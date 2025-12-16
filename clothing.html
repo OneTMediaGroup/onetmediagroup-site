@@ -22,7 +22,10 @@
           <a href="apps.html">Apps</a>
           <a href="programs.html">Programs</a>
           <a href="books.html">Books</a>
-          <a href="clothing.html" style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">Clothing</a>
+          <a href="clothing.html"
+             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+             Clothing
+          </a>
           <a href="media.html">Media</a>
           <a href="contact.html">Contact</a>
         </nav>
@@ -36,44 +39,40 @@
   </div>
 
   <main class="container">
-    
-  <div class="breadcrumb">Home / Clothing</div>
+    <div class="breadcrumb">Home / Clothing</div>
 
-  <section class="section">
-    <h2>Clothing</h2>
-    <p class="sub">Official One T Media Group merchandise.</p>
+    <!-- STORE SECTION -->
+    <section class="section">
+      <h2>🛍️ One T Media Group Store</h2>
+      <p class="sub">Official One T Media Group merchandise powered by Redbubble.</p>
 
+      <!-- IMPORTANT: Redbubble embed must NOT be inside a card -->
+      <script
+        type="text/javascript"
+        src="https://www.redbubble.com/assets/external_portfolio.js">
+      </script>
 
-    <div class="card uc">
-     <h2>🛍️ One T Media Group Store</h2>
-<p class="sub">Official merchandise powered by Redbubble.</p>
+      <script
+        id="rb-xzfcxvzx"
+        type="text/javascript">
+        new RBExternalPortfolio(
+          'www.redbubble.com',
+          'onetwearthevibe',
+          5,
+          5
+        ).renderIframe();
+      </script>
 
-<!-- Redbubble Store Embed -->
-<script
-  type="text/javascript"
-  src="https://www.redbubble.com/assets/external_portfolio.js">
-</script>
+      <div style="height:32px"></div>
 
-<script
-  id="rb-xzfcxvzx"
-  type="text/javascript">
-  new RBExternalPortfolio(
-    'www.redbubble.com',
-    'onetwearthevibe',
-    5,
-    5
-  ).renderIframe();
-</script>
-
-
-      <div class="tile">
+      <!-- SUPPORT -->
+      <div class="card uc">
         <h3>Support</h3>
         <p>Shipping, returns, and help</p>
         <div style="height:12px"></div>
         <a class="btn" href="contact.html">Contact Support</a>
       </div>
-    </div>
-  </section>
+    </section>
 
     <div class="footer">
       <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
