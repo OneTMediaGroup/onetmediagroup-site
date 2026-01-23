@@ -65,7 +65,6 @@
     position: relative;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     margin-bottom: 40px;
-    cursor: zoom-in;
   }
 
   .notice-wrapper img {
@@ -78,17 +77,12 @@
     position: absolute;
     top: 0;
     bottom: 0;
+    width: 50%;
     cursor: zoom-in;
   }
 
-  /* 2-zone hotspots */
-  .hotspot.left { left: 0; width: 50%; }
-  .hotspot.right { right: 0; width: 50%; }
-
-  /* 3-zone hotspots */
-  .hotspot.third { width: 33.333%; }
-  .hotspot.center { left: 33.333%; }
-  .hotspot.right-third { right: 0; }
+  .hotspot.left { left: 0; }
+  .hotspot.right { right: 0; }
 
   .hotspot:hover {
     background: rgba(255,255,255,0.03);
@@ -155,6 +149,16 @@
     opacity: 0.6;
     margin-top: 70px;
   }
+
+  audio {
+    width: 100%;
+    margin: 16px 0;
+  }
+
+  details summary {
+    cursor: pointer;
+    opacity: 0.75;
+  }
 </style>
 </head>
 
@@ -197,7 +201,7 @@
   <img src="assets/raven-hallow-notice.jpg" alt="Raven’s Hollow Notice">
 </div>
 
-<!-- ARCHIVED NOTICES — SET 1 -->
+<!-- ARCHIVED NOTICES -->
 <div class="section-title">Archived Notices</div>
 <div class="notice-wrapper">
   <img src="assets/notice-composite.jpg" alt="Archived Notices Composite">
@@ -213,15 +217,6 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-bio.jpg')"></div>
 </div>
 
-<!-- ARCHIVED NOTICES — SET 2 (3-ZONE) -->
-<div class="section-title">Additional Archived Notices</div>
-<div class="notice-wrapper">
-  <img src="assets/notice-composite2.jpg" alt="Archived Notices Composite 2">
-  <div class="hotspot third left" onclick="openOverlay('assets/notice-composite2Left.jpg')"></div>
-  <div class="hotspot third center" onclick="openOverlay('assets/notice-composite2Center.jpg')"></div>
-  <div class="hotspot third right-third" onclick="openOverlay('assets/notice-composite2Right.jpg')"></div>
-</div>
-
 <!-- RECOVERED DOCUMENTS -->
 <div class="section-title">Recovered Documents</div>
 
@@ -231,18 +226,8 @@
   <span style="opacity:0.7;">Internal · Archived</span></p>
 
   <p>
-    This document records findings from the initial pilot implementation of the Echo behavioral
-    alignment framework within Raven’s Hollow. Participation was voluntary. No enforcement
-    mechanisms were employed.
-  </p>
-
-  <p>
-    Early indicators demonstrated reduced hesitation, increased decisional confidence, and
-    improved interpersonal efficiency. No adverse outcomes were observed.
-  </p>
-
-  <p>
-    Expansion is advised pending continued compliance.
+    Early indicators demonstrated reduced hesitation, increased decisional confidence,
+    and improved interpersonal efficiency. No adverse outcomes were observed.
   </p>
 
   <p>
@@ -258,11 +243,7 @@
   <span style="opacity:0.7;">Public · Current</span></p>
 
   <p>
-    This document provides a consolidated status update one year following full deployment
-    of the Echo framework. Conditions remain stable. Outcomes remain favorable.
-  </p>
-
-  <p>
+    Conditions remain stable. Outcomes remain favorable.
     Further documentation is unnecessary.
   </p>
 
@@ -273,61 +254,38 @@
   </p>
 </div>
 
-  <div class="archive-text">
-  <p><strong>Recovered Document 03</strong><br>
-  <em>Community Alignment Review — Raven’s Hollow</em><br>
-  <span style="opacity:0.7;">Internal · Advisory</span></p>
+<!-- RECORDED COMMUNITY UPDATE -->
+<div class="section-title">Recorded Community Update</div>
 
-  <p>
-    This document was issued to clarify discrepancies between observed outcomes
-    and reported satisfaction metrics following full Echo integration.
-  </p>
+<div class="archive-text">
+  <p><strong>Recorded Community Update — Raven’s Hollow</strong><br>
+  <em>Public Information Recording</em><br>
+  <span style="opacity:0.7;">Public · Archived</span></p>
 
-  <p>
-    <a href="assets/Recovered_Document_03_Community_Alignment_Review.pdf"
-       target="_blank"
-       style="color:#9cc7ff;">
-      Download archival copy (PDF)
-    </a>
-  </p>
+  <audio controls preload="metadata">
+    <source src="assets/community-update-archive.mp3" type="audio/mpeg">
+  </audio>
+
+  <details>
+    <summary>View transcript</summary>
+    <div style="margin-top:14px">
+      <p>This is a recorded community update for residents of Raven’s Hollow.</p>
+      <p>Recent adjustments to local decision-support systems have now completed their initial evaluation period.</p>
+      <p>This is considered a positive indicator.</p>
+      <p>No adverse effects have been identified.</p>
+      <p>If you have questions, they will resolve in time.</p>
+    </div>
+  </details>
 </div>
+
 <!-- BOOKS -->
 <div class="section-title">Echo — Published Volumes</div>
 <div class="books">
-  <div class="book">
-    <img src="assets/EchoBook1Cover.png">
-    <strong>The First Reflection</strong>
-    <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">Amazon Canada</a>
-    <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">Amazon USA</a>
-  </div>
-
-  <div class="book">
-    <img src="assets/EchoBook2Cover.png">
-    <strong>The Shadow Line</strong>
-    <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">Amazon Canada</a>
-    <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">Amazon USA</a>
-  </div>
-
-  <div class="book">
-    <img src="assets/EchoBook3Cover.png">
-    <strong>Coauthor</strong>
-    <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">Amazon Canada</a>
-    <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">Amazon USA</a>
-  </div>
-
-  <div class="book">
-    <img src="assets/EchoBook4Cover.png">
-    <strong>The Mercy Protocol</strong>
-    <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">Amazon Canada</a>
-    <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">Amazon USA</a>
-  </div>
-
-  <div class="book">
-    <img src="assets/EchoBook5Cover.png">
-    <strong>Final Draft</strong>
-    <a href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">Amazon Canada</a>
-    <a href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">Amazon USA</a>
-  </div>
+  <div class="book"><img src="assets/EchoBook1Cover.png"><strong>The First Reflection</strong></div>
+  <div class="book"><img src="assets/EchoBook2Cover.png"><strong>The Shadow Line</strong></div>
+  <div class="book"><img src="assets/EchoBook3Cover.png"><strong>Coauthor</strong></div>
+  <div class="book"><img src="assets/EchoBook4Cover.png"><strong>The Mercy Protocol</strong></div>
+  <div class="book"><img src="assets/EchoBook5Cover.png"><strong>Final Draft</strong></div>
 </div>
 
 <div class="footer-note">
