@@ -81,17 +81,14 @@
     cursor: zoom-in;
   }
 
+  /* 2-zone hotspots */
   .hotspot.left { left: 0; width: 50%; }
   .hotspot.right { right: 0; width: 50%; }
+
+  /* 3-zone hotspots */
   .hotspot.third { width: 33.333%; }
-
-  .hotspot.center {
-    left: 33.333%;
-  }
-
-  .hotspot.right-third {
-    right: 0;
-  }
+  .hotspot.center { left: 33.333%; }
+  .hotspot.right-third { right: 0; }
 
   .hotspot:hover {
     background: rgba(255,255,255,0.03);
@@ -172,9 +169,25 @@
 
 <div class="archive-text">
   <p><strong>ECHO: Resident Records Archive</strong></p>
+
   <p>
     The following materials relate to documented anomalies observed in the town of Raven’s Hollow.
-    Materials are presented without interpretation. Readers are encouraged to draw their own conclusions.
+    What began as minor inconsistencies—reflections lagging, conversations resolving too easily,
+    decisions arriving already formed—gradually revealed a broader pattern.
+  </p>
+
+  <p>
+    Residents reported improved efficiency, reduced conflict, and an unusual sense of clarity.
+    Not all changes were unwelcome. Not all changes were noticed.
+  </p>
+
+  <p>
+    This archive contains selected profiles, notices, and internal communications compiled during
+    the early and middle stages of the Echo phenomenon. Materials are presented without interpretation.
+  </p>
+
+  <p>
+    Readers are encouraged to review carefully and draw their own conclusions.
   </p>
 </div>
 
@@ -200,13 +213,64 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-bio.jpg')"></div>
 </div>
 
-<!-- ARCHIVED NOTICES — SET 2 -->
+<!-- ARCHIVED NOTICES — SET 2 (3-ZONE) -->
 <div class="section-title">Additional Archived Notices</div>
 <div class="notice-wrapper">
   <img src="assets/notice-composite2.jpg" alt="Archived Notices Composite 2">
   <div class="hotspot third left" onclick="openOverlay('assets/notice-composite2Left.jpg')"></div>
   <div class="hotspot third center" onclick="openOverlay('assets/notice-composite2Center.jpg')"></div>
   <div class="hotspot third right-third" onclick="openOverlay('assets/notice-composite2Right.jpg')"></div>
+</div>
+
+<!-- RECOVERED DOCUMENTS -->
+<div class="section-title">Recovered Documents</div>
+
+<div class="archive-text">
+  <p><strong>Recovered Document 01</strong><br>
+  <em>Pilot Period Summary — Raven’s Hollow</em><br>
+  <span style="opacity:0.7;">Internal · Archived</span></p>
+
+  <p>
+    This document records findings from the initial pilot implementation of the Echo behavioral
+    alignment framework within Raven’s Hollow. Participation was voluntary. No enforcement
+    mechanisms were employed.
+  </p>
+
+  <p>
+    Early indicators demonstrated reduced hesitation, increased decisional confidence, and
+    improved interpersonal efficiency. No adverse outcomes were observed.
+  </p>
+
+  <p>
+    Expansion is advised pending continued compliance.
+  </p>
+
+  <p>
+    <a href="assets/Recovered_Document_01_Full_Archival_Report.pdf" target="_blank" style="color:#9cc7ff;">
+      Download archival copy (PDF)
+    </a>
+  </p>
+</div>
+
+<div class="archive-text">
+  <p><strong>Recovered Document 02</strong><br>
+  <em>Archive Status Update — Raven’s Hollow</em><br>
+  <span style="opacity:0.7;">Public · Current</span></p>
+
+  <p>
+    This document provides a consolidated status update one year following full deployment
+    of the Echo framework. Conditions remain stable. Outcomes remain favorable.
+  </p>
+
+  <p>
+    Further documentation is unnecessary.
+  </p>
+
+  <p>
+    <a href="assets/Recovered_Document_02_Full_Archival_Report.pdf" target="_blank" style="color:#9cc7ff;">
+      Download archival copy (PDF)
+    </a>
+  </p>
 </div>
 
 <!-- BOOKS -->
@@ -218,24 +282,28 @@
     <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">Amazon USA</a>
   </div>
+
   <div class="book">
     <img src="assets/EchoBook2Cover.png">
     <strong>The Shadow Line</strong>
     <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">Amazon USA</a>
   </div>
+
   <div class="book">
     <img src="assets/EchoBook3Cover.png">
     <strong>Coauthor</strong>
     <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">Amazon USA</a>
   </div>
+
   <div class="book">
     <img src="assets/EchoBook4Cover.png">
     <strong>The Mercy Protocol</strong>
     <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">Amazon USA</a>
   </div>
+
   <div class="book">
     <img src="assets/EchoBook5Cover.png">
     <strong>Final Draft</strong>
