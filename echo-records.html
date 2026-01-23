@@ -13,7 +13,6 @@
     font-family: Georgia, "Times New Roman", serif;
   }
 
-  /* Back link */
   .back-link {
     position: fixed;
     top: 20px;
@@ -25,9 +24,7 @@
     z-index: 1000;
   }
 
-  .back-link:hover {
-    color: rgba(230,230,230,0.9);
-  }
+  .back-link:hover { color: rgba(230,230,230,0.9); }
 
   .page {
     max-width: 1100px;
@@ -50,7 +47,7 @@
   }
 
   .section-title {
-    margin-top: 60px;
+    margin-top: 70px;
     margin-bottom: 16px;
     font-size: 1.2rem;
     letter-spacing: 0.5px;
@@ -58,15 +55,14 @@
 
   .archive-text {
     max-width: 800px;
-    margin: 0 auto 40px auto;
+    margin: 0 auto 50px auto;
     font-size: 0.95rem;
-    line-height: 1.6;
-    opacity: 0.85;
+    line-height: 1.65;
+    opacity: 0.88;
   }
 
   .notice-wrapper {
     position: relative;
-    cursor: pointer;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     margin-bottom: 40px;
   }
@@ -82,6 +78,7 @@
     top: 0;
     bottom: 0;
     width: 50%;
+    cursor: pointer;
   }
 
   .hotspot.left { left: 0; }
@@ -144,15 +141,13 @@
     margin-top: 4px;
   }
 
-  .book a:hover {
-    text-decoration: underline;
-  }
+  .book a:hover { text-decoration: underline; }
 
   .footer-note {
     text-align: center;
     font-size: 0.8rem;
     opacity: 0.6;
-    margin-top: 60px;
+    margin-top: 70px;
   }
 </style>
 </head>
@@ -172,7 +167,7 @@
   <p>
     The following materials relate to documented anomalies observed in the town of Raven’s Hollow.
     What began as minor inconsistencies—reflections lagging, conversations resolving too easily,
-    decisions feeling pre-made—gradually revealed a broader pattern.
+    decisions arriving already formed—gradually revealed a broader pattern.
   </p>
 
   <p>
@@ -190,11 +185,13 @@
   </p>
 </div>
 
+<!-- COMMUNITY NOTICE -->
 <div class="section-title">Community Notice</div>
 <div class="notice-wrapper">
   <img src="assets/raven-hallow-notice.jpg" alt="Raven’s Hollow Notice">
 </div>
 
+<!-- ARCHIVED NOTICES -->
 <div class="section-title">Archived Notices</div>
 <div class="notice-wrapper">
   <img src="assets/notice-composite.jpg" alt="Archived Notices Composite">
@@ -202,6 +199,7 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-notice.jpg')"></div>
 </div>
 
+<!-- RESIDENT PROFILES -->
 <div class="section-title">Resident Profiles</div>
 <div class="notice-wrapper">
   <img src="assets/bio-composite.jpg" alt="Resident Profiles Composite">
@@ -209,6 +207,58 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-bio.jpg')"></div>
 </div>
 
+<!-- RECOVERED DOCUMENTS -->
+<div class="section-title">Recovered Documents</div>
+
+<div class="archive-text">
+  <p><strong>Recovered Document 01</strong><br>
+  <em>Pilot Period Summary — Raven’s Hollow</em><br>
+  <span style="opacity:0.7;">Internal · Archived</span></p>
+
+  <p>
+    This document records findings from the initial pilot implementation of the Echo behavioral
+    alignment framework within Raven’s Hollow. Participation was voluntary. No enforcement
+    mechanisms were employed.
+  </p>
+
+  <p>
+    Early indicators demonstrated reduced hesitation, increased decisional confidence, and
+    improved interpersonal efficiency. No adverse outcomes were observed.
+  </p>
+
+  <p>
+    Expansion is advised pending continued compliance.
+  </p>
+
+  <p>
+    <a href="assets/Recovered_Document_01_Full_Archival_Report.pdf" target="_blank" style="color:#9cc7ff;">
+      Download archival copy (PDF)
+    </a>
+  </p>
+</div>
+
+<div class="archive-text">
+  <p><strong>Recovered Document 02</strong><br>
+  <em>Archive Status Update — Raven’s Hollow</em><br>
+  <span style="opacity:0.7;">Public · Current</span></p>
+
+  <p>
+    This document provides a consolidated status update one year following full deployment
+    of the Echo framework. Conditions remain stable. Outcomes remain favorable.
+  </p>
+
+  <p>
+    Further documentation is unnecessary.
+  </p>
+
+  <p>
+    <a href="assets/Recovered_Document_02_Full_Archival_Report.pdf" target="_blank" style="color:#9cc7ff;">
+      Download archival copy (PDF)
+    </a>
+  </p>
+</div>
+
+<!-- BOOKS -->
 <div class="section-title">Echo — Published Volumes</div>
 <div class="books">
   <div class="book">
@@ -263,7 +313,6 @@
     document.getElementById('overlayImage').src = src;
     document.getElementById('overlay').style.display = 'flex';
   }
-
   function closeOverlay() {
     document.getElementById('overlay').style.display = 'none';
   }
