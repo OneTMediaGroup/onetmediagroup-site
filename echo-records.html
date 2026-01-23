@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>Raven’s Hollow — Archived Notices</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<style>
+  body {
+    margin: 0;
+    background: #0f1216;
+    color: #e6e6e6;
+    font-family: Georgia, "Times New Roman", serif;
+  }
+
+  .page {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 20px;
+  }
+
+  h1 {
+    text-align: center;
+    font-weight: normal;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-size: 0.95rem;
+    opacity: 0.75;
+    margin-bottom: 40px;
+  }
+
+  /* Composite image container */
+  .notice-wrapper {
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+
+  .notice-wrapper img {
+    width: 100%;
+    display: block;
+  }
+
+  /* Invisible click zones */
+  .hotspot {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+  }
+
+  .hotspot.left {
+    left: 0;
+  }
+
+  .hotspot.right {
+    right: 0;
+  }
+
+  /* Subtle hover hint */
+  .hotspot:hover {
+    background: rgba(255,255,255,0.03);
+  }
+
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,12,16,0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
+
+  .overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  }
+
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 28px;
+    cursor: pointer;
+    opacity: 0.7;
+  }
+
+  .close:hover {
+    opacity: 1;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 0.85rem;
+    opacity: 0.6;
+    margin-top: 30px;
+  }
+</style>
+</head>
+
+<body>
+
+<div class="page">
+  <h1>Raven’s Hollow Records</h1>
+  <div class="subtitle">Archived community notices · access is not restricted</div>
+
+  <div class="notice-wrapper">
+    <!-- COMPOSITE IMAGE -->
+    <img src="notice-composite.jpg" alt="Raven’s Hollow Notices" />
+
+    <!-- CLICK ZONES -->
+    <div class="hotspot left" onclick="openOverlay('ember-notice.jpg')"></div>
+    <div class="hotspot right" onclick="openOverlay('daniel-notice.jpg')"></div>
+  </div>
+
+  <div class="footer-note">
+    Some documents are clearer when viewed alone.
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="closeOverlay()">
+  <span class="close">&times;</span>
+  <img id="overlayImage" src="" alt="Expanded Notice" />
+</div>
+
+<script>
+  function openOverlay(imageSrc) {
+    document.getElementById('overlayImage').src = imageSrc;
+    document.getElementById('overlay').style.display = 'flex';
+  }
+
+  function closeOverlay() {
+    document.getElementById('overlay').style.display = 'none';
+  }
+</script>
+
+</body>
+</html>
