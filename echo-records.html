@@ -13,7 +13,6 @@
     font-family: Georgia, "Times New Roman", serif;
   }
 
-  /* Back link */
   .back-link {
     position: fixed;
     top: 20px;
@@ -25,9 +24,7 @@
     z-index: 1000;
   }
 
-  .back-link:hover {
-    color: rgba(230,230,230,0.9);
-  }
+  .back-link:hover { color: rgba(230,230,230,0.9); }
 
   .page {
     max-width: 1100px;
@@ -50,7 +47,7 @@
   }
 
   .section-title {
-    margin-top: 60px;
+    margin-top: 70px;
     margin-bottom: 16px;
     font-size: 1.2rem;
     letter-spacing: 0.5px;
@@ -58,18 +55,17 @@
 
   .archive-text {
     max-width: 800px;
-    margin: 0 auto 40px auto;
+    margin: 0 auto 50px auto;
     font-size: 0.95rem;
-    line-height: 1.6;
-    opacity: 0.85;
+    line-height: 1.65;
+    opacity: 0.88;
   }
 
-  /* Composite / Image containers */
   .notice-wrapper {
     position: relative;
-    cursor: zoom-in;
     box-shadow: 0 20px 60px rgba(0,0,0,0.6);
     margin-bottom: 40px;
+    cursor: zoom-in;
   }
 
   .notice-wrapper img {
@@ -78,7 +74,6 @@
     border-radius: 4px;
   }
 
-  /* Hotspots */
   .hotspot {
     position: absolute;
     top: 0;
@@ -86,26 +81,22 @@
     cursor: zoom-in;
   }
 
-  .hotspot.left {
-    left: 0;
-    width: 33.333%;
-  }
+  .hotspot.left { left: 0; width: 50%; }
+  .hotspot.right { right: 0; width: 50%; }
+  .hotspot.third { width: 33.333%; }
 
   .hotspot.center {
     left: 33.333%;
-    width: 33.333%;
   }
 
-  .hotspot.right {
+  .hotspot.right-third {
     right: 0;
-    width: 33.333%;
   }
 
   .hotspot:hover {
-    background: rgba(255,255,255,0.035);
+    background: rgba(255,255,255,0.03);
   }
 
-  /* Overlay */
   .overlay {
     position: fixed;
     inset: 0;
@@ -133,7 +124,6 @@
 
   .close:hover { opacity: 1; }
 
-  /* Books */
   .books {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -160,15 +150,13 @@
     margin-top: 4px;
   }
 
-  .book a:hover {
-    text-decoration: underline;
-  }
+  .book a:hover { text-decoration: underline; }
 
   .footer-note {
     text-align: center;
     font-size: 0.8rem;
     opacity: 0.6;
-    margin-top: 60px;
+    margin-top: 70px;
   }
 </style>
 </head>
@@ -184,29 +172,13 @@
 
 <div class="archive-text">
   <p><strong>ECHO: Resident Records Archive</strong></p>
-
   <p>
     The following materials relate to documented anomalies observed in the town of Raven’s Hollow.
-    What began as minor inconsistencies—reflections lagging, conversations resolving too easily,
-    decisions feeling pre-made—gradually revealed a broader pattern.
-  </p>
-
-  <p>
-    Residents reported improved efficiency, reduced conflict, and an unusual sense of clarity.
-    Not all changes were unwelcome. Not all changes were noticed.
-  </p>
-
-  <p>
-    This archive contains selected profiles, notices, and internal communications compiled during
-    the early and middle stages of the Echo phenomenon. Materials are presented without interpretation.
-  </p>
-
-  <p>
-    Readers are encouraged to review carefully and draw their own conclusions.
+    Materials are presented without interpretation. Readers are encouraged to draw their own conclusions.
   </p>
 </div>
 
-<!-- STANDALONE NOTICE -->
+<!-- COMMUNITY NOTICE -->
 <div class="section-title">Community Notice</div>
 <div class="notice-wrapper">
   <img src="assets/raven-hallow-notice.jpg" alt="Raven’s Hollow Notice">
@@ -220,21 +192,21 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-notice.jpg')"></div>
 </div>
 
-<!-- ARCHIVED NOTICES — SET 2 -->
-<div class="section-title">Supplemental Notices</div>
-<div class="notice-wrapper">
-  <img src="assets/notice-composite2.jpg" alt="Supplemental Notices Composite">
-  <div class="hotspot left" onclick="openOverlay('assets/notice-composite2Left.jpg')"></div>
-  <div class="hotspot center" onclick="openOverlay('assets/notice-composite2Center.jpg')"></div>
-  <div class="hotspot right" onclick="openOverlay('assets/notice-composite2Right.jpg')"></div>
-</div>
-
 <!-- RESIDENT PROFILES -->
 <div class="section-title">Resident Profiles</div>
 <div class="notice-wrapper">
   <img src="assets/bio-composite.jpg" alt="Resident Profiles Composite">
   <div class="hotspot left" onclick="openOverlay('assets/ember-bio.jpg')"></div>
   <div class="hotspot right" onclick="openOverlay('assets/daniel-bio.jpg')"></div>
+</div>
+
+<!-- ARCHIVED NOTICES — SET 2 -->
+<div class="section-title">Additional Archived Notices</div>
+<div class="notice-wrapper">
+  <img src="assets/notice-composite2.jpg" alt="Archived Notices Composite 2">
+  <div class="hotspot third left" onclick="openOverlay('assets/notice-composite2Left.jpg')"></div>
+  <div class="hotspot third center" onclick="openOverlay('assets/notice-composite2Center.jpg')"></div>
+  <div class="hotspot third right-third" onclick="openOverlay('assets/notice-composite2Right.jpg')"></div>
 </div>
 
 <!-- BOOKS -->
@@ -246,28 +218,24 @@
     <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">Amazon USA</a>
   </div>
-
   <div class="book">
     <img src="assets/EchoBook2Cover.png">
     <strong>The Shadow Line</strong>
     <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">Amazon USA</a>
   </div>
-
   <div class="book">
     <img src="assets/EchoBook3Cover.png">
     <strong>Coauthor</strong>
     <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">Amazon USA</a>
   </div>
-
   <div class="book">
     <img src="assets/EchoBook4Cover.png">
     <strong>The Mercy Protocol</strong>
     <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">Amazon Canada</a>
     <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">Amazon USA</a>
   </div>
-
   <div class="book">
     <img src="assets/EchoBook5Cover.png">
     <strong>Final Draft</strong>
@@ -282,7 +250,6 @@
 
 </div>
 
-<!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeOverlay()">
   <span class="close">&times;</span>
   <img id="overlayImage" src="" alt="Expanded Record">
@@ -293,7 +260,6 @@
     document.getElementById('overlayImage').src = src;
     document.getElementById('overlay').style.display = 'flex';
   }
-
   function closeOverlay() {
     document.getElementById('overlay').style.display = 'none';
   }
