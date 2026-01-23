@@ -6,125 +6,142 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
 <style>
-body {
-  margin: 0;
-  background: #0f1216;
-  color: #e6e6e6;
-  font-family: Georgia, "Times New Roman", serif;
-}
+  body {
+    margin: 0;
+    background: #0f1216;
+    color: #e6e6e6;
+    font-family: Georgia, "Times New Roman", serif;
+  }
 
-.page {
-  max-width: 1100px;
-  margin: 60px auto;
-  padding: 0 20px;
-}
+  .page {
+    max-width: 1100px;
+    margin: 60px auto;
+    padding: 0 20px;
+  }
 
-h1 {
-  text-align: center;
-  font-weight: normal;
-  letter-spacing: 1px;
-}
+  h1 {
+    text-align: center;
+    font-weight: normal;
+    letter-spacing: 1px;
+    margin-bottom: 10px;
+  }
 
-.subtitle {
-  text-align: center;
-  font-size: 0.95rem;
-  opacity: 0.7;
-  margin-bottom: 50px;
-}
+  .subtitle {
+    text-align: center;
+    font-size: 0.95rem;
+    opacity: 0.75;
+    margin-bottom: 40px;
+  }
 
-.section-title {
-  margin-top: 70px;
-  margin-bottom: 20px;
-  font-size: 1.2rem;
-  letter-spacing: 0.5px;
-}
+  .section-title {
+    margin-top: 60px;
+    margin-bottom: 16px;
+    font-size: 1.2rem;
+    letter-spacing: 0.5px;
+  }
 
-.notice-wrapper {
-  position: relative;
-  cursor: pointer;
-  box-shadow: 0 25px 70px rgba(0,0,0,0.7);
-  margin-bottom: 20px;
-}
+  .archive-text {
+    max-width: 800px;
+    margin: 0 auto 40px auto;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    opacity: 0.85;
+  }
 
-.notice-wrapper img {
-  width: 100%;
-  display: block;
-}
+  /* Composite / Image containers */
+  .notice-wrapper {
+    position: relative;
+    cursor: pointer;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+    margin-bottom: 40px;
+  }
 
-.hotspot {
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 50%;
-}
+  .notice-wrapper img {
+    width: 100%;
+    display: block;
+    border-radius: 4px;
+  }
 
-.hotspot.left { left: 0; }
-.hotspot.right { right: 0; }
+  /* Hotspots */
+  .hotspot {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+  }
 
-.hotspot:hover {
-  background: rgba(255,255,255,0.04);
-}
+  .hotspot.left { left: 0; }
+  .hotspot.right { right: 0; }
 
-.overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(10,12,16,0.96);
-  display: none;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-}
+  .hotspot:hover {
+    background: rgba(255,255,255,0.03);
+  }
 
-.overlay img {
-  max-width: 90%;
-  max-height: 90%;
-  box-shadow: 0 40px 90px rgba(0,0,0,0.9);
-}
+  /* Overlay */
+  .overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,12,16,0.95);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+  }
 
-.close {
-  position: absolute;
-  top: 20px;
-  right: 30px;
-  font-size: 28px;
-  cursor: pointer;
-  opacity: 0.7;
-}
+  .overlay img {
+    max-width: 90%;
+    max-height: 90%;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+  }
 
-.close:hover { opacity: 1; }
+  .close {
+    position: absolute;
+    top: 20px;
+    right: 30px;
+    font-size: 28px;
+    cursor: pointer;
+    opacity: 0.7;
+  }
 
-.books-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-  gap: 30px;
-  margin-top: 30px;
-}
+  .close:hover { opacity: 1; }
 
-.book {
-  text-align: center;
-}
+  /* Books */
+  .books {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 24px;
+    margin-top: 30px;
+  }
 
-.book img {
-  width: 100%;
-  border-radius: 12px;
-  margin-bottom: 10px;
-}
+  .book {
+    text-align: center;
+    font-size: 0.85rem;
+  }
 
-.book a {
-  display: block;
-  font-size: 0.9rem;
-  margin-top: 6px;
-  color: #9cc9ff;
-  text-decoration: none;
-}
+  .book img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+  }
 
-.book a:hover { text-decoration: underline; }
+  .book a {
+    color: #9cc7ff;
+    text-decoration: none;
+    display: block;
+    margin-top: 4px;
+  }
 
-.footer-note {
-  text-align: center;
-  font-size: 0.85rem;
-  opacity: 0.6;
-  margin-top: 40px;
-}
+  .book a:hover {
+    text-decoration: underline;
+  }
+
+  .footer-note {
+    text-align: center;
+    font-size: 0.8rem;
+    opacity: 0.6;
+    margin-top: 60px;
+  }
 </style>
 </head>
 
@@ -132,38 +149,47 @@ h1 {
 <div class="page">
 
 <h1>Echo — Resident Records Archive</h1>
-<div class="subtitle">
-The following materials relate to documented anomalies observed in the town of Raven’s Hollow.
+<div class="subtitle">Archived materials · access is not restricted</div>
+
+<div class="archive-text">
+  <p><strong>ECHO: Resident Records Archive</strong></p>
+
+  <p>
+    The following materials relate to documented anomalies observed in the town of Raven’s Hollow.
+    What began as minor inconsistencies—reflections lagging, conversations resolving too easily,
+    decisions feeling pre-made—gradually revealed a broader pattern.
+  </p>
+
+  <p>
+    Residents reported improved efficiency, reduced conflict, and an unusual sense of clarity.
+    Not all changes were unwelcome. Not all changes were noticed.
+  </p>
+
+  <p>
+    This archive contains selected profiles, notices, and internal communications compiled during
+    the early and middle stages of the Echo phenomenon. Materials are presented without interpretation.
+  </p>
+
+  <p>
+    Readers are encouraged to review carefully and draw their own conclusions.
+  </p>
 </div>
 
-<p>
-What began as minor inconsistencies—reflections lagging, conversations resolving too easily,
-decisions feeling pre-made—gradually revealed a broader pattern.
-</p>
-
-<p>
-Residents reported improved efficiency, reduced conflict, and an unusual sense of clarity.
-Not all changes were unwelcome. Not all changes were noticed.
-</p>
-
-<p>
-This archive contains selected profiles, notices, and internal communications compiled during
-the early and middle stages of the Echo phenomenon.
-</p>
-
-<p><em>Materials are presented without interpretation.</em></p>
-
-<p><em>Readers are encouraged to review carefully and draw their own conclusions.</em></p>
-
-<!-- COMMUNITY NOTICES -->
-<div class="section-title">Community Notices</div>
+<!-- STANDALONE NOTICE -->
+<div class="section-title">Community Notice</div>
 <div class="notice-wrapper">
-  <img src="assets/raven-hallow-notice.jpg" alt="Community Notice Composite">
+  <img src="assets/raven-hallow-notice.jpg" alt="Raven’s Hollow Notice">
+</div>
+
+<!-- INTERACTIVE NOTICES -->
+<div class="section-title">Archived Notices</div>
+<div class="notice-wrapper">
+  <img src="assets/notice-composite.jpg" alt="Archived Notices Composite">
   <div class="hotspot left" onclick="openOverlay('assets/ember-notice.jpg')"></div>
   <div class="hotspot right" onclick="openOverlay('assets/daniel-notice.jpg')"></div>
 </div>
 
-<!-- RESIDENT PROFILES -->
+<!-- INTERACTIVE BIOS -->
 <div class="section-title">Resident Profiles</div>
 <div class="notice-wrapper">
   <img src="assets/bio-composite.jpg" alt="Resident Profiles Composite">
@@ -171,10 +197,9 @@ the early and middle stages of the Echo phenomenon.
   <div class="hotspot right" onclick="openOverlay('assets/daniel-bio.jpg')"></div>
 </div>
 
-<!-- PUBLISHED VOLUMES -->
+<!-- BOOKS -->
 <div class="section-title">Echo — Published Volumes</div>
-
-<div class="books-grid">
+<div class="books">
   <div class="book">
     <img src="assets/EchoBook1Cover.png">
     <strong>The First Reflection</strong>
@@ -212,7 +237,7 @@ the early and middle stages of the Echo phenomenon.
 </div>
 
 <div class="footer-note">
-Some documents are clearer when viewed alone.
+  Some documents are clearer when viewed alone.
 </div>
 
 </div>
@@ -220,18 +245,18 @@ Some documents are clearer when viewed alone.
 <!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeOverlay()">
   <span class="close">&times;</span>
-  <img id="overlayImage" src="" alt="Expanded Document">
+  <img id="overlayImage" src="" alt="Expanded Record">
 </div>
 
 <script>
-function openOverlay(src) {
-  document.getElementById('overlayImage').src = src;
-  document.getElementById('overlay').style.display = 'flex';
-}
+  function openOverlay(src) {
+    document.getElementById('overlayImage').src = src;
+    document.getElementById('overlay').style.display = 'flex';
+  }
 
-function closeOverlay() {
-  document.getElementById('overlay').style.display = 'none';
-}
+  function closeOverlay() {
+    document.getElementById('overlay').style.display = 'none';
+  }
 </script>
 
 </body>
