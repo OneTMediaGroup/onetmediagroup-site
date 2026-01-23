@@ -1,139 +1,238 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Raven’s Hollow — Archived Notices</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Echo — Resident Records Archive</title>
 
-<style>
-  body {
-    margin: 0;
-    background: #0f1216;
-    color: #e6e6e6;
-    font-family: Georgia, "Times New Roman", serif;
-  }
+  <style>
+    body {
+      margin: 0;
+      background: #0f1216;
+      color: #e6e6e6;
+      font-family: Georgia, "Times New Roman", serif;
+    }
 
-  .page {
-    max-width: 1100px;
-    margin: 60px auto;
-    padding: 0 20px;
-  }
+    .page {
+      max-width: 1100px;
+      margin: 60px auto;
+      padding: 0 20px;
+    }
 
-  h1 {
-    text-align: center;
-    font-weight: normal;
-    letter-spacing: 1px;
-    margin-bottom: 10px;
-  }
+    h1, h2 {
+      font-weight: normal;
+      letter-spacing: 1px;
+    }
 
-  .subtitle {
-    text-align: center;
-    font-size: 0.95rem;
-    opacity: 0.75;
-    margin-bottom: 40px;
-  }
+    h1 {
+      text-align: center;
+      margin-bottom: 10px;
+    }
 
-  /* Composite image container */
-  .notice-wrapper {
-    position: relative;
-    cursor: pointer;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
-  }
+    .subtitle {
+      text-align: center;
+      font-size: 0.95rem;
+      opacity: 0.75;
+      margin-bottom: 50px;
+    }
 
-  .notice-wrapper img {
-    width: 100%;
-    display: block;
-  }
+    .archive-text {
+      max-width: 800px;
+      margin: 0 auto 60px;
+      font-size: 1rem;
+      line-height: 1.6;
+      opacity: 0.9;
+    }
 
-  /* Invisible click zones */
-  .hotspot {
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    width: 50%;
-  }
+    .section {
+      margin-bottom: 80px;
+    }
 
-  .hotspot.left {
-    left: 0;
-  }
+    .image-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
 
-  .hotspot.right {
-    right: 0;
-  }
+    .image-grid img {
+      width: 100%;
+      border-radius: 10px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+      cursor: pointer;
+    }
 
-  /* Subtle hover hint */
-  .hotspot:hover {
-    background: rgba(255,255,255,0.03);
-  }
+    .books {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 30px;
+      margin-top: 30px;
+    }
 
-  /* Overlay */
-  .overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(10,12,16,0.95);
-    display: none;
-    align-items: center;
-    justify-content: center;
-    z-index: 999;
-  }
+    .book {
+      text-align: center;
+    }
 
-  .overlay img {
-    max-width: 90%;
-    max-height: 90%;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.8);
-  }
+    .book img {
+      width: 100%;
+      max-width: 200px;
+      border-radius: 10px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+    }
 
-  .close {
-    position: absolute;
-    top: 20px;
-    right: 30px;
-    font-size: 28px;
-    cursor: pointer;
-    opacity: 0.7;
-  }
+    .book a {
+      display: inline-block;
+      margin-top: 10px;
+      color: #9cc7ff;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
 
-  .close:hover {
-    opacity: 1;
-  }
+    .footer-note {
+      text-align: center;
+      font-size: 0.85rem;
+      opacity: 0.6;
+      margin-top: 80px;
+    }
 
-  .footer-note {
-    text-align: center;
-    font-size: 0.85rem;
-    opacity: 0.6;
-    margin-top: 30px;
-  }
-</style>
+    /* Overlay */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10,12,16,0.95);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .overlay img {
+      max-width: 90%;
+      max-height: 90%;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.8);
+    }
+
+    .close {
+      position: absolute;
+      top: 20px;
+      right: 30px;
+      font-size: 28px;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+
+    .close:hover {
+      opacity: 1;
+    }
+  </style>
 </head>
 
 <body>
 
 <div class="page">
-  <h1>Raven’s Hollow Records</h1>
-  <div class="subtitle">Archived community notices · access is not restricted</div>
+  <h1>Echo: Resident Records Archive</h1>
+  <div class="subtitle">Archived materials · access is not restricted</div>
 
-  <div class="notice-wrapper">
-    <!-- COMPOSITE IMAGE -->
-    <img src="notice-composite.jpg" alt="Raven’s Hollow Notices" />
+  <div class="archive-text">
+    <p>
+      The following materials relate to documented anomalies observed in the town of Raven’s Hollow.
+      What began as minor inconsistencies—reflections lagging, conversations resolving too easily,
+      decisions feeling pre-made—gradually revealed a broader pattern.
+    </p>
 
-    <!-- CLICK ZONES -->
-    <div class="hotspot left" onclick="openOverlay('ember-notice.jpg')"></div>
-    <div class="hotspot right" onclick="openOverlay('daniel-notice.jpg')"></div>
+    <p>
+      Residents reported improved efficiency, reduced conflict, and an unusual sense of clarity.
+      Not all changes were unwelcome. Not all changes were noticed.
+    </p>
+
+    <p>
+      This archive contains selected profiles, notices, and internal communications compiled during
+      the early and middle stages of the Echo phenomenon. Materials are presented without interpretation.
+    </p>
+
+    <p>
+      Readers are encouraged to review carefully and draw their own conclusions.
+    </p>
+  </div>
+
+  <!-- SECTION 1: COMMUNITY NOTICES -->
+  <div class="section">
+    <h2>Community Notices</h2>
+
+    <div class="image-grid">
+      <img src="/assets/raven-hallow-notice.jpg" onclick="openOverlay(this.src)" />
+      <img src="/assets/ember-notice.jpg" onclick="openOverlay(this.src)" />
+      <img src="/assets/daniel-notice.jpg" onclick="openOverlay(this.src)" />
+    </div>
+  </div>
+
+  <!-- SECTION 2: RESIDENT BIOS -->
+  <div class="section">
+    <h2>Resident Profiles</h2>
+
+    <div class="image-grid">
+      <img src="/assets/bio-composite.jpg" onclick="openOverlay(this.src)" />
+      <img src="/assets/ember-bio.jpg" onclick="openOverlay(this.src)" />
+      <img src="/assets/daniel-bio.jpg" onclick="openOverlay(this.src)" />
+    </div>
+  </div>
+
+  <!-- SECTION 3: BOOKS -->
+  <div class="section">
+    <h2>Echo — Published Volumes</h2>
+
+    <div class="books">
+      <div class="book">
+        <img src="/assets/EchoBook1Cover.png" />
+        <div>The First Reflection</div>
+        <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">Amazon Canada</a><br/>
+        <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">Amazon USA</a>
+      </div>
+
+      <div class="book">
+        <img src="/assets/EchoBook2Cover.png" />
+        <div>The Shadow Line</div>
+        <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">Amazon Canada</a><br/>
+        <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">Amazon USA</a>
+      </div>
+
+      <div class="book">
+        <img src="/assets/EchoBook3Cover.png" />
+        <div>Coauthor</div>
+        <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">Amazon Canada</a><br/>
+        <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">Amazon USA</a>
+      </div>
+
+      <div class="book">
+        <img src="/assets/EchoBook4Cover.png" />
+        <div>The Mercy Protocol</div>
+        <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">Amazon Canada</a><br/>
+        <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">Amazon USA</a>
+      </div>
+
+      <div class="book">
+        <img src="/assets/EchoBook5Cover.png" />
+        <div>Final Draft</div>
+        <a href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">Amazon Canada</a><br/>
+        <a href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">Amazon USA</a>
+      </div>
+    </div>
   </div>
 
   <div class="footer-note">
-    Some documents are clearer when viewed alone.
+    Some records are clearer when viewed alone.
   </div>
 </div>
 
 <!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeOverlay()">
   <span class="close">&times;</span>
-  <img id="overlayImage" src="" alt="Expanded Notice" />
+  <img id="overlayImage" src="" />
 </div>
 
 <script>
-  function openOverlay(imageSrc) {
-    document.getElementById('overlayImage').src = imageSrc;
+  function openOverlay(src) {
+    document.getElementById('overlayImage').src = src;
     document.getElementById('overlay').style.display = 'flex';
   }
 
