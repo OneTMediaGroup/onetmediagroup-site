@@ -13,6 +13,22 @@
     font-family: Georgia, "Times New Roman", serif;
   }
 
+  /* Back link */
+  .back-link {
+    position: fixed;
+    top: 20px;
+    left: 24px;
+    font-size: 0.85rem;
+    color: rgba(230,230,230,0.6);
+    text-decoration: none;
+    letter-spacing: 0.5px;
+    z-index: 1000;
+  }
+
+  .back-link:hover {
+    color: rgba(230,230,230,0.9);
+  }
+
   .page {
     max-width: 1100px;
     margin: 60px auto;
@@ -48,7 +64,6 @@
     opacity: 0.85;
   }
 
-  /* Composite / Image containers */
   .notice-wrapper {
     position: relative;
     cursor: pointer;
@@ -62,7 +77,6 @@
     border-radius: 4px;
   }
 
-  /* Hotspots */
   .hotspot {
     position: absolute;
     top: 0;
@@ -77,7 +91,6 @@
     background: rgba(255,255,255,0.03);
   }
 
-  /* Overlay */
   .overlay {
     position: fixed;
     inset: 0;
@@ -105,7 +118,6 @@
 
   .close:hover { opacity: 1; }
 
-  /* Books */
   .books {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -146,6 +158,9 @@
 </head>
 
 <body>
+
+<a href="books.html" class="back-link">← Back to Books</a>
+
 <div class="page">
 
 <h1>Echo — Resident Records Archive</h1>
@@ -175,13 +190,11 @@
   </p>
 </div>
 
-<!-- STANDALONE NOTICE -->
 <div class="section-title">Community Notice</div>
 <div class="notice-wrapper">
   <img src="assets/raven-hallow-notice.jpg" alt="Raven’s Hollow Notice">
 </div>
 
-<!-- INTERACTIVE NOTICES -->
 <div class="section-title">Archived Notices</div>
 <div class="notice-wrapper">
   <img src="assets/notice-composite.jpg" alt="Archived Notices Composite">
@@ -189,7 +202,6 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-notice.jpg')"></div>
 </div>
 
-<!-- INTERACTIVE BIOS -->
 <div class="section-title">Resident Profiles</div>
 <div class="notice-wrapper">
   <img src="assets/bio-composite.jpg" alt="Resident Profiles Composite">
@@ -197,7 +209,6 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-bio.jpg')"></div>
 </div>
 
-<!-- BOOKS -->
 <div class="section-title">Echo — Published Volumes</div>
 <div class="books">
   <div class="book">
@@ -242,7 +253,6 @@
 
 </div>
 
-<!-- OVERLAY -->
 <div class="overlay" id="overlay" onclick="closeOverlay()">
   <span class="close">&times;</span>
   <img id="overlayImage" src="" alt="Expanded Record">
