@@ -55,7 +55,7 @@
 
   .archive-text {
     max-width: 800px;
-    margin: 0 auto 50px auto;
+    margin: 0 auto 40px auto;
     font-size: 0.95rem;
     line-height: 1.65;
     opacity: 0.88;
@@ -115,6 +115,11 @@
 
   .close:hover { opacity: 1; }
 
+  audio {
+    width: 100%;
+    margin-top: 10px;
+  }
+
   .books {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
@@ -149,16 +154,6 @@
     opacity: 0.6;
     margin-top: 70px;
   }
-
-  audio {
-    width: 100%;
-    margin: 16px 0;
-  }
-
-  details summary {
-    cursor: pointer;
-    opacity: 0.75;
-  }
 </style>
 </head>
 
@@ -181,16 +176,7 @@
   </p>
 
   <p>
-    Residents reported improved efficiency, reduced conflict, and an unusual sense of clarity.
-    Not all changes were unwelcome. Not all changes were noticed.
-  </p>
-
-  <p>
-    This archive contains selected profiles, notices, and internal communications compiled during
-    the early and middle stages of the Echo phenomenon. Materials are presented without interpretation.
-  </p>
-
-  <p>
+    Materials are presented without interpretation.
     Readers are encouraged to review carefully and draw their own conclusions.
   </p>
 </div>
@@ -217,75 +203,69 @@
   <div class="hotspot right" onclick="openOverlay('assets/daniel-bio.jpg')"></div>
 </div>
 
-<!-- RECOVERED DOCUMENTS -->
-<div class="section-title">Recovered Documents</div>
-
-<div class="archive-text">
-  <p><strong>Recovered Document 01</strong><br>
-  <em>Pilot Period Summary — Raven’s Hollow</em><br>
-  <span style="opacity:0.7;">Internal · Archived</span></p>
-
-  <p>
-    Early indicators demonstrated reduced hesitation, increased decisional confidence,
-    and improved interpersonal efficiency. No adverse outcomes were observed.
-  </p>
-
-  <p>
-    <a href="assets/Recovered_Document_01_Full_Archival_Report.pdf" target="_blank" style="color:#9cc7ff;">
-      Download archival copy (PDF)
-    </a>
-  </p>
-</div>
-
-<div class="archive-text">
-  <p><strong>Recovered Document 02</strong><br>
-  <em>Archive Status Update — Raven’s Hollow</em><br>
-  <span style="opacity:0.7;">Public · Current</span></p>
-
-  <p>
-    Conditions remain stable. Outcomes remain favorable.
-    Further documentation is unnecessary.
-  </p>
-
-  <p>
-    <a href="assets/Recovered_Document_02_Full_Archival_Report.pdf" target="_blank" style="color:#9cc7ff;">
-      Download archival copy (PDF)
-    </a>
-  </p>
-</div>
-
 <!-- RECORDED COMMUNITY UPDATE -->
 <div class="section-title">Recorded Community Update</div>
 
 <div class="archive-text">
-  <p><strong>Recorded Community Update — Raven’s Hollow</strong><br>
-  <em>Public Information Recording</em><br>
-  <span style="opacity:0.7;">Public · Archived</span></p>
+  <p><strong>Public Information Recording · Archived</strong></p>
 
-  <audio controls preload="metadata">
+  <audio controls>
     <source src="assets/community-update-archive.mp3" type="audio/mpeg">
+    Your browser does not support the audio element.
   </audio>
+</div>
 
-  <details>
-    <summary>View transcript</summary>
-    <div style="margin-top:14px">
-      <p>This is a recorded community update for residents of Raven’s Hollow.</p>
-      <p>Recent adjustments to local decision-support systems have now completed their initial evaluation period.</p>
-      <p>This is considered a positive indicator.</p>
-      <p>No adverse effects have been identified.</p>
-      <p>If you have questions, they will resolve in time.</p>
-    </div>
-  </details>
+<!-- TRANSCRIPT (IMAGE ONLY) -->
+<div class="archive-text">
+  <img
+    src="assets/community_update_transcript_edit.jpg"
+    alt="Community Update Transcript"
+    style="
+      width:100%;
+      border-radius:6px;
+      box-shadow:0 20px 60px rgba(0,0,0,0.65);
+    "
+  />
 </div>
 
 <!-- BOOKS -->
 <div class="section-title">Echo — Published Volumes</div>
+
 <div class="books">
-  <div class="book"><img src="assets/EchoBook1Cover.png"><strong>The First Reflection</strong></div>
-  <div class="book"><img src="assets/EchoBook2Cover.png"><strong>The Shadow Line</strong></div>
-  <div class="book"><img src="assets/EchoBook3Cover.png"><strong>Coauthor</strong></div>
-  <div class="book"><img src="assets/EchoBook4Cover.png"><strong>The Mercy Protocol</strong></div>
-  <div class="book"><img src="assets/EchoBook5Cover.png"><strong>Final Draft</strong></div>
+  <div class="book">
+    <img src="assets/EchoBook1Cover.png">
+    <strong>The First Reflection</strong>
+    <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">Amazon Canada</a>
+    <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">Amazon USA</a>
+  </div>
+
+  <div class="book">
+    <img src="assets/EchoBook2Cover.png">
+    <strong>The Shadow Line</strong>
+    <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">Amazon Canada</a>
+    <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">Amazon USA</a>
+  </div>
+
+  <div class="book">
+    <img src="assets/EchoBook3Cover.png">
+    <strong>Coauthor</strong>
+    <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">Amazon Canada</a>
+    <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">Amazon USA</a>
+  </div>
+
+  <div class="book">
+    <img src="assets/EchoBook4Cover.png">
+    <strong>The Mercy Protocol</strong>
+    <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">Amazon Canada</a>
+    <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">Amazon USA</a>
+  </div>
+
+  <div class="book">
+    <img src="assets/EchoBook5Cover.png">
+    <strong>Final Draft</strong>
+    <a href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">Amazon Canada</a>
+    <a href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">Amazon USA</a>
+  </div>
 </div>
 
 <div class="footer-note">
