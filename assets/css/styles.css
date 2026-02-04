@@ -116,6 +116,7 @@ a{color:inherit; text-decoration:none}
 }
 
 .card{
+  padding: 28px 32px;
   background: rgba(20,20,28,.72);
   border: 1px solid rgba(35,35,54,.9);
   border-radius: var(--radius);
