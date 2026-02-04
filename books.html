@@ -1,48 +1,223 @@
-<!doctype html> <html lang="en"> <head> <meta charset="utf-8" /> <meta name="viewport" content="width=device-width,initial-scale=1" /> <title>Books — One T Media Group</title> <meta name="description" content="Books published by One T Media Group." /> <meta name="theme-color" content="#0b0b0f" /> <link rel="stylesheet" href="assets/css/styles.css" /> </head> <body> <div class="nav"> <div class="container"> <div class="nav-inner"> <a class="brand" href="index.html"> <div class="brand-badge">1T</div> <div>One T Media Group</div> </a> <nav class="nav-links"> <a href="index.html">Home</a> <a href="apps.html">Apps</a> <a href="programs.html">Programs</a> <a href="books.html" style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)"> Books </a> <a href="clothing.html">Clothing</a> <a href="media.html">Media</a> <a href="contact.html">Contact</a> </nav> <div class="nav-cta"> <a class="btn" href="contact.html">Contact</a> </div> </div> </div> </div> <main class="container"> <div class="breadcrumb">Home / Books</div> <section class="section"> <h2>Books</h2> <p class="sub">Original fiction and non-fiction published by One T Media Group.</p> <!-- ========================= --> <!-- ECHO SERIES --> <!-- ========================= --> <h2 style="margin-top:16px">Echo Series</h2> <p class="sub">A five-book fiction series by Scot Anderson</p> <div class="card"> <p><strong>Echo — A Five-Book Series</strong></p> <p> In the town of Raven’s Hallow, no one loses their freedom. They simply stop needing to use it. </p> <p> The Echo series follows the quiet rise of systems designed to reduce friction, ease decision-making, and keep communities running smoothly. What begins as guidance soon becomes preference. What feels like help slowly replaces judgment. And responsibility—once visible and personal—becomes distributed so widely that no one can claim it anymore. </p> <p> Echo is not a story about collapse or rebellion. It is a story about adaptation. </p> <p> Because the most powerful systems do not announce themselves. They simply wait to be accepted. </p> </div> <!-- ARCHIVE ACCESS --> <div style="height:28px"></div> <div class="card" style=" background:rgba(18,20,28,0.85); border:1px dashed rgba(140,140,160,0.25); padding:24px 28px; "> <p class="small" style="letter-spacing:0.4px;opacity:0.8"> Supplemental materials available </p> <h4 style="margin:6px 0 8px 0;font-weight:normal"> Echo Records Archive </h4> <p class="small" style="opacity:0.7;max-width:520px"> Archived notices, resident profiles, and internal documents compiled during early Echo deployment. Materials are presented without interpretation. </p> <a class="btn primary" href="echo-records.html" style="margin-top:12px;box-shadow:0 8px 24px rgba(140,170,255,0.25);"> Access archive → </a> </div> <div style="height:36px"></div> <!-- ========================= --> <!-- ECHO BOOKS --> <!-- ========================= --> <div class="card uc"> <img src="assets/EchoBook1Cover.png" style="max-width:200px;border-radius:14px" /> <p><strong>Book One:</strong> The First Reflection<br> <span class="small">Available Now</span> </p> <a class="btn primary" href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">🇨🇦 Amazon Canada</a> <a class="btn" href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">🇺🇸 Amazon USA</a> </div> <div class="card uc"> <img src="assets/EchoBook2Cover.png" style="max-width:200px;border-radius:14px" /> <p><strong>Book Two:</strong> The Shadow Line<br> <span class="small">Available Now</span> </p> <a class="btn primary" href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">🇨🇦 Amazon Canada</a> <a class="btn" href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">🇺🇸 Amazon USA</a> </div> <div class="card uc"> <img src="assets/EchoBook3Cover.png" style="max-width:200px;border-radius:14px" /> <p><strong>Book Three:</strong> Coauthor<br> <span class="small">Available Now</span> </p> <a class="btn primary" href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">🇨🇦 Amazon Canada</a> <a class="btn" href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">🇺🇸 Amazon USA</a> </div> <div class="card uc"> <img src="assets/EchoBook4Cover.png" style="max-width:200px;border-radius:14px" /> <p><strong>Book Four:</strong> The Mercy Protocol<br> <span class="small">Available Now</span> </p> <a class="btn primary" href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">🇨🇦 Amazon Canada</a> <a class="btn" href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">🇺🇸 Amazon USA</a> </div> <div class="card uc"> <img src="assets/EchoBook5Cover.png" style="max-width:200px;border-radius:14px" /> <p><strong>Book Five:</strong> Final Draft<br> <span class="small">Available Now</span> </p> <a class="btn primary" href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">🇨🇦 Amazon Canada</a> <a class="btn" href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">🇺🇸 Amazon USA</a> </div> <div style="height:56px"></div>
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Books — One T Media Group</title>
+  <meta name="description" content="Books published by One T Media Group." />
+  <meta name="theme-color" content="#0b0b0f" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
 
+<body>
 
-  <!-- LEADERSHIP & NON-FICTION -->
+<!-- NAV -->
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="programs.html">Programs</a>
+        <a href="books.html"
+           style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+          Books
+        </a>
+        <a href="clothing.html">Clothing</a>
+        <a href="media.html">Media</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+
+      <div class="nav-cta">
+        <a class="btn" href="contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<main class="container">
+  <div class="breadcrumb">Home / Books</div>
+
+  <section class="section">
+    <h2>Books</h2>
+    <p class="sub">Original fiction and non-fiction published by One T Media Group.</p>
+
+    <!-- ========================= -->
+    <!-- ECHO SERIES -->
+    <!-- ========================= -->
+    <h2 style="margin-top:16px">Echo Series</h2>
+    <p class="sub">A five-book fiction series by Scot Anderson</p>
+
+    <div class="card">
+      <p><strong>Echo — A Five-Book Series</strong></p>
+      <p>In the town of Raven’s Hallow, no one loses their freedom. They simply stop needing to use it.</p>
+      <p>The Echo series follows the quiet rise of systems designed to reduce friction, ease decision-making, and keep communities running smoothly.</p>
+      <p>Echo is not a story about collapse or rebellion. It is a story about adaptation.</p>
+      <p>Because the most powerful systems do not announce themselves. They simply wait to be accepted.</p>
+    </div>
+
+    <!-- ARCHIVE -->
+    <div style="height:28px"></div>
+
+    <div class="card"
+         style="background:rgba(18,20,28,0.85);
+                border:1px dashed rgba(140,140,160,0.25);
+                padding:24px 28px;">
+      <p class="small" style="letter-spacing:0.4px;opacity:0.8">
+        Supplemental materials available
+      </p>
+
+      <h4 style="margin:6px 0 8px 0;font-weight:normal">
+        Echo Records Archive
+      </h4>
+
+      <p class="small" style="opacity:0.7;max-width:520px">
+        Archived notices, resident profiles, and internal documents compiled during early Echo deployment.
+      </p>
+
+      <a class="btn primary"
+         href="echo-records.html"
+         style="margin-top:12px;box-shadow:0 8px 24px rgba(140,170,255,0.25);">
+        Access archive →
+      </a>
+    </div>
+
+    <div style="height:36px"></div>
+
+    <!-- ========================= -->
+    <!-- ECHO BOOKS -->
+    <!-- ========================= -->
+
+    <!-- BOOK 1 -->
+    <div class="card uc">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/EchoBook1Cover.png" style="width:200px;border-radius:14px" />
+        <div style="max-width:520px">
+          <p><strong>Book One:</strong> The First Reflection</p>
+          <p class="small" style="opacity:0.75"><!-- BLURB GOES HERE --></p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 2 -->
+    <div class="card uc">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/EchoBook2Cover.png" style="width:200px;border-radius:14px" />
+        <div style="max-width:520px">
+          <p><strong>Book Two:</strong> The Shadow Line</p>
+          <p class="small" style="opacity:0.75"><!-- BLURB GOES HERE --></p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 3 -->
+    <div class="card uc">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/EchoBook3Cover.png" style="width:200px;border-radius:14px" />
+        <div style="max-width:520px">
+          <p><strong>Book Three:</strong> Coauthor</p>
+          <p class="small" style="opacity:0.75"><!-- BLURB GOES HERE --></p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 4 -->
+    <div class="card uc">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/EchoBook4Cover.png" style="width:200px;border-radius:14px" />
+        <div style="max-width:520px">
+          <p><strong>Book Four:</strong> The Mercy Protocol</p>
+          <p class="small" style="opacity:0.75"><!-- BLURB GOES HERE --></p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- BOOK 5 -->
+    <div class="card uc">
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/EchoBook5Cover.png" style="width:200px;border-radius:14px" />
+        <div style="max-width:520px">
+          <p><strong>Book Five:</strong> Final Draft</p>
+          <p class="small" style="opacity:0.75"><!-- BLURB GOES HERE --></p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
+    </div>
+
+    <div style="height:56px"></div>
+
+    <!-- ========================= -->
+    <!-- LEADERSHIP & NON-FICTION -->
+    <!-- ========================= -->
     <h2>Leadership & Non-Fiction</h2>
     <p class="sub">Practical, reflective work on responsibility and self-direction.</p>
 
-
-<!-- FACING CONFLICT -->
+    <!-- FACING CONFLICT -->
     <div class="card uc">
-      <img src="assets/FacingConflictCover.png" style="max-width:220px;border-radius:14px" />
-      <h3>Facing Conflict</h3>
-      <p class="small"><strong>Author:</strong> Scot Anderson</p>
-      <a class="btn primary" href="https://www.amazon.ca/dp/B0GL1C3YJP" target="_blank">🇨🇦 Amazon Canada</a>
-      <a class="btn" href="https://www.amazon.com/dp/B0GL1C3YJP" target="_blank">🇺🇸 Amazon USA</a>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/FacingConflictCover.png" style="width:220px;border-radius:14px" />
+        <div style="max-width:520px">
+          <h3>Facing Conflict</h3>
+          <p class="small"><strong>Author:</strong> Scot Anderson</p>
+          <p class="small" style="opacity:0.8"><!-- BLURB GOES HERE --></p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GL1C3YJP" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GL1C3YJP" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
     </div>
 
-
-    
     <!-- WHEN NOTHING MOVES -->
     <div class="card uc">
-      <img src="assets/WhenNothingMoves.png" style="max-width:220px;border-radius:14px" />
-      <h3>When Nothing Moves</h3>
-      <p class="small"><strong>Author:</strong> Scot Anderson</p>
-      <a class="btn primary" href="https://www.amazon.ca/dp/B0GKK363WM" target="_blank">🇨🇦 Amazon Canada</a>
-      <a class="btn" href="https://www.amazon.com/dp/B0GKK363WM" target="_blank">🇺🇸 Amazon USA</a>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/WhenNothingMoves.png" style="width:220px;border-radius:14px" />
+        <div style="max-width:520px">
+          <h3>When Nothing Moves</h3>
+          <p class="small"><strong>Author:</strong> Scot Anderson</p>
+          <p class="small" style="opacity:0.8"><!-- BLURB GOES HERE --></p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GKK363WM" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GKK363WM" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
     </div>
-
-    
 
     <!-- OTHER BOOKS -->
     <div class="card uc">
-      <img src="assets/the-weight-of-leadership-cover.png" style="max-width:220px;border-radius:14px" />
-      <h3>The Weight of Leadership</h3>
-      <p class="small"><strong>Author:</strong> Scot Anderson</p>
-      <a class="btn primary" href="https://www.amazon.ca/dp/B0GGBZR8YW" target="_blank">🇨🇦 Amazon Canada</a>
-      <a class="btn" href="https://www.amazon.com/dp/B0GGBZR8YW" target="_blank">🇺🇸 Amazon USA</a>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/the-weight-of-leadership-cover.png" style="width:220px;border-radius:14px" />
+        <div>
+          <h3>The Weight of Leadership</h3>
+          <p class="small"><strong>Author:</strong> Scot Anderson</p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GGBZR8YW" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GGBZR8YW" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
     </div>
 
     <div class="card uc">
-      <img src="assets/OWN YOURSELF.png" style="max-width:220px;border-radius:14px" />
-      <h3>Own Yourself</h3>
-      <p class="small"><strong>Author:</strong> Scot Anderson</p>
-      <a class="btn primary" href="https://www.amazon.ca/dp/B0GGFGFLPX" target="_blank">🇨🇦 Amazon Canada</a>
-      <a class="btn" href="https://www.amazon.com/dp/B0GGFGFLPX" target="_blank">🇺🇸 Amazon USA</a>
+      <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+        <img src="assets/OWN YOURSELF.png" style="width:220px;border-radius:14px" />
+        <div>
+          <h3>Own Yourself</h3>
+          <p class="small"><strong>Author:</strong> Scot Anderson</p>
+          <a class="btn primary" href="https://www.amazon.ca/dp/B0GGFGFLPX" target="_blank">🇨🇦 Amazon Canada</a>
+          <a class="btn" href="https://www.amazon.com/dp/B0GGFGFLPX" target="_blank">🇺🇸 Amazon USA</a>
+        </div>
+      </div>
     </div>
 
   </section>
