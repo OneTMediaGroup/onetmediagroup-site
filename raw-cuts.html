@@ -1,0 +1,224 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Raw Cuts — One T Media Group</title>
+  <meta name="description" content="Raw Cuts — original music from independent artists. Free listening." />
+  <meta name="theme-color" content="#0b0b0f" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+
+<body>
+  <!-- NAV -->
+  <div class="nav">
+    <div class="container">
+      <div class="nav-inner">
+        <a class="brand" href="index.html">
+          <div class="brand-badge">1T</div>
+          <div>One T Media Group</div>
+        </a>
+
+        <nav class="nav-links">
+          <a href="index.html">Home</a>
+          <a href="apps.html">Apps</a>
+          <a href="programs.html">Programs</a>
+          <a href="books.html">Books</a>
+          <a href="clothing.html">Clothing</a>
+          <a href="media.html">Media</a>
+
+          <!-- NEW NAV ITEM -->
+          <a href="raw-cuts.html"
+             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+            Raw Cuts
+          </a>
+
+          <a href="contact.html">Contact</a>
+        </nav>
+
+        <div class="nav-cta">
+          <a class="btn" href="contact.html">Contact</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <main class="container">
+    <div class="breadcrumb">Home / Raw Cuts</div>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="card hero-left">
+          <div class="kicker">
+            <span class="kicker-dot"></span>
+            Original Music • Independent Artists • Free Listening
+          </div>
+
+          <h1>
+            Raw Cuts<br />
+            <span class="grad">Unmixed. Unfiltered. Uncompromised.</span>
+          </h1>
+
+          <p class="lead">
+            A simple listening room for original tracks connected to One T Media Group.
+            Stream freely. No noise. Just signal.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#tracks">Play Tracks</a>
+            <a class="btn" href="#about">About Raw Cuts</a>
+          </div>
+        </div>
+
+        <div class="card hero-right">
+          <div class="stat">
+            <div class="label">Access</div>
+            <div class="value">Public</div>
+          </div>
+          <div class="stat">
+            <div class="label">Format</div>
+            <div class="value">Streaming (MP3/M4A)</div>
+          </div>
+          <div class="stat">
+            <div class="label">Status</div>
+            <div class="value">Growing Library</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="section" id="about">
+      <h2>What this is</h2>
+      <p class="sub">A clean space for listening — and a home for future releases.</p>
+
+      <div class="card">
+        <p style="margin-top:0">
+          <strong>Raw Cuts</strong> is an open studio page for original music.
+          Tracks are free to stream. Some releases may later include optional downloads or storefront links,
+          but this page stays simple: press play and listen.
+        </p>
+
+        <div class="pillrow">
+          <span class="pill">Original</span>
+          <span class="pill">Independent</span>
+          <span class="pill">Free Listening</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TRACKS -->
+    <section class="section" id="tracks">
+      <h2>Tracks</h2>
+      <p class="sub">Drop your audio files in <code>assets/audio/</code> and update the <code>src</code> paths.</p>
+
+      <!-- TRACK TEMPLATE: duplicate this block per song -->
+      <div class="card uc">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+          <!-- Optional artwork (put jpg/png in assets/music/) -->
+          <img
+            src="assets/music/raw-cuts-placeholder.png"
+            alt="Track artwork"
+            style="width:220px;max-width:220px;border-radius:14px;opacity:0.95"
+            onerror="this.style.display='none';"
+          />
+
+          <div style="max-width:620px">
+            <h3 style="margin-top:0">Track Title (Edit Me)</h3>
+            <p class="small" style="opacity:0.8;margin-top:-6px">
+              <strong>Artist:</strong> Artist Name (Edit Me)
+              <span style="opacity:0.6"> • </span>
+              <span style="opacity:0.7">Raw Cut #01</span>
+            </p>
+
+            <!-- Optional blurb -->
+            <p class="small" style="opacity:0.8">
+              <!-- BLURB GOES HERE (optional): one or two lines max -->
+              A short note about the vibe, the session, or the moment.
+            </p>
+
+            <!-- AUDIO PLAYER -->
+            <div style="height:8px"></div>
+            <audio
+              controls
+              preload="none"
+              style="width:min(620px, 100%);border-radius:12px;outline:none"
+            >
+              <!-- Put your file here -->
+              <source src="assets/audio/Can't Stop Me Now" type="audio/mp4" />
+              <source src="assets/audio/track-01.mp3" type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+
+            <!-- Optional links (later) -->
+            <div style="height:12px"></div>
+            <div class="pillrow" style="opacity:0.9">
+              <span class="pill">Free Stream</span>
+              <span class="pill">Studio Session</span>
+              <span class="pill">Hip-Hop</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- TRACK 02 (example) -->
+      <div class="card uc">
+        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+          <img
+            src="assets/music/raw-cuts-placeholder.png"
+            alt="Track artwork"
+            style="width:220px;max-width:220px;border-radius:14px;opacity:0.95"
+            onerror="this.style.display='none';"
+          />
+
+          <div style="max-width:620px">
+            <h3 style="margin-top:0">Track Title (Edit Me)</h3>
+            <p class="small" style="opacity:0.8;margin-top:-6px">
+              <strong>Artist:</strong> Artist Name (Edit Me)
+              <span style="opacity:0.6"> • </span>
+              <span style="opacity:0.7">Raw Cut #02</span>
+            </p>
+
+            <p class="small" style="opacity:0.8">
+              <!-- BLURB GOES HERE (optional) -->
+              Short description. Keep it tight.
+            </p>
+
+            <div style="height:8px"></div>
+            <audio controls preload="none" style="width:min(620px, 100%);border-radius:12px;outline:none">
+              <source src="assets/audio/Don't Wake Me Up" type="audio/mp4" />
+              <source src="assets/audio/track-02.mp3" type="audio/mpeg" />
+              Your browser does not support the audio element.
+            </audio>
+
+            <div style="height:12px"></div>
+            <div class="pillrow" style="opacity:0.9">
+              <span class="pill">Free Stream</span>
+              <span class="pill">Demo</span>
+              <span class="pill">Original</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK NOTE CARD -->
+      <div class="card" style="opacity:0.95">
+        <p style="margin-top:0">
+          <strong>File drop tip:</strong> Create folders:
+          <code>assets/audio/</code> and <code>assets/music/</code>.
+          Keep filenames simple (no spaces): <code>rawcut01.mp3</code>, <code>rawcut02.m4a</code>.
+        </p>
+      </div>
+    </section>
+
+    <div class="footer">
+      <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
+      <div class="small">Independent creative studio • Built with intention</div>
+    </div>
+  </main>
+
+  <script src="assets/js/main.js"></script>
+</body>
+</html>
