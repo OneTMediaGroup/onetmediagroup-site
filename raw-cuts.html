@@ -27,7 +27,6 @@
           <a href="clothing.html">Clothing</a>
           <a href="media.html">Media</a>
 
-          <!-- NEW NAV ITEM -->
           <a href="raw-cuts.html"
              style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
             Raw Cuts
@@ -47,46 +46,13 @@
   <main class="container">
     <div class="breadcrumb">Home / Raw Cuts</div>
 
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-grid">
-        <div class="card hero-left">
-          <div class="kicker">
-            <span class="kicker-dot"></span>
-            Original Music • Independent Artists • Free Listening
-          </div>
-
-          <h1>
-            Raw Cuts<br />
-            <span class="grad">Unmixed. Unfiltered. Uncompromised.</span>
-          </h1>
-
-          <p class="lead">
-            A simple listening room for original tracks connected to One T Media Group.
-            Stream freely. No noise. Just signal.
-          </p>
-
-          <div class="hero-actions">
-            <a class="btn primary" href="#tracks">Play Tracks</a>
-            <a class="btn" href="#about">About Raw Cuts</a>
-          </div>
-        </div>
-
-        <div class="card hero-right">
-          <div class="stat">
-            <div class="label">Access</div>
-            <div class="value">Public</div>
-          </div>
-          <div class="stat">
-            <div class="label">Format</div>
-            <div class="value">Streaming (MP3/M4A)</div>
-          </div>
-          <div class="stat">
-            <div class="label">Status</div>
-            <div class="value">Growing Library</div>
-          </div>
-        </div>
-      </div>
+    <!-- RAW CUTS HERO IMAGE -->
+    <section style="margin:0 0 56px 0;">
+      <img 
+        src="assets/raw-cuts-logo.png" 
+        alt="Raw Cuts — Unmixed. Unfiltered. Uncompromised."
+        style="width:100%;border-radius:var(--radius);box-shadow:var(--shadow);" 
+      />
     </section>
 
     <!-- ABOUT -->
@@ -113,10 +79,9 @@
     <section class="section" id="tracks">
       <h2>Tracks</h2>
   
-      <!-- TRACK TEMPLATE: duplicate this block per song -->
+      <!-- TRACK 01 -->
       <div class="card uc">
         <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
-          <!-- Optional artwork (put jpg/png in assets/music/) -->
           <img
             src="assets/music/raw-cuts-placeholder.png"
             alt="Track artwork"
@@ -132,39 +97,24 @@
               <span style="opacity:0.7">Raw Cut #01</span>
             </p>
 
-            <!-- Optional blurb -->
             <p class="small" style="opacity:0.8">
               🎧 Can’t Stop Me Now
 
-Cold bounce. No apologies.
+              Cold bounce. No apologies.
 
-“Can’t Stop Me Now” moves with that late-night trap energy — stripped back, heavy 808s, sharp hats cutting through clean space. It doesn’t chase trends. It locks into a pocket and rides it.
-
-There’s confidence in the minimalism.
-Nothing wasted. Nothing soft.
-
-It feels like motion in the dark.
-Windows down. City lights passing.
-Focused. Unbothered.
-
-No vocals needed.
-The beat speaks.
+              Late-night trap energy — stripped back, heavy 808s, sharp hats cutting clean space.
+              Nothing wasted. Nothing soft. Just motion in the dark.
             </p>
 
-            <!-- AUDIO PLAYER -->
             <div style="height:8px"></div>
-            <audio
-              controls
-              preload="none"
-              style="width:min(620px, 100%);border-radius:12px;outline:none"
-            >
-              <!-- Put your file here -->
+
+            <audio controls preload="none"
+                   style="width:min(620px, 100%);border-radius:12px;outline:none">
               <source src="assets/audio/Can'tStopMeNow.m4a" type="audio/mp4" />
               <source src="assets/audio/Can'tStopMeNow.mp3" type="audio/mpeg" />
               Your browser does not support the audio element.
             </audio>
 
-            <!-- Optional links (later) -->
             <div style="height:12px"></div>
             <div class="pillrow" style="opacity:0.9">
               <span class="pill">Free Stream</span>
@@ -175,7 +125,7 @@ The beat speaks.
         </div>
       </div>
 
-      <!-- TRACK 02 (example) -->
+      <!-- TRACK 02 -->
       <div class="card uc">
         <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
           <img
@@ -196,25 +146,14 @@ The beat speaks.
             <p class="small" style="opacity:0.8">
               🎧 Don’t Wake Me Up
 
-Soul samples in the shadows. Drums that hit like concrete.
-
-“Don’t Wake Me Up” carries that raw, surgical energy — part art school genius, part basement cipher. There’s texture in it. Grit in the bounce. It feels handcrafted, not assembled.
-
-The drums knock.
-The space breathes.
-The mood lingers.
-
-It’s the kind of beat that doesn’t beg for attention — it commands it.
-
-There’s hunger in this one.
-Old-school backbone. Modern trap execution.
-
-Don’t wake him up.
-Let him cook.
+              Soul samples in the shadows. Drums that hit like concrete.
+              Old-school backbone. Modern trap execution.
             </p>
 
             <div style="height:8px"></div>
-            <audio controls preload="none" style="width:min(620px, 100%);border-radius:12px;outline:none">
+
+            <audio controls preload="none"
+                   style="width:min(620px, 100%);border-radius:12px;outline:none">
               <source src="assets/audio/Don'tWakeMeUp.m4a" type="audio/mp4" />
               <source src="assets/audio/Don'tWakeMeUp.mp3" type="audio/mpeg" />
               Your browser does not support the audio element.
@@ -230,7 +169,7 @@ Let him cook.
         </div>
       </div>
 
-     
+    </section>
 
     <div class="footer">
       <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
