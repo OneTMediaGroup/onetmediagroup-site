@@ -4,20 +4,23 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Clothing — One T Media Group</title>
-  <meta name="description" content="One T Media Group — one vision, every medium." />
+  <meta name="description" content="Creative studio apparel from One T Media Group." />
   <meta name="theme-color" content="#0b0b0f" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
+
 <body>
+
+  <!-- NAV -->
   <div class="nav">
     <div class="container">
       <div class="nav-inner">
-        <a class="brand" href="index.html" aria-label="One T Media Group Home">
+        <a class="brand" href="index.html">
           <div class="brand-badge">1T</div>
           <div>One T Media Group</div>
         </a>
 
-        <nav class="nav-links" aria-label="Primary">
+        <nav class="nav-links">
           <a href="index.html">Home</a>
           <a href="apps.html">Apps</a>
           <a href="programs.html">Programs</a>
@@ -32,21 +35,71 @@
 
         <div class="nav-cta">
           <a class="btn" href="contact.html">Contact</a>
-          <a class="btn primary" href="clothing.html">Shop</a>
         </div>
       </div>
     </div>
   </div>
 
+  <!-- MAIN -->
   <main class="container">
     <div class="breadcrumb">Home / Clothing</div>
 
-    <!-- STORE SECTION -->
-    <section class="section">
-      <h2>🛍️ One T Media Group Store</h2>
-      <p class="sub">Official One T Media Group merchandise powered by Redbubble.</p>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-grid">
+        <div class="card hero-left">
 
-      <!-- IMPORTANT: Redbubble embed must NOT be inside a card -->
+          <div class="kicker">
+            <span class="kicker-dot"></span>
+            Creative Studio Apparel
+          </div>
+
+          <h1>
+            One T Wear<br />
+            <span class="grad">Built from the work.</span>
+          </h1>
+
+          <p class="lead">
+            Apparel inspired by our books, ideas, and creative output.
+            Minimal. Intentional. Studio-made.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn primary" href="#shop">Browse Collection</a>
+            <a class="btn" href="contact.html">Questions?</a>
+          </div>
+
+        </div>
+
+        <div class="card hero-right">
+          <div class="stat">
+            <div class="label">Platform</div>
+            <div class="value">Redbubble</div>
+          </div>
+          <div class="stat">
+            <div class="label">Format</div>
+            <div class="value">Studio Designs</div>
+          </div>
+          <div class="stat">
+            <div class="label">Updated</div>
+            <div class="value">New Drops Added</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SHOP SECTION -->
+    <section class="section" id="shop">
+      <h2>Collection</h2>
+      <p class="sub">
+        Official One T Media Group merchandise.
+        Printed and fulfilled through Redbubble.
+      </p>
+
+      <div style="height:18px"></div>
+
+      <!-- REDBUBBLE EMBED (leave outside card for best rendering) -->
       <script
         type="text/javascript"
         src="https://www.redbubble.com/assets/external_portfolio.js">
@@ -63,21 +116,53 @@
         ).renderIframe();
       </script>
 
-      <div style="height:32px"></div>
+    </section>
 
-      <!-- SUPPORT -->
+
+    <!-- PHILOSOPHY SECTION -->
+    <section class="section">
+      <div class="card">
+        <h3 style="margin-top:0">Why apparel?</h3>
+
+        <p style="opacity:0.85">
+          Clothing is extension.
+          It carries ideas into physical space.
+        </p>
+
+        <p style="opacity:0.75">
+          These designs reflect the themes found in our books —
+          responsibility, discipline, independence, clarity.
+        </p>
+
+        <div class="pillrow">
+          <span class="pill">Minimal</span>
+          <span class="pill">Independent</span>
+          <span class="pill">Studio Created</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- SUPPORT -->
+    <section class="section">
       <div class="card uc">
         <h3>Support</h3>
-        <p>Shipping, returns, and help</p>
+        <p class="small">
+          All orders, shipping, and returns are handled by Redbubble.
+          For brand questions or issues, contact us directly.
+        </p>
+
         <div style="height:12px"></div>
         <a class="btn" href="contact.html">Contact Support</a>
       </div>
     </section>
 
+
     <div class="footer">
       <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-      <div class="small">Built for GitHub Pages • Static site • No build step</div>
+      <div class="small">Independent creative studio • Built with intention</div>
     </div>
+
   </main>
 
   <script src="assets/js/main.js"></script>
