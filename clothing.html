@@ -1,170 +1,256 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Clothing — One T Media Group</title>
-  <meta name="description" content="Creative studio apparel from One T Media Group." />
-  <meta name="theme-color" content="#0b0b0f" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>One T Wear — One T Media Group</title>
+<meta name="description" content="Creative studio apparel. Minimal. Intentional. Studio-made." />
+<meta name="theme-color" content="#0b0b0f" />
+<link rel="stylesheet" href="assets/css/styles.css" />
+
+<style>
+
+/* ===== HERO GRADIENT ANIMATION ===== */
+.hero-wear{
+  position:relative;
+  overflow:hidden;
+}
+
+.hero-wear::before{
+  content:"";
+  position:absolute;
+  inset:-50%;
+  background:
+    radial-gradient(circle at 30% 30%, rgba(120,120,255,.15), transparent 60%),
+    radial-gradient(circle at 70% 70%, rgba(0,255,200,.15), transparent 60%);
+  animation: floatGlow 12s ease-in-out infinite alternate;
+  z-index:0;
+}
+
+@keyframes floatGlow{
+  from{transform:translateY(-40px) rotate(0deg);}
+  to{transform:translateY(40px) rotate(20deg);}
+}
+
+.hero-wear > *{
+  position:relative;
+  z-index:2;
+}
+
+/* PRODUCT HOVER */
+.product-card{
+  transition:all .35s ease;
+}
+
+.product-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 0 30px rgba(120,140,255,.25);
+  border-color:rgba(120,140,255,.6);
+}
+
+/* DROP LABEL */
+.drop-label{
+  font-size:12px;
+  letter-spacing:1px;
+  opacity:.6;
+  text-transform:uppercase;
+  margin-bottom:6px;
+}
+
+.wear-title{
+  font-size:42px;
+  font-weight:700;
+}
+
+.wear-title span{
+  background:linear-gradient(90deg,#8ea2ff,#6ef3ff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
+
+</style>
 </head>
 
 <body>
 
-  <!-- NAV -->
-  <div class="nav">
-    <div class="container">
-      <div class="nav-inner">
-        <a class="brand" href="index.html">
-          <div class="brand-badge">1T</div>
-          <div>One T Media Group</div>
+<!-- NAV -->
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="programs.html">Programs</a>
+        <a href="books.html">Books</a>
+        <a href="clothing.html"
+           style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+          Clothing
         </a>
+        <a href="media.html">Media</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-        <nav class="nav-links">
-          <a href="index.html">Home</a>
-          <a href="apps.html">Apps</a>
-          <a href="programs.html">Programs</a>
-          <a href="books.html">Books</a>
-          <a href="clothing.html"
-             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
-             Clothing
-          </a>
-          <a href="media.html">Media</a>
-          <a href="contact.html">Contact</a>
-        </nav>
-
-        <div class="nav-cta">
-          <a class="btn" href="contact.html">Contact</a>
-        </div>
+      <div class="nav-cta">
+        <a class="btn" href="contact.html">Contact</a>
       </div>
     </div>
   </div>
+</div>
 
-  <!-- MAIN -->
-  <main class="container">
-    <div class="breadcrumb">Home / Clothing</div>
+<main class="container">
+<div class="breadcrumb">Home / Clothing</div>
 
-    <!-- HERO -->
-    <section class="hero">
-      <div class="hero-grid">
-        <div class="card hero-left">
-
-          <div class="kicker">
-            <span class="kicker-dot"></span>
-            Creative Studio Apparel
-          </div>
-
-          <h1>
-            One T Wear<br />
-            <span class="grad">Built from the work.</span>
-          </h1>
-
-          <p class="lead">
-            Apparel inspired by our books, ideas, and creative output.
-            Minimal. Intentional. Studio-made.
-          </p>
-
-          <div class="hero-actions">
-            <a class="btn primary" href="#shop">Browse Collection</a>
-            <a class="btn" href="contact.html">Questions?</a>
-          </div>
-
-        </div>
-
-        <div class="card hero-right">
-          <div class="stat">
-            <div class="label">Platform</div>
-            <div class="value">Redbubble</div>
-          </div>
-          <div class="stat">
-            <div class="label">Format</div>
-            <div class="value">Studio Designs</div>
-          </div>
-          <div class="stat">
-            <div class="label">Updated</div>
-            <div class="value">New Drops Added</div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- SHOP SECTION -->
-    <section class="section" id="shop">
-      <h2>Collection</h2>
-      <p class="sub">
-        Official One T Media Group merchandise.
-        Printed and fulfilled through Redbubble.
-      </p>
-
-      <div style="height:18px"></div>
-
-      <!-- REDBUBBLE EMBED (leave outside card for best rendering) -->
-      <script
-        type="text/javascript"
-        src="https://www.redbubble.com/assets/external_portfolio.js">
-      </script>
-
-      <script
-        id="rb-xzfcxvzx"
-        type="text/javascript">
-        new RBExternalPortfolio(
-          'www.redbubble.com',
-          'onetwearthevibe',
-          5,
-          5
-        ).renderIframe();
-      </script>
-
-    </section>
-
-
-    <!-- PHILOSOPHY SECTION -->
-    <section class="section">
-      <div class="card">
-        <h3 style="margin-top:0">Why apparel?</h3>
-
-        <p style="opacity:0.85">
-          Clothing is extension.
-          It carries ideas into physical space.
-        </p>
-
-        <p style="opacity:0.75">
-          These designs reflect the themes found in our books —
-          responsibility, discipline, independence, clarity.
-        </p>
-
-        <div class="pillrow">
-          <span class="pill">Minimal</span>
-          <span class="pill">Independent</span>
-          <span class="pill">Studio Created</span>
-        </div>
-      </div>
-    </section>
-
-
-    <!-- SUPPORT -->
-    <section class="section">
-      <div class="card uc">
-        <h3>Support</h3>
-        <p class="small">
-          All orders, shipping, and returns are handled by Redbubble.
-          For brand questions or issues, contact us directly.
-        </p>
-
-        <div style="height:12px"></div>
-        <a class="btn" href="contact.html">Contact Support</a>
-      </div>
-    </section>
-
-
-    <div class="footer">
-      <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-      <div class="small">Independent creative studio • Built with intention</div>
+<!-- HERO -->
+<section class="section hero-wear">
+  <div class="card">
+    <div class="drop-label">One T Wear</div>
+    <div class="wear-title">
+      Built from the <span>work.</span>
     </div>
 
-  </main>
+    <p class="lead" style="max-width:640px;margin-top:16px;">
+      Creative studio apparel inspired by responsibility, discipline, independence, and clarity.
+      Minimal. Intentional. Studio-made.
+    </p>
 
-  <script src="assets/js/main.js"></script>
+    <div style="height:18px"></div>
+
+    <a class="btn primary"
+       href="https://www.redbubble.com/people/onetwearthevibe/shop"
+       target="_blank">
+       Browse Full Collection →
+    </a>
+  </div>
+</section>
+
+<!-- COLLECTION -->
+<section class="section">
+
+<h2>Current Drops</h2>
+<p class="sub">Selected pieces from the studio.</p>
+
+<div class="grid">
+
+  <!-- DROP 01 -->
+  <div class="card uc product-card">
+    <div class="drop-label">Drop 01</div>
+
+    <img src="assets/store/silence-strength.jpg"
+         alt="Silence is Strength"
+         style="width:100%;border-radius:14px" />
+
+    <div style="height:16px"></div>
+
+    <h3>Silence is Strength</h3>
+    <p class="small" style="opacity:.8">
+      Statement wall piece. Clean typography. Studio minimal.
+    </p>
+
+    <div style="height:14px"></div>
+
+    <a class="btn primary"
+       href="https://www.redbubble.com/i/art-board-print/Silence-is-Strength-by-OneTWearTheVibe/178490086.NVL2T"
+       target="_blank">
+       View Product →
+    </a>
+  </div>
+
+  <!-- DROP 02 -->
+  <div class="card uc product-card">
+    <div class="drop-label">Drop 02</div>
+
+    <img src="assets/store/power-earned.jpg"
+         alt="Power Is Earned"
+         style="width:100%;border-radius:14px" />
+
+    <div style="height:16px"></div>
+
+    <h3>Power Is Earned</h3>
+    <p class="small" style="opacity:.8">
+      Discipline over noise. Built for those who do the work.
+    </p>
+
+    <div style="height:14px"></div>
+
+    <a class="btn primary"
+       href="https://www.redbubble.com/i/sweatshirt/Power-Is-Earned-by-OneTWearTheVibe/178490503.7PZBN"
+       target="_blank">
+       View Product →
+    </a>
+  </div>
+
+  <!-- DROP 03 -->
+  <div class="card uc product-card">
+    <div class="drop-label">Drop 03</div>
+
+    <img src="assets/store/gym-one.jpg"
+         alt="Gym Shirt One"
+         style="width:100%;border-radius:14px" />
+
+    <div style="height:16px"></div>
+
+    <h3>Gym Shirt One</h3>
+    <p class="small" style="opacity:.8">
+      Minimal gym piece. Built for repetition. Built for discipline.
+    </p>
+
+    <div style="height:14px"></div>
+
+    <a class="btn primary"
+       href="https://www.redbubble.com/i/mouse-pad/Gym-Shirt-One-by-OneTWearTheVibe/178489924.G1FH6"
+       target="_blank">
+       View Product →
+    </a>
+  </div>
+
+</div>
+</section>
+
+<!-- WHY -->
+<section class="section">
+<div class="card">
+  <h3>Why apparel?</h3>
+  <p style="margin-top:10px;">
+    Clothing is extension. It carries ideas into physical space.
+    These designs reflect the themes found in our books —
+    responsibility, discipline, independence, clarity.
+  </p>
+
+  <div class="pillrow" style="margin-top:12px;">
+    <span class="pill">Minimal</span>
+    <span class="pill">Independent</span>
+    <span class="pill">Studio Created</span>
+  </div>
+</div>
+</section>
+
+<!-- SUPPORT -->
+<section class="section">
+<div class="card">
+  <h3>Support</h3>
+  <p>
+    All orders, shipping, and returns are handled by Redbubble.
+    For brand questions or issues, contact us directly.
+  </p>
+
+  <div style="height:12px"></div>
+
+  <a class="btn" href="contact.html">Contact Support</a>
+</div>
+</section>
+
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
+  <div class="small">Independent creative studio • Built with intention</div>
+</div>
+
+</main>
+
+<script src="assets/js/main.js"></script>
 </body>
 </html>
