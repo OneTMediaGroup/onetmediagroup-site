@@ -56,7 +56,7 @@
 .guru-card {
   background: rgba(255,255,255,0.96);
   border-radius: 26px;
- padding: 34px 26px 30px;
+  padding: 34px 26px 30px;
   text-align: center;
   box-shadow: 0 20px 50px rgba(0,0,0,.15);
   transition: transform .3s ease, box-shadow .3s ease;
@@ -68,12 +68,12 @@
 }
 
 .guru-card img {
-  width: 95px;
-  height: 95px;
+  width: 90px;
+  height: 90px;
   object-fit: contain;
   border-radius: 20px;
   margin-bottom: 18px;
-  padding: 8px;
+  padding: 10px;
   background: #f5f5f7;
   box-shadow: 0 10px 25px rgba(0,0,0,.12);
 }
@@ -93,12 +93,8 @@ audio {
 /* ---------- FEATURES ---------- */
 
 .feature-section {
-  margin-top: 120px;
+  margin-top: 140px;
   text-align: center;
-}
-
-.feature-section h2 {
-  margin-bottom: 20px;
 }
 
 .feature-grid {
@@ -115,16 +111,66 @@ audio {
   box-shadow: 0 15px 35px rgba(0,0,0,.08);
 }
 
-/* ---------- CTA ---------- */
+/* ---------- SCREENSHOTS ---------- */
 
-.cta-section {
+.screens-section {
   margin-top: 140px;
-  padding: 80px 0;
   text-align: center;
 }
 
-.cta-section h2 {
+.screens-title {
+  font-size: 34px;
   margin-bottom: 10px;
+}
+
+.screens-sub {
+  opacity: .65;
+  max-width: 600px;
+  margin: 0 auto 60px;
+}
+
+.screens-wrapper {
+  display: flex;
+  gap: 28px;
+  overflow-x: auto;
+  padding-bottom: 20px;
+  scroll-snap-type: x mandatory;
+}
+
+.screens-wrapper::-webkit-scrollbar {
+  height: 8px;
+}
+
+.screens-wrapper::-webkit-scrollbar-thumb {
+  background: rgba(255,255,255,.15);
+  border-radius: 20px;
+}
+
+.screen-card {
+  min-width: 300px;
+  scroll-snap-align: center;
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,.35);
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.screen-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 40px 80px rgba(0,0,0,.45);
+}
+
+.screen-card img {
+  width: 100%;
+  display: block;
+}
+
+/* ---------- CTA ---------- */
+
+.cta-section {
+  margin-top: 160px;
+  padding: 80px 0;
+  text-align: center;
 }
 
 .cta-button {
@@ -135,7 +181,6 @@ audio {
 
 @media (max-width: 768px){
   .guru-hero h1 { font-size: 36px; }
-  .guru-card img { width: 110px; height: 110px; }
 }
 
 </style>
@@ -170,7 +215,6 @@ audio {
 
 <main class="container">
 
-<!-- FULL WIDTH BANNER -->
 <div class="guru-banner">
   <img src="assets/GuruCrewBanner1.png" alt="Guru Crew Banner">
 </div>
@@ -185,7 +229,7 @@ audio {
 <section class="guru-grid">
 
   <div class="guru-card">
-    <img src="assets/Images/GuruJayImage1.png" alt="Guru Jay">
+    <img src="assets/images/GuruJayImage1.png" alt="Guru Jay">
     <div class="guru-quote">“Dream it. Doubt it. Do it anyway.”</div>
     <audio controls preload="none">
       <source src="assets/audio/GuruJayAudio1.mp3" type="audio/mpeg">
@@ -193,7 +237,7 @@ audio {
   </div>
 
   <div class="guru-card">
-    <img src="assets/Images/SarcasticSallyImage1.png" alt="Sarcastic Sally">
+    <img src="assets/images/SarcasticSallyImage1.png" alt="Sarcastic Sally">
     <div class="guru-quote">“I’m listening. Unfortunately.”</div>
     <audio controls preload="none">
       <source src="assets/audio/SarcasticSallyAudio1.mp3" type="audio/mpeg">
@@ -201,7 +245,7 @@ audio {
   </div>
 
   <div class="guru-card">
-    <img src="assets/Images/BroBobImage1.png" alt="Bro Bob">
+    <img src="assets/images/BroBobImage1.png" alt="Bro Bob">
     <div class="guru-quote">“We showed up. That counts.”</div>
     <audio controls preload="none">
       <source src="assets/audio/BroBobAudio1.mp3" type="audio/mpeg">
@@ -209,7 +253,7 @@ audio {
   </div>
 
   <div class="guru-card">
-    <img src="assets/Images/SocialSandyImage1.png" alt="Social Sandy">
+    <img src="assets/images/SocialSandyImage1.png" alt="Social Sandy">
     <div class="guru-quote">“Posting this and logging off for 4 minutes.”</div>
     <audio controls preload="none">
       <source src="assets/audio/SocialSandyAudio1.mp3" type="audio/mpeg">
@@ -217,7 +261,7 @@ audio {
   </div>
 
   <div class="guru-card">
-    <img src="assets/Images/DeadPanDaveImage1.png" alt="Deadpan Dave">
+    <img src="assets/images/DeadPanDaveImage1.png" alt="Deadpan Dave">
     <div class="guru-quote">“That sounds difficult.”</div>
     <audio controls preload="none">
       <source src="assets/audio/DeadPanDaveAudio1.mp3" type="audio/mpeg">
@@ -228,19 +272,37 @@ audio {
 
 <section class="feature-section">
   <h2>Inside the App</h2>
-
   <div class="feature-grid">
     <div class="feature-card">
-      Scrollable Guru Selector<br/>
+      Scrollable Guru Selector<br><br>
       Swipeable Advice Cards
     </div>
     <div class="feature-card">
-      Synchronized Audio Playback<br/>
+      Synchronized Audio Playback<br><br>
       Visual Quote Sharing
     </div>
     <div class="feature-card">
-      Full Guru Profiles<br/>
+      Full Guru Profiles<br><br>
       Dynamic Character Imagery
+    </div>
+  </div>
+</section>
+
+<section class="screens-section">
+  <h2 class="screens-title">In Action</h2>
+  <p class="screens-sub">
+    A glimpse inside Guru Crew.
+  </p>
+
+  <div class="screens-wrapper">
+    <div class="screen-card">
+      <img src="assets/images/guru-crew/guru-crew-screen-1.png">
+    </div>
+    <div class="screen-card">
+      <img src="assets/images/guru-crew/guru-crew-screen-2.png">
+    </div>
+    <div class="screen-card">
+      <img src="assets/images/guru-crew/guru-crew-screen-3.png">
     </div>
   </div>
 </section>
