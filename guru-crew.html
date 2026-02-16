@@ -10,12 +10,26 @@
 
 <style>
 
-/* ---------- PAGE SPECIFIC STYLES ---------- */
+/* ---------- HERO BANNER ---------- */
+
+.guru-banner {
+  width: 100%;
+  border-radius: 26px;
+  overflow: hidden;
+  margin-top: 40px;
+  box-shadow: 0 30px 80px rgba(0,0,0,.45);
+}
+
+.guru-banner img {
+  width: 100%;
+  display: block;
+}
+
+/* ---------- HERO TEXT ---------- */
 
 .guru-hero {
-  padding: 100px 0 60px;
+  padding: 60px 0 20px;
   text-align: center;
-  position: relative;
 }
 
 .guru-hero h1 {
@@ -30,80 +44,96 @@
   margin: 0 auto;
 }
 
-.logo-large {
-  width: 110px;
-  margin-bottom: 24px;
-}
+/* ---------- GURU GRID ---------- */
 
 .guru-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
-  gap: 28px;
-  margin-top: 60px;
+  gap: 32px;
+  margin-top: 80px;
 }
 
 .guru-card {
-  background: white;
-  border-radius: 22px;
-  padding: 26px;
-  box-shadow: 0 12px 28px rgba(0,0,0,.08);
-  transition: transform .25s ease, box-shadow .25s ease;
+  background: rgba(255,255,255,0.96);
+  border-radius: 26px;
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.15);
+  transition: transform .3s ease, box-shadow .3s ease;
 }
 
 .guru-card:hover {
-  transform: translateY(-6px);
-  box-shadow: 0 18px 40px rgba(0,0,0,.12);
+  transform: translateY(-8px);
+  box-shadow: 0 30px 70px rgba(0,0,0,.22);
 }
 
 .guru-card img {
-  width: 110px;
-  height: 110px;
+  width: 130px;
+  height: 130px;
   object-fit: cover;
-  border-radius: 22px;
-  margin-bottom: 18px;
+  border-radius: 26px;
+  margin-bottom: 20px;
+  box-shadow: 0 15px 35px rgba(0,0,0,.18);
 }
 
 .guru-quote {
   font-weight: 600;
-  margin-bottom: 14px;
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: #0b0b0f;
 }
 
 audio {
   width: 100%;
-  margin-top: 8px;
+  margin-top: 6px;
 }
 
+/* ---------- FEATURES ---------- */
+
 .feature-section {
-  margin-top: 100px;
+  margin-top: 120px;
   text-align: center;
+}
+
+.feature-section h2 {
+  margin-bottom: 20px;
 }
 
 .feature-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(240px,1fr));
-  gap: 24px;
+  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
+  gap: 30px;
   margin-top: 40px;
 }
 
 .feature-card {
-  background: white;
-  padding: 26px;
-  border-radius: 18px;
-  box-shadow: 0 8px 24px rgba(0,0,0,.06);
+  background: rgba(255,255,255,0.95);
+  padding: 30px;
+  border-radius: 22px;
+  box-shadow: 0 15px 35px rgba(0,0,0,.08);
 }
 
+/* ---------- CTA ---------- */
+
 .cta-section {
-  margin-top: 120px;
-  padding: 60px 0;
+  margin-top: 140px;
+  padding: 80px 0;
   text-align: center;
 }
 
-.cta-button {
-  margin-top: 20px;
+.cta-section h2 {
+  margin-bottom: 10px;
 }
 
-@media (max-width: 600px){
-  .guru-hero h1 { font-size: 34px; }
+.cta-button {
+  margin-top: 25px;
+}
+
+/* ---------- RESPONSIVE ---------- */
+
+@media (max-width: 768px){
+  .guru-hero h1 { font-size: 36px; }
+  .guru-card img { width: 110px; height: 110px; }
 }
 
 </style>
@@ -138,8 +168,12 @@ audio {
 
 <main class="container">
 
+<!-- FULL WIDTH BANNER -->
+<div class="guru-banner">
+  <img src="assets/GuruCrewBanner1.png" alt="Guru Crew Banner">
+</div>
+
 <section class="guru-hero">
-  <img src="assets/GuruCrewLogo.png" class="logo-large" alt="Guru Crew Logo" />
   <h1>Guru Crew</h1>
   <p class="guru-tagline">
     Personality-driven advice. Five distinct voices. Visual cards with synchronized audio.
@@ -148,7 +182,6 @@ audio {
 
 <section class="guru-grid">
 
-  <!-- Guru Jay -->
   <div class="guru-card">
     <img src="assets/Images/GuruJayImage1.png" alt="Guru Jay">
     <div class="guru-quote">“Dream it. Doubt it. Do it anyway.”</div>
@@ -157,7 +190,6 @@ audio {
     </audio>
   </div>
 
-  <!-- Sarcastic Sally -->
   <div class="guru-card">
     <img src="assets/Images/SarcasticSallyImage1.png" alt="Sarcastic Sally">
     <div class="guru-quote">“I’m listening. Unfortunately.”</div>
@@ -166,7 +198,6 @@ audio {
     </audio>
   </div>
 
-  <!-- Bro Bob -->
   <div class="guru-card">
     <img src="assets/Images/BroBobImage1.png" alt="Bro Bob">
     <div class="guru-quote">“We showed up. That counts.”</div>
@@ -175,7 +206,6 @@ audio {
     </audio>
   </div>
 
-  <!-- Social Sandy -->
   <div class="guru-card">
     <img src="assets/Images/SocialSandyImage1.png" alt="Social Sandy">
     <div class="guru-quote">“Posting this and logging off for 4 minutes.”</div>
@@ -184,7 +214,6 @@ audio {
     </audio>
   </div>
 
-  <!-- Deadpan Dave -->
   <div class="guru-card">
     <img src="assets/Images/DeadPanDaveImage1.png" alt="Deadpan Dave">
     <div class="guru-quote">“That sounds difficult.”</div>
