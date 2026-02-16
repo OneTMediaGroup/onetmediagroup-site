@@ -90,27 +90,6 @@ audio {
   margin-top: 6px;
 }
 
-/* ---------- FEATURES ---------- */
-
-.feature-section {
-  margin-top: 140px;
-  text-align: center;
-}
-
-.feature-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit,minmax(260px,1fr));
-  gap: 30px;
-  margin-top: 40px;
-}
-
-.feature-card {
-  background: rgba(255,255,255,0.95);
-  padding: 30px;
-  border-radius: 22px;
-  box-shadow: 0 15px 35px rgba(0,0,0,.08);
-}
-
 /* ---------- SCREENSHOTS ---------- */
 
 .screens-section {
@@ -129,26 +108,13 @@ audio {
   margin: 0 auto 60px;
 }
 
-.screens-wrapper {
-  display: flex;
-  gap: 28px;
-  overflow-x: auto;
-  padding-bottom: 20px;
-  scroll-snap-type: x mandatory;
-}
-
-.screens-wrapper::-webkit-scrollbar {
-  height: 8px;
-}
-
-.screens-wrapper::-webkit-scrollbar-thumb {
-  background: rgba(255,255,255,.15);
-  border-radius: 20px;
+.screens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+  gap: 32px;
 }
 
 .screen-card {
-  min-width: 300px;
-  scroll-snap-align: center;
   border-radius: 28px;
   overflow: hidden;
   box-shadow: 0 30px 60px rgba(0,0,0,.35);
@@ -270,39 +236,27 @@ audio {
 
 </section>
 
-<section class="feature-section">
-  <h2>Inside the App</h2>
-  <div class="feature-grid">
-    <div class="feature-card">
-      Scrollable Guru Selector<br><br>
-      Swipeable Advice Cards
-    </div>
-    <div class="feature-card">
-      Synchronized Audio Playback<br><br>
-      Visual Quote Sharing
-    </div>
-    <div class="feature-card">
-      Full Guru Profiles<br><br>
-      Dynamic Character Imagery
-    </div>
-  </div>
-</section>
-
 <section class="screens-section">
   <h2 class="screens-title">In Action</h2>
   <p class="screens-sub">
     A glimpse inside Guru Crew.
   </p>
 
-  <div class="screens-wrapper">
+  <div class="screens-grid">
     <div class="screen-card">
-      <img src="assets/images/guru-crew/guru-crew-screen-1.png">
+      <img src="assets/images/guru-crew/guru-crew-screen-1.png" alt="">
     </div>
     <div class="screen-card">
-      <img src="assets/images/guru-crew/guru-crew-screen-2.png">
+      <img src="assets/images/guru-crew/guru-crew-screen-2.png" alt="">
     </div>
     <div class="screen-card">
-      <img src="assets/images/guru-crew/guru-crew-screen-3.png">
+      <img src="assets/images/guru-crew/guru-crew-screen-3.png" alt="">
+    </div>
+    <div class="screen-card">
+      <img src="assets/images/guru-crew/guru-crew-screen-4.png" alt="">
+    </div>
+    <div class="screen-card">
+      <img src="assets/images/guru-crew/guru-crew-screen-5.png" alt="">
     </div>
   </div>
 </section>
