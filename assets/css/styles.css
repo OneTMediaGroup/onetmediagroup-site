@@ -270,3 +270,34 @@ h1{
   color: var(--muted);
   font-size: .95rem;
 }
+
+/* ---------- BOOK BUTTON ROW ---------- */
+
+.book-buttons{
+  display:flex;
+  gap:14px;
+  margin-top:18px;
+  flex-wrap:wrap;
+}
+
+.book-buttons .btn{
+  flex:1;
+  text-align:center;
+  justify-content:center;
+}
+
+/* Optional: tighten on very small screens */
+@media (max-width:520px){
+  .book-buttons{
+    flex-direction:column;
+  }
+}
+
+
+
+
+
+
+
+
+
