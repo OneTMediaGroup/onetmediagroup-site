@@ -271,6 +271,28 @@ h1{
   font-size: .95rem;
 }
 
+.amazon-buttons{
+  display:flex;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-top:18px;
+}
+
+.amazon-flag-btn{
+  max-width:220px;
+  border-radius:16px;
+  transition: transform .25s ease, box-shadow .25s ease;
+  box-shadow: 0 15px 40px rgba(0,0,0,.35);
+}
+
+.amazon-flag-btn:hover{
+  transform: translateY(-6px);
+  box-shadow: 0 25px 60px rgba(0,0,0,.5);
+}
+
+
+
+
 /* ---------- BOOK BUTTON ROW ---------- */
 
 .book-buttons{
