@@ -300,6 +300,7 @@ h1{
   gap:14px;
   margin-top:18px;
   flex-wrap:wrap;
+  justify-content:center;
 }
 
 .book-buttons .btn{
