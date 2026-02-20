@@ -62,16 +62,19 @@
     </div>
   </main>
 
-  <script src="assets/js/main.js"></script>
-<audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
+ <audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
 
 <script>
   const badge = document.getElementById("canadaBadge");
   const anthem = document.getElementById("ohCanadaAudio");
 
   badge.addEventListener("click", () => {
-    anthem.currentTime = 0;
-    anthem.play();
+    if (anthem.paused) {
+      anthem.play();
+    } else {
+      anthem.pause();
+      anthem.currentTime = 0; // resets to beginning
+    }
   });
 </script>
   
