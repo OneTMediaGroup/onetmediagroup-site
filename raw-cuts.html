@@ -29,9 +29,11 @@
           <a href="raw-cuts.html">Raw Cuts</a>
           <a href="clothing.html">Clothing</a>
           <a href="contact.html">Contact</a>
-           <img src="assets/ui/Crafted-In-The-North-Header.png"
-       alt="Crafted in Canada"
-       class="crafted-badge" />
+          <img src="assets/ui/Crafted-In-The-North-Header.png"
+     alt="Crafted in Canada"
+     class="crafted-badge"
+     id="canadaBadge"
+     style="cursor:pointer;" />
         </nav>
 
           </div>
@@ -174,5 +176,22 @@
   </main>
 
   <script src="assets/js/main.js"></script>
+<audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
+
+<script>
+  const badge = document.getElementById("canadaBadge");
+  const anthem = document.getElementById("ohCanadaAudio");
+
+  badge.addEventListener("click", () => {
+    if (anthem.paused) {
+      anthem.play();
+    } else {
+      anthem.pause();
+      anthem.currentTime = 0; // resets to beginning
+    }
+  });
+</script>
+
+  
 </body>
 </html>
