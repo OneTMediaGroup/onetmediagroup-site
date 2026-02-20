@@ -9,6 +9,7 @@
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
 <body>
+
   <div class="nav">
     <div class="container">
       <div class="nav-inner">
@@ -17,7 +18,7 @@
           <div>One T Media Group</div>
         </a>
 
-       <nav class="nav-links">
+        <nav class="nav-links">
           <a href="index.html"
              style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
             Home
@@ -27,20 +28,22 @@
           <a href="raw-cuts.html">Raw Cuts</a>
           <a href="clothing.html">Clothing</a>
           <a href="contact.html">Contact</a>
-           <img src="assets/images/Crafted-In-The-North-Header.png"
-     alt="Crafted in Canada"
-     class="crafted-badge"
-     id="canadaBadge"
-     style="cursor:pointer;" />
+          <img src="assets/images/Crafted-In-The-North-Header.png"
+               alt="Crafted in Canada"
+               class="crafted-badge"
+               id="canadaBadge"
+               style="cursor:pointer;" />
         </nav>
-
-      
       </div>
     </div>
   </div>
 
   <main class="container">
     <div class="breadcrumb">Home / Contact</div>
+
+    <!-- ===================== -->
+    <!-- CONTACT SECTION -->
+    <!-- ===================== -->
 
     <section class="section">
       <h2>Contact</h2>
@@ -60,9 +63,85 @@
 
         <div class="card uc">
           <h3>Location</h3>
-          <p>North America</p>
+          <p>Newmarket, Ontario</p>
           <p class="small">Working worldwide</p>
         </div>
+      </div>
+    </section>
+
+    <!-- ===================== -->
+    <!-- LAND ACKNOWLEDGEMENT -->
+    <!-- ===================== -->
+
+    <section class="section">
+      <h2>Land Acknowledgement</h2>
+      <p class="sub">Respecting the land on which we live and create.</p>
+
+      <div class="card">
+
+        <div style="display:flex;gap:28px;flex-wrap:wrap;align-items:flex-start">
+
+          <!-- IMAGE -->
+          <div>
+            <img src="assets/images/land-acknowledgement.png"
+                 alt="Land acknowledgement"
+                 style="width:100%;max-width:360px;border-radius:18px;border:1px solid rgba(35,35,54,.9);" />
+          </div>
+
+          <!-- TEXT -->
+          <div style="max-width:600px">
+            <p class="small" style="opacity:.9;white-space:pre-line;">
+Today, I would like to acknowledge the land on which I live and work.
+
+One T Media Group operates in the Town of Newmarket, which is situated on the treaty lands of the Williams Treaties First Nations.
+
+This area is the traditional territory of the Wendat (Huron-Wendat), the Haudenosaunee, and the Anishinaabe peoples.
+
+For thousands of years, these nations have cared for this land, traveled its waterways, and built community here.
+This region was also part of the historic Toronto Carrying Place Trail — an essential Indigenous trade and travel route connecting Lake Ontario to Lake Huron.
+
+We recognize the enduring presence, resilience, and contributions of Indigenous peoples — past, present, and future.
+
+As creators, builders, and storytellers, we acknowledge that our work takes place on this land, and we commit to learning, listening, and moving forward with respect.
+            </p>
+
+            <div style="height:18px"></div>
+
+            <!-- AUDIO PLAYER -->
+            <div class="notice">
+              <strong>Listen to the Acknowledgement</strong>
+              <div style="height:10px"></div>
+              <audio controls style="width:100%">
+                <source src="assets/audio/land-acknowledgement.mp3" type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
+            </div>
+
+            <div style="height:16px"></div>
+
+            <!-- OFFICIAL LINKS -->
+            <div class="small" style="opacity:.85;">
+              Learn more:
+              <ul style="margin:10px 0 0 18px; padding:0; color:var(--muted);">
+                <li>
+                  <a href="https://www.ontario.ca/page/williams-treaties"
+                     target="_blank" rel="noopener">
+                    Williams Treaties First Nations
+                  </a>
+                </li>
+                <li>
+                  <a href="https://www.newmarket.ca/"
+                     target="_blank" rel="noopener">
+                    Town of Newmarket
+                  </a>
+                </li>
+              </ul>
+            </div>
+
+          </div>
+
+        </div>
+
       </div>
     </section>
 
@@ -70,27 +149,27 @@
       <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
       <div class="small">Built for GitHub Pages • Static site</div>
     </div>
+
   </main>
 
   <script src="assets/js/main.js"></script>
-<audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
 
-<script>
-  const badge = document.getElementById("canadaBadge");
-  const anthem = document.getElementById("ohCanadaAudio");
+  <!-- Canada Badge Audio -->
+  <audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
 
-  badge.addEventListener("click", () => {
-    if (anthem.paused) {
-      anthem.play();
-    } else {
-      anthem.pause();
-      anthem.currentTime = 0; // resets to beginning
-    }
-  });
-</script>
+  <script>
+    const badge = document.getElementById("canadaBadge");
+    const anthem = document.getElementById("ohCanadaAudio");
 
+    badge.addEventListener("click", () => {
+      if (anthem.paused) {
+        anthem.play();
+      } else {
+        anthem.pause();
+        anthem.currentTime = 0;
+      }
+    });
+  </script>
 
-
-  
 </body>
 </html>
