@@ -8,75 +8,125 @@
   <meta name="theme-color" content="#0b0b0f" />
   <link rel="stylesheet" href="assets/css/styles.css" />
 </head>
+
 <body>
-  <div class="nav">
-    <div class="container">
-      <div class="nav-inner">
-        <a class="brand" href="index.html" aria-label="One T Media Group Home">
-          <div class="brand-badge">1T</div>
-          <div>One T Media Group</div>
+
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="One T Media Group Home">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html"
+           style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+          Home
         </a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Raw Cuts</a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
+        <img src="assets/images/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
+      </nav>
+    </div>
+  </div>
+</div>
 
-        <nav class="nav-links">
-          <a href="index.html"
-             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
-            Home
-          </a>
-          <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
-           <img src="assets/images/Crafted-In-The-North-Header.png"
-     alt="Crafted in Canada"
-     class="crafted-badge"
-     id="canadaBadge"
-     style="cursor:pointer;" />
-        </nav>
+<main class="container">
 
+<div class="breadcrumb">Home / Apps</div>
+
+<section class="section">
+  <h2>Apps</h2>
+  <p class="sub">Active development projects and releases.</p>
+
+  <!-- ===================== -->
+  <!-- GURU CREW -->
+  <!-- ===================== -->
+
+  <div class="card uc">
+    <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center">
+
+      <img
+        src="assets/images/GuruCrewLogo.png"
+        alt="Guru Crew"
+        style="width:96px;height:96px;border-radius:20px;object-fit:contain;
+               background:rgba(16,16,24,.6);
+               border:1px solid rgba(35,35,54,.9);
+               padding:12px;"
+      />
+
+      <div style="max-width:520px">
+        <h3 style="margin:0 0 6px 0">Guru Crew</h3>
+
+        <p class="small" style="opacity:.85;margin:0 0 12px 0">
+          Personality-driven advice with visual cards and synchronized audio.
+          Designed for humor, clarity, and quick insight.
+        </p>
+
+        <div class="pillrow" style="margin-bottom:14px">
+          <span class="pill">iOS</span>
+          <span class="pill">In Production</span>
+        </div>
+
+        <a class="btn primary" href="guru-crew.html">
+          View App Page →
+        </a>
       </div>
+
     </div>
   </div>
 
-  <main class="container">
-    
-  <div class="breadcrumb">Home / Apps</div>
+  <!-- ===================== -->
+  <!-- UNDER CONSTRUCTION -->
+  <!-- ===================== -->
 
-  <div class="section">
-    <h2>Apps</h2>
-    <p class="sub">This section is live, but the content is still being built.</p>
-
-    <div class="card uc">
-      <h2>🚧 Under Construction</h2>
-      <p>We’re building this area now. Check back soon — this is where we’ll publish updates, releases, and content drops.</p>
-      <div class="pillrow">
-        <span class="pill">App releases</span><span class="pill">Roadmap</span><span class="pill">Beta links</span><span class="pill">Support</span>
-      </div>
-      
+  <div class="card uc" style="margin-top:28px">
+    <h2>🚧 More Apps Coming</h2>
+    <p>
+      Additional tools and digital products are currently in development.
+      Check back soon for release updates.
+    </p>
+    <div class="pillrow">
+      <span class="pill">Roadmap</span>
+      <span class="pill">Beta</span>
+      <span class="pill">Support</span>
     </div>
   </div>
 
-    <div class="footer">
-      <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-      <div class="small">Built for GitHub Pages • Static site • No build step</div>
-    </div>
-  </main>
+</section>
 
- <audio id="ohCanadaAudio" src="assets/audio/OhCanadaapps.mp3"></audio>
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
+  <div class="small">Built for GitHub Pages • Static site • No build step</div>
+</div>
+
+</main>
+
+<script src="assets/js/main.js"></script>
+
+<audio id="ohCanadaAudio" src="assets/audio/OhCanadaapps.mp3"></audio>
 
 <script>
-  const badge = document.getElementById("canadaBadge");
-  const anthem = document.getElementById("ohCanadaAudio");
+const badge = document.getElementById("canadaBadge");
+const anthem = document.getElementById("ohCanadaAudio");
 
-  badge.addEventListener("click", () => {
-    if (anthem.paused) {
-      anthem.play();
-    } else {
-      anthem.pause();
-      anthem.currentTime = 0; // resets to beginning
-    }
-  });
+badge.addEventListener("click", () => {
+  if (anthem.paused) {
+    anthem.play();
+  } else {
+    anthem.pause();
+    anthem.currentTime = 0;
+  }
+});
 </script>
-  
+
 </body>
 </html>
