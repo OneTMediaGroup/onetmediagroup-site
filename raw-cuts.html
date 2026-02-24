@@ -7,90 +7,6 @@
 <meta name="description" content="Empire Mode — Full album by OneT. 14 tracks. 28 versions." />
 <meta name="theme-color" content="#0b0b0f" />
 <link rel="stylesheet" href="assets/css/styles.css" />
-
-<style>
-
-/* ===== ALBUM GLOW ===== */
-
-.album-wrap{
-  position:relative;
-  display:inline-block;
-}
-
-.album-glow{
-  position:absolute;
-  inset:-30px;
-  background:radial-gradient(circle at center,
-    rgba(120,70,255,.35),
-    rgba(0,200,255,.15),
-    transparent 70%);
-  filter:blur(40px);
-  animation:pulseGlow 6s ease-in-out infinite;
-  z-index:0;
-}
-
-@keyframes pulseGlow{
-  0%,100%{opacity:.7;transform:scale(1);}
-  50%{opacity:1;transform:scale(1.08);}
-}
-
-/* ===== STICKY PLAYER ===== */
-
-.mini-player{
-  position:fixed;
-  bottom:0;
-  left:0;
-  right:0;
-  background:rgba(15,15,22,.95);
-  border-top:1px solid rgba(40,40,60,.8);
-  padding:14px 24px;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  backdrop-filter:blur(10px);
-  z-index:999;
-}
-
-.mini-title{
-  font-size:14px;
-  opacity:.8;
-}
-
-.track-nav{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-  justify-content:center;
-  margin:30px 0;
-}
-
-.track-nav button{
-  background:rgba(20,20,28,.8);
-  border:1px solid rgba(40,40,60,.8);
-  color:var(--text);
-  padding:8px 12px;
-  border-radius:10px;
-  cursor:pointer;
-  transition:.2s;
-}
-
-.track-nav button:hover{
-  background:rgba(120,70,255,.3);
-}
-
-.play-all{
-  margin-top:20px;
-}
-
-.credits{
-  margin-top:80px;
-  padding:40px;
-  background:rgba(20,20,28,.6);
-  border-radius:20px;
-  border:1px solid rgba(40,40,60,.8);
-}
-
-</style>
 </head>
 
 <body>
@@ -105,10 +21,20 @@
 
       <nav class="nav-links">
         <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
         <a href="raw-cuts.html"
            style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
           Raw Cuts
         </a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
+
+        <img src="assets/images/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
       </nav>
     </div>
   </div>
@@ -120,124 +46,61 @@
 
 <section class="section" style="text-align:center">
 
-<h1>Empire Mode</h1>
-<p class="sub">OneT • 14 Tracks • 28 Versions</p>
+  <h1>Empire Mode</h1>
+  <p class="sub">OneT • 14 Tracks • 28 Versions</p>
 
-<div class="album-wrap">
-  <div class="album-glow"></div>
-  <img 
-    src="assets/images/Onet-Empire-Mode-Cover-V1.png" 
-    style="width:min(420px,90%);border-radius:20px;position:relative;z-index:2;"
-  />
-</div>
-
-<p style="margin-top:20px;opacity:.7;">
-Released 2026 • Independent Release • Produced & Written by OneT
-</p>
-
-<div class="play-all">
-  <button class="btn" onclick="playAll()">Play All (V1)</button>
-</div>
-
-</section>
-
-<section class="section">
-
-<h2>Jump to Track</h2>
-<div class="track-nav">
-<script>
-for(let i=1;i<=14;i++){
-  document.write(`<button onclick="scrollToTrack(${i})">${i}</button>`);
-}
-</script>
-</div>
+  <div style="
+    display:inline-block;
+    padding:40px;
+    background:rgba(20,20,28,.7);
+    border:1px solid rgba(35,35,54,.9);
+    border-radius:28px;
+    margin-top:20px;
+  ">
+    <img 
+      src="assets/images/Onet-Empire-Mode-Cover-V1.png" 
+      alt="Empire Mode Album Cover"
+      style="
+        width:min(420px, 90%);
+        border-radius:20px;
+        box-shadow:0 30px 60px rgba(0,0,0,.5);
+      "
+    />
+  </div>
 
 </section>
 
 <section class="section">
-<h2>Tracks</h2>
-<p class="sub">Stream both versions below.</p>
+  <h2>Tracks</h2>
+  <p class="sub">Stream both versions of every track below.</p>
 
-<!-- TRACKS -->
-
-<div id="track-list"></div>
+  <!-- PASTE ALL YOUR TRACK CARDS HERE -->
+  <!-- (Use the block you already built earlier) -->
 
 </section>
 
-<section class="credits">
-<h2>Credits</h2>
-<p><strong>Artist:</strong> OneT</p>
-<p><strong>Production:</strong> Independent Studio Build</p>
-<p><strong>Concept:</strong> Systems Over Hype</p>
-<p><strong>Engineered:</strong> Late Nights & Discipline</p>
-<p><strong>Location:</strong> Crafted in the North 🇨🇦</p>
-</section>
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group</div>
+</div>
 
 </main>
 
-<!-- STICKY PLAYER -->
-<div class="mini-player">
-  <div class="mini-title" id="miniTitle">No track playing</div>
-  <audio id="globalPlayer" controls style="width:320px;"></audio>
-</div>
+<script src="assets/js/main.js"></script>
+
+<audio id="ohCanadaAudio" src="assets/audio/OhCanadaraw.mp3"></audio>
 
 <script>
+const badge = document.getElementById("canadaBadge");
+const anthem = document.getElementById("ohCanadaAudio");
 
-const tracks = [
-  {title:"Empire Mode", file:"Track1–EMPIRE-MODE-V1"},
-  {title:"Built From Scratch", file:"Track2–BUILT-FROM-SCRATCH-V1"},
-  {title:"No Days Off", file:"Track3-No-Days-Off-V1"},
-  {title:"Phase One", file:"Track4–PHASE-ONE-V1"},
-  {title:"Drafts & Deadlines", file:"Track5–DRAFTS-&-DEADLINES-V1"},
-  {title:"Guru Crew", file:"Track6–GURU-CREW-V1"},
-  {title:"Crafted in the North", file:"Track7–CRAFTED-IN-THE-NORTH-V1"},
-  {title:"Firestore Dreams", file:"Track8–FIRESTORE-DREAMS-V1"},
-  {title:"Quiet Wins", file:"Track9–QUIET-WINS-V1"},
-  {title:"Redbubble Revenue", file:"Track10–REDBUBBLE-REVENUE-V1"},
-  {title:"Refactor", file:"Track11–REFACTOR-V1"},
-  {title:"Chapter 40", file:"Track12–CHAPTER-40-V1"},
-  {title:"Systems Over Hype", file:"Track13–SYSTEMS-OVER-HYPE-V1"},
-  {title:"Legacy Loop", file:"Track14–LEGACY-LOOP-V1"}
-];
-
-const container = document.getElementById("track-list");
-
-tracks.forEach((t,i)=>{
-  container.innerHTML += `
-  <div class="card uc" id="track${i+1}">
-    <h3>${i+1}. ${t.title}</h3>
-    <button onclick="playTrack('${t.file}','${t.title}')">Play V1</button>
-  </div>
-  `;
-});
-
-const player = document.getElementById("globalPlayer");
-const miniTitle = document.getElementById("miniTitle");
-
-function playTrack(file,title){
-  player.src = "assets/audio/" + file + ".mp3";
-  player.play();
-  miniTitle.innerText = title;
-}
-
-function scrollToTrack(n){
-  document.getElementById("track"+n).scrollIntoView({behavior:"smooth"});
-}
-
-let playIndex = 0;
-
-function playAll(){
-  playIndex = 0;
-  playTrack(tracks[0].file, tracks[0].title);
-
-  player.onended = ()=>{
-    playIndex++;
-    if(playIndex < tracks.length){
-      playTrack(tracks[playIndex].file, tracks[playIndex].title);
-    }
+badge.addEventListener("click", () => {
+  if (anthem.paused) {
+    anthem.play();
+  } else {
+    anthem.pause();
+    anthem.currentTime = 0;
   }
-}
-
+});
 </script>
 
 </body>
