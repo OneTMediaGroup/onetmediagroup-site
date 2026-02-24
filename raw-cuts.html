@@ -122,11 +122,62 @@
     14 Tracks • 28 Versions • Built from the ground up.
   </p>
 
-  <div style="margin-top:20px">
-    <a href="empire-mode.html" class="btn">
-      View Full Album
-    </a>
-  </div>
+  <div style="margin-top:28px;text-align:center;">
+  <a href="empire-mode.html" class="album-cta">
+    🔥 View Full Album
+  </a>
+</div>
+
+<style>
+.album-cta{
+  display:inline-block;
+  padding:18px 34px;
+  font-size:1.1rem;
+  font-weight:900;
+  letter-spacing:.5px;
+  border-radius:18px;
+  text-decoration:none;
+  color:#0b0b0f;
+  background:linear-gradient(135deg, var(--accent1), var(--accent2));
+  box-shadow:
+    0 18px 40px rgba(110,231,255,.25),
+    0 8px 18px rgba(0,0,0,.35);
+  transition: all .25s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+/* Glow pulse */
+.album-cta::before{
+  content:"";
+  position:absolute;
+  inset:-40%;
+  background:radial-gradient(circle at center, rgba(255,255,255,.25), transparent 60%);
+  opacity:0;
+  transition:opacity .4s ease;
+}
+
+.album-cta:hover{
+  transform:translateY(-4px) scale(1.03);
+  box-shadow:
+    0 24px 60px rgba(110,231,255,.35),
+    0 10px 22px rgba(0,0,0,.45);
+}
+
+.album-cta:hover::before{
+  opacity:.4;
+}
+
+/* Subtle pulse animation so it stands out */
+@keyframes ctaPulse{
+  0%,100%{ transform:scale(1); }
+  50%{ transform:scale(1.04); }
+}
+
+.album-cta{
+  animation:ctaPulse 3s ease-in-out infinite;
+}
+</style>
 
 </section>
 
