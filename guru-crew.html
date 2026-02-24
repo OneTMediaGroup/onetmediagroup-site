@@ -44,6 +44,17 @@
   margin: 0 auto;
 }
 
+/* ---------- MUSIC FEATURE ---------- */
+
+.music-feature {
+  border: 1px solid rgba(139,92,246,.35);
+  background: linear-gradient(
+    180deg,
+    rgba(139,92,246,.08),
+    rgba(20,20,28,.85)
+  );
+}
+
 /* ---------- GURU GRID ---------- */
 
 .guru-grid {
@@ -61,7 +72,6 @@
   text-align: center;
   box-shadow: 0 20px 50px rgba(0,0,0,.35);
   transition: transform .3s ease, box-shadow .3s ease;
-  cursor: pointer;
 }
 
 .guru-card:hover {
@@ -145,8 +155,6 @@ audio {
   margin-top: 25px;
 }
 
-/* ---------- RESPONSIVE ---------- */
-
 @media (max-width: 768px){
   .guru-hero h1 { font-size: 36px; }
 }
@@ -196,88 +204,76 @@ audio {
     Personality-driven advice. Five distinct voices. Visual cards with synchronized audio.
   </p>
 </section>
- <div class="card uc">
-        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
-          <img
-            src="assets/images/GuruCrewSongCover1.png"
-            alt="Track artwork"
-            style="width:220px;max-width:220px;border-radius:14px;opacity:0.95"
-            onerror="this.style.display='none';"
-          />
 
-          <div style="max-width:620px">
-            <h3 style="margin-top:0">Guru Crew V1</h3>
-            <p class="small" style="opacity:0.8;margin-top:-6px">
-              <strong>Artist:</strong> OneT
-              <span style="opacity:0.6"> • </span>
-              <span style="opacity:0.7">Empire Mode</span>
-            </p>
+<!-- MUSIC SECTION -->
+<section class="section" style="margin-top:60px">
+  <h2 style="text-align:center;margin-bottom:40px">Guru Crew Theme</h2>
 
-            <p class="small" style="opacity:0.8">
-             🎧 Guru Crew Song from Empire Mode V1
-            </p>
+  <!-- SONG 1 -->
+  <div class="card uc music-feature">
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <img src="assets/images/GuruCrewSongCover1.png"
+           alt="Guru Crew Song Cover"
+           style="width:220px;border-radius:14px;opacity:0.95"
+           onerror="this.style.display='none';" />
 
-            <div style="height:8px"></div>
+      <div style="max-width:620px">
+        <h3 style="margin-top:0">Guru Crew V1</h3>
+        <p class="small" style="opacity:0.8">
+          <strong>Artist:</strong> OneT • Empire Mode
+        </p>
+        <p class="small" style="opacity:0.8">
+          🎧 Guru Crew Song from Empire Mode V1
+        </p>
 
-            <audio controls preload="none"
-                   style="width:min(620px, 100%);border-radius:12px;outline:none">
-              <source src="assets/audio/GuruCrewSong1.m4a" type="audio/mp4" />
-              <source src="assets/audio/GuruCrewSong1.mp3" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
+        <audio controls preload="none" style="width:min(620px,100%);border-radius:12px;">
+          <source src="assets/audio/GuruCrewSong1.m4a" type="audio/mp4" />
+          <source src="assets/audio/GuruCrewSong1.mp3" type="audio/mpeg" />
+        </audio>
 
-            <div style="height:12px"></div>
-            <div class="pillrow" style="opacity:0.9">
-              <span class="pill">Free Stream</span>
-              <span class="pill">Studio Session</span>
-              <span class="pill">Hip-Hop</span>
-            </div>
-          </div>
+        <div class="pillrow" style="margin-top:12px">
+          <span class="pill">Free Stream</span>
+          <span class="pill">Studio Session</span>
+          <span class="pill">Hip-Hop</span>
         </div>
       </div>
+    </div>
+  </div>
 
-      <!-- TRACK 02 -->
-      <div class="card uc">
-        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
-          <img
-            src="assets/images/GuruCrewSongCover2.png"
-            alt="Track artwork"
-            style="width:220px;max-width:220px;border-radius:14px;opacity:0.95"
-            onerror="this.style.display='none';"
-          />
+  <!-- SONG 2 -->
+  <div class="card uc music-feature" style="margin-top:30px">
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <img src="assets/images/GuruCrewSongCover2.png"
+           alt="Guru Crew Song Cover"
+           style="width:220px;border-radius:14px;opacity:0.95"
+           onerror="this.style.display='none';" />
 
-          <div style="max-width:620px">
-            <h3 style="margin-top:0">Guru Crew Song V2</h3>
-            <p class="small" style="opacity:0.8;margin-top:-6px">
-              <strong>Artist:</strong>OneT
-              <span style="opacity:0.6"> • </span>
-              <span style="opacity:0.7">Empire Mode</span>
-            </p>
+      <div style="max-width:620px">
+        <h3 style="margin-top:0">Guru Crew V2</h3>
+        <p class="small" style="opacity:0.8">
+          <strong>Artist:</strong> OneT • Empire Mode
+        </p>
+        <p class="small" style="opacity:0.8">
+          🎧 Guru Crew Song from Empire Mode V2
+        </p>
 
-            <p class="small" style="opacity:0.8">
-              🎧 Guru Crew Song from Empire Mode V2
-            </p>
+        <audio controls preload="none" style="width:min(620px,100%);border-radius:12px;">
+          <source src="assets/audio/GuruCrewSong2.m4a" type="audio/mp4" />
+          <source src="assets/audio/GuruCrewSong2.mp3" type="audio/mpeg" />
+        </audio>
 
-            <div style="height:8px"></div>
-
-            <audio controls preload="none"
-                   style="width:min(620px, 100%);border-radius:12px;outline:none">
-              <source src="assets/audio/GuruCrewSong2.m4a" type="audio/mp4" />
-              <source src="assets/audio/GuruCrewSong2.mp3" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-
-            <div style="height:12px"></div>
-            <div class="pillrow" style="opacity:0.9">
-              <span class="pill">Free Stream</span>
-              <span class="pill">Demo</span>
-              <span class="pill">Original</span>
-            </div>
-          </div>
+        <div class="pillrow" style="margin-top:12px">
+          <span class="pill">Free Stream</span>
+          <span class="pill">Demo</span>
+          <span class="pill">Original</span>
         </div>
       </div>
+    </div>
+  </div>
+</section>
 
-    </section><section class="guru-grid">
+<!-- GURU GRID -->
+<section class="guru-grid">
 
   <div class="guru-card">
     <img src="assets/images/GuruJayImage1.png" alt="Guru Jay">
@@ -326,21 +322,11 @@ audio {
   <p class="screens-sub">A glimpse inside Guru Crew.</p>
 
   <div class="screens-grid">
-    <div class="screen-card">
-      <img src="assets/images/guru-crew-screen-1.png" alt="">
-    </div>
-    <div class="screen-card">
-      <img src="assets/images/guru-crew-screen-2.png" alt="">
-    </div>
-    <div class="screen-card">
-      <img src="assets/images/guru-crew-screen-3.png" alt="">
-    </div>
-    <div class="screen-card">
-      <img src="assets/images/guru-crew-screen-4.png" alt="">
-    </div>
-    <div class="screen-card">
-      <img src="assets/images/guru-crew-screen-5.png" alt="">
-    </div>
+    <div class="screen-card"><img src="assets/images/guru-crew-screen-1.png" alt=""></div>
+    <div class="screen-card"><img src="assets/images/guru-crew-screen-2.png" alt=""></div>
+    <div class="screen-card"><img src="assets/images/guru-crew-screen-3.png" alt=""></div>
+    <div class="screen-card"><img src="assets/images/guru-crew-screen-4.png" alt=""></div>
+    <div class="screen-card"><img src="assets/images/guru-crew-screen-5.png" alt=""></div>
   </div>
 </section>
 
