@@ -1,239 +1,244 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Raw Cuts — One T Media Group</title>
-  <meta name="description" content="Raw Cuts — original music from independent artists. Free listening." />
-  <meta name="theme-color" content="#0b0b0f" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Empire Mode — OneT</title>
+<meta name="description" content="Empire Mode — Full album by OneT. 14 tracks. 28 versions." />
+<meta name="theme-color" content="#0b0b0f" />
+<link rel="stylesheet" href="assets/css/styles.css" />
+
+<style>
+
+/* ===== ALBUM GLOW ===== */
+
+.album-wrap{
+  position:relative;
+  display:inline-block;
+}
+
+.album-glow{
+  position:absolute;
+  inset:-30px;
+  background:radial-gradient(circle at center,
+    rgba(120,70,255,.35),
+    rgba(0,200,255,.15),
+    transparent 70%);
+  filter:blur(40px);
+  animation:pulseGlow 6s ease-in-out infinite;
+  z-index:0;
+}
+
+@keyframes pulseGlow{
+  0%,100%{opacity:.7;transform:scale(1);}
+  50%{opacity:1;transform:scale(1.08);}
+}
+
+/* ===== STICKY PLAYER ===== */
+
+.mini-player{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  background:rgba(15,15,22,.95);
+  border-top:1px solid rgba(40,40,60,.8);
+  padding:14px 24px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  backdrop-filter:blur(10px);
+  z-index:999;
+}
+
+.mini-title{
+  font-size:14px;
+  opacity:.8;
+}
+
+.track-nav{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin:30px 0;
+}
+
+.track-nav button{
+  background:rgba(20,20,28,.8);
+  border:1px solid rgba(40,40,60,.8);
+  color:var(--text);
+  padding:8px 12px;
+  border-radius:10px;
+  cursor:pointer;
+  transition:.2s;
+}
+
+.track-nav button:hover{
+  background:rgba(120,70,255,.3);
+}
+
+.play-all{
+  margin-top:20px;
+}
+
+.credits{
+  margin-top:80px;
+  padding:40px;
+  background:rgba(20,20,28,.6);
+  border-radius:20px;
+  border:1px solid rgba(40,40,60,.8);
+}
+
+</style>
 </head>
 
 <body>
-  <!-- NAV -->
-  <div class="nav">
-    <div class="container">
-      <div class="nav-inner">
-        <a class="brand" href="index.html">
-          <div class="brand-badge">1T</div>
-          <div>One T Media Group</div>
-        </a>
+
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
 
       <nav class="nav-links">
-          <a href="index.html"
-             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
-            Home
-          </a>
-          <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
-          <img src="assets/images/Crafted-In-The-North-Header.png"
-     alt="Crafted in Canada"
-     class="crafted-badge"
-     id="canadaBadge"
-     style="cursor:pointer;" />
-        </nav>
-
-          </div>
+        <a href="index.html">Home</a>
+        <a href="raw-cuts.html"
+           style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+          Raw Cuts
+        </a>
+      </nav>
     </div>
   </div>
+</div>
 
-  <!-- MAIN -->
-  <main class="container">
-    <div class="breadcrumb">Home / Raw Cuts</div>
+<main class="container">
 
-    <!-- RAW CUTS HERO IMAGE -->
-    <section style="margin:0 0 56px 0;">
-      <img 
-        src="assets/images/raw-cuts-logo.png" 
-        alt="Raw Cuts — Unmixed. Unfiltered. Uncompromised."
-        style="width:100%;border-radius:var(--radius);box-shadow:var(--shadow);" 
-      />
-    </section>
+<div class="breadcrumb">Home / Raw Cuts / Empire Mode</div>
 
-    <!-- ABOUT -->
-    <section class="section" id="about">
-      <h2>What this is</h2>
-      <p class="sub">A clean space for listening — and a home for future releases.</p>
-
-      <div class="card">
-        <p style="margin-top:0">
-          <strong>Raw Cuts</strong> is an open studio page for original music.
-          Tracks are free to stream. Some releases may later include optional downloads or storefront links,
-          but this page stays simple: press play and listen.
-        </p>
-
-        <div class="pillrow">
-          <span class="pill">Original</span>
-          <span class="pill">Independent</span>
-          <span class="pill">Free Listening</span>
-        </div>
-      </div>
-<!-- ========================= -->
-<!-- ONE T — ALBUM: EMPIRE MODE -->
-<!-- ========================= -->
-<!-- ========================= -->
-<!-- ONE T — EMPIRE MODE -->
-<!-- ========================= -->
 <section class="section" style="text-align:center">
 
-  <h2>OneT — Empire Mode</h2>
+<h1>Empire Mode</h1>
+<p class="sub">OneT • 14 Tracks • 28 Versions</p>
 
-  <div style="
-    display:inline-block;
-    padding:30px;
-    background:rgba(20,20,28,.7);
-    border:1px solid rgba(35,35,54,.9);
-    border-radius:24px;
-    margin-top:20px;
-  ">
-    <img 
-      src="assets/images/Onet-Empire-Mode-Cover-V1.png" 
-      alt="OneT Empire Mode Album Cover"
-      style="
-        width:min(380px, 90%);
-        border-radius:16px;
-        box-shadow:0 25px 50px rgba(0,0,0,.5);
-      " 
-    />
-  </div>
+<div class="album-wrap">
+  <div class="album-glow"></div>
+  <img 
+    src="assets/images/Onet-Empire-Mode-Cover-V1.png" 
+    style="width:min(420px,90%);border-radius:20px;position:relative;z-index:2;"
+  />
+</div>
 
-  <p class="sub" style="margin-top:30px">
-    14 Tracks • 28 Versions • Built from the ground up.
-  </p>
+<p style="margin-top:20px;opacity:.7;">
+Released 2026 • Independent Release • Produced & Written by OneT
+</p>
 
-  <div style="margin-top:20px">
-    <a href="empire-mode.html" class="btn">
-      View Full Album
-    </a>
-  </div>
+<div class="play-all">
+  <button class="btn" onclick="playAll()">Play All (V1)</button>
+</div>
 
 </section>
 
-      
-    </section>
+<section class="section">
 
-    <!-- TRACKS -->
-    <section class="section" id="tracks">
-      <h2>Tracks</h2>
-  
-      <!-- TRACK 01 -->
-      <div class="card uc">
-        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
-          <img
-            src="assets/images/Can'tStopMeNow.png"
-            alt="Track artwork"
-            style="width:220px;max-width:220px;border-radius:14px;opacity:0.95"
-            onerror="this.style.display='none';"
-          />
+<h2>Jump to Track</h2>
+<div class="track-nav">
+<script>
+for(let i=1;i<=14;i++){
+  document.write(`<button onclick="scrollToTrack(${i})">${i}</button>`);
+}
+</script>
+</div>
 
-          <div style="max-width:620px">
-            <h3 style="margin-top:0">Can't Stop Me Now</h3>
-            <p class="small" style="opacity:0.8;margin-top:-6px">
-              <strong>Artist:</strong> LoJo
-              <span style="opacity:0.6"> • </span>
-              <span style="opacity:0.7">Raw Cut #01</span>
-            </p>
+</section>
 
-            <p class="small" style="opacity:0.8">
-              🎧 Can’t Stop Me Now
+<section class="section">
+<h2>Tracks</h2>
+<p class="sub">Stream both versions below.</p>
 
-              Cold bounce. No apologies.
+<!-- TRACKS -->
 
-              Late-night trap energy — stripped back, heavy 808s, sharp hats cutting clean space.
-              Nothing wasted. Nothing soft. Just motion in the dark.
-            </p>
+<div id="track-list"></div>
 
-            <div style="height:8px"></div>
+</section>
 
-            <audio controls preload="none"
-                   style="width:min(620px, 100%);border-radius:12px;outline:none">
-              <source src="assets/audio/Can'tStopMeNow.m4a" type="audio/mp4" />
-              <source src="assets/audio/Can'tStopMeNow.mp3" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
+<section class="credits">
+<h2>Credits</h2>
+<p><strong>Artist:</strong> OneT</p>
+<p><strong>Production:</strong> Independent Studio Build</p>
+<p><strong>Concept:</strong> Systems Over Hype</p>
+<p><strong>Engineered:</strong> Late Nights & Discipline</p>
+<p><strong>Location:</strong> Crafted in the North 🇨🇦</p>
+</section>
 
-            <div style="height:12px"></div>
-            <div class="pillrow" style="opacity:0.9">
-              <span class="pill">Free Stream</span>
-              <span class="pill">Studio Session</span>
-              <span class="pill">Hip-Hop</span>
-            </div>
-          </div>
-        </div>
-      </div>
+</main>
 
-      <!-- TRACK 02 -->
-      <div class="card uc">
-        <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
-          <img
-            src="assets/images/Don'tWakeMeUp.png"
-            alt="Track artwork"
-            style="width:220px;max-width:220px;border-radius:14px;opacity:0.95"
-            onerror="this.style.display='none';"
-          />
-
-          <div style="max-width:620px">
-            <h3 style="margin-top:0">Don't Wake Me Up</h3>
-            <p class="small" style="opacity:0.8;margin-top:-6px">
-              <strong>Artist:</strong> LoJo
-              <span style="opacity:0.6"> • </span>
-              <span style="opacity:0.7">Raw Cut #02</span>
-            </p>
-
-            <p class="small" style="opacity:0.8">
-              🎧 Don’t Wake Me Up
-
-              Soul samples in the shadows. Drums that hit like concrete.
-              Old-school backbone. Modern trap execution.
-            </p>
-
-            <div style="height:8px"></div>
-
-            <audio controls preload="none"
-                   style="width:min(620px, 100%);border-radius:12px;outline:none">
-              <source src="assets/audio/Don'tWakeMeUp.m4a" type="audio/mp4" />
-              <source src="assets/audio/Don'tWakeMeUp.mp3" type="audio/mpeg" />
-              Your browser does not support the audio element.
-            </audio>
-
-            <div style="height:12px"></div>
-            <div class="pillrow" style="opacity:0.9">
-              <span class="pill">Free Stream</span>
-              <span class="pill">Demo</span>
-              <span class="pill">Original</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-    </section>
-
-    <div class="footer">
-      <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-      <div class="small">Independent creative studio • Built with intention</div>
-    </div>
-  </main>
-
-  <script src="assets/js/main.js"></script>
-<audio id="ohCanadaAudio" src="assets/audio/OhCanadaraw.mp3"></audio>
+<!-- STICKY PLAYER -->
+<div class="mini-player">
+  <div class="mini-title" id="miniTitle">No track playing</div>
+  <audio id="globalPlayer" controls style="width:320px;"></audio>
+</div>
 
 <script>
-  const badge = document.getElementById("canadaBadge");
-  const anthem = document.getElementById("ohCanadaAudio");
 
-  badge.addEventListener("click", () => {
-    if (anthem.paused) {
-      anthem.play();
-    } else {
-      anthem.pause();
-      anthem.currentTime = 0; // resets to beginning
+const tracks = [
+  {title:"Empire Mode", file:"Track1–EMPIRE-MODE-V1"},
+  {title:"Built From Scratch", file:"Track2–BUILT-FROM-SCRATCH-V1"},
+  {title:"No Days Off", file:"Track3-No-Days-Off-V1"},
+  {title:"Phase One", file:"Track4–PHASE-ONE-V1"},
+  {title:"Drafts & Deadlines", file:"Track5–DRAFTS-&-DEADLINES-V1"},
+  {title:"Guru Crew", file:"Track6–GURU-CREW-V1"},
+  {title:"Crafted in the North", file:"Track7–CRAFTED-IN-THE-NORTH-V1"},
+  {title:"Firestore Dreams", file:"Track8–FIRESTORE-DREAMS-V1"},
+  {title:"Quiet Wins", file:"Track9–QUIET-WINS-V1"},
+  {title:"Redbubble Revenue", file:"Track10–REDBUBBLE-REVENUE-V1"},
+  {title:"Refactor", file:"Track11–REFACTOR-V1"},
+  {title:"Chapter 40", file:"Track12–CHAPTER-40-V1"},
+  {title:"Systems Over Hype", file:"Track13–SYSTEMS-OVER-HYPE-V1"},
+  {title:"Legacy Loop", file:"Track14–LEGACY-LOOP-V1"}
+];
+
+const container = document.getElementById("track-list");
+
+tracks.forEach((t,i)=>{
+  container.innerHTML += `
+  <div class="card uc" id="track${i+1}">
+    <h3>${i+1}. ${t.title}</h3>
+    <button onclick="playTrack('${t.file}','${t.title}')">Play V1</button>
+  </div>
+  `;
+});
+
+const player = document.getElementById("globalPlayer");
+const miniTitle = document.getElementById("miniTitle");
+
+function playTrack(file,title){
+  player.src = "assets/audio/" + file + ".mp3";
+  player.play();
+  miniTitle.innerText = title;
+}
+
+function scrollToTrack(n){
+  document.getElementById("track"+n).scrollIntoView({behavior:"smooth"});
+}
+
+let playIndex = 0;
+
+function playAll(){
+  playIndex = 0;
+  playTrack(tracks[0].file, tracks[0].title);
+
+  player.onended = ()=>{
+    playIndex++;
+    if(playIndex < tracks.length){
+      playTrack(tracks[playIndex].file, tracks[playIndex].title);
     }
-  });
+  }
+}
+
 </script>
 
-  
 </body>
 </html>
