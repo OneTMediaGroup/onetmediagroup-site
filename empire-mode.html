@@ -1,854 +1,304 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>OneT — Empire Mode (Full Album) | One T Media Group</title>
-  <meta name="description" content="OneT — Empire Mode. 14 tracks, each with two versions. Stream free." />
-  <meta name="theme-color" content="#0b0b0f" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>OneT — Empire Mode</title>
+<meta name="theme-color" content="#0b0b0f"/>
+<link rel="stylesheet" href="assets/css/styles.css"/>
 
-  <style>
-    /* ---------- ALBUM HERO ---------- */
-    .album-hero {
-      margin: 10px 0 28px;
-      display: grid;
-      grid-template-columns: 260px 1fr;
-      gap: 24px;
-      align-items: center;
-    }
-    @media (max-width: 860px){
-      .album-hero { grid-template-columns: 1fr; }
-    }
+<style>
 
-    .album-cover-wrap{
-      position: relative;
-      border-radius: 22px;
-      overflow: hidden;
-      box-shadow: var(--shadow);
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(20,20,28,.6);
-    }
-    .album-cover{
-      width: 100%;
-      display: block;
-      border-radius: 22px;
-    }
+/* ===== HERO ===== */
+.album-hero{
+  margin:20px 0 40px;
+  display:grid;
+  grid-template-columns:260px 1fr;
+  gap:28px;
+  align-items:center;
+}
+@media(max-width:860px){
+  .album-hero{grid-template-columns:1fr;}
+}
 
-    /* animated album glow */
-    .album-cover-wrap::before{
-      content:"";
-      position:absolute;
-      inset:-30%;
-      background:
-        radial-gradient(300px 220px at 20% 20%, rgba(110,231,255,.22), transparent 60%),
-        radial-gradient(340px 260px at 80% 30%, rgba(139,92,246,.22), transparent 60%),
-        radial-gradient(360px 260px at 50% 85%, rgba(34,197,94,.18), transparent 60%);
-      filter: blur(18px);
-      animation: glow 4.2s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes glow{
-      0%,100%{ transform: translateY(0) scale(1); opacity:.75; }
-      50%{ transform: translateY(-10px) scale(1.02); opacity:1; }
-    }
+.album-cover{
+  width:100%;
+  border-radius:20px;
+  box-shadow:var(--shadow);
+  position:relative;
+  animation:glow 4s ease-in-out infinite;
+}
+@keyframes glow{
+  0%,100%{transform:scale(1);}
+  50%{transform:scale(1.03);}
+}
 
-    .album-meta h1{
-      margin: 0 0 10px;
-      font-size: clamp(2.0rem, 4.6vw, 3.1rem);
-      line-height: 1.05;
-    }
-    .album-meta .subline{
-      color: var(--muted);
-      margin: 0 0 14px;
-      max-width: 70ch;
-    }
-    .album-meta .credits{
-      color: var(--muted);
-      font-size: .95rem;
-      margin-top: 10px;
-    }
+/* ===== TOGGLE ===== */
+.version-toggle{
+  display:flex;
+  gap:8px;
+}
+.version-toggle button{
+  padding:8px 14px;
+  border-radius:12px;
+  border:1px solid rgba(35,35,54,.9);
+  background:rgba(20,20,28,.6);
+  color:var(--text);
+  font-weight:800;
+  cursor:pointer;
+}
+.version-toggle button.active{
+  background:linear-gradient(135deg,var(--accent1),var(--accent2));
+  color:#0b0b0f;
+  border:none;
+}
 
-    /* ---------- TOP CONTROLS ---------- */
-    .top-controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:12px;
-      align-items:center;
-      margin-top: 14px;
-    }
+/* ===== TRACK CARD ===== */
+.track-card.playing{
+  border-color:rgba(110,231,255,.7)!important;
+  box-shadow:0 0 25px rgba(110,231,255,.2);
+}
 
-    /* Album-wide V1/V2 toggle */
-    .version-toggle{
-      display:inline-flex;
-      align-items:center;
-      gap:10px;
-      padding: 10px 12px;
-      border-radius: 16px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(16,16,24,.65);
-    }
-    .toggle-pill{
-      display:flex;
-      border-radius: 999px;
-      border: 1px solid rgba(35,35,54,.9);
-      overflow:hidden;
-    }
-    .toggle-pill button{
-      appearance:none;
-      border:0;
-      padding: 8px 12px;
-      background: transparent;
-      color: var(--muted);
-      font-weight: 900;
-      cursor:pointer;
-      font-size: .9rem;
-    }
-    .toggle-pill button.active{
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      color: #0b0b0f;
-    }
+.track-art{
+  width:160px;
+  border-radius:14px;
+}
 
-    .playall{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-    }
+/* ===== MINI PLAYER ===== */
+.mini-player{
+  position:sticky;
+  bottom:10px;
+  margin-top:40px;
+}
 
-    /* Track number navigation */
-    .track-nav{
-      margin-top: 14px;
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-    .track-nav button{
-      width: 42px;
-      height: 38px;
-      border-radius: 14px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(20,20,28,.6);
-      color: var(--text);
-      font-weight: 900;
-      cursor:pointer;
-    }
-    .track-nav button:hover{ filter: brightness(1.08); }
-    .track-nav button.is-playing{
-      border-color: rgba(110,231,255,.65);
-      box-shadow: 0 0 0 3px rgba(110,231,255,.12);
-    }
+.mini-shell{
+  padding:14px;
+  border-radius:18px;
+  background:rgba(11,11,15,.85);
+  border:1px solid rgba(35,35,54,.9);
+  backdrop-filter:blur(12px);
+  display:flex;
+  gap:20px;
+  align-items:center;
+  justify-content:space-between;
+}
 
-    /* ---------- TRACK LIST ---------- */
-    .album-section-title{
-      margin-top: 26px;
-    }
+.progress-bar{
+  height:8px;
+  background:#222;
+  border-radius:999px;
+  overflow:hidden;
+  cursor:pointer;
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(135deg,var(--accent1),var(--accent2));
+}
 
-    .track-card{
-      position: relative;
-      overflow: hidden;
-    }
+.download-btn{
+  font-size:.85rem;
+  opacity:.8;
+}
 
-    /* currently playing highlight */
-    .track-card.playing{
-      border-color: rgba(110,231,255,.70) !important;
-      box-shadow: 0 18px 55px rgba(110,231,255,.10), var(--shadow);
-    }
-    .track-card.playing::before{
-      content:"";
-      position:absolute;
-      inset:0;
-      background:
-        radial-gradient(600px 220px at 20% 0%, rgba(110,231,255,.10), transparent 60%),
-        radial-gradient(600px 220px at 80% 0%, rgba(139,92,246,.10), transparent 60%);
-      pointer-events:none;
-    }
-
-    .track-row{
-      display:flex;
-      gap:24px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-    }
-    .track-art{
-      width: 180px;
-      max-width: 180px;
-      border-radius: 14px;
-      opacity: .96;
-      border: 1px solid rgba(35,35,54,.9);
-    }
-    .track-main{
-      flex:1;
-      min-width: 260px;
-      max-width: 760px;
-      position: relative;
-      z-index: 1;
-    }
-    .track-topline{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:baseline;
-      justify-content:space-between;
-    }
-    .track-title{
-      margin: 0;
-    }
-    .track-meta{
-      color: var(--muted);
-      font-size: .95rem;
-      margin: 2px 0 12px;
-    }
-
-    .track-actions{
-      display:flex;
-      gap:10px;
-      flex-wrap:wrap;
-      align-items:center;
-      margin: 6px 0 12px;
-    }
-    .mini-btn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:10px;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(20,20,28,.6);
-      color: var(--text);
-      font-weight: 900;
-      font-size: .92rem;
-      cursor:pointer;
-    }
-    .mini-btn.primary{
-      border: none;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      color: #0b0b0f;
-    }
-    .mini-btn:hover{ filter: brightness(1.08); }
-
-    /* duration display */
-    .dur{
-      color: var(--muted);
-      font-weight: 900;
-      font-size: .9rem;
-    }
-
-    /* ---------- STICKY MINI PLAYER ---------- */
-    .mini-player{
-      position: sticky;
-      bottom: 12px;
-      z-index: 60;
-      margin: 24px 0 0;
-    }
-    .mini-shell{
-      border-radius: 18px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(11,11,15,.72);
-      backdrop-filter: blur(12px);
-      box-shadow: var(--shadow);
-      padding: 14px 14px;
-      display:flex;
-      gap: 14px;
-      align-items:center;
-      justify-content: space-between;
-    }
-    .mini-left{
-      display:flex;
-      gap: 12px;
-      align-items:center;
-      min-width: 0;
-    }
-    .mini-dot{
-      width: 10px;
-      height: 10px;
-      border-radius: 99px;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      box-shadow: 0 0 0 4px rgba(110,231,255,.10);
-      flex-shrink:0;
-      animation: pulse 1.4s ease-in-out infinite;
-      opacity: .7;
-    }
-    @keyframes pulse{
-      0%,100%{ transform: scale(1); opacity:.65; }
-      50%{ transform: scale(1.18); opacity:1; }
-    }
-    .mini-title{
-      font-weight: 900;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 46vw;
-    }
-    .mini-sub{
-      color: var(--muted);
-      font-size: .9rem;
-      font-weight: 800;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 46vw;
-    }
-    .mini-controls{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap: wrap;
-      justify-content:flex-end;
-    }
-    .mini-icon{
-      width: 44px;
-      height: 42px;
-      border-radius: 14px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(20,20,28,.6);
-      color: var(--text);
-      font-weight: 900;
-      cursor:pointer;
-    }
-    .mini-icon:hover{ filter: brightness(1.08); }
-
-    /* progress bar animation styling */
-    .progress-wrap{
-      width: min(520px, 45vw);
-      min-width: 200px;
-    }
-    .progress-meta{
-      display:flex;
-      justify-content:space-between;
-      gap:12px;
-      color: var(--muted);
-      font-weight: 900;
-      font-size: .85rem;
-      margin-bottom: 6px;
-    }
-    .progress-bar{
-      height: 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(16,16,24,.7);
-      overflow:hidden;
-      cursor:pointer;
-    }
-    .progress-fill{
-      height:100%;
-      width:0%;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      transition: width .12s linear;
-    }
-
-    @media (max-width: 760px){
-      .progress-wrap{ width: 100%; min-width: 0; }
-      .mini-shell{ flex-direction: column; align-items: stretch; }
-      .mini-controls{ justify-content: space-between; }
-      .mini-title,.mini-sub{ max-width: 100%; }
-    }
-  </style>
+</style>
 </head>
 
 <body>
-  <!-- NAV -->
-  <div class="nav">
-    <div class="container">
-      <div class="nav-inner">
-        <a class="brand" href="index.html">
-          <div class="brand-badge">1T</div>
-          <div>One T Media Group</div>
-        </a>
+<main class="container">
 
-        <nav class="nav-links">
-          <a href="index.html"
-             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
-            Home
-          </a>
-          <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
-          <img src="assets/images/Crafted-In-The-North-Header.png"
-               alt="Crafted in Canada"
-               class="crafted-badge"
-               id="canadaBadge"
-               style="cursor:pointer;" />
-        </nav>
-      </div>
+<div class="album-hero">
+  <img src="assets/images/Onet-Empire-Mode-Cover-V1.png" class="album-cover"/>
+
+  <div>
+    <h1>OneT — Empire Mode</h1>
+    <p>14 tracks. Two versions each. Free release.</p>
+
+    <div class="version-toggle">
+      <button id="v1Btn" class="active">V1</button>
+      <button id="v2Btn">V2</button>
+    </div>
+
+    <div style="margin-top:16px;">
+      <button class="btn primary" id="playAllBtn">Play All</button>
+      <button class="btn" id="stopBtn">Stop</button>
+      <!-- OPTIONAL FULL ALBUM ZIP -->
+      <a href="assets/audio/Empire-Mode-Full-Album.zip" download class="btn">
+        ⬇ Download Full Album
+      </a>
+    </div>
+
+    <div style="margin-top:12px;font-size:.9rem;color:var(--muted);">
+      Release Date: 2026 • OneT • One T Media Group
     </div>
   </div>
+</div>
 
-  <main class="container">
-    <div class="breadcrumb">Home / Raw Cuts / OneT / Empire Mode</div>
+<section id="trackList"></section>
 
-    <!-- HERO -->
-    <section class="album-hero">
-      <div class="album-cover-wrap">
-        <img class="album-cover"
-             src="assets/images/Onet-Empire-Mode-Cover-V1.png"
-             alt="OneT — Empire Mode Album Cover"
-             onerror="this.style.display='none';" />
+<!-- MINI PLAYER -->
+<div class="mini-player">
+  <div class="mini-shell">
+    <div>
+      <strong id="miniTitle">Nothing Playing</strong>
+      <div id="miniSub" style="font-size:.85rem;color:var(--muted);">V1</div>
+    </div>
+
+    <div style="flex:1;max-width:400px;">
+      <div style="display:flex;justify-content:space-between;font-size:.8rem;">
+        <span id="curTime">0:00</span>
+        <span id="totTime">0:00</span>
       </div>
-
-      <div class="album-meta">
-        <h1>OneT — <span class="grad">Empire Mode</span></h1>
-        <p class="subline">
-          14 tracks. Each track has two versions.<br/>
-          Use the toggle to switch the entire album between <strong>V1</strong> and <strong>V2</strong>.
-        </p>
-
-        <div class="top-controls">
-          <!-- Album-wide toggle -->
-          <div class="version-toggle" aria-label="Album version toggle">
-            <div class="kicker" style="margin:0">
-              <span class="kicker-dot"></span>
-              Album Version
-            </div>
-
-            <div class="toggle-pill" role="tablist" aria-label="Version select">
-              <button id="btnV1" class="active" type="button" role="tab" aria-selected="true">V1</button>
-              <button id="btnV2" type="button" role="tab" aria-selected="false">V2</button>
-            </div>
-          </div>
-
-          <!-- Play All -->
-          <div class="playall">
-            <button class="btn primary" type="button" id="playAllBtn">Play All</button>
-            <button class="btn" type="button" id="stopBtn">Stop</button>
-          </div>
-        </div>
-
-        <!-- Track number navigation -->
-        <div class="track-nav" id="trackNav" aria-label="Track navigation"></div>
-
-        <div class="credits">
-          <div><strong>Release date:</strong> <span id="releaseDate">TBD</span></div>
-          <div><strong>Credits:</strong> OneT • One T Media Group</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- TRACKS -->
-    <section class="section album-section-title">
-      <h2>Tracklist</h2>
-      <p class="sub">Click a track to play the selected album version (V1/V2). Durations load automatically.</p>
-
-      <div id="trackList"></div>
-    </section>
-
-    <!-- STICKY MINI PLAYER -->
-    <div class="mini-player">
-      <div class="mini-shell">
-        <div class="mini-left">
-          <div class="mini-dot" id="miniDot" aria-hidden="true"></div>
-          <div style="min-width:0">
-            <div class="mini-title" id="miniTitle">Nothing playing</div>
-            <div class="mini-sub" id="miniSub">Choose a track • V1</div>
-          </div>
-        </div>
-
-        <div class="progress-wrap">
-          <div class="progress-meta">
-            <span id="curTime">0:00</span>
-            <span id="totTime">0:00</span>
-          </div>
-          <div class="progress-bar" id="progressBar" role="slider" aria-label="Playback progress">
-            <div class="progress-fill" id="progressFill"></div>
-          </div>
-        </div>
-
-        <div class="mini-controls">
-          <button class="mini-icon" type="button" id="prevBtn" title="Previous">⟵</button>
-          <button class="mini-icon" type="button" id="playPauseBtn" title="Play/Pause">▶︎</button>
-          <button class="mini-icon" type="button" id="nextBtn" title="Next">⟶</button>
-        </div>
-
-        <!-- Hidden global audio element -->
-        <audio id="globalPlayer" preload="metadata"></audio>
+      <div class="progress-bar" id="progressBar">
+        <div class="progress-fill" id="progressFill"></div>
       </div>
     </div>
 
-    <div class="footer">
-      <div>© <span id="year"></span> One T Media Group • <a href="raw-cuts.html">Raw Cuts</a></div>
-      <div class="small">Independent creative studio • Built with intention</div>
+    <div>
+      <button id="prevBtn">⟵</button>
+      <button id="playPauseBtn">▶︎</button>
+      <button id="nextBtn">⟶</button>
     </div>
-  </main>
 
-  <script src="assets/js/main.js"></script>
+    <audio id="player" preload="metadata"></audio>
+  </div>
+</div>
 
-  <!-- Canada Easter Egg -->
-  <audio id="ohCanadaAudio" src="assets/audio/OhCanadaraw.mp3"></audio>
+</main>
 
-  <script>
-    // ----------------------------
-    // Canada Badge Audio Toggle
-    // ----------------------------
-    (function(){
-      const badge = document.getElementById("canadaBadge");
-      const anthem = document.getElementById("ohCanadaAudio");
-      if(!badge || !anthem) return;
+<script>
 
-      badge.addEventListener("click", () => {
-        if (anthem.paused) {
-          anthem.play();
-        } else {
-          anthem.pause();
-          anthem.currentTime = 0;
-        }
-      });
-    })();
+const tracks = [
+  {num:1,title:"Empire Mode",base:"Track1–EMPIRE-MODE"},
+  {num:2,title:"Built From Scratch",base:"Track2–BUILT-FROM-SCRATCH"},
+  {num:3,title:"No Days Off",base:"Track3-No-Days-Off"},
+  {num:4,title:"Phase One",base:"Track4–PHASE-ONE"},
+  {num:5,title:"Drafts & Deadlines",base:"Track5–DRAFTS-&-DEADLINES"},
+  {num:6,title:"Guru Crew",base:"Track6–GURU-CREW"},
+  {num:7,title:"Crafted in the North",base:"Track7–CRAFTED-IN-THE-NORTH"},
+  {num:8,title:"Firestore Dreams",base:"Track8–FIRESTORE-DREAMS"},
+  {num:9,title:"Quiet Wins",base:"Track9–QUIET-WINS"},
+  {num:10,title:"Redbubble Revenue",base:"Track10–REDBUBBLE-REVENUE"},
+  {num:11,title:"Refactor",base:"Track11–REFACTOR"},
+  {num:12,title:"Chapter 40",base:"Track12–CHAPTER-40"},
+  {num:13,title:"Systems Over Hype",base:"Track13–SYSTEMS-OVER-HYPE"},
+  {num:14,title:"Legacy Loop",base:"Track14–LEGACY-LOOP"}
+];
 
-    // ----------------------------
-    // Empire Mode Album Player
-    // ----------------------------
-    (function(){
-      const versionButtons = {
-        v1: document.getElementById("btnV1"),
-        v2: document.getElementById("btnV2"),
-      };
-      const playAllBtn = document.getElementById("playAllBtn");
-      const stopBtn = document.getElementById("stopBtn");
+let albumVersion = "V1";
+let currentIndex = -1;
+let playAllMode = false;
 
-      const trackNav = document.getElementById("trackNav");
-      const trackList = document.getElementById("trackList");
+const trackList = document.getElementById("trackList");
+const player = document.getElementById("player");
+const miniTitle = document.getElementById("miniTitle");
+const miniSub = document.getElementById("miniSub");
 
-      const player = document.getElementById("globalPlayer");
-      const miniTitle = document.getElementById("miniTitle");
-      const miniSub = document.getElementById("miniSub");
-      const playPauseBtn = document.getElementById("playPauseBtn");
-      const prevBtn = document.getElementById("prevBtn");
-      const nextBtn = document.getElementById("nextBtn");
+function renderTracks(){
+  tracks.forEach((t,i)=>{
+    const card = document.createElement("div");
+    card.className="card track-card";
+    card.id="track"+t.num;
+    card.innerHTML=`
+      <div style="display:flex;gap:20px;">
+        <img src="assets/images/Empire-Mode-Tack-${t.num}-Cover.png"
+             class="track-art"
+             onerror="this.style.display='none';"/>
+        <div style="flex:1;">
+          <h3>${t.num}. ${t.title}</h3>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn primary" onclick="playTrack(${i})">Play</button>
+            <button class="btn download-btn" onclick="downloadTrack(${i})">⬇ Download</button>
+            <span id="dur${t.num}" style="margin-left:auto;color:var(--muted);">--:--</span>
+          </div>
+        </div>
+      </div>
+    `;
+    trackList.appendChild(card);
 
-      const progressBar = document.getElementById("progressBar");
-      const progressFill = document.getElementById("progressFill");
-      const curTimeEl = document.getElementById("curTime");
-      const totTimeEl = document.getElementById("totTime");
+    // duration auto-detect
+    const temp = new Audio(`assets/audio/${t.base}-${albumVersion}.mp3`);
+    temp.addEventListener("loadedmetadata",()=>{
+      document.getElementById("dur"+t.num).textContent=
+        Math.floor(temp.duration/60)+":"+
+        String(Math.floor(temp.duration%60)).padStart(2,"0");
+    });
+  });
+}
 
-      // IMPORTANT: bases match your real filenames exactly (including – en dash where you used it)
-      const tracks = [
-        { num: 1,  title: "Empire Mode",          base: "Track1–EMPIRE-MODE",                v1label:"Intro Cinematic",          v2label:"Extended Build Version" },
-        { num: 2,  title: "Built From Scratch",   base: "Track2–BUILT-FROM-SCRATCH",        v1label:"Album Version",            v2label:"Harder Beat Remix" },
-        { num: 3,  title: "No Days Off",          base: "Track3-No-Days-Off",               v1label:"Funny Bounce",             v2label:"Late Night Vibes Version" },
-        { num: 4,  title: "Phase One",            base: "Track4–PHASE-ONE",                 v1label:"Original Heavy",           v2label:"Minimal Systems Edit" },
-        { num: 5,  title: "Drafts & Deadlines",   base: "Track5–DRAFTS-&-DEADLINES",        v1label:"Album Cut",                v2label:"Piano Edition" },
-        { num: 6,  title: "Guru Crew",            base: "Track6–GURU-CREW",                 v1label:"App Anthem",               v2label:"Remix Mode" },
-        { num: 7,  title: "Crafted in the North", base: "Track7–CRAFTED-IN-THE-NORTH",      v1label:"Original",                 v2label:"Orchestral Version" },
-        { num: 8,  title: "Firestore Dreams",     base: "Track8–FIRESTORE-DREAMS",          v1label:"Tech Grind",               v2label:"Synthwave Edit" },
-        { num: 9,  title: "Quiet Wins",           base: "Track9–QUIET-WINS",                v1label:"Minimal Version",          v2label:"Lo-Fi Night Edit" },
-        { num: 10, title: "Redbubble Revenue",    base: "Track10–REDBUBBLE-REVENUE",        v1label:"Playful Flex",             v2label:"Trap Remix" },
-        { num: 11, title: "Refactor",             base: "Track11–REFACTOR",                 v1label:"Original Intense",         v2label:"Spoken Word Reset" },
-        { num: 12, title: "Chapter 40",           base: "Track12–CHAPTER-40",               v1label:"Album Version",            v2label:"Acoustic Reflection" },
-        { num: 13, title: "Systems Over Hype",    base: "Track13–SYSTEMS-OVER-HYPE",        v1label:"Original",                 v2label:"Drill Edit" },
-        { num: 14, title: "Legacy Loop",          base: "Track14–LEGACY-LOOP",              v1label:"Album Version",            v2label:"Extended Outro" },
-      ];
+function playTrack(index){
+  currentIndex=index;
+  const t=tracks[index];
+  player.src=`assets/audio/${t.base}-${albumVersion}.mp3`;
+  player.play();
+  miniTitle.textContent=t.title;
+  miniSub.textContent=albumVersion;
+  highlight();
+}
 
-      // State
-      let albumVersion = "V1";    // V1 or V2
-      let currentIndex = -1;      // 0-based
-      let playAllMode = false;    // if true, auto-advance through tracks
+function downloadTrack(index){
+  const t=tracks[index];
+  const a=document.createElement("a");
+  a.href=`assets/audio/${t.base}-${albumVersion}.mp3`;
+  a.download="";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
 
-      // Helpers
-      const pad = (n) => String(n).padStart(2,"0");
-      const formatTime = (sec) => {
-        if(!isFinite(sec) || sec < 0) return "0:00";
-        const m = Math.floor(sec / 60);
-        const s = Math.floor(sec % 60);
-        return `${m}:${String(s).padStart(2,"0")}`;
-      };
+function highlight(){
+  document.querySelectorAll(".track-card").forEach(c=>c.classList.remove("playing"));
+  if(currentIndex>=0)
+    document.getElementById("track"+tracks[currentIndex].num)
+      .classList.add("playing");
+}
 
-      // Prefer MP3, fallback to M4A if needed
-      function setPlayerSources(baseWithVersion){
-        // baseWithVersion already like: Track1–EMPIRE-MODE-V1
-        // We try .mp3 first, then .m4a
-        const mp3 = `assets/audio/${baseWithVersion}.mp3`;
-        const m4a = `assets/audio/${baseWithVersion}.m4a`;
+document.getElementById("v1Btn").onclick=()=>{
+  albumVersion="V1";
+  setActive("v1Btn");
+};
+document.getElementById("v2Btn").onclick=()=>{
+  albumVersion="V2";
+  setActive("v2Btn");
+};
+function setActive(id){
+  document.getElementById("v1Btn").classList.remove("active");
+  document.getElementById("v2Btn").classList.remove("active");
+  document.getElementById(id).classList.add("active");
+}
 
-        player.src = mp3;
+document.getElementById("playAllBtn").onclick=()=>{
+  playAllMode=true;
+  playTrack(0);
+};
 
-        // if mp3 fails, fallback to m4a
-        player.onerror = () => {
-          player.src = m4a;
-          player.play().catch(()=>{});
-        };
-      }
+document.getElementById("stopBtn").onclick=()=>{
+  playAllMode=false;
+  player.pause();
+  player.currentTime=0;
+};
 
-      // Build Track Nav Buttons
-      function renderTrackNav(){
-        trackNav.innerHTML = "";
-        tracks.forEach((t, i) => {
-          const b = document.createElement("button");
-          b.type = "button";
-          b.textContent = t.num;
-          b.addEventListener("click", () => {
-            scrollToTrack(t.num);
-            playIndex(i, true);
-          });
-          trackNav.appendChild(b);
-        });
-      }
+player.addEventListener("ended",()=>{
+  if(playAllMode && currentIndex<tracks.length-1){
+    playTrack(currentIndex+1);
+  }
+});
 
-      // Build Track Cards
-      function renderTracks(){
-        trackList.innerHTML = "";
-        tracks.forEach((t, i) => {
-          const card = document.createElement("div");
-          card.className = "card uc track-card";
-          card.id = `track${t.num}`;
-          card.dataset.index = String(i);
+// progress
+const progressFill=document.getElementById("progressFill");
+player.addEventListener("timeupdate",()=>{
+  const pct=(player.currentTime/player.duration)*100;
+  progressFill.style.width=pct+"%";
+  document.getElementById("curTime").textContent=
+    Math.floor(player.currentTime/60)+":"+
+    String(Math.floor(player.currentTime%60)).padStart(2,"0");
+  document.getElementById("totTime").textContent=
+    Math.floor(player.duration/60)+":"+
+    String(Math.floor(player.duration%60)).padStart(2,"0");
+});
 
-          card.innerHTML = `
-            <div class="track-row">
-              <img class="track-art"
-                   src="assets/images/Empire-Mode-Tack-${t.num}-Cover.png"
-                   alt="Track ${t.num} cover"
-                   onerror="this.style.display='none';" />
+renderTracks();
 
-              <div class="track-main">
-                <div class="track-topline">
-                  <h3 class="track-title" style="margin-top:0">${t.num}. ${t.title}</h3>
-                  <div class="dur" id="dur${t.num}">—:—</div>
-                </div>
-
-                <div class="track-meta">
-                  <strong>Artist:</strong> OneT
-                  <span style="opacity:.6"> • </span>
-                  <span id="verLabel${t.num}">${albumVersion}: ${albumVersion === "V1" ? t.v1label : t.v2label}</span>
-                </div>
-
-                <div class="track-actions">
-                  <button class="mini-btn primary" type="button" data-action="play">Play ${albumVersion}</button>
-                  <button class="mini-btn" type="button" data-action="v1">V1</button>
-                  <button class="mini-btn" type="button" data-action="v2">V2</button>
-                </div>
-
-                <div class="pillrow" style="opacity:.9">
-                  <span class="pill">Free Stream</span>
-                  <span class="pill">Two Versions</span>
-                  <span class="pill">Album</span>
-                </div>
-              </div>
-            </div>
-          `;
-
-          // Card click plays current album version
-          card.addEventListener("click", (e) => {
-            const actionBtn = e.target && e.target.closest ? e.target.closest("button[data-action]") : null;
-            if(actionBtn){
-              const action = actionBtn.getAttribute("data-action");
-              if(action === "v1"){ setAlbumVersion("V1"); playIndex(i, true); return; }
-              if(action === "v2"){ setAlbumVersion("V2"); playIndex(i, true); return; }
-              if(action === "play"){ playIndex(i, true); return; }
-            }
-            // click anywhere else in card => play
-            if(!actionBtn) playIndex(i, true);
-          });
-
-          trackList.appendChild(card);
-        });
-      }
-
-      function updateVersionLabels(){
-        tracks.forEach((t) => {
-          const el = document.getElementById(`verLabel${t.num}`);
-          if(!el) return;
-          el.textContent = `${albumVersion}: ${albumVersion === "V1" ? t.v1label : t.v2label}`;
-        });
-      }
-
-      function setAlbumVersion(v){
-        albumVersion = v;
-        versionButtons.v1.classList.toggle("active", v === "V1");
-        versionButtons.v2.classList.toggle("active", v === "V2");
-        versionButtons.v1.setAttribute("aria-selected", v === "V1" ? "true" : "false");
-        versionButtons.v2.setAttribute("aria-selected", v === "V2" ? "true" : "false");
-        miniSub.textContent = `Choose a track • ${albumVersion}`;
-        updateVersionLabels();
-      }
-
-      function scrollToTrack(n){
-        const el = document.getElementById(`track${n}`);
-        if(!el) return;
-        el.scrollIntoView({ behavior: "smooth", block: "start" });
-      }
-
-      function clearPlayingUI(){
-        document.querySelectorAll(".track-card.playing").forEach(el => el.classList.remove("playing"));
-        Array.from(trackNav.children).forEach(btn => btn.classList.remove("is-playing"));
-      }
-
-      function setPlayingUI(index){
-        clearPlayingUI();
-        const t = tracks[index];
-        const card = document.getElementById(`track${t.num}`);
-        if(card) card.classList.add("playing");
-        const navBtn = trackNav.children[index];
-        if(navBtn) navBtn.classList.add("is-playing");
-      }
-
-      function playIndex(index, userInitiated){
-        if(index < 0 || index >= tracks.length) return;
-        currentIndex = index;
-        const t = tracks[index];
-
-        const baseWithVersion = `${t.base}-${albumVersion}`;
-        setPlayerSources(baseWithVersion);
-
-        // metadata -> duration will update automatically
-        player.play().catch(()=>{});
-        miniTitle.textContent = `${t.num}. ${t.title}`;
-        miniSub.textContent = `Now playing • ${albumVersion}`;
-        playPauseBtn.textContent = "⏸";
-
-        setPlayingUI(index);
-
-        // If user clicks a track manually, turn off playAllMode unless they hit Play All
-        if(userInitiated && !playAllMode){
-          // do nothing special
-        }
-      }
-
-      // Play All from current version
-      function playAll(){
-        playAllMode = true;
-        const startAt = currentIndex >= 0 ? currentIndex : 0;
-        playIndex(startAt, false);
-      }
-
-      function stop(){
-        playAllMode = false;
-        player.pause();
-        player.currentTime = 0;
-        playPauseBtn.textContent = "▶︎";
-        progressFill.style.width = "0%";
-        curTimeEl.textContent = "0:00";
-      }
-
-      function next(){
-        if(currentIndex < 0) { playIndex(0, true); return; }
-        const nextIndex = Math.min(currentIndex + 1, tracks.length - 1);
-        playIndex(nextIndex, true);
-        scrollToTrack(tracks[nextIndex].num);
-      }
-
-      function prev(){
-        if(currentIndex < 0) { playIndex(0, true); return; }
-        const prevIndex = Math.max(currentIndex - 1, 0);
-        playIndex(prevIndex, true);
-        scrollToTrack(tracks[prevIndex].num);
-      }
-
-      // Auto-next (Play All mode)
-      player.addEventListener("ended", () => {
-        if(!playAllMode) return;
-        const nextIndex = currentIndex + 1;
-        if(nextIndex < tracks.length){
-          playIndex(nextIndex, false);
-          scrollToTrack(tracks[nextIndex].num);
-        } else {
-          playAllMode = false;
-          playPauseBtn.textContent = "▶︎";
-        }
-      });
-
-      // Progress bar updates
-      player.addEventListener("timeupdate", () => {
-        const dur = player.duration || 0;
-        const cur = player.currentTime || 0;
-        curTimeEl.textContent = formatTime(cur);
-        totTimeEl.textContent = formatTime(dur);
-        const pct = dur > 0 ? (cur / dur) * 100 : 0;
-        progressFill.style.width = `${pct}%`;
-      });
-
-      // Click progress to seek
-      progressBar.addEventListener("click", (e) => {
-        const rect = progressBar.getBoundingClientRect();
-        const x = e.clientX - rect.left;
-        const pct = Math.max(0, Math.min(1, x / rect.width));
-        if(isFinite(player.duration) && player.duration > 0){
-          player.currentTime = player.duration * pct;
-        }
-      });
-
-      // Play/Pause
-      playPauseBtn.addEventListener("click", () => {
-        if(player.paused){
-          if(currentIndex < 0){
-            playIndex(0, true);
-          } else {
-            player.play().catch(()=>{});
-            playPauseBtn.textContent = "⏸";
-          }
-        } else {
-          player.pause();
-          playPauseBtn.textContent = "▶︎";
-        }
-      });
-
-      prevBtn.addEventListener("click", prev);
-      nextBtn.addEventListener("click", next);
-
-      // Toggle buttons
-      versionButtons.v1.addEventListener("click", () => setAlbumVersion("V1"));
-      versionButtons.v2.addEventListener("click", () => setAlbumVersion("V2"));
-
-      playAllBtn.addEventListener("click", () => {
-        playAllMode = true;
-        // start at top if nothing playing
-        if(currentIndex < 0) currentIndex = 0;
-        playIndex(currentIndex, false);
-      });
-
-      stopBtn.addEventListener("click", stop);
-
-      // Duration auto-detect (metadata) for each track in CURRENT version
-      // We show durations for whichever album version is selected.
-      async function loadDurationsForVersion(){
-        tracks.forEach((t) => {
-          const durEl = document.getElementById(`dur${t.num}`);
-          if(durEl) durEl.textContent = "—:—";
-        });
-
-        tracks.forEach((t) => {
-          const temp = new Audio();
-          const baseWithVersion = `${t.base}-${albumVersion}`;
-          temp.src = `assets/audio/${baseWithVersion}.mp3`;
-          temp.preload = "metadata";
-
-          temp.addEventListener("error", () => {
-            // fallback to m4a
-            temp.src = `assets/audio/${baseWithVersion}.m4a`;
-          }, { once:true });
-
-          temp.addEventListener("loadedmetadata", () => {
-            const durEl = document.getElementById(`dur${t.num}`);
-            if(durEl) durEl.textContent = formatTime(temp.duration);
-          }, { once:true });
-        });
-      }
-
-      // Refresh durations when toggle changes
-      function afterVersionChange(){
-        updateVersionLabels();
-        loadDurationsForVersion();
-        // If currently playing, keep playing but switch the *next click* behavior.
-        // (We do NOT auto-switch the currently playing file unless you want that.)
-      }
-
-      // Hook into setAlbumVersion
-      const _setAlbumVersion = setAlbumVersion;
-      setAlbumVersion = function(v){
-        _setAlbumVersion(v);
-        afterVersionChange();
-      };
-
-      // Init
-      renderTrackNav();
-      renderTracks();
-      setAlbumVersion("V1");
-      loadDurationsForVersion();
-    })();
-  </script>
+</script>
 </body>
 </html>
