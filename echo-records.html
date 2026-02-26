@@ -122,8 +122,8 @@
 
   .books {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 24px;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 28px;
     margin-top: 30px;
   }
 
@@ -139,14 +139,16 @@
     box-shadow: 0 10px 30px rgba(0,0,0,0.6);
   }
 
-  .book a {
-    color: #9cc7ff;
-    text-decoration: none;
-    display: block;
-    margin-top: 4px;
+  .book-buttons {
+    margin-top: 10px;
   }
 
-  .book a:hover { text-decoration: underline; }
+  .book-buttons img {
+    max-width: 150px;
+    border-radius: 14px;
+    margin: 4px auto;
+    display: block;
+  }
 
   .footer-note {
     text-align: center;
@@ -203,122 +205,100 @@
   <div class="hotspot right" onclick="openOverlay('assets/images/EchoArchive/daniel-bio.png')"></div>
 </div>
 
-<!-- RECORDED COMMUNITY UPDATE -->
+<!-- AUDIO -->
 <div class="section-title">Recorded Community Update</div>
 
 <div class="archive-text">
   <p><strong>Public Information Recording · Archived</strong></p>
-
   <audio controls>
     <source src="assets/audio/community-update-archive.mp3" type="audio/mpeg">
-    Your browser does not support the audio element.
   </audio>
 </div>
- 
-<!-- TRANSCRIPT (IMAGE ONLY) -->
+
+<!-- TRANSCRIPT IMAGE -->
 <div class="archive-text">
- <div class="card uc">
-  <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:center">
-    <img src="assets/images/EchoArchive/community_update_transcript_edit.png"
-         style="width:160px;border-radius:14px" />
-    <div style="max-width:420px">
+  <img src="assets/images/EchoArchive/community_update_transcript_edit.png"
+       style="width:100%;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.6);" />
+</div>
 
 <!-- BOOKS -->
 <div class="section-title">Echo — Published Volumes</div>
 
 <div class="books">
+
   <div class="book">
     <img src="assets/images/BookCovers/EchoBook1Cover.png">
     <strong>The First Reflection</strong>
-<div class="book-buttons">
-        <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">
-          <img src="assets/images/General/amazon-ca-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-        <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">
-          <img src="assets/images/General/amazon-us-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-      </div>
-     </div>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
+  </div>
 
   <div class="book">
     <img src="assets/images/BookCovers/EchoBook2Cover.png">
     <strong>The Shadow Line</strong>
-<div class="book-buttons">
-        <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">
-          <img src="assets/images/General/amazon-ca-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-        <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">
-          <img src="assets/images/General/amazon-us-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-      </div>
-
-     </div>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
+  </div>
 
   <div class="book">
     <img src="assets/images/BookCovers/EchoBook3Cover.png">
     <strong>Coauthor</strong>
-<div class="book-buttons">
-        <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">
-          <img src="assets/images/General/amazon-ca-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-        <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">
-          <img src="assets/images/General/amazon-us-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-      </div>
-
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
     </div>
+  </div>
 
   <div class="book">
     <img src="assets/images/BookCovers/EchoBook4Cover.png">
     <strong>The Mercy Protocol</strong>
-<div class="book-buttons">
-        <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">
-          <img src="assets/images/General/amazon-ca-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-        <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">
-          <img src="assets/images/General/amazon-us-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-      </div>
-
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
   </div>
 
   <div class="book">
     <img src="assets/images/BookCovers/EchoBook5Cover.png">
     <strong>Final Draft</strong>
- <div class="book-buttons">
-        <a href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">
-          <img src="assets/images/General/amazon-ca-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-        <a href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">
-          <img src="assets/images/General/amazon-us-flag-button.png"
-               style="max-width:150px;border-radius:14px;">
-        </a>
-      </div>
-
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
   </div>
-</div>
-</div>
-</section>
-
-    <div class="footer">
-  <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-  <div class="small">Independent creative studio • Built with intention</div>
-</div>
-
-  </main>
-
-  <script src="assets/js/main.js"></script>
 
 </div>
+
+<div class="footer-note">
+  © <span id="year"></span> One T Media Group
+</div>
+
+</div>
+
 <div class="overlay" id="overlay" onclick="closeOverlay()">
   <span class="close">&times;</span>
   <img id="overlayImage" src="" alt="Expanded Record">
@@ -332,6 +312,7 @@
   function closeOverlay() {
     document.getElementById('overlay').style.display = 'none';
   }
+  document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 
 </body>
