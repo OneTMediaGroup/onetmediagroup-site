@@ -15,16 +15,16 @@
   <meta name="author" content="Scot Anderson" />
   <meta name="theme-color" content="#0b0b0f" />
 
-  <!-- Open Graph (Social Sharing Boost) -->
+  <!-- Open Graph -->
   <meta property="og:title" content="One T Media Group | Official Site" />
   <meta property="og:description" content="Books, music, apps, and independent creative work from Canada." />
   <meta property="og:type" content="website" />
   <meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/" />
-  <meta property="og:image" content="assets/images/General/Crafted-In-The-North-Header.png" />
+  <meta property="og:image" content="https://onetmediagroup.github.io/onetmediagroup-site/assets/images/General/Crafted-In-The-North-Header.png" />
 
   <link rel="stylesheet" href="assets/css/styles.css" />
 
-  <!-- Structured Data for Google -->
+  <!-- Structured Data -->
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -87,7 +87,6 @@
             Publishing • Original Music • Digital Products • Canada
           </div>
 
-          <!-- H1 for SEO -->
           <h1>
             One vision.<br />
             <span class="grad">Many ways to express it.</span>
@@ -123,72 +122,80 @@
       </div>
     </section>
 
-    <!-- (Rest of your content remains unchanged below this line) -->
+    <!-- CHILD ZERO FEATURE -->
+    <section class="section">
+      <h2>Featured Series</h2>
 
-           <div class="book-buttons">
-  <a href="https://www.amazon.ca/dp/B0GNTBVLJ3" target="_blank" rel="noopener">
-    <img src="assets/images/amazon-ca-flag-button.png"
-    <img src="assets/images/General/amazon-ca-flag-button.png"
-         alt="Buy on Amazon Canada"
-         style="max-width:180px;border-radius:14px;box-shadow:0 15px 35px rgba(0,0,0,.35);">
-  </a>
+      <div class="card uc">
+        <div class="grid" style="align-items:start">
+          <div>
+            <img
+              src="assets/images/BookCovers/ChildZeroBookSeriesCover.png"
+              alt="Child Zero Book Series Cover"
+              style="width:100%;max-width:520px;border-radius:16px;border:1px solid rgba(35,35,54,.9);" />
+          </div>
 
-  <a href="https://www.amazon.com/dp/B0GNTBVLJ3" target="_blank" rel="noopener">
-    <img src="assets/images/amazon-us-flag-button.png"
-    <img src="assets/images/General/amazon-us-flag-button.png"
-         alt="Buy on Amazon USA"
-         style="max-width:180px;border-radius:14px;box-shadow:0 15px 35px rgba(0,0,0,.35);">
-  </a>
-@@ -186,51 +186,51 @@
-        <div class="tile">
-          <h3>🎧 Raw Cuts</h3>
-          <p>
-            Original hip-hop and studio sessions.
-            Original Sounds
-            Unmixed. Unfiltered. Uncompromised.
-          </p>
-          <span class="mini">Free Streaming</span>
-          <div style="height:12px"></div>
-          <a class="btn" href="raw-cuts.html">Listen</a>
+          <div>
+            <h2 style="margin-top:0">Child Zero — A Five-Book Series</h2>
+
+            <p>
+              When a simple repair creates an unintended intelligence, Jax finds himself protecting 
+              something the world was never meant to notice. Zero is small, local, and calm — but calm
+              does not go unseen.
+            </p>
+
+            <div class="pillrow">
+              <span class="pill">Fiction</span>
+              <span class="pill">Series</span>
+              <span class="pill">Available Now</span>
+            </div>
+
+            <div style="height:14px"></div>
+
+            <div class="book-buttons">
+              <a href="https://www.amazon.ca/dp/B0GNTBVLJ3" target="_blank" rel="noopener">
+                <img src="assets/images/General/amazon-ca-flag-button.png"
+                     alt="Buy on Amazon Canada"
+                     style="max-width:180px;border-radius:14px;box-shadow:0 15px 35px rgba(0,0,0,.35);" />
+              </a>
+
+              <a href="https://www.amazon.com/dp/B0GNTBVLJ3" target="_blank" rel="noopener">
+                <img src="assets/images/General/amazon-us-flag-button.png"
+                     alt="Buy on Amazon USA"
+                     style="max-width:180px;border-radius:14px;box-shadow:0 15px 35px rgba(0,0,0,.35);" />
+              </a>
+            </div>
+
+          </div>
         </div>
-
-        <div class="tile">
-          <h3>🧠 Apps & Programs</h3>
-          <p>
-            Human-first tools designed with clarity and intention.
-          </p>
-          <span class="mini">In Development</span>
-          <div style="height:12px"></div>
-          <a class="btn" href="apps.html">Explore</a>
-        </div>
-
       </div>
     </section>
 
+    <!-- FOOTER -->
     <div class="footer">
       <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-      <div class="small">Independent creative studio • Built with intention</div>
+      <div class="small">Independent Canadian creative studio • Crafted in the North</div>
     </div>
 
   </main>
 
   <script src="assets/js/main.js"></script>
-<audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
 
-<script>
-  const badge = document.getElementById("canadaBadge");
-  const anthem = document.getElementById("ohCanadaAudio");
+  <audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
 
-  badge.addEventListener("click", () => {
-    if (anthem.paused) {
-      anthem.play();
-    } else {
-      anthem.pause();
-      anthem.currentTime = 0; // resets to beginning
-    }
-  });
-</script>
+  <script>
+    const badge = document.getElementById("canadaBadge");
+    const anthem = document.getElementById("ohCanadaAudio");
 
+    badge.addEventListener("click", () => {
+      if (anthem.paused) {
+        anthem.play();
+      } else {
+        anthem.pause();
+        anthem.currentTime = 0;
+      }
+    });
+  </script>
 
 </body>
 </html>
