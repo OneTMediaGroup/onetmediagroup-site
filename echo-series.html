@@ -231,6 +231,27 @@
       </a>
     </div>
   </div>
+<!-- ARCHIVE -->
+<section class="echo-archive">
+  <h2>Echo Records Archive</h2>
+  <p>
+    Archived notices, resident profiles, and internal documents compiled during early Echo deployment.
+  </p>
+  <a class="btn primary" href="echo-records.html">Access Archive →</a>
+</section>
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
+  <div class="small">Independent creative studio • Built with intention</div>
+    <strong>Final Draft</strong>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
+  </div>
 
 </div>
 
@@ -239,13 +260,27 @@
 </div>
 
 </div>
+</main>
 
+<script src="assets/js/main.js"></script>
+<audio id="ohCanadaAudio" src="assets/audio/OhCanadaecho.mp3"></audio>
 <div class="overlay" id="overlay" onclick="closeOverlay()">
   <span class="close">&times;</span>
   <img id="overlayImage" src="" alt="Expanded Record">
 </div>
 
 <script>
+  const badge = document.getElementById("canadaBadge");
+  const anthem = document.getElementById("ohCanadaAudio");
+
+  badge.addEventListener("click", () => {
+    if (anthem.paused) {
+      anthem.play();
+    } else {
+      anthem.pause();
+      anthem.currentTime = 0; // resets to beginning
+    }
+  });
   function openOverlay(src) {
     document.getElementById('overlayImage').src = src;
     document.getElementById('overlay').style.display = 'flex';
@@ -256,5 +291,7 @@
   document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 
+
+  
 </body>
 </html>
