@@ -1,5 +1,4 @@
 <!doctype html>
-<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -54,6 +53,7 @@
   flex-wrap: wrap;
   align-items: center;
   transition: .3s ease;
+  position: relative;
 }
 
 .track-card.playing {
@@ -75,6 +75,43 @@
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
+}
+
+/* ===== SHARE DROPDOWN ===== */
+
+.share-wrapper {
+  position: relative;
+}
+
+.share-menu {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  background: rgba(20,20,28,.98);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 180px;
+  z-index: 20;
+}
+
+.share-menu a,
+.share-menu button {
+  background: none;
+  border: none;
+  color: #fff;
+  text-align: left;
+  cursor: pointer;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.share-menu a:hover,
+.share-menu button:hover {
+  background: rgba(255,255,255,.08);
 }
 
 /* ===== STICKY PLAYER ===== */
@@ -109,25 +146,6 @@ input[type=range] {
   width: 200px;
 }
 
-<div id="toast" style="
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(20,20,28,.95);
-  padding: 12px 20px;
-  border-radius: 30px;
-  font-size: 14px;
-  opacity: 0;
-  transition: opacity .3s ease, transform .3s ease;
-  pointer-events: none;
-  z-index: 1000;
-">
-  Copied to clipboard
-</div>
-
-
-  
 body {
   padding-bottom: 120px;
 }
@@ -139,7 +157,6 @@ body {
 
 <main class="container">
 
-<!-- HERO -->
 <section class="album-hero">
   <img src="assets/images/EmpireModeCovers/EmpireModeCover.png" class="album-cover">
   <div class="album-title">Empire Mode</div>
@@ -149,18 +166,11 @@ body {
   </div>
 </section>
 
-<!-- TRACK LIST -->
 <section class="track-list">
 
-  <!-- Track cards (INDEX AUTO FROM JS) -->
+  <!-- Example Track (repeat structure for all tracks) -->
 
-  <!-- Repeat pattern only, no data-index needed -->
-
-  <!-- TRACK TEMPLATE EXAMPLE -->
-  <!-- Duplicate structure for all 14 tracks -->
-
-  
- <div class="track-card" data-index="0">
+  <div class="track-card">
     <img src="assets/images/EmpireModeCovers/EmpireModeCover1.png" class="track-cover">
     <div class="track-info">
       <h3>1. Empire Mode</h3>
@@ -168,194 +178,25 @@ body {
         <button class="btn primary play-btn">Play</button>
         <a class="btn" href="assets/audio/EmpireModeAlbum/EMPIREMODE.mp3" download>Download MP3</a>
         <a class="btn" href="assets/audio/EmpireModeAlbum/EMPIREMODE.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
+
+        <div class="share-wrapper">
+          <button class="btn share-toggle">Share</button>
+          <div class="share-menu">
+            <a href="#" class="share-twitter">Share on Twitter</a>
+            <a href="#" class="share-facebook">Share on Facebook</a>
+            <a href="#" class="share-email">Share via Email</a>
+            <button class="share-copy">Copy Link</button>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover2.png" class="track-cover">
-    <div class="track-info">
-      <h3>2. BUILT FROM SCRATCH</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/BUILTFROMSCRATCH.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/BUILTFROMSCRATCH.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover3.png" class="track-cover">
-    <div class="track-info">
-      <h3>3. No Days Off</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/NoDaysOff.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/NoDaysOff.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover4.png" class="track-cover">
-    <div class="track-info">
-      <h3>4. PHASE ONE</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/PHASEONE.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/PHASEONE.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover5.png" class="track-cover">
-    <div class="track-info">
-      <h3>5. DRAFTS & DEADLINES</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/DRAFTS&DEADLINES.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/DRAFTS&DEADLINES.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover6.png" class="track-cover">
-    <div class="track-info">
-      <h3>6. GURU CREW</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/GURUCREW.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/GURUCREW.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover7.png" class="track-cover">
-    <div class="track-info">
-      <h3>7. CRAFTED IN THE NORTH</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/CRAFTEDINTHENORTH.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/CRAFTEDINTHENORTH.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover8.png" class="track-cover">
-    <div class="track-info">
-      <h3>8. FIRESTORE DREAMS</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/FIRESTOREDREAMS.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/FIRESTOREDREAMS.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover9.png" class="track-cover">
-    <div class="track-info">
-      <h3>9. QUIET WINS</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/QUIETWINS.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/QUIETWINS.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover10.png" class="track-cover">
-    <div class="track-info">
-      <h3>10. REDBUBBLE REVENUE</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/REDBUBBLEREVENUE.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/REDBUBBLEREVENUE.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>  
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover11.png" class="track-cover">
-    <div class="track-info">
-      <h3>11. REDBUBBLE REVENUE</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/REFACTOR.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/REFACTOR.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>  
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover12.png" class="track-cover">
-    <div class="track-info">
-      <h3>12. CHAPTER 40</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/CHAPTER40.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/CHAPTER40.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>  
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover13.png" class="track-cover">
-    <div class="track-info">
-      <h3>13. SYSTEMS OVER HYPE</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/SYSTEMSOVERHYPE.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/SYSTEMSOVERHYPE.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>  
-
-<div class="track-card" data-index="0">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover14.png" class="track-cover">
-    <div class="track-info">
-      <h3>14. LEGACY LOOP</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/LEGACYLOOP.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/LEGACYLOOP.m4a" download>Download M4A</a>
-        <button class="btn share-btn">Share</button>
-      </div>
-    </div>
-  </div>    
-
-  
-
-  
-  <!-- COPY BELOW BLOCK AND CHANGE INDEX + FILE NAMES FOR ALL TRACKS -->
 
 </section>
 
 </main>
 
-<!-- AUDIO ENGINE -->
 <audio id="audioPlayer"></audio>
 
 <div class="player-dock">
@@ -368,99 +209,73 @@ body {
   </div>
 </div>
 
+<!-- Toast -->
+<div id="toast" style="
+  position: fixed;
+  bottom: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(20,20,28,.95);
+  padding: 12px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity .3s ease, transform .3s ease;
+  pointer-events: none;
+  z-index: 1000;">
+</div>
+
 <script>
 
-const tracks = [
-  { title: "Empire Mode", file: "EMPIREMODE.mp3" },
-  { title: "Built From Scratch", file: "BUILTFROMSCRATCH.mp3" },
-  { title: "No Days Off", file: "NoDaysOff.mp3" },
-  { title: "Phase One", file: "PHASEONE.mp3" },
-  { title: "Drafts & Deadlines", file: "DRAFTS&DEADLINES.mp3" },
-  { title: "Guru Crew", file: "GURUCREW.mp3" },
-  { title: "Crafted In The North", file: "CRAFTEDINTHENORTH.mp3" },
-  { title: "Firestore Dreams", file: "FIRESTOREDREAMS.mp3" },
-  { title: "Quiet Wins", file: "QUIETWINS.mp3" },
-  { title: "Redbubble Revenue", file: "REDBUBBLEREVENUE.mp3" },
-  { title: "Refactor", file: "REFACTOR.mp3" },
-  { title: "Chapter 40", file: "CHAPTER40.mp3" },
-  { title: "Systems Over Hype", file: "SYSTEMSOVERHYPE.mp3" },
-  { title: "Legacy Loop", file: "LEGACYLOOP.mp3" },
-];
-
 const audio = document.getElementById("audioPlayer");
+const trackCards = document.querySelectorAll(".track-card");
 const nowPlaying = document.getElementById("nowPlaying");
 const playPause = document.getElementById("playPause");
 const progress = document.getElementById("progress");
-const trackCards = document.querySelectorAll(".track-card");
 
-let currentIndex = 0;
-
-function loadTrack(index) {
-  const track = tracks[index];
-  audio.src = "assets/audio/EmpireModeAlbum/" + track.file;
-  nowPlaying.textContent = track.title;
-
-  trackCards.forEach(card => card.classList.remove("playing"));
-  trackCards[index].classList.add("playing");
+function showToast(message){
+  const toast = document.getElementById("toast");
+  toast.textContent = message;
+  toast.style.opacity = "1";
+  toast.style.transform = "translateX(-50%) translateY(-10px)";
+  setTimeout(()=>{
+    toast.style.opacity = "0";
+    toast.style.transform = "translateX(-50%)";
+  },2000);
 }
 
-function playTrack(index) {
-  currentIndex = index;
-  loadTrack(index);
-  audio.play();
-  playPause.textContent = "Pause";
-}
+/* Share dropdown logic */
+document.querySelectorAll(".share-wrapper").forEach(wrapper=>{
+  const toggle = wrapper.querySelector(".share-toggle");
+  const menu = wrapper.querySelector(".share-menu");
 
-trackCards.forEach((card, index) => {
-  card.querySelector(".play-btn").addEventListener("click", () => {
-    playTrack(index);
+  toggle.addEventListener("click",(e)=>{
+    e.stopPropagation();
+    document.querySelectorAll(".share-menu").forEach(m=>m.style.display="none");
+    menu.style.display = "flex";
   });
-});
 
-playPause.addEventListener("click", () => {
-  if (audio.paused) {
-    audio.play();
-    playPause.textContent = "Pause";
-  } else {
-    audio.pause();
-    playPause.textContent = "Play";
-  }
-});
+  document.addEventListener("click",()=> menu.style.display="none");
 
-document.getElementById("next").addEventListener("click", () => {
-  currentIndex = (currentIndex + 1) % tracks.length;
-  playTrack(currentIndex);
-});
+  const pageUrl = window.location.href;
+  const title = document.title;
 
-document.getElementById("prev").addEventListener("click", () => {
-  currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
-  playTrack(currentIndex);
-});
+  wrapper.querySelector(".share-twitter").onclick = () => {
+    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(pageUrl)}`);
+  };
 
-audio.addEventListener("timeupdate", () => {
-  progress.value = (audio.currentTime / audio.duration) * 100 || 0;
-});
+  wrapper.querySelector(".share-facebook").onclick = () => {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`);
+  };
 
-progress.addEventListener("input", () => {
-  audio.currentTime = (progress.value / 100) * audio.duration;
-});
+  wrapper.querySelector(".share-email").onclick = () => {
+    window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(pageUrl)}`;
+  };
 
-audio.addEventListener("ended", () => {
-  currentIndex = (currentIndex + 1) % tracks.length;
-  playTrack(currentIndex);
-});
-
-document.getElementById("playAll").addEventListener("click", () => {
-  playTrack(0);
-});
-
-document.querySelectorAll(".share-btn").forEach((btn, index) => {
-  btn.addEventListener("click", () => {
-    const url = window.location.href;
-    const text = `Listening to "${tracks[index].title}" from Empire Mode by OneT`;
-    navigator.clipboard.writeText(text + " " + url);
-    alert("Track link copied.");
-  });
+  wrapper.querySelector(".share-copy").onclick = () => {
+    navigator.clipboard.writeText(pageUrl);
+    showToast("Link copied to clipboard");
+  };
 });
 
 </script>
