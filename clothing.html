@@ -3,19 +3,52 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>One T Wear The Vibe — One T Media Group</title>
-<meta name="description" content="Creative studio apparel. Minimal. Intentional. Studio-made." />
+
+<title>One T Wear The Vibe | Studio Apparel by One T Media Group</title>
+
+<meta name="description" content="One T Wear The Vibe — minimalist studio apparel inspired by discipline, responsibility, and independent thinking. Designed in Canada. Available via Redbubble." />
+
+<meta name="keywords" content="One T Wear The Vibe, One T clothing, minimalist apparel brand, independent Canadian apparel, studio clothing, discipline shirts" />
+
+<meta name="author" content="One T Media Group" />
 <meta name="theme-color" content="#0b0b0f" />
+
+<link rel="canonical" href="https://onetmediagroup.github.io/onetmediagroup-site/clothing.html" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="One T Wear The Vibe — Studio Apparel" />
+<meta property="og:description" content="Minimal. Intentional. Studio-made apparel inspired by responsibility and discipline." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/clothing.html" />
+<meta property="og:image" content="https://onetmediagroup.github.io/onetmediagroup-site/assets/images/RedBubble/silence-strength.png" />
+
 <link rel="stylesheet" href="assets/css/styles.css" />
 
-<style>
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "ClothingStore",
+  "name": "One T Wear The Vibe",
+  "brand": {
+    "@type": "Brand",
+    "name": "One T Wear The Vibe"
+  },
+  "parentOrganization": {
+    "@type": "Organization",
+    "name": "One T Media Group",
+    "url": "https://onetmediagroup.github.io/onetmediagroup-site/"
+  },
+  "areaServed": "Worldwide"
+}
+</script>
 
+<style>
 /* ===== HERO GRADIENT ANIMATION ===== */
 .hero-wear{
   position:relative;
   overflow:hidden;
 }
-
 .hero-wear::before{
   content:"";
   position:absolute;
@@ -26,29 +59,22 @@
   animation: floatGlow 12s ease-in-out infinite alternate;
   z-index:0;
 }
-
 @keyframes floatGlow{
   from{transform:translateY(-40px) rotate(0deg);}
   to{transform:translateY(40px) rotate(20deg);}
 }
-
 .hero-wear > *{
   position:relative;
   z-index:2;
 }
-
-/* PRODUCT HOVER */
 .product-card{
   transition:all .35s ease;
 }
-
 .product-card:hover{
   transform:translateY(-6px);
   box-shadow:0 0 30px rgba(120,140,255,.25);
   border-color:rgba(120,140,255,.6);
 }
-
-/* DROP LABEL */
 .drop-label{
   font-size:12px;
   letter-spacing:1px;
@@ -56,18 +82,15 @@
   text-transform:uppercase;
   margin-bottom:6px;
 }
-
 .wear-title{
   font-size:42px;
   font-weight:700;
 }
-
 .wear-title span{
   background:linear-gradient(90deg,#8ea2ff,#6ef3ff);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-
 </style>
 </head>
 
@@ -82,24 +105,22 @@
         <div>One T Media Group</div>
       </a>
 
-     <nav class="nav-links">
-          <a href="index.html"
-             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
-            Home
-          </a>
-          <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
-           <img src="assets/images/General/Crafted-In-The-North-Header.png"
-     alt="Crafted in Canada"
-     class="crafted-badge"
-     id="canadaBadge"
-     style="cursor:pointer;" />
-        </nav>
-
-     
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Raw Cuts</a>
+        <a href="clothing.html"
+           style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+          Clothing
+        </a>
+        <a href="contact.html">Contact</a>
+        <img src="assets/images/General/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada - One T Media Group"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
+      </nav>
     </div>
   </div>
 </div>
@@ -111,20 +132,21 @@
 <section class="section hero-wear">
   <div class="card">
     <div class="drop-label">One T Wear The Vibe</div>
-    <div class="wear-title">
+
+    <h1 class="wear-title">
       Built from the <span>work.</span>
-    </div>
+    </h1>
 
     <p class="lead" style="max-width:640px;margin-top:16px;">
       Creative studio apparel inspired by responsibility, discipline, independence, and clarity.
-      Minimal. Intentional. Studio-made.
+      Minimal. Intentional. Studio-made in Canada.
     </p>
 
     <div style="height:18px"></div>
 
     <a class="btn primary"
        href="https://www.redbubble.com/people/onetwearthevibe/shop"
-       target="_blank">
+       target="_blank" rel="noopener">
        Browse Full Collection →
     </a>
   </div>
@@ -138,74 +160,56 @@
 
 <div class="grid">
 
-  <!-- DROP 01 -->
   <div class="card uc product-card">
     <div class="drop-label">Drop 01</div>
-
     <img src="assets/images/RedBubble/silence-strength.png"
-         alt="Silence is Strength"
+         alt="Silence is Strength minimalist apparel design"
          style="width:100%;border-radius:14px" />
-
     <div style="height:16px"></div>
-
     <h3>Silence is Strength</h3>
     <p class="small" style="opacity:.8">
-      Statement wall piece. Clean typography. Studio minimal.
+      Clean typography. Studio minimal. Designed for presence.
     </p>
-
     <div style="height:14px"></div>
-
     <a class="btn primary"
        href="https://www.redbubble.com/i/art-board-print/Silence-is-Strength-by-OneTWearTheVibe/178490086.NVL2T"
-       target="_blank">
+       target="_blank" rel="noopener">
        View Product →
     </a>
   </div>
 
-  <!-- DROP 02 -->
   <div class="card uc product-card">
     <div class="drop-label">Drop 02</div>
-
     <img src="assets/images/RedBubble/power-earned.png"
-         alt="Power Is Earned"
+         alt="Power Is Earned minimalist sweatshirt"
          style="width:100%;border-radius:14px" />
-
     <div style="height:16px"></div>
-
     <h3>Power Is Earned</h3>
     <p class="small" style="opacity:.8">
       Discipline over noise. Built for those who do the work.
     </p>
-
     <div style="height:14px"></div>
-
     <a class="btn primary"
        href="https://www.redbubble.com/i/sweatshirt/Power-Is-Earned-by-OneTWearTheVibe/178490503.7PZBN"
-       target="_blank">
+       target="_blank" rel="noopener">
        View Product →
     </a>
   </div>
 
-  <!-- DROP 03 -->
   <div class="card uc product-card">
     <div class="drop-label">Drop 03</div>
-
     <img src="assets/images/RedBubble/gym-one.png"
-         alt="Gym Shirt One"
+         alt="Minimal gym shirt design"
          style="width:100%;border-radius:14px" />
-
     <div style="height:16px"></div>
-
     <h3>Gym Shirt One</h3>
     <p class="small" style="opacity:.8">
-      Minimal gym piece. Built for repetition. Built for discipline.
+      Built for repetition. Built for discipline.
     </p>
-
     <div style="height:14px"></div>
-
     <a class="btn primary"
        href="https://www.redbubble.com/i/mouse-pad/Gym-Shirt-One-by-OneTWearTheVibe/178489924.G1FH6"
-       target="_blank">
+       target="_blank" rel="noopener">
        View Product →
     </a>
   </div>
@@ -213,7 +217,6 @@
 </div>
 </section>
 
-<!-- WHY -->
 <section class="section">
 <div class="card">
   <h3>Why apparel?</h3>
@@ -231,7 +234,6 @@
 </div>
 </section>
 
-<!-- SUPPORT -->
 <section class="section">
 <div class="card">
   <h3>Support</h3>
@@ -239,37 +241,34 @@
     All orders, shipping, and returns are handled by Redbubble.
     For brand questions or issues, contact us directly.
   </p>
-
   <div style="height:12px"></div>
-
   <a class="btn" href="contact.html">Contact Support</a>
 </div>
 </section>
 
 <div class="footer">
   <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-  <div class="small">Independent creative studio • Built with intention</div>
+  <div class="small">Independent Canadian creative studio • Crafted in the North</div>
 </div>
 
 </main>
 
 <script src="assets/js/main.js"></script>
-
 <audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
 
 <script>
-  const badge = document.getElementById("canadaBadge");
-  const anthem = document.getElementById("ohCanadaAudio");
+const badge = document.getElementById("canadaBadge");
+const anthem = document.getElementById("ohCanadaAudio");
 
-  badge.addEventListener("click", () => {
-    if (anthem.paused) {
-      anthem.play();
-    } else {
-      anthem.pause();
-      anthem.currentTime = 0; // resets to beginning
-    }
-  });
+badge.addEventListener("click", () => {
+  if (anthem.paused) {
+    anthem.play();
+  } else {
+    anthem.pause();
+    anthem.currentTime = 0;
+  }
+});
 </script>
-  
+
 </body>
 </html>
