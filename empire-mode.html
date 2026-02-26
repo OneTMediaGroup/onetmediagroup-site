@@ -1,4 +1,5 @@
 <!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8" />
@@ -70,10 +71,6 @@
   min-width: 220px;
 }
 
-.track-info h3 {
-  margin: 0 0 8px 0;
-}
-
 .track-actions {
   display: flex;
   gap: 12px;
@@ -87,7 +84,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(10,10,15,.9);
+  background: rgba(10,10,15,.95);
   backdrop-filter: blur(14px);
   padding: 14px 20px;
   border-top: 1px solid rgba(255,255,255,.08);
@@ -105,6 +102,7 @@
 .player-controls {
   display: flex;
   gap: 10px;
+  align-items: center;
 }
 
 input[type=range] {
@@ -120,17 +118,6 @@ body {
 
 <body>
 
-<div class="nav">
-  <div class="container">
-    <div class="nav-inner">
-      <a class="brand" href="index.html">
-        <div class="brand-badge">1T</div>
-        <div>One T Media Group</div>
-      </a>
-    </div>
-  </div>
-</div>
-
 <main class="container">
 
 <!-- HERO -->
@@ -139,12 +126,16 @@ body {
   <div class="album-title">Empire Mode</div>
   <div class="album-sub">OneT • One T Media Group</div>
   <div style="margin-top:20px">
-    <button class="btn primary" id="playAll">Play All</button>
+    <button class="btn primary" id="playAll">Play Album</button>
   </div>
 </section>
 
 <!-- TRACK LIST -->
-<section class="track-list" id="trackList">
+<section class="track-list">
+
+  <!-- Track cards (INDEX AUTO FROM JS) -->
+
+  <!-- Repeat pattern only, no data-index needed -->
 
   <!-- TRACK TEMPLATE EXAMPLE -->
   <!-- Duplicate structure for all 14 tracks -->
@@ -362,20 +353,19 @@ body {
 
 const tracks = [
   { title: "Empire Mode", file: "EMPIREMODE.mp3" },
- { title: "BUILT FROM SCRATCH", file: "BUILTFROMSCRATCH.mp3" },
- { title: "No Day Off", file: "NoDaysOff.mp3" },
- { title: "PHASE ONE", file: "PHASEONE.mp3" },
-  { title: "EDRAFTS & DEADLINES", file: "DRAFTS&DEADLINES.mp3" },
- { title: "GURU CREW", file: "GURUCREW.mp3" },
-   { title: "CRAFTED IN THE NORTH", file: "CRAFTEDINTHENORTH.mp3" },
- { title: "FIRESTORE DREAMS", file: "FIRESTOREDREAMS.mp3" },
-   { title: "QUIET WINS", file: "QUIETWINS.mp3" },
-  { title: "REDBUBBLE REVENUE", file: "REDBUBBLEREVENUE.mp3" },
-   { title: "REFACTOR", file: "REFACTOR.mp3" },
- { title: "CHAPTER 40", file: "CHAPTER40.mp3" },  
- { title: "SYSTEMS OVER HYPE", file: "SYSTEMSOVERHYPE.mp3" },
- { title: "LEGACY LOOP", file: "LEGACYLOOP.mp3" },
-
+  { title: "Built From Scratch", file: "BUILTFROMSCRATCH.mp3" },
+  { title: "No Days Off", file: "NoDaysOff.mp3" },
+  { title: "Phase One", file: "PHASEONE.mp3" },
+  { title: "Drafts & Deadlines", file: "DRAFTS&DEADLINES.mp3" },
+  { title: "Guru Crew", file: "GURUCREW.mp3" },
+  { title: "Crafted In The North", file: "CRAFTEDINTHENORTH.mp3" },
+  { title: "Firestore Dreams", file: "FIRESTOREDREAMS.mp3" },
+  { title: "Quiet Wins", file: "QUIETWINS.mp3" },
+  { title: "Redbubble Revenue", file: "REDBUBBLEREVENUE.mp3" },
+  { title: "Refactor", file: "REFACTOR.mp3" },
+  { title: "Chapter 40", file: "CHAPTER40.mp3" },
+  { title: "Systems Over Hype", file: "SYSTEMSOVERHYPE.mp3" },
+  { title: "Legacy Loop", file: "LEGACYLOOP.mp3" },
 ];
 
 const audio = document.getElementById("audioPlayer");
@@ -388,8 +378,9 @@ let currentIndex = 0;
 
 function loadTrack(index) {
   const track = tracks[index];
-  audio.src = track.file;
+  audio.src = "assets/audio/EmpireModeAlbum/" + track.file;
   nowPlaying.textContent = track.title;
+
   trackCards.forEach(card => card.classList.remove("playing"));
   trackCards[index].classList.add("playing");
 }
@@ -435,15 +426,21 @@ progress.addEventListener("input", () => {
   audio.currentTime = (progress.value / 100) * audio.duration;
 });
 
+audio.addEventListener("ended", () => {
+  currentIndex = (currentIndex + 1) % tracks.length;
+  playTrack(currentIndex);
+});
+
 document.getElementById("playAll").addEventListener("click", () => {
   playTrack(0);
 });
 
 document.querySelectorAll(".share-btn").forEach((btn, index) => {
   btn.addEventListener("click", () => {
-    const text = `Listening to Empire Mode - Track ${index + 1}`;
-    navigator.clipboard.writeText(text);
-    alert("Track info copied.");
+    const url = window.location.href;
+    const text = `Listening to "${tracks[index].title}" from Empire Mode by OneT`;
+    navigator.clipboard.writeText(text + " " + url);
+    alert("Track link copied.");
   });
 });
 
