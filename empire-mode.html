@@ -10,149 +10,106 @@
 
 <style>
 
-/* ===== ALBUM HERO ===== */
-
-.album-hero {
-  margin-top: 60px;
-  text-align: center;
-}
-
+.album-hero { margin-top:60px; text-align:center; }
 .album-cover {
-  width: 320px;
-  max-width: 90%;
-  border-radius: 20px;
-  box-shadow: 0 40px 100px rgba(0,0,0,.6);
-  margin-bottom: 30px;
+  width:320px; max-width:90%;
+  border-radius:20px;
+  box-shadow:0 40px 100px rgba(0,0,0,.6);
+  margin-bottom:30px;
 }
-
-.album-title {
-  font-size: 48px;
-  font-weight: 700;
-}
-
-.album-sub {
-  opacity: .7;
-  margin-top: 10px;
-}
-
-/* ===== TRACK LIST ===== */
+.album-title { font-size:48px; font-weight:700; }
+.album-sub { opacity:.7; margin-top:10px; }
 
 .track-list {
-  margin-top: 80px;
-  display: flex;
-  flex-direction: column;
-  gap: 28px;
+  margin-top:80px;
+  display:flex;
+  flex-direction:column;
+  gap:28px;
 }
 
 .track-card {
-  background: rgba(255,255,255,0.04);
-  border-radius: 20px;
-  padding: 24px;
-  display: flex;
-  gap: 20px;
-  flex-wrap: wrap;
-  align-items: center;
-  transition: .3s ease;
-  position: relative;
+  background:rgba(255,255,255,0.04);
+  border-radius:20px;
+  padding:24px;
+  display:flex;
+  gap:20px;
+  flex-wrap:wrap;
+  align-items:center;
+  transition:.3s ease;
+  position:relative;
 }
 
 .track-card.playing {
-  outline: 2px solid var(--accent1);
-  box-shadow: 0 30px 80px rgba(0,0,0,.6);
+  outline:2px solid var(--accent1);
+  box-shadow:0 30px 80px rgba(0,0,0,.6);
 }
 
-.track-cover {
-  width: 140px;
-  border-radius: 14px;
-}
-
-.track-info {
-  flex: 1;
-  min-width: 220px;
-}
+.track-cover { width:140px; border-radius:14px; }
+.track-info { flex:1; min-width:220px; }
 
 .track-actions {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
 }
 
-/* ===== SHARE DROPDOWN ===== */
+/* Share Dropdown */
 
-.share-wrapper {
-  position: relative;
-}
+.share-wrapper { position:relative; }
 
 .share-menu {
-  position: absolute;
-  top: 45px;
-  right: 0;
-  background: rgba(20,20,28,.98);
-  border: 1px solid rgba(255,255,255,.08);
-  border-radius: 14px;
-  padding: 10px;
-  display: none;
-  flex-direction: column;
-  gap: 8px;
-  min-width: 180px;
-  z-index: 20;
+  position:absolute;
+  top:45px;
+  right:0;
+  background:rgba(20,20,28,.98);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:10px;
+  display:none;
+  flex-direction:column;
+  gap:8px;
+  min-width:180px;
+  z-index:20;
 }
 
 .share-menu a,
 .share-menu button {
-  background: none;
-  border: none;
-  color: #fff;
-  text-align: left;
-  cursor: pointer;
-  padding: 6px 8px;
-  border-radius: 8px;
+  background:none;
+  border:none;
+  color:#fff;
+  text-align:left;
+  cursor:pointer;
+  padding:6px 8px;
+  border-radius:8px;
 }
 
 .share-menu a:hover,
 .share-menu button:hover {
-  background: rgba(255,255,255,.08);
+  background:rgba(255,255,255,.08);
 }
 
-/* ===== STICKY PLAYER ===== */
+/* Sticky Player */
 
 .player-dock {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(10,10,15,.95);
-  backdrop-filter: blur(14px);
-  padding: 14px 20px;
-  border-top: 1px solid rgba(255,255,255,.08);
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 50;
+  position:fixed;
+  left:0; right:0; bottom:0;
+  background:rgba(10,10,15,.95);
+  backdrop-filter:blur(14px);
+  padding:14px 20px;
+  border-top:1px solid rgba(255,255,255,.08);
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  z-index:50;
 }
 
-.player-info {
-  font-weight: 600;
-}
+.player-controls { display:flex; gap:10px; align-items:center; }
+input[type=range]{ width:200px; }
 
-.player-controls {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-}
-
-input[type=range] {
-  width: 200px;
-}
-
-body {
-  padding-bottom: 120px;
-}
+body { padding-bottom:120px; }
 
 </style>
 </head>
-
 <body>
 
 <main class="container">
@@ -168,39 +125,26 @@ body {
 
 <section class="track-list">
 
-  <!-- Example Track (repeat structure for all tracks) -->
+<!-- TRACKS 1–14 -->
 
-  <div class="track-card">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover1.png" class="track-cover">
-    <div class="track-info">
-      <h3>1. Empire Mode</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/EMPIREMODE.mp3" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/EMPIREMODE.m4a" download>Download M4A</a>
+<script>
+const trackData = [
+"Empire Mode","Built From Scratch","No Days Off","Phase One",
+"Drafts & Deadlines","Guru Crew","Crafted In The North",
+"Firestore Dreams","Quiet Wins","Redbubble Revenue",
+"Refactor","Chapter 40","Systems Over Hype","Legacy Loop"
+];
+</script>
 
-        <div class="share-wrapper">
-          <button class="btn share-toggle">Share</button>
-          <div class="share-menu">
-            <a href="#" class="share-twitter">Share on Twitter</a>
-            <a href="#" class="share-facebook">Share on Facebook</a>
-            <a href="#" class="share-email">Share via Email</a>
-            <button class="share-copy">Copy Link</button>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
+<div id="tracksContainer"></div>
 
 </section>
-
 </main>
 
 <audio id="audioPlayer"></audio>
 
 <div class="player-dock">
-  <div class="player-info" id="nowPlaying">Not Playing</div>
+  <div id="nowPlaying">Not Playing</div>
   <div class="player-controls">
     <button class="btn" id="prev">Prev</button>
     <button class="btn" id="playPause">Play</button>
@@ -209,73 +153,115 @@ body {
   </div>
 </div>
 
-<!-- Toast -->
 <div id="toast" style="
-  position: fixed;
-  bottom: 100px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: rgba(20,20,28,.95);
-  padding: 12px 20px;
-  border-radius: 30px;
-  font-size: 14px;
-  opacity: 0;
-  transition: opacity .3s ease, transform .3s ease;
-  pointer-events: none;
-  z-index: 1000;">
-</div>
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:rgba(20,20,28,.95);
+  padding:12px 20px;
+  border-radius:30px;
+  font-size:14px;
+  opacity:0;
+  transition:opacity .3s ease, transform .3s ease;
+  pointer-events:none;
+  z-index:1000;"></div>
 
 <script>
 
+const tracks = trackData.map(title => ({
+  title,
+  file: title.replace(/[^A-Za-z0-9]/g,"").toUpperCase() + ".mp3"
+}));
+
+const container = document.getElementById("tracksContainer");
+
+tracks.forEach((track,index)=>{
+  container.innerHTML += `
+  <div class="track-card">
+    <img src="assets/images/EmpireModeCovers/EmpireModeCover${index+1}.png" class="track-cover">
+    <div class="track-info">
+      <h3>${index+1}. ${track.title}</h3>
+      <div class="track-actions">
+        <button class="btn primary play-btn">Play</button>
+        <a class="btn" href="assets/audio/EmpireModeAlbum/${track.file}" download>Download MP3</a>
+        <a class="btn" href="assets/audio/EmpireModeAlbum/${track.file.replace(".mp3",".m4a")}" download>Download M4A</a>
+        <div class="share-wrapper">
+          <button class="btn share-toggle">Share</button>
+          <div class="share-menu">
+            <a href="#" class="share-twitter">Twitter</a>
+            <a href="#" class="share-facebook">Facebook</a>
+            <a href="#" class="share-email">Email</a>
+            <button class="share-copy">Copy Link</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>`;
+});
+
 const audio = document.getElementById("audioPlayer");
-const trackCards = document.querySelectorAll(".track-card");
 const nowPlaying = document.getElementById("nowPlaying");
 const playPause = document.getElementById("playPause");
 const progress = document.getElementById("progress");
 
-function showToast(message){
-  const toast = document.getElementById("toast");
-  toast.textContent = message;
-  toast.style.opacity = "1";
-  toast.style.transform = "translateX(-50%) translateY(-10px)";
-  setTimeout(()=>{
-    toast.style.opacity = "0";
-    toast.style.transform = "translateX(-50%)";
-  },2000);
+let currentIndex=0;
+
+function loadTrack(i){
+  audio.src="assets/audio/EmpireModeAlbum/"+tracks[i].file;
+  nowPlaying.textContent=tracks[i].title;
+  document.querySelectorAll(".track-card").forEach(c=>c.classList.remove("playing"));
+  document.querySelectorAll(".track-card")[i].classList.add("playing");
 }
 
-/* Share dropdown logic */
-document.querySelectorAll(".share-wrapper").forEach(wrapper=>{
-  const toggle = wrapper.querySelector(".share-toggle");
-  const menu = wrapper.querySelector(".share-menu");
+function playTrack(i){
+  currentIndex=i;
+  loadTrack(i);
+  audio.play();
+  playPause.textContent="Pause";
+}
 
-  toggle.addEventListener("click",(e)=>{
+document.addEventListener("click",e=>{
+  if(e.target.classList.contains("play-btn")){
+    const i=[...document.querySelectorAll(".play-btn")].indexOf(e.target);
+    playTrack(i);
+  }
+});
+
+playPause.onclick=()=>{
+  if(audio.paused){ audio.play(); playPause.textContent="Pause"; }
+  else{ audio.pause(); playPause.textContent="Play"; }
+};
+
+next.onclick=()=> playTrack((currentIndex+1)%tracks.length);
+prev.onclick=()=> playTrack((currentIndex-1+tracks.length)%tracks.length);
+
+audio.ontimeupdate=()=> progress.value=(audio.currentTime/audio.duration)*100||0;
+progress.oninput=()=> audio.currentTime=(progress.value/100)*audio.duration;
+audio.onended=()=> playTrack((currentIndex+1)%tracks.length);
+playAll.onclick=()=> playTrack(0);
+
+function showToast(msg){
+  const t=document.getElementById("toast");
+  t.textContent=msg;
+  t.style.opacity="1";
+  setTimeout(()=>t.style.opacity="0",2000);
+}
+
+document.addEventListener("click",e=>{
+  if(e.target.classList.contains("share-toggle")){
     e.stopPropagation();
     document.querySelectorAll(".share-menu").forEach(m=>m.style.display="none");
-    menu.style.display = "flex";
-  });
+    e.target.nextElementSibling.style.display="flex";
+  }
+  if(e.target.classList.contains("share-copy")){
+    navigator.clipboard.writeText(window.location.href);
+    showToast("Link copied");
+  }
+});
 
-  document.addEventListener("click",()=> menu.style.display="none");
-
-  const pageUrl = window.location.href;
-  const title = document.title;
-
-  wrapper.querySelector(".share-twitter").onclick = () => {
-    window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(pageUrl)}`);
-  };
-
-  wrapper.querySelector(".share-facebook").onclick = () => {
-    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(pageUrl)}`);
-  };
-
-  wrapper.querySelector(".share-email").onclick = () => {
-    window.location.href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(pageUrl)}`;
-  };
-
-  wrapper.querySelector(".share-copy").onclick = () => {
-    navigator.clipboard.writeText(pageUrl);
-    showToast("Link copied to clipboard");
-  };
+document.addEventListener("click",()=> {
+  document.querySelectorAll(".share-menu").forEach(m=>m.style.display="none");
 });
 
 </script>
