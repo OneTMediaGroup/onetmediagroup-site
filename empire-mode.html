@@ -1,815 +1,276 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Empire Mode — One T Media Group</title>
-  <meta name="description" content="OneT — Empire Mode. Free release. Stream or download individually." />
-  <meta name="theme-color" content="#0b0b0f" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Empire Mode — One T</title>
+<meta name="description" content="Empire Mode — Official album by OneT." />
+<meta name="theme-color" content="#0b0b0f" />
+<link rel="stylesheet" href="assets/css/styles.css" />
 
-  <style>
-    /* Page extras (keeps your main site style) */
-    .album-hero {
-      margin: 0 0 26px 0;
-      display: grid;
-      grid-template-columns: 320px 1fr;
-      gap: 22px;
-      align-items: start;
-    }
-    @media (max-width: 860px){
-      .album-hero { grid-template-columns: 1fr; }
-    }
+<style>
 
-    .album-cover-wrap{
-      position: relative;
-      border-radius: var(--radius);
-      overflow: hidden;
-      border: 1px solid rgba(35,35,54,.9);
-      box-shadow: var(--shadow);
-      background: rgba(20,20,28,.6);
-    }
-    .album-cover{
-      width: 100%;
-      display:block;
-      aspect-ratio: 1/1;
-      object-fit: cover;
-    }
+/* ===== ALBUM HERO ===== */
 
-    /* Animated glow */
-    .album-cover-wrap::before{
-      content:"";
-      position:absolute;
-      inset:-30%;
-      background: radial-gradient(circle at 30% 30%, rgba(110,231,255,.30), transparent 55%),
-                  radial-gradient(circle at 70% 35%, rgba(139,92,246,.30), transparent 55%),
-                  radial-gradient(circle at 45% 80%, rgba(34,197,94,.18), transparent 60%);
-      filter: blur(18px);
-      opacity: .8;
-      animation: glowFloat 6s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes glowFloat{
-      0%,100%{ transform: translate3d(-1%, 0%, 0) scale(1.02); opacity:.75; }
-      50%{ transform: translate3d(1%, -1%, 0) scale(1.06); opacity:.95; }
-    }
-    .album-cover-wrap::after{
-      content:"";
-      position:absolute;
-      inset:0;
-      background: linear-gradient(180deg, rgba(0,0,0,.00), rgba(0,0,0,.12));
-      pointer-events:none;
-    }
+.album-hero {
+  margin-top: 60px;
+  text-align: center;
+}
 
-    .album-meta h1{
-      margin: 6px 0 10px;
-      font-size: clamp(2.1rem, 4.8vw, 3.4rem);
-      line-height: 1.05;
-    }
-    .album-meta .subline{
-      color: var(--muted);
-      margin: 0 0 14px;
-      max-width: 80ch;
-    }
+.album-cover {
+  width: 320px;
+  max-width: 90%;
+  border-radius: 20px;
+  box-shadow: 0 40px 100px rgba(0,0,0,.6);
+  margin-bottom: 30px;
+}
 
-    .album-actions{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      align-items:center;
-      margin-top: 12px;
-    }
+.album-title {
+  font-size: 48px;
+  font-weight: 700;
+}
 
-    /* Make button pop */
-    .btn.album-primary{
-      border:none;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      color:#0b0b0f;
-      box-shadow: 0 18px 50px rgba(0,0,0,.45);
-      position: relative;
-      overflow: hidden;
-    }
-    .btn.album-primary::after{
-      content:"";
-      position:absolute;
-      inset:-40%;
-      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.45), transparent 55%);
-      transform: translateX(-30%);
-      opacity:.55;
-      animation: shine 3.8s ease-in-out infinite;
-      pointer-events:none;
-    }
-    @keyframes shine{
-      0%,100%{ transform: translateX(-35%) rotate(8deg); opacity:.35; }
-      50%{ transform: translateX(35%) rotate(8deg); opacity:.65; }
-    }
+.album-sub {
+  opacity: .7;
+  margin-top: 10px;
+}
 
-    /* Version toggle */
-    .version-toggle{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      padding: 12px 14px;
-      border-radius: 16px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(16,16,24,.6);
-    }
-    .seg{
-      display:flex;
-      border-radius: 14px;
-      overflow:hidden;
-      border:1px solid rgba(35,35,54,.9);
-      background: rgba(20,20,28,.55);
-    }
-    .seg button{
-      border:0;
-      background: transparent;
-      color: var(--muted);
-      padding: 10px 12px;
-      font-weight: 800;
-      cursor:pointer;
-      min-width: 66px;
-    }
-    .seg button.active{
-      background: rgba(20,20,28,.85);
-      color: var(--text);
-    }
+/* ===== TRACK LIST ===== */
 
-    /* Track nav */
-    .track-nav{
-      position: sticky;
-      top: 74px;
-      z-index: 5;
-      margin: 16px 0 10px;
-      padding: 10px 10px;
-      border-radius: 16px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(11,11,15,.55);
-      backdrop-filter: blur(10px);
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-      justify-content:space-between;
-    }
-    .track-nav .nums{
-      display:flex;
-      flex-wrap:wrap;
-      gap:8px;
-      align-items:center;
-    }
-    .track-nav a{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      width: 36px;
-      height: 34px;
-      border-radius: 12px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(20,20,28,.55);
-      color: var(--muted);
-      font-weight: 900;
-    }
-    .track-nav a:hover{ color: var(--text); filter: brightness(1.08); }
+.track-list {
+  margin-top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
 
-    /* Track card controls */
-    .track-card{
-      position: relative;
-    }
-    .track-card.playing{
-      outline: 2px solid rgba(110,231,255,.35);
-      box-shadow: 0 30px 80px rgba(0,0,0,.55);
-    }
-    .track-head{
-      display:flex;
-      gap:18px;
-      flex-wrap:wrap;
-      align-items:flex-start;
-    }
-    .track-cover{
-      width: 220px;
-      max-width: 220px;
-      border-radius: 14px;
-      border: 1px solid rgba(35,35,54,.9);
-      box-shadow: 0 15px 35px rgba(0,0,0,.35);
-      opacity: .96;
-      background: rgba(16,16,24,.6);
-    }
-    .track-cover[hidden]{ display:none; }
+.track-card {
+  background: rgba(255,255,255,0.04);
+  border-radius: 20px;
+  padding: 24px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  align-items: center;
+  transition: .3s ease;
+}
 
-    .track-controls{
-      display:flex;
-      flex-wrap:wrap;
-      gap:10px;
-      margin-top: 10px;
-      align-items:center;
-    }
-    .mini{
-      display:inline-flex;
-      padding: 8px 10px;
-      border-radius: 12px;
-      border:1px solid rgba(35,35,54,.9);
-      background: rgba(16,16,24,.65);
-      color: var(--muted);
-      font-weight: 800;
-      font-size: .85rem;
-    }
-    .mini strong{ color: var(--text); }
+.track-card.playing {
+  outline: 2px solid var(--accent1);
+  box-shadow: 0 30px 80px rgba(0,0,0,.6);
+}
 
-    /* Waveform */
-    .wave{
-      display:inline-flex;
-      gap:4px;
-      align-items:flex-end;
-      height: 18px;
-      margin-left: 4px;
-      opacity: .85;
-    }
-    .bar{
-      width: 4px;
-      border-radius: 99px;
-      background: linear-gradient(180deg, var(--accent1), var(--accent2));
-      height: 6px;
-      animation: bounce 1.2s ease-in-out infinite;
-      opacity: .6;
-    }
-    .bar:nth-child(2){ animation-delay: .08s; }
-    .bar:nth-child(3){ animation-delay: .16s; }
-    .bar:nth-child(4){ animation-delay: .24s; }
-    .bar:nth-child(5){ animation-delay: .32s; }
-    @keyframes bounce{
-      0%,100%{ height: 6px; opacity:.45; }
-      50%{ height: 18px; opacity: .95; }
-    }
-    .wave.paused .bar{
-      animation-play-state: paused;
-      height: 6px;
-      opacity: .35;
-    }
+.track-cover {
+  width: 140px;
+  border-radius: 14px;
+}
 
-    /* Sticky mini player */
-    .player-dock{
-      position: fixed;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      z-index: 60;
-      padding: 10px 0;
-      background: rgba(11,11,15,.82);
-      backdrop-filter: blur(14px);
-      border-top: 1px solid rgba(35,35,54,.7);
-    }
-    .player-inner{
-      display:flex;
-      flex-wrap:wrap;
-      gap: 12px;
-      align-items:center;
-      justify-content:space-between;
-      padding: 0 20px;
-      max-width: 1200px;
-      margin: 0 auto;
-    }
-    .now{
-      display:flex;
-      flex-direction:column;
-      gap: 2px;
-      min-width: 240px;
-    }
-    .now .t{ font-weight: 900; }
-    .now .s{ color: var(--muted); font-weight: 700; font-size: .9rem; }
+.track-info {
+  flex: 1;
+  min-width: 220px;
+}
 
-    .player-controls{
-      display:flex;
-      gap:10px;
-      align-items:center;
-      flex-wrap:wrap;
-      justify-content:flex-end;
-      min-width: 280px;
-    }
-    .pbtn{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      padding: 10px 12px;
-      border-radius: 14px;
-      border: 1px solid rgba(35,35,54,.9);
-      background: rgba(20,20,28,.6);
-      color: var(--text);
-      font-weight: 900;
-      cursor:pointer;
-      user-select:none;
-    }
-    .pbtn:hover{ filter: brightness(1.08); }
+.track-info h3 {
+  margin: 0 0 8px 0;
+}
 
-    /* Progress */
-    .progress-wrap{
-      display:flex;
-      align-items:center;
-      gap:10px;
-      min-width: min(520px, 100%);
-      flex: 1;
-    }
-    .time{
-      color: var(--muted);
-      font-weight: 800;
-      font-size: .9rem;
-      min-width: 92px;
-      text-align:center;
-    }
-    input[type="range"]{
-      -webkit-appearance: none;
-      appearance: none;
-      width: 100%;
-      height: 10px;
-      border-radius: 999px;
-      background: rgba(20,20,28,.75);
-      border: 1px solid rgba(35,35,54,.9);
-      outline: none;
-      overflow:hidden;
-    }
-    input[type="range"]::-webkit-slider-thumb{
-      -webkit-appearance: none;
-      appearance: none;
-      width: 14px;
-      height: 14px;
-      border-radius: 999px;
-      background: linear-gradient(135deg, var(--accent1), var(--accent2));
-      box-shadow: 0 8px 18px rgba(0,0,0,.35);
-      border: 0;
-    }
+.track-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-    /* Make room for dock */
-    .page-pad{ padding-bottom: 92px; }
-    @media (max-width: 560px){
-      .page-pad{ padding-bottom: 128px; }
-      .now{ min-width: 100%; }
-      .player-controls{ min-width: 100%; justify-content:space-between; }
-      .progress-wrap{ min-width: 100%; }
-    }
-  </style>
+/* ===== STICKY PLAYER ===== */
+
+.player-dock {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10,10,15,.9);
+  backdrop-filter: blur(14px);
+  padding: 14px 20px;
+  border-top: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 50;
+}
+
+.player-info {
+  font-weight: 600;
+}
+
+.player-controls {
+  display: flex;
+  gap: 10px;
+}
+
+input[type=range] {
+  width: 200px;
+}
+
+body {
+  padding-bottom: 120px;
+}
+
+</style>
 </head>
 
 <body>
-  <div class="nav">
-    <div class="container">
-      <div class="nav-inner">
-        <a class="brand" href="index.html">
-          <div class="brand-badge">1T</div>
-          <div>One T Media Group</div>
-        </a>
 
-        <nav class="nav-links">
-          <a href="index.html"
-             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
-            Home
-          </a>
-          <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
-          <img src="assets/images/General/Crafted-In-The-North-Header.png"
-               alt="Crafted in Canada"
-               class="crafted-badge"
-               id="canadaBadge"
-               style="cursor:pointer;" />
-        </nav>
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+
+<!-- HERO -->
+<section class="album-hero">
+  <img src="cover-goes-here.png" class="album-cover">
+  <div class="album-title">Empire Mode</div>
+  <div class="album-sub">OneT • One T Media Group</div>
+  <div style="margin-top:20px">
+    <button class="btn primary" id="playAll">Play All</button>
+  </div>
+</section>
+
+<!-- TRACK LIST -->
+<section class="track-list" id="trackList">
+
+  <!-- TRACK TEMPLATE EXAMPLE -->
+  <!-- Duplicate structure for all 14 tracks -->
+
+  <div class="track-card" data-index="0">
+    <img src="cover1-goes-here.png" class="track-cover">
+    <div class="track-info">
+      <h3>1. Empire Mode</h3>
+      <div class="track-actions">
+        <button class="btn primary play-btn">Play</button>
+        <a class="btn" href="track1-goes-here.mp3" download>Download MP3</a>
+        <a class="btn" href="track1-goes-here.m4a" download>Download M4A</a>
+        <button class="btn share-btn">Share</button>
       </div>
     </div>
   </div>
 
-  <main class="container page-pad">
-    <div class="breadcrumb">Home / Raw Cuts / Empire Mode</div>
+  <!-- COPY BELOW BLOCK AND CHANGE INDEX + FILE NAMES FOR ALL TRACKS -->
 
-    <section class="section" style="padding-top:18px">
-      <div class="album-hero">
-        <div class="album-cover-wrap">
-          <img class="album-cover"
-               src="assets/images/EmpireModeCovers/EmpireModeCover.png"
-               alt="Empire Mode album cover"
-               onerror="this.style.display='none';" />
-        </div>
+</section>
 
-        <div class="album-meta">
-          <h1>Empire Mode</h1>
-          <p class="subline">
-            <strong>Artist:</strong> OneT • <strong>Release:</strong> Free listening
-            <span style="opacity:.6"> • </span>
-            <span style="opacity:.85"><strong>Date:</strong> <span id="releaseDate">2026-02-24</span></span>
-            <span style="opacity:.6"> • </span>
-            <span style="opacity:.85"><strong>Credits:</strong> One T Media Group</span>
-          </p>
+</main>
 
-          <div class="album-actions">
-            <div class="version-toggle">
-              <span class="mini"><strong>Album Version</strong></span>
-              <div class="seg" role="tablist" aria-label="Album-wide version switch">
-                <button id="v1Btn" class="active" type="button">V1</button>
-                <button id="v2Btn" type="button">V2</button>
-              </div>
-              <span class="mini" id="versionLabel"><strong>V1</strong> selected</span>
-            </div>
+<!-- AUDIO ENGINE -->
+<audio id="audioPlayer"></audio>
 
-            <button class="btn primary" id="playAllBtn" type="button">Play All</button>
-            <button class="btn" id="stopAllBtn" type="button">Stop</button>
-
-            <a class="btn album-primary" href="raw-cuts.html">Back to Raw Cuts</a>
-          </div>
-
-          <div style="height:10px"></div>
-          <p class="small" style="opacity:.85;margin:0;max-width:80ch">
-            Two versions per track. Use the album toggle to switch the default playback between V1 and V2.
-            Each track also has its own V1/V2 play + download buttons.
-          </p>
-        </div>
-      </div>
-
-      <div class="track-nav">
-        <div class="nums" aria-label="Track navigation">
-          <span class="mini"><strong>Jump</strong></span>
-          <a href="#t1">1</a><a href="#t2">2</a><a href="#t3">3</a><a href="#t4">4</a><a href="#t5">5</a><a href="#t6">6</a><a href="#t7">7</a>
-          <a href="#t8">8</a><a href="#t9">9</a><a href="#t10">10</a><a href="#t11">11</a><a href="#t12">12</a><a href="#t13">13</a><a href="#t14">14</a>
-        </div>
-
-        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end">
-          <span class="mini">Now playing highlight + mini player enabled</span>
-        </div>
-      </div>
-
-      <!-- TRACK LIST -->
-      <div id="tracks"></div>
-    </section>
-
-    <div class="footer">
-      <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
-      <div class="small">Independent creative studio • Built with intention</div>
-    </div>
-  </main>
-
-  <script src="assets/js/main.js"></script>
-
-  <!-- Canada Easter egg -->
-  <audio id="ohCanadaAudio" src="assets/audio/OhCanadaraw.mp3"></audio>
-
-  <!-- Sticky player audio (single source of truth) -->
-  <audio id="player" preload="metadata"></audio>
-
-  <div class="player-dock" aria-label="Mini player">
-    <div class="player-inner">
-      <div class="now">
-        <div class="t" id="nowTitle">Not playing</div>
-        <div class="s" id="nowSub">Select a track • V1/V2 supported</div>
-      </div>
-
-      <div class="progress-wrap">
-        <div class="time" id="timeLeft">0:00</div>
-        <input id="progress" type="range" min="0" max="1000" value="0" />
-        <div class="time" id="timeRight">0:00 / 0:00</div>
-      </div>
-
-      <div class="player-controls">
-        <div class="wave paused" id="dockWave" aria-hidden="true">
-          <span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span><span class="bar"></span>
-        </div>
-        <button class="pbtn" id="prevBtn" type="button">Prev</button>
-        <button class="pbtn" id="playBtn" type="button">Play</button>
-        <button class="pbtn" id="nextBtn" type="button">Next</button>
-      </div>
-    </div>
+<div class="player-dock">
+  <div class="player-info" id="nowPlaying">Not Playing</div>
+  <div class="player-controls">
+    <button class="btn" id="prev">Prev</button>
+    <button class="btn" id="playPause">Play</button>
+    <button class="btn" id="next">Next</button>
+    <input type="range" id="progress" value="0">
   </div>
+</div>
+
+<script>
+
+const tracks = [
+  { title: "Empire Mode", file: "EMPIREMODE.mp3" },
+ { title: "BUILT FROM SCRATCH", file: "BUILTFROMSCRATCH.mp3" },
+ { title: "No Day Off", file: "NoDaysOff.mp3" },
+ { title: "PHASE ONE", file: "PHASEONE.mp3" },
+  { title: "EDRAFTS & DEADLINES", file: "DRAFTS&DEADLINES.mp3" },
+ { title: "GURU CREW", file: "GURUCREW.mp3" },
+   { title: "CRAFTED IN THE NORTH", file: "CRAFTEDINTHENORTH.mp3" },
+ { title: "FIRESTORE DREAMS", file: "FIRESTOREDREAMS.mp3" },
+   { title: "QUIET WINS", file: "QUIETWINS.mp3" },
+  { title: "REDBUBBLE REVENUE", file: "REDBUBBLEREVENUE.mp3" },
+   { title: "REFACTOR", file: "REFACTOR.mp3" },
+ { title: "CHAPTER 40", file: "CHAPTER40.mp3" },  
+ { title: "SYSTEMS OVER HYPE", file: "SYSTEMSOVERHYPE.mp3" },
+ { title: "LEGACY LOOP", file: "LEGACYLOOP.mp3" },
+
+];
+
+const audio = document.getElementById("audioPlayer");
+const nowPlaying = document.getElementById("nowPlaying");
+const playPause = document.getElementById("playPause");
+const progress = document.getElementById("progress");
+const trackCards = document.querySelectorAll(".track-card");
+
+let currentIndex = 0;
+
+function loadTrack(index) {
+  const track = tracks[index];
+  audio.src = track.file;
+  nowPlaying.textContent = track.title;
+  trackCards.forEach(card => card.classList.remove("playing"));
+  trackCards[index].classList.add("playing");
+}
+
+function playTrack(index) {
+  currentIndex = index;
+  loadTrack(index);
+  audio.play();
+  playPause.textContent = "Pause";
+}
+
+trackCards.forEach((card, index) => {
+  card.querySelector(".play-btn").addEventListener("click", () => {
+    playTrack(index);
+  });
+});
+
+playPause.addEventListener("click", () => {
+  if (audio.paused) {
+    audio.play();
+    playPause.textContent = "Pause";
+  } else {
+    audio.pause();
+    playPause.textContent = "Play";
+  }
+});
+
+document.getElementById("next").addEventListener("click", () => {
+  currentIndex = (currentIndex + 1) % tracks.length;
+  playTrack(currentIndex);
+});
+
+document.getElementById("prev").addEventListener("click", () => {
+  currentIndex = (currentIndex - 1 + tracks.length) % tracks.length;
+  playTrack(currentIndex);
+});
+
+audio.addEventListener("timeupdate", () => {
+  progress.value = (audio.currentTime / audio.duration) * 100 || 0;
+});
+
+progress.addEventListener("input", () => {
+  audio.currentTime = (progress.value / 100) * audio.duration;
+});
+
+document.getElementById("playAll").addEventListener("click", () => {
+  playTrack(0);
+});
+
+document.querySelectorAll(".share-btn").forEach((btn, index) => {
+  btn.addEventListener("click", () => {
+    const text = `Listening to Empire Mode - Track ${index + 1}`;
+    navigator.clipboard.writeText(text);
+    alert("Track info copied.");
+  });
+});
+
+</script>
 
-  <script>
-    // --------- SETTINGS ---------
-    // Hyphen-only filenames (NO en-dash). If your real files differ, rename OR update here.
-    const AUDIO_BASE = "assets/audio/";
-    const IMG_BASE   = "assets/images/EmpireModeCovers/";
-
-    // Track list (titles + descriptions + file stems)
-    const TRACKS = [
-      { n: 1,  id:"t1",  title:"Empire Mode", desc:"V1: Intro Cinematic • V2: Extended Build Version", tags:["Cinematic","Build","Album"], cover:"EmpireModeCover1.png",
-        v1:["Track1–EMPIRE-MODE-V1.m4a","Track1-EMPIRE-MODE-V1.mp3"], v2:["Track1–EMPIRE-MODE-V2.m4a","Track1-EMPIRE-MODE-V2.mp3"] },
-
-      { n: 2,  id:"t2",  title:"Built From Scratch", desc:"V1: Album Version • V2: Harder Beat Remix", tags:["Grind","Remix","Indie"], cover:"EmpireModeCover2.png",
-        v1:["Track2–BUILT-FROM-SCRATCH-V1.m4a","Track2-BUILT-FROM-SCRATCH-V1.mp3"], v2:["Track2–BUILT-FROM-SCRATCH-V2.m4a","Track2-BUILT-FROM-SCRATCH-V2.mp3"] },
-
-      { n: 3,  id:"t3",  title:"No Days Off", desc:"V1: Funny Bounce • V2: Late Night Vibes Version", tags:["Funny","Vibes","Two Versions"], cover:"EmpireModeCover3.png",
-        v1:["Track3-No-Days-Off-V1.m4a","Track3-No-Days-Off-V1.mp3"], v2:["Track3-No-Days-Off-V2.m4a","Track3-No-Days-Off-V2.mp3"] },
-
-      { n: 4,  id:"t4",  title:"Phase One", desc:"V1: Original Heavy • V2: Minimal Systems Edit", note:"Ad-lib stays: “Secure the base.”", tags:["Systems","Heavy","Minimal Edit"], cover:"EmpireModeCover4.png",
-        v1:["Track4–PHASE-ONE-V1.m4a","Track4-PHASE-ONE-V1.mp3"], v2:["Track4–PHASE-ONE-V2.m4a","Track4-PHASE-ONE-V2.mp3"] },
-
-      { n: 5,  id:"t5",  title:"Drafts & Deadlines", desc:"V1: Album Cut • V2: Piano Edition", tags:["Writing","Piano","Album"], cover:"EmpireModeCover5.png",
-        v1:["Track5–DRAFTS-&-DEADLINES-V1.m4a","Track5-DRAFTS-&-DEADLINES-V1.mp3"], v2:["Track5–DRAFTS-&-DEADLINES-V2.m4a","Track5-DRAFTS-&-DEADLINES-V2.mp3"] },
-
-      { n: 6,  id:"t6",  title:"Guru Crew", desc:"V1: App Anthem • V2: Remix Mode", tags:["App Anthem","Remix","Energy"], cover:"EmpireModeCover6.png",
-        v1:["Track6–GURU-CREW-V1.m4a","Track6-GURU-CREW-V1.mp3"], v2:["Track6–GURU-CREW-V2.m4a","Track6-GURU-CREW-V2.mp3"] },
-
-      { n: 7,  id:"t7",  title:"Crafted in the North", desc:"V1: Original • V2: Orchestral Version", tags:["Canada","Orchestral","Signature"], cover:"EmpireModeCover7.png",
-        v1:["Track7–CRAFTED-IN-THE-NORTH-V1.m4a","Track7-CRAFTED-IN-THE-NORTH-V1.mp3"], v2:["Track7–CRAFTED-IN-THE-NORTH-V2.m4a","Track7-CRAFTED-IN-THE-NORTH-V2.mp3"] },
-
-      { n: 8,  id:"t8",  title:"Firestore Dreams", desc:"V1: Tech Grind • V2: Synthwave Edit", tags:["Tech","Synthwave","Grind"], cover:"EmpireModeCover8.png",
-        v1:["Track8–FIRESTORE-DREAMS-V1.m4a","Track8-FIRESTORE-DREAMS-V1.mp3"], v2:["Track8–FIRESTORE-DREAMS-V2.m4a","Track8-FIRESTORE-DREAMS-V2.mp3"] },
-
-      { n: 9,  id:"t9",  title:"Quiet Wins", desc:"V1: Minimal Version • V2: Lo-Fi Night Edit", tags:["Minimal","Lo-Fi","Night"], cover:"EmpireModeCover9.png",
-        v1:["Track9–QUIET-WINS-V1.m4a","Track9-QUIET-WINS-V1.mp3"], v2:["Track9–QUIET-WINS-V2.m4a","Track9-QUIET-WINS-V2.mp3"] },
-
-      { n:10,  id:"t10", title:"Redbubble Revenue", desc:"V1: Playful Flex • V2: Trap Remix", tags:["Playful","Trap","Merch"], cover:"EmpireModeCover10.png",
-        v1:["Track10–REDBUBBLE-REVENUE-V1.m4a","Track10-REDBUBBLE-REVENUE-V1.mp3"], v2:["Track10–REDBUBBLE-REVENUE-V2.m4a","Track10-REDBUBBLE-REVENUE-V2.mp3"] },
-
-      { n:11,  id:"t11", title:"Refactor", desc:"V1: Original Intense • V2: Spoken Word Reset", tags:["Intense","Spoken Word","Reset"], cover:"EmpireModeCover11.png",
-        v1:["Track11–REFACTOR-V1.m4a","Track11-REFACTOR-V1.mp3"], v2:["Track11–REFACTOR-V2.m4a","Track11-REFACTOR-V2.mp3"] },
-
-      { n:12,  id:"t12", title:"Chapter 40", desc:"V1: Album Version • V2: Acoustic Reflection", tags:["Reflection","Acoustic","Story"], cover:"EmpireModeCover12.png",
-        v1:["Track12–CHAPTER-40-V1.m4a","Track12-CHAPTER-40-V1.mp3"], v2:["Track12–CHAPTER-40-V2.m4a","Track12-CHAPTER-40-V2.mp3"] },
-
-      { n:13,  id:"t13", title:"Systems Over Hype", desc:"V1: Original • V2: Drill Edit", tags:["Systems","Drill","No Hype"], cover:"EmpireModeCover13.png",
-        v1:["Track13–SYSTEMS-OVER-HYPE-V1.m4a","Track13-SYSTEMS-OVER-HYPE-V1.mp3"], v2:["Track13–SYSTEMS-OVER-HYPE-V2.m4a","Track13-SYSTEMS-OVER-HYPE-V2.mp3"] },
-
-      { n:14,  id:"t14", title:"Legacy Loop", desc:"V1: Album Version • V2: Extended Outro", tags:["Legacy","Outro","Album"], cover:"EmpireModeCover14.png",
-        v1:["Track14–LEGACY-LOOP-V1.m4a","Track14-LEGACY-LOOP-V1.mp3"], v2:["Track14–LEGACY-LOOP-V2.m4a","Track14-LEGACY-LOOP-V2.mp3"] },
-    ];
-
-    // --------- RENDER TRACKS ---------
-    const tracksRoot = document.getElementById("tracks");
-
-    function pillRow(tags){
-      return `<div class="pillrow" style="opacity:0.95">${tags.map(t=>`<span class="pill">${t}</span>`).join("")}</div>`;
-    }
-
-    function trackHTML(t){
-      const coverSrc = IMG_BASE + t.cover;
-      return `
-        <div class="card uc track-card" id="${t.id}" data-track="${t.n}">
-          <div class="track-head">
-            <img class="track-cover" src="${coverSrc}" alt="Track ${t.n} cover"
-                 onerror="this.hidden=true;" />
-
-            <div style="max-width:720px">
-              <h3 style="margin-top:0">${t.n}. ${t.title}</h3>
-              <p class="small" style="opacity:.8;margin-top:-6px"><strong>Artist:</strong> OneT <span style="opacity:.6"> • </span> Empire Mode</p>
-              <p class="small" style="opacity:.8;margin:0 0 6px">${t.desc}</p>
-              ${t.note ? `<p class="small" style="opacity:.75;margin:0 0 8px"><em>${t.note}</em></p>` : ``}
-
-              <div class="track-controls">
-                <button class="btn primary" data-action="play" data-version="v1" data-track="${t.n}">Play V1</button>
-                <button class="btn" data-action="play" data-version="v2" data-track="${t.n}">Play V2</button>
-
-                <a class="btn" data-action="download" data-version="v1" data-track="${t.n}"
-                   href="${AUDIO_BASE + t.v1[1]}" download>Download V1</a>
-
-                <a class="btn" data-action="download" data-version="v2" data-track="${t.n}"
-                   href="${AUDIO_BASE + t.v2[1]}" download>Download V2</a>
-
-                <button class="btn" data-action="share" data-version="auto" data-track="${t.n}">Share</button>
-
-                <span class="mini">V1 <strong id="d-v1-${t.n}">--:--</strong></span>
-                <span class="mini">V2 <strong id="d-v2-${t.n}">--:--</strong></span>
-              </div>
-
-              <div style="height:10px"></div>
-              ${pillRow(t.tags)}
-            </div>
-          </div>
-        </div>
-      `;
-    }
-
-    tracksRoot.innerHTML = TRACKS.map(trackHTML).join("");
-
-    // --------- PLAYER STATE ---------
-    const player = document.getElementById("player");
-    const nowTitle = document.getElementById("nowTitle");
-    const nowSub = document.getElementById("nowSub");
-    const progress = document.getElementById("progress");
-    const timeLeft = document.getElementById("timeLeft");
-    const timeRight = document.getElementById("timeRight");
-    const dockWave = document.getElementById("dockWave");
-
-    const v1Btn = document.getElementById("v1Btn");
-    const v2Btn = document.getElementById("v2Btn");
-    const versionLabel = document.getElementById("versionLabel");
-
-    const playBtn = document.getElementById("playBtn");
-    const prevBtn = document.getElementById("prevBtn");
-    const nextBtn = document.getElementById("nextBtn");
-
-    const playAllBtn = document.getElementById("playAllBtn");
-    const stopAllBtn = document.getElementById("stopAllBtn");
-
-    let albumVersion = "v1";       // default
-    let currentTrackN = null;      // number
-    let playAllMode = false;
-
-    function setAlbumVersion(v){
-      albumVersion = v;
-      v1Btn.classList.toggle("active", v === "v1");
-      v2Btn.classList.toggle("active", v === "v2");
-      versionLabel.innerHTML = `<strong>${v.toUpperCase()}</strong> selected`;
-    }
-
-    function fmt(sec){
-      if (!isFinite(sec) || sec < 0) return "0:00";
-      const m = Math.floor(sec / 60);
-      const s = Math.floor(sec % 60);
-      return `${m}:${String(s).padStart(2,"0")}`;
-    }
-
-    function pickBestSource(files){
-      // files[0]=m4a, files[1]=mp3 (we prefer m4a, fallback mp3)
-      return AUDIO_BASE + (files[0] || files[1]);
-    }
-
-    function trackByN(n){ return TRACKS.find(t => t.n === Number(n)); }
-
-    function clearHighlights(){
-      document.querySelectorAll(".track-card.playing").forEach(el => el.classList.remove("playing"));
-    }
-
-    function highlightTrack(n){
-      clearHighlights();
-      const el = document.querySelector(`.track-card[data-track="${n}"]`);
-      if (el) el.classList.add("playing");
-    }
-
-    function loadAndPlay(n, version){
-      const t = trackByN(n);
-      if (!t) return;
-
-      const useVer = version === "auto" ? albumVersion : version;
-      const files = useVer === "v2" ? t.v2 : t.v1;
-
-      const src = pickBestSource(files);
-
-      currentTrackN = t.n;
-      highlightTrack(t.n);
-
-      nowTitle.textContent = `${t.n}. ${t.title}`;
-      nowSub.textContent = `Empire Mode • ${useVer.toUpperCase()}`;
-
-      player.src = src;
-      player.currentTime = 0;
-      player.play().catch(()=>{ /* user gesture required sometimes */ });
-
-      playBtn.textContent = "Pause";
-      dockWave.classList.remove("paused");
-    }
-
-    function togglePlayPause(){
-      if (!player.src){
-        loadAndPlay(1, "auto");
-        return;
-      }
-      if (player.paused){
-        player.play().catch(()=>{});
-        playBtn.textContent = "Pause";
-        dockWave.classList.remove("paused");
-      } else {
-        player.pause();
-        playBtn.textContent = "Play";
-        dockWave.classList.add("paused");
-      }
-    }
-
-    function nextTrack(){
-      if (!currentTrackN) return loadAndPlay(1, "auto");
-      const next = currentTrackN >= TRACKS.length ? 1 : currentTrackN + 1;
-      loadAndPlay(next, "auto");
-    }
-
-    function prevTrack(){
-      if (!currentTrackN) return loadAndPlay(1, "auto");
-      const prev = currentTrackN <= 1 ? TRACKS.length : currentTrackN - 1;
-      loadAndPlay(prev, "auto");
-    }
-
-    // --------- EVENTS ---------
-    v1Btn.addEventListener("click", ()=> setAlbumVersion("v1"));
-    v2Btn.addEventListener("click", ()=> setAlbumVersion("v2"));
-
-    playBtn.addEventListener("click", togglePlayPause);
-    nextBtn.addEventListener("click", ()=>{ playAllMode = false; nextTrack(); });
-    prevBtn.addEventListener("click", ()=>{ playAllMode = false; prevTrack(); });
-
-    playAllBtn.addEventListener("click", ()=>{
-      playAllMode = true;
-      loadAndPlay(currentTrackN || 1, "auto");
-    });
-
-    stopAllBtn.addEventListener("click", ()=>{
-      playAllMode = false;
-      player.pause();
-      player.currentTime = 0;
-      playBtn.textContent = "Play";
-      dockWave.classList.add("paused");
-      nowTitle.textContent = "Stopped";
-      nowSub.textContent = "Select a track • V1/V2 supported";
-      clearHighlights();
-      currentTrackN = null;
-      progress.value = 0;
-      timeLeft.textContent = "0:00";
-      timeRight.textContent = "0:00 / 0:00";
-    });
-
-    // Track card button clicks (delegation)
-    document.addEventListener("click", (e)=>{
-      const btn = e.target.closest("[data-action]");
-      if (!btn) return;
-
-      const action = btn.getAttribute("data-action");
-      const n = Number(btn.getAttribute("data-track"));
-      const ver = btn.getAttribute("data-version") || "auto";
-
-      if (action === "play"){
-        playAllMode = false;
-        loadAndPlay(n, ver);
-      }
-
-      if (action === "share"){
-        const t = trackByN(n);
-        if (!t) return;
-        const useVer = (ver === "auto") ? albumVersion : ver;
-        const shareUrl = `${location.origin}${location.pathname}#t${n}`;
-        const text = `OneT — Empire Mode • Track ${n}: ${t.title} (${useVer.toUpperCase()})`;
-        if (navigator.share){
-          navigator.share({ title: "Empire Mode", text, url: shareUrl }).catch(()=>{});
-        } else {
-          navigator.clipboard?.writeText(`${text} • ${shareUrl}`).catch(()=>{});
-          alert("Link copied (or attempted).");
-        }
-      }
-    });
-
-    // Auto advance in Play All mode
-    player.addEventListener("ended", ()=>{
-      if (playAllMode){
-        const next = currentTrackN >= TRACKS.length ? 1 : currentTrackN + 1;
-        loadAndPlay(next, "auto");
-      } else {
-        playBtn.textContent = "Play";
-        dockWave.classList.add("paused");
-      }
-    });
-
-    // Progress sync
-    function updateProgress(){
-      const cur = player.currentTime || 0;
-      const dur = player.duration || 0;
-      const pct = dur ? Math.round((cur/dur) * 1000) : 0;
-      progress.value = String(pct);
-
-      timeLeft.textContent = fmt(cur);
-      timeRight.textContent = `${fmt(cur)} / ${fmt(dur)}`;
-    }
-    player.addEventListener("timeupdate", updateProgress);
-    player.addEventListener("loadedmetadata", updateProgress);
-
-    progress.addEventListener("input", ()=>{
-      const dur = player.duration || 0;
-      if (!dur) return;
-      const pct = Number(progress.value) / 1000;
-      player.currentTime = dur * pct;
-    });
-
-    // When paused, stop waveform
-    player.addEventListener("pause", ()=> dockWave.classList.add("paused"));
-    player.addEventListener("play", ()=> dockWave.classList.remove("paused"));
-
-    // --------- AUTO DURATION DETECTION (V1 + V2) ---------
-    function detectDurations(){
-      TRACKS.forEach(t=>{
-        // V1
-        const a1 = new Audio();
-        a1.preload = "metadata";
-        a1.src = pickBestSource(t.v1);
-        a1.addEventListener("loadedmetadata", ()=>{
-          const el = document.getElementById(`d-v1-${t.n}`);
-          if (el) el.textContent = fmt(a1.duration);
-        });
-
-        // V2
-        const a2 = new Audio();
-        a2.preload = "metadata";
-        a2.src = pickBestSource(t.v2);
-        a2.addEventListener("loadedmetadata", ()=>{
-          const el = document.getElementById(`d-v2-${t.n}`);
-          if (el) el.textContent = fmt(a2.duration);
-        });
-      });
-    }
-    detectDurations();
-
-    // --------- CANADA EASTER EGG (click to toggle) ---------
-    const badge = document.getElementById("canadaBadge");
-    const anthem = document.getElementById("ohCanadaAudio");
-    if (badge && anthem){
-      badge.addEventListener("click", () => {
-        if (anthem.paused) anthem.play();
-        else { anthem.pause(); anthem.currentTime = 0; }
-      });
-    }
-
-    // Init
-    setAlbumVersion("v1");
-  </script>
 </body>
 </html>
