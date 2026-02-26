@@ -169,11 +169,22 @@ const trackData = [
 
 <script>
 
-const tracks = trackData.map(title => ({
-  title,
-  file: title.replace(/[^A-Za-z0-9]/g,"").toUpperCase() + ".mp3"
-}));
-
+const tracks = [
+  { title: "Empire Mode", file: "EMPIREMODE.mp3" },
+  { title: "Built From Scratch", file: "BUILTFROMSCRATCH.mp3" },
+  { title: "No Days Off", file: "NoDaysOff.mp3" },
+  { title: "Phase One", file: "PHASEONE.mp3" },
+  { title: "Drafts & Deadlines", file: "DRAFTS&DEADLINES.mp3" },
+  { title: "Guru Crew", file: "GURUCREW.mp3" },
+  { title: "Crafted In The North", file: "CRAFTEDINTHENORTH.mp3" },
+  { title: "Firestore Dreams", file: "FIRESTOREDREAMS.mp3" },
+  { title: "Quiet Wins", file: "QUIETWINS.mp3" },
+  { title: "Redbubble Revenue", file: "REDBUBBLEREVENUE.mp3" },
+  { title: "Refactor", file: "REFACTOR.mp3" },
+  { title: "Chapter 40", file: "CHAPTER40.mp3" },
+  { title: "Systems Over Hype", file: "SYSTEMSOVERHYPE.mp3" },
+  { title: "Legacy Loop", file: "LEGACYLOOP.mp3" }
+];
 const container = document.getElementById("tracksContainer");
 
 tracks.forEach((track,index)=>{
