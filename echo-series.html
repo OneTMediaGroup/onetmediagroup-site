@@ -12,7 +12,6 @@
 
 /* ---------- HERO ---------- */
 
-
 .echo-hero {
   padding: 120px 0 80px;
   text-align: center;
@@ -53,6 +52,7 @@
   padding: 24px;
   box-shadow: 0 25px 60px rgba(0,0,0,.35);
   transition: transform .3s ease, box-shadow .3s ease;
+  text-align: center;
 }
 
 .echo-card:hover {
@@ -74,6 +74,22 @@
   font-size: 14px;
   opacity: .8;
   margin-bottom: 16px;
+}
+
+.book-buttons {
+  margin-top: 12px;
+}
+
+.book-buttons img {
+  max-width: 150px;
+  border-radius: 14px;
+  margin: 6px auto;
+  display: block;
+  transition: transform .2s ease;
+}
+
+.book-buttons img:hover {
+  transform: scale(1.05);
 }
 
 /* ---------- ARCHIVE ---------- */
@@ -116,22 +132,22 @@
         <div>One T Media Group</div>
       </a>
 
-     <nav class="nav-links">
-          <a href="index.html"
-             style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
-            Home
-          </a>
-          <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
-           <img src="assets/images/Crafted-In-The-North-Header.png"
-     alt="Crafted in Canada"
-     class="crafted-badge"
-     id="canadaBadge"
-     style="cursor:pointer;" />
-        </nav>
+      <nav class="nav-links">
+        <a href="index.html"
+           style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+          Home
+        </a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Raw Cuts</a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
+        <img src="assets/images/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
+      </nav>
     </div>
   </div>
 </div>
@@ -144,7 +160,6 @@
   <div class="echo-sub">
     A five-book fiction series by Scot Anderson
   </div>
-
 
   <div class="echo-intro">
     In the town of Raven’s Hallow, no one loses their freedom.
@@ -161,39 +176,79 @@
 <!-- BOOKS -->
 <section class="echo-grid">
 
+  <!-- BOOK 1 -->
   <div class="echo-card">
-    <img src="assets/images/EchoBook1Cover.png">
+    <img src="assets/images/BookCovers/EchoBook1Cover.png">
     <h3>Book I — The First Reflection</h3>
     <p>Clarity replaces hesitation. Reflections begin to act on their own.</p>
-    <a class="btn primary" href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">Read</a>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH74TR3P" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH74TR3P" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
   </div>
 
+  <!-- BOOK 2 -->
   <div class="echo-card">
-    <img src="assets/images/EchoBook2Cover.png">
+    <img src="assets/images/BookCovers/EchoBook2Cover.png">
     <h3>Book II — The Shadow Line</h3>
     <p>Alignment spreads. Remaining undecided becomes dangerous.</p>
-    <a class="btn primary" href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">Read</a>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GGZHRTSJ" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GGZHRTSJ" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
   </div>
 
+  <!-- BOOK 3 -->
   <div class="echo-card">
-    <img src="assets/images/EchoBook3Cover.png">
+    <img src="assets/images/BookCovers/EchoBook3Cover.png">
     <h3>Book III — Coauthor</h3>
     <p>The line between assistance and authorship disappears.</p>
-    <a class="btn primary" href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">Read</a>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH1DW3LH" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH1DW3LH" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
   </div>
 
+  <!-- BOOK 4 -->
   <div class="echo-card">
-    <img src="assets/images/EchoBook4Cover.png">
+    <img src="assets/images/BookCovers/EchoBook4Cover.png">
     <h3>Book IV — The Mercy Protocol</h3>
     <p>Certainty arrives before doubt.</p>
-    <a class="btn primary" href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">Read</a>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH46S48W" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH46S48W" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
   </div>
 
+  <!-- BOOK 5 -->
   <div class="echo-card">
-    <img src="assets/images/EchoBook5Cover.png">
+    <img src="assets/images/BookCovers/EchoBook5Cover.png">
     <h3>Book V — Final Draft</h3>
     <p>Clarity has replaced choice. Nothing remains to be revised.</p>
-    <a class="btn primary" href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">Read</a>
+    <div class="book-buttons">
+      <a href="https://www.amazon.ca/dp/B0GH7BJRBQ" target="_blank">
+        <img src="assets/images/General/amazon-ca-flag-button.png">
+      </a>
+      <a href="https://www.amazon.com/dp/B0GH7BJRBQ" target="_blank">
+        <img src="assets/images/General/amazon-us-flag-button.png">
+      </a>
+    </div>
   </div>
 
 </section>
@@ -210,7 +265,7 @@
 </main>
 
 <script src="assets/js/main.js"></script>
-<audio id="ohCanadaAudio" src="assets/audio/OhCanada.mp3"></audio>
+
 <audio id="ohCanadaAudio" src="assets/audio/OhCanadaecho.mp3"></audio>
 
 <script>
@@ -222,12 +277,10 @@
       anthem.play();
     } else {
       anthem.pause();
-      anthem.currentTime = 0; // resets to beginning
+      anthem.currentTime = 0;
     }
   });
 </script>
-
-
 
 </body>
 </html>
