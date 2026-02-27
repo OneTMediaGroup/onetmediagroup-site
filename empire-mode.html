@@ -7,15 +7,12 @@
 <title>Empire Mode Album by OneT | One T Media Group</title>
 
 <meta name="description" content="Empire Mode is the official 14-track album by OneT. Produced by One T Media Group. Stream free, download MP3 & M4A, and explore the full tracklist." />
-
 <meta name="keywords" content="Empire Mode album, OneT music, One T Media Group album, Canadian hip hop album, Empire Mode tracks" />
-
 <meta name="author" content="One T Media Group" />
 <meta name="theme-color" content="#0b0b0f" />
 
 <link rel="canonical" href="https://onetmediagroup.github.io/onetmediagroup-site/empire-mode.html" />
 
-<!-- Open Graph -->
 <meta property="og:title" content="Empire Mode — OneT" />
 <meta property="og:description" content="Official 14-track album by OneT. Stream and download directly." />
 <meta property="og:type" content="music.album" />
@@ -24,16 +21,12 @@
 
 <link rel="stylesheet" href="assets/css/styles.css" />
 
-<!-- Structured Data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "MusicAlbum",
   "name": "Empire Mode",
-  "byArtist": {
-    "@type": "MusicGroup",
-    "name": "OneT"
-  },
+  "byArtist": { "@type": "MusicGroup", "name": "OneT" },
   "publisher": {
     "@type": "Organization",
     "name": "One T Media Group",
@@ -45,8 +38,6 @@
 </script>
 
 <style>
-
-/* === YOUR ORIGINAL STYLES (UNCHANGED) === */
 
 .album-hero { margin-top:60px; text-align:center; }
 
@@ -62,6 +53,7 @@
 
 .track-list {
   margin-top:80px;
+  margin-bottom:160px; /* FIX: ensures last card clears player */
   display:flex;
   flex-direction:column;
   gap:28px;
@@ -87,44 +79,7 @@
 .track-cover { width:140px; border-radius:14px; }
 .track-info { flex:1; min-width:220px; }
 
-.track-actions {
-  display:flex;
-  gap:12px;
-  flex-wrap:wrap;
-}
-
-.share-wrapper { position:relative; }
-
-.share-menu {
-  position:absolute;
-  top:45px;
-  right:0;
-  background:rgba(20,20,28,.98);
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;
-  padding:10px;
-  display:none;
-  flex-direction:column;
-  gap:8px;
-  min-width:180px;
-  z-index:20;
-}
-
-.share-menu a,
-.share-menu button {
-  background:none;
-  border:none;
-  color:#fff;
-  text-align:left;
-  cursor:pointer;
-  padding:6px 8px;
-  border-radius:8px;
-}
-
-.share-menu a:hover,
-.share-menu button:hover {
-  background:rgba(255,255,255,.08);
-}
+.track-actions { display:flex; gap:12px; flex-wrap:wrap; }
 
 .player-dock {
   position:fixed;
@@ -148,7 +103,34 @@ body { padding-bottom:120px; }
 
 <body>
 
+<!-- NAV ADDED -->
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Raw Cuts</a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
+        <img src="assets/images/General/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
+      </nav>
+    </div>
+  </div>
+</div>
+
 <main class="container">
+
+<div class="breadcrumb">Home / Empire Mode</div>
 
 <section class="album-hero">
   <img src="assets/images/EmpireModeCovers/EmpireModeCover.png"
@@ -167,6 +149,11 @@ body { padding-bottom:120px; }
 <div id="tracksContainer"></div>
 </section>
 
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
+  <div class="small">Independent Canadian creative studio • Crafted in the North</div>
+</div>
+
 </main>
 
 <audio id="audioPlayer"></audio>
@@ -181,23 +168,9 @@ body { padding-bottom:120px; }
   </div>
 </div>
 
-<div id="toast" style="
-  position:fixed;
-  bottom:100px;
-  left:50%;
-  transform:translateX(-50%);
-  background:rgba(20,20,28,.95);
-  padding:12px 20px;
-  border-radius:30px;
-  font-size:14px;
-  opacity:0;
-  transition:opacity .3s ease;
-  pointer-events:none;
-  z-index:1000;"></div>
-
 <script>
 
-/* === YOUR ORIGINAL PLAYER SCRIPT (UNCHANGED) === */
+/* PLAYER LOGIC UNCHANGED */
 
 const tracks = [
   { title: "Empire Mode", file: "EMPIREMODE.mp3" },
@@ -235,12 +208,13 @@ tracks.forEach((track,index)=>{
   </div>`;
 });
 
-/* Player logic unchanged below */
-
 const audio = document.getElementById("audioPlayer");
 const nowPlaying = document.getElementById("nowPlaying");
 const playPause = document.getElementById("playPause");
 const progress = document.getElementById("progress");
+const next = document.getElementById("next");
+const prev = document.getElementById("prev");
+const playAll = document.getElementById("playAll");
 
 let currentIndex=0;
 
@@ -277,6 +251,16 @@ audio.ontimeupdate=()=> progress.value=(audio.currentTime/audio.duration)*100||0
 progress.oninput=()=> audio.currentTime=(progress.value/100)*audio.duration;
 audio.onended=()=> playTrack((currentIndex+1)%tracks.length);
 playAll.onclick=()=> playTrack(0);
+
+document.getElementById("year").textContent = new Date().getFullYear();
+
+const badge = document.getElementById("canadaBadge");
+if(badge){
+  const anthem = new Audio("assets/audio/OhCanada.mp3");
+  badge.addEventListener("click",()=>{
+    anthem.paused ? anthem.play() : (anthem.pause(), anthem.currentTime=0);
+  });
+}
 
 </script>
 
