@@ -6,43 +6,21 @@
 
 <title>Empire Mode Album by OneT | One T Media Group</title>
 
-<meta name="description" content="Empire Mode is the official 14-track album by OneT. Produced by One T Media Group. Stream free, download MP3 & M4A, and explore the full tracklist." />
-<meta name="keywords" content="Empire Mode album, OneT music, One T Media Group album, Canadian hip hop album, Empire Mode tracks" />
+<meta name="description" content="Empire Mode is the official 14-track album by OneT. Stream the full album on YouTube." />
+<meta name="keywords" content="Empire Mode album, OneT music, One T Media Group album, Canadian hip hop album" />
 <meta name="author" content="One T Media Group" />
 <meta name="theme-color" content="#0b0b0f" />
 
 <link rel="canonical" href="https://onetmediagroup.github.io/onetmediagroup-site/empire-mode.html" />
-
-<meta property="og:title" content="Empire Mode — OneT" />
-<meta property="og:description" content="Official 14-track album by OneT. Stream and download directly." />
-<meta property="og:type" content="music.album" />
-<meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/empire-mode.html" />
-<meta property="og:image" content="https://onetmediagroup.github.io/onetmediagroup-site/assets/images/EmpireModeCovers/EmpireModeCover.png" />
-
 <link rel="stylesheet" href="assets/css/styles.css" />
-
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "MusicAlbum",
-  "name": "Empire Mode",
-  "byArtist": { "@type": "MusicGroup", "name": "OneT" },
-  "publisher": {
-    "@type": "Organization",
-    "name": "One T Media Group",
-    "url": "https://onetmediagroup.github.io/onetmediagroup-site/"
-  },
-  "numTracks": 14,
-  "genre": "Hip Hop"
-}
-</script>
 
 <style>
 
 .album-hero { margin-top:60px; text-align:center; }
 
 .album-cover {
-  width:320px; max-width:90%;
+  width:320px;
+  max-width:90%;
   border-radius:20px;
   box-shadow:0 40px 100px rgba(0,0,0,.6);
   margin-bottom:30px;
@@ -53,57 +31,73 @@
 
 .track-list {
   margin-top:80px;
-  margin-bottom:160px; /* FIX: ensures last card clears player */
   display:flex;
   flex-direction:column;
-  gap:28px;
+  gap:40px;
+  margin-bottom:120px;
 }
 
 .track-card {
   background:rgba(255,255,255,0.04);
   border-radius:20px;
   padding:24px;
-  display:flex;
-  gap:20px;
-  flex-wrap:wrap;
-  align-items:center;
-  transition:.3s ease;
+  box-shadow:0 25px 60px rgba(0,0,0,.35);
+}
+
+.track-cover {
+  width:140px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+
+.track-title {
+  font-size:20px;
+  margin-bottom:18px;
+}
+
+.video-wrapper {
   position:relative;
+  padding-bottom:56.25%;
+  height:0;
+  overflow:hidden;
+  border-radius:16px;
 }
 
-.track-card.playing {
-  outline:2px solid var(--accent1);
-  box-shadow:0 30px 80px rgba(0,0,0,.6);
+.video-wrapper iframe {
+  position:absolute;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  border:0;
 }
 
-.track-cover { width:140px; border-radius:14px; }
-.track-info { flex:1; min-width:220px; }
-
-.track-actions { display:flex; gap:12px; flex-wrap:wrap; }
-
-.player-dock {
-  position:fixed;
-  left:0; right:0; bottom:0;
-  background:rgba(10,10,15,.95);
-  backdrop-filter:blur(14px);
-  padding:14px 20px;
-  border-top:1px solid rgba(255,255,255,.08);
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  z-index:50;
+.watch-btn {
+  display:inline-block;
+  margin-top:14px;
+  padding:10px 20px;
+  border-radius:30px;
+  background:#0f0f0f;
+  border:1px solid #ff0000;
+  color:#fff;
+  text-decoration:none;
+  transition:.3s ease;
+  box-shadow:0 0 10px rgba(255,0,0,.25);
 }
 
-.player-controls { display:flex; gap:10px; align-items:center; }
-input[type=range]{ width:200px; }
-body { padding-bottom:120px; }
+.watch-btn:hover {
+  background:#ff0000;
+  box-shadow:0 0 20px rgba(255,0,0,.6);
+}
+
+body { padding-bottom:60px; }
 
 </style>
 </head>
 
 <body>
 
-<!-- NAV ADDED -->
+<!-- NAV -->
 <div class="nav">
   <div class="container">
     <div class="nav-inner">
@@ -118,11 +112,6 @@ body { padding-bottom:120px; }
         <a href="raw-cuts.html">Raw Cuts</a>
         <a href="clothing.html">Clothing</a>
         <a href="contact.html">Contact</a>
-        <img src="assets/images/General/Crafted-In-The-North-Header.png"
-             alt="Crafted in Canada"
-             class="crafted-badge"
-             id="canadaBadge"
-             style="cursor:pointer;" />
       </nav>
     </div>
   </div>
@@ -141,12 +130,36 @@ body { padding-bottom:120px; }
   <div class="album-sub">OneT • One T Media Group</div>
 
   <div style="margin-top:20px">
-    <button class="btn primary" id="playAll">Play Album</button>
+    <a href="https://www.youtube.com/@OneTMediaGroup" target="_blank" class="watch-btn">
+      ▶ View Channel on YouTube
+    </a>
   </div>
 </section>
 
 <section class="track-list">
-<div id="tracksContainer"></div>
+
+<!-- TRACK TEMPLATE — REPEAT FOR ALL 14 TRACKS -->
+
+<div class="track-card">
+  <img src="assets/images/EmpireModeCovers/EmpireModeCover1.png" class="track-cover">
+  <div class="track-title">1. Empire Mode</div>
+  <div class="video-wrapper">
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID_1"
+            allowfullscreen></iframe>
+  </div>
+</div>
+
+<div class="track-card">
+  <img src="assets/images/EmpireModeCovers/EmpireModeCover2.png" class="track-cover">
+  <div class="track-title">2. Built From Scratch</div>
+  <div class="video-wrapper">
+    <iframe src="https://www.youtube.com/embed/VIDEO_ID_2"
+            allowfullscreen></iframe>
+  </div>
+</div>
+
+<!-- Continue replacing VIDEO_ID_X for all 14 tracks -->
+
 </section>
 
 <div class="footer">
@@ -156,112 +169,8 @@ body { padding-bottom:120px; }
 
 </main>
 
-<audio id="audioPlayer"></audio>
-
-<div class="player-dock">
-  <div id="nowPlaying">Not Playing</div>
-  <div class="player-controls">
-    <button class="btn" id="prev">Prev</button>
-    <button class="btn" id="playPause">Play</button>
-    <button class="btn" id="next">Next</button>
-    <input type="range" id="progress" value="0">
-  </div>
-</div>
-
 <script>
-
-/* PLAYER LOGIC UNCHANGED */
-
-const tracks = [
-  { title: "Empire Mode", file: "EMPIREMODE.mp3" },
-  { title: "Built From Scratch", file: "BUILTFROMSCRATCH.mp3" },
-  { title: "No Days Off", file: "NoDaysOff.mp3" },
-  { title: "Phase One", file: "PHASEONE.mp3" },
-  { title: "Drafts & Deadlines", file: "DRAFTS&DEADLINES.mp3" },
-  { title: "Guru Crew", file: "GURUCREW.mp3" },
-  { title: "Crafted In The North", file: "CRAFTEDINTHENORTH.mp3" },
-  { title: "Firestore Dreams", file: "FIRESTOREDREAMS.mp3" },
-  { title: "Quiet Wins", file: "QUIETWINS.mp3" },
-  { title: "Redbubble Revenue", file: "REDBUBBLEREVENUE.mp3" },
-  { title: "Refactor", file: "REFACTOR.mp3" },
-  { title: "Chapter 40", file: "CHAPTER40.mp3" },
-  { title: "Systems Over Hype", file: "SYSTEMSOVERHYPE.mp3" },
-  { title: "Legacy Loop", file: "LEGACYLOOP.mp3" }
-];
-
-const container = document.getElementById("tracksContainer");
-
-tracks.forEach((track,index)=>{
-  container.innerHTML += `
-  <div class="track-card">
-    <img src="assets/images/EmpireModeCovers/EmpireModeCover${index+1}.png"
-         class="track-cover"
-         alt="${track.title} cover art">
-    <div class="track-info">
-      <h3>${index+1}. ${track.title}</h3>
-      <div class="track-actions">
-        <button class="btn primary play-btn">Play</button>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/${track.file}" download>Download MP3</a>
-        <a class="btn" href="assets/audio/EmpireModeAlbum/${track.file.replace(".mp3",".m4a")}" download>Download M4A</a>
-      </div>
-    </div>
-  </div>`;
-});
-
-const audio = document.getElementById("audioPlayer");
-const nowPlaying = document.getElementById("nowPlaying");
-const playPause = document.getElementById("playPause");
-const progress = document.getElementById("progress");
-const next = document.getElementById("next");
-const prev = document.getElementById("prev");
-const playAll = document.getElementById("playAll");
-
-let currentIndex=0;
-
-function loadTrack(i){
-  audio.src="assets/audio/EmpireModeAlbum/"+tracks[i].file;
-  nowPlaying.textContent=tracks[i].title;
-  document.querySelectorAll(".track-card").forEach(c=>c.classList.remove("playing"));
-  document.querySelectorAll(".track-card")[i].classList.add("playing");
-}
-
-function playTrack(i){
-  currentIndex=i;
-  loadTrack(i);
-  audio.play();
-  playPause.textContent="Pause";
-}
-
-document.addEventListener("click",e=>{
-  if(e.target.classList.contains("play-btn")){
-    const i=[...document.querySelectorAll(".play-btn")].indexOf(e.target);
-    playTrack(i);
-  }
-});
-
-playPause.onclick=()=>{
-  if(audio.paused){ audio.play(); playPause.textContent="Pause"; }
-  else{ audio.pause(); playPause.textContent="Play"; }
-};
-
-next.onclick=()=> playTrack((currentIndex+1)%tracks.length);
-prev.onclick=()=> playTrack((currentIndex-1+tracks.length)%tracks.length);
-
-audio.ontimeupdate=()=> progress.value=(audio.currentTime/audio.duration)*100||0;
-progress.oninput=()=> audio.currentTime=(progress.value/100)*audio.duration;
-audio.onended=()=> playTrack((currentIndex+1)%tracks.length);
-playAll.onclick=()=> playTrack(0);
-
 document.getElementById("year").textContent = new Date().getFullYear();
-
-const badge = document.getElementById("canadaBadge");
-if(badge){
-  const anthem = new Audio("assets/audio/OhCanada/OhCanada.mp3");
-  badge.addEventListener("click",()=>{
-    anthem.paused ? anthem.play() : (anthem.pause(), anthem.currentTime=0);
-  });
-}
-
 </script>
 
 </body>
