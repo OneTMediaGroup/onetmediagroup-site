@@ -291,6 +291,36 @@ h1{
   font-size:.85rem;
 }
 
+.footer-social{
+  display:flex;
+  gap:16px;
+  margin-top:10px;
+}
+
+.footer-social a{
+  width:40px;
+  height:40px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  background:rgba(255,255,255,.05);
+  transition:.25s ease;
+}
+
+.footer-social a:hover{
+  background:rgba(255,255,255,.12);
+  transform:translateY(-2px);
+}
+
+.footer-social img{
+  width:20px;
+  height:20px;
+  opacity:.9;
+}
+
+
+
 .footer{
   margin-top:80px;
   padding:56px 24px 28px;
