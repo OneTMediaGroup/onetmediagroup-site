@@ -83,6 +83,7 @@
       display:flex;
       flex-wrap:wrap;
       gap:18px;
+      align-items:center;
     }
 
     .nav-links a{
@@ -91,6 +92,18 @@
     }
 
     .nav-links a:hover{color:var(--text)}
+
+    .crafted-badge{
+      height:50px;
+      margin-left:12px;
+      border-radius:8px;
+      object-fit:contain;
+      transition:transform .2s ease;
+    }
+
+    .crafted-badge:hover{
+      transform:translateY(-2px);
+    }
 
     .hero{
       padding:42px 0 24px;
@@ -321,6 +334,11 @@
         gap:12px;
         font-size:.94rem;
       }
+
+      .crafted-badge{
+        height:42px;
+        margin-left:6px;
+      }
     }
   </style>
 </head>
@@ -334,13 +352,18 @@
       </a>
 
       <nav class="nav-links">
-       <a href="index.html">Home</a>
+        <a href="index.html">Home</a>
         <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-           <a href="artist-one-t.html">Artist Spotlight</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Raw Cuts</a>
+        <a href="artist-one-t.html">Artist Spotlight</a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
+        <img src="assets/images/General/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
       </nav>
     </div>
   </header>
@@ -353,7 +376,6 @@
         <div class="hero-card">
           <div class="hero-grid">
             <div class="artist-image-box">
-              <!-- Replace with your artist image -->
               <img src="assets/images/General/OneTProfilePicture.png" alt="One T artist photo" />
             </div>
 
@@ -361,7 +383,7 @@
               <div class="eyebrow">Official Artist Page</div>
               <h1>One T</h1>
               <p class="subhead">
-                Independent artist and producer under One T Media Group, creating music that crosses genres while focusing on storytelling, creativity, and ambition.
+                Independent artist and producer under One T Media Group, creating music that blends genres while staying grounded in storytelling, creativity, and ambition.
               </p>
 
               <div class="pill-row">
@@ -372,8 +394,8 @@
               </div>
 
               <div class="button-row">
-                <a class="btn btn-primary" href="https://distrokid.com/hyperfollow/onet4/empire-mode" target="_blank" rel="noopener">Listen / Pre-save</a>
-                
+                <a class="btn btn-primary" href="https://distrokid.com/hyperfollow/onet4/empire-mode" target="_blank" rel="noopener">Listen Now</a>
+                <a class="btn" href="raw-cuts.html">Browse Raw Cuts</a>
                 <a class="btn" href="contact.html">Contact</a>
               </div>
             </div>
@@ -387,7 +409,7 @@
         <article class="card">
           <h2>Artist Bio</h2>
           <p>
-            One T is an independent artist and producer behind One T Media Group, creating music that crosses genres while focusing on storytelling, creativity, and ambition. Projects like <strong>Empire Mode</strong> capture the mindset of building something from nothing.
+            One T is an independent artist and producer released through <strong>One T Media Group</strong>, creating music rooted in ambition, discipline, and original storytelling. From hip hop to experimental crossover releases, the work reflects a builder mindset — turning ideas into finished projects with intention. <strong>Empire Mode</strong> represents that energy in album form.
           </p>
         </article>
 
@@ -395,7 +417,6 @@
           <h2>Label</h2>
 
           <div class="label-image-box">
-            <!-- Replace with your label image -->
             <img src="assets/images/RedBubble/OneTMediaLogo.png" alt="One T Media Group logo" />
           </div>
 
@@ -441,7 +462,7 @@
             <div class="meta-item">
               <span class="meta-label">Public Contact Email</span>
               <div class="meta-value">
-                <a href="mailto:scotfree@hotmail.com">scotfree@hotmail.com</a>
+                <a href="mailto:onetmediagroup@gmail.com">onetmediagroup@gmail.com</a>
               </div>
             </div>
 
@@ -459,6 +480,15 @@
               <div class="meta-value">
                 <a href="https://www.facebook.com/OneTMedia" target="_blank" rel="noopener">
                   facebook.com/OneTMedia
+                </a>
+              </div>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">YouTube</span>
+              <div class="meta-value">
+                <a href="https://www.youtube.com/@OneTMediaGroup" target="_blank" rel="noopener">
+                  youtube.com/@OneTMediaGroup
                 </a>
               </div>
             </div>
@@ -482,6 +512,24 @@
       © 2026 One T Media Group. All rights reserved.
     </div>
   </footer>
+
+  <audio id="ohCanadaAudio" src="assets/audio/OhCanada/OhCanada.mp3"></audio>
+
+  <script>
+    const badge = document.getElementById("canadaBadge");
+    const anthem = document.getElementById("ohCanadaAudio");
+
+    if (badge && anthem) {
+      badge.addEventListener("click", () => {
+        if (anthem.paused) {
+          anthem.play();
+        } else {
+          anthem.pause();
+          anthem.currentTime = 0;
+        }
+      });
+    }
+  </script>
 
 </body>
 </html>
