@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>One T | Artist | One T Media Group</title>
+  <meta name="description" content="Official artist page for One T on One T Media Group. Music, bio, contact, and links." />
+  <meta name="theme-color" content="#0b0b0f" />
+
+  <style>
+    :root{
+      --bg:#0b0b0f;
+      --panel:#14141b;
+      --panel-2:#1b1b24;
+      --text:#f4f4f6;
+      --muted:#b8b8c3;
+      --line:rgba(255,255,255,0.08);
+      --accent:#d9b36a;
+      --accent-2:#8d6b2e;
+      --max:1200px;
+      --radius:22px;
+      --shadow:0 18px 45px rgba(0,0,0,.35);
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(217,179,106,.12), transparent 28%),
+        linear-gradient(180deg, #0a0a0d 0%, #101017 100%);
+      color:var(--text);
+      line-height:1.6;
+    }
+
+    a{color:inherit;text-decoration:none}
+    img{max-width:100%;display:block}
+
+    .wrap{
+      width:min(100% - 28px, var(--max));
+      margin:0 auto;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:50;
+      backdrop-filter:blur(10px);
+      background:rgba(10,10,14,.78);
+      border-bottom:1px solid var(--line);
+    }
+
+    .nav{
+      min-height:72px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:20px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+
+    .brand-badge{
+      width:42px;
+      height:42px;
+      border-radius:12px;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#7c5cff,#5fd1ff);
+      color:#fff;
+      font-weight:900;
+      box-shadow:var(--shadow);
+    }
+
+    .nav-links{
+      display:flex;
+      flex-wrap:wrap;
+      gap:18px;
+    }
+
+    .nav-links a{
+      color:var(--muted);
+      font-weight:600;
+    }
+
+    .nav-links a:hover{color:var(--text)}
+
+    .hero{
+      padding:42px 0 24px;
+    }
+
+    .crumb{
+      color:var(--muted);
+      font-size:.95rem;
+      margin-bottom:14px;
+    }
+
+    .hero-card{
+      background:linear-gradient(180deg, rgba(255,255,255,.03), rgba(255,255,255,.015));
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:28px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero-grid{
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:28px;
+      align-items:center;
+    }
+
+    .artist-image-box,
+    .label-image-box{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:24px;
+      overflow:hidden;
+    }
+
+    .artist-image-box{
+      aspect-ratio:1 / 1;
+    }
+
+    .artist-image-box img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+    }
+
+    .hero-copy h1{
+      margin:0 0 10px;
+      font-size:clamp(2.2rem,5vw,4.4rem);
+      line-height:.95;
+      letter-spacing:-.03em;
+    }
+
+    .eyebrow{
+      display:inline-block;
+      padding:8px 14px;
+      border:1px solid rgba(217,179,106,.3);
+      background:rgba(217,179,106,.08);
+      color:#f3d59e;
+      border-radius:999px;
+      font-size:.84rem;
+      font-weight:800;
+      letter-spacing:.08em;
+      text-transform:uppercase;
+      margin-bottom:14px;
+    }
+
+    .subhead{
+      font-size:1.08rem;
+      color:var(--muted);
+      max-width:760px;
+      margin:0 0 18px;
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin:18px 0 0;
+    }
+
+    .pill{
+      padding:10px 14px;
+      border-radius:999px;
+      background:var(--panel);
+      border:1px solid var(--line);
+      color:var(--text);
+      font-size:.95rem;
+      font-weight:700;
+    }
+
+    .section{
+      padding:16px 0 34px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:1.25fr .85fr;
+      gap:24px;
+    }
+
+    .card{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .card h2{
+      margin:0 0 12px;
+      font-size:1.35rem;
+      line-height:1.15;
+    }
+
+    .card p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .meta-list{
+      display:grid;
+      gap:14px;
+      margin-top:8px;
+    }
+
+    .meta-item{
+      padding:14px 16px;
+      background:var(--panel-2);
+      border:1px solid var(--line);
+      border-radius:16px;
+    }
+
+    .meta-label{
+      display:block;
+      font-size:.78rem;
+      text-transform:uppercase;
+      letter-spacing:.08em;
+      color:#c9ab6f;
+      margin-bottom:4px;
+      font-weight:800;
+    }
+
+    .meta-value{
+      color:var(--text);
+      word-break:break-word;
+      font-weight:600;
+    }
+
+    .label-box{
+      display:grid;
+      gap:18px;
+    }
+
+    .label-image-box{
+      aspect-ratio:1 / 1;
+      display:grid;
+      place-items:center;
+      background:linear-gradient(135deg,#171722,#101018);
+      padding:18px;
+    }
+
+    .label-image-box img{
+      width:100%;
+      height:100%;
+      object-fit:contain;
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:18px;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      padding:0 16px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel-2);
+      color:var(--text);
+      font-weight:800;
+      transition:.2s ease;
+    }
+
+    .btn:hover{
+      transform:translateY(-1px);
+      border-color:rgba(217,179,106,.35);
+    }
+
+    .btn-primary{
+      background:linear-gradient(135deg, var(--accent), #f0cf8e);
+      color:#111;
+      border:none;
+    }
+
+    .footer{
+      padding:18px 0 40px;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    @media (max-width: 920px){
+      .hero-grid,
+      .grid{
+        grid-template-columns:1fr;
+      }
+
+      .artist-image-box{
+        max-width:420px;
+      }
+    }
+
+    @media (max-width: 640px){
+      .hero-card,
+      .card{
+        padding:18px;
+        border-radius:20px;
+      }
+
+      .nav{
+        min-height:64px;
+      }
+
+      .nav-links{
+        gap:12px;
+        font-size:.94rem;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <header class="topbar">
+    <div class="wrap nav">
+      <a class="brand" href="index.html">
+        <span class="brand-badge">1T</span>
+        <span>One T Media Group</span>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
+        <a href="music.html">Music</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="wrap">
+        <div class="crumb">Home / Artists / One T</div>
+
+        <div class="hero-card">
+          <div class="hero-grid">
+            <div class="artist-image-box">
+              <!-- Replace with your artist image -->
+              <img src="images/artists/one-t-profile.jpg" alt="One T artist photo" />
+            </div>
+
+            <div class="hero-copy">
+              <div class="eyebrow">Official Artist Page</div>
+              <h1>One T</h1>
+              <p class="subhead">
+                Independent artist and producer under One T Media Group, creating music that crosses genres while focusing on storytelling, creativity, and ambition.
+              </p>
+
+              <div class="pill-row">
+                <span class="pill">Artist</span>
+                <span class="pill">Producer</span>
+                <span class="pill">One T Media Group</span>
+                <span class="pill">Newmarket, Ontario, Canada</span>
+              </div>
+
+              <div class="button-row">
+                <a class="btn btn-primary" href="https://distrokid.com/hyperfollow/onet4/empire-mode" target="_blank" rel="noopener">Listen / Pre-save</a>
+                <a class="btn" href="music.html">View Music</a>
+                <a class="btn" href="contact.html">Contact</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap grid">
+        <article class="card">
+          <h2>Artist Bio</h2>
+          <p>
+            One T is an independent artist and producer behind One T Media Group, creating music that crosses genres while focusing on storytelling, creativity, and ambition. Projects like <strong>Empire Mode</strong> capture the mindset of building something from nothing.
+          </p>
+        </article>
+
+        <aside class="card label-box">
+          <h2>Label</h2>
+
+          <div class="label-image-box">
+            <!-- Replace with your label image -->
+            <img src="images/logos/one-t-media-group-logo.png" alt="One T Media Group logo" />
+          </div>
+
+          <p>
+            Officially released under <strong>One T Media Group</strong>.
+          </p>
+        </aside>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="wrap grid">
+        <article class="card">
+          <h2>Official Artist Details</h2>
+
+          <div class="meta-list">
+            <div class="meta-item">
+              <span class="meta-label">Artist Name</span>
+              <div class="meta-value">One T</div>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Role</span>
+              <div class="meta-value">Artist / Producer / Songwriter</div>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Label</span>
+              <div class="meta-value">One T Media Group</div>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Current Release</span>
+              <div class="meta-value">Empire Mode</div>
+            </div>
+          </div>
+        </article>
+
+        <aside class="card">
+          <h2>Contact & Verification</h2>
+
+          <div class="meta-list">
+            <div class="meta-item">
+              <span class="meta-label">Public Contact Email</span>
+              <div class="meta-value">
+                <a href="mailto:scotfree@hotmail.com">scotfree@hotmail.com</a>
+              </div>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Official Website</span>
+              <div class="meta-value">
+                <a href="https://onetmediagroup.github.io/onetmediagroup-site/" target="_blank" rel="noopener">
+                  onetmediagroup.github.io/onetmediagroup-site
+                </a>
+              </div>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">Facebook</span>
+              <div class="meta-value">
+                <a href="https://www.facebook.com/OneTMedia" target="_blank" rel="noopener">
+                  facebook.com/OneTMedia
+                </a>
+              </div>
+            </div>
+
+            <div class="meta-item">
+              <span class="meta-label">HyperFollow</span>
+              <div class="meta-value">
+                <a href="https://distrokid.com/hyperfollow/onet4/empire-mode" target="_blank" rel="noopener">
+                  Empire Mode HyperFollow
+                </a>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      © 2026 One T Media Group. All rights reserved.
+    </div>
+  </footer>
+
+</body>
+</html>
