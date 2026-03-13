@@ -36,7 +36,7 @@
   <style>
     .music-feature-grid{
       display:grid;
-      grid-template-columns: 320px 1fr;
+      grid-template-columns:320px 1fr;
       gap:24px;
       align-items:center;
     }
@@ -49,16 +49,62 @@
       box-shadow:0 20px 50px rgba(0,0,0,.35);
     }
 
-    .platform-buttons{
+    .release-actions{
       display:flex;
       flex-wrap:wrap;
       gap:12px;
       margin-top:18px;
     }
 
+    .platform-bar{
+      display:grid;
+      grid-template-columns:repeat(4, minmax(140px, 1fr));
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .platform-tile{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      min-height:54px;
+      padding:0 16px;
+      border-radius:16px;
+      background:rgba(20,20,28,.78);
+      border:1px solid rgba(35,35,54,.9);
+      color:var(--text);
+      font-weight:800;
+      transition:transform .2s ease, border-color .2s ease, background .2s ease, box-shadow .2s ease;
+      box-shadow:0 10px 24px rgba(0,0,0,.18);
+      text-decoration:none;
+    }
+
+    .platform-tile:hover{
+      transform:translateY(-2px);
+      border-color:rgba(217,179,106,.35);
+      background:rgba(28,28,38,.95);
+      box-shadow:0 16px 30px rgba(0,0,0,.28);
+    }
+
+    .platform-tile img{
+      width:20px;
+      height:20px;
+      max-width:20px;
+      max-height:20px;
+      opacity:.95;
+      flex-shrink:0;
+      display:block;
+    }
+
+    .platform-tile span{
+      white-space:nowrap;
+      line-height:1;
+    }
+
     .artist-spotlight-grid{
       display:grid;
-      grid-template-columns: 260px 1fr;
+      grid-template-columns:260px 1fr;
       gap:24px;
       align-items:center;
     }
@@ -141,7 +187,10 @@
     .footer-social img{
       width:20px;
       height:20px;
+      max-width:20px;
+      max-height:20px;
       opacity:.9;
+      display:block;
     }
 
     .footer-bottom{
@@ -164,6 +213,16 @@
       .music-cover,
       .artist-spotlight-image{
         max-width:420px;
+      }
+
+      .platform-bar{
+        grid-template-columns:repeat(2, minmax(140px, 1fr));
+      }
+    }
+
+    @media (max-width: 560px){
+      .platform-bar{
+        grid-template-columns:1fr;
       }
     }
   </style>
@@ -275,32 +334,33 @@
               <span class="pill">Independent Release</span>
             </div>
 
-           <div class="release-actions">
-  <a class="btn primary" href="empire-mode.html">View Album</a>
-  <a class="btn" href="artist-one-t.html">Artist Page</a>
-</div>
+            <div class="release-actions">
+              <a class="btn primary" href="empire-mode.html">View Album</a>
+              <a class="btn" href="artist-one-t.html">Artist Page</a>
+            </div>
 
-<div class="platform-bar">
-  <a class="platform-tile" href="https://www.youtube.com/@OneTMediaGroup" target="_blank" rel="noopener">
-    <img src="assets/icons/youtube.svg" alt="YouTube">
-    <span>YouTube</span>
-  </a>
+            <div class="platform-bar">
+              <a class="platform-tile" href="https://www.youtube.com/@OneTMediaGroup" target="_blank" rel="noopener">
+                <img src="assets/icons/youtube.svg" alt="YouTube">
+                <span>YouTube</span>
+              </a>
 
-  <a class="platform-tile" href="https://open.spotify.com/artist/5Dy6IEy1EBvWKhS9b06DNm?si=D5JwTMQ4RF2qZphqs0N6hg" target="_blank" rel="noopener">
-    <img src="assets/icons/spotify.svg" alt="Spotify">
-    <span>Spotify</span>
-  </a>
+              <a class="platform-tile" href="https://open.spotify.com/artist/5Dy6IEy1EBvWKhS9b06DNm?si=D5JwTMQ4RF2qZphqs0N6hg" target="_blank" rel="noopener">
+                <img src="assets/icons/spotify.svg" alt="Spotify">
+                <span>Spotify</span>
+              </a>
 
-  <a class="platform-tile" href="https://music.apple.com/ca/artist/one-t/1882252458" target="_blank" rel="noopener">
-    <img src="assets/icons/apple-music.svg" alt="Apple Music">
-    <span>Apple Music</span>
-  </a>
+              <a class="platform-tile" href="https://music.apple.com/ca/artist/one-t/1882252458" target="_blank" rel="noopener">
+                <img src="assets/icons/apple-music.svg" alt="Apple Music">
+                <span>Apple Music</span>
+              </a>
 
-  <a class="platform-tile" href="https://music.amazon.com/artists/B0028090Z6?ref=AM4APC_AR_P_en_US_B0028090Z6_HtIFXza" target="_blank" rel="noopener">
-    <img src="assets/icons/amazon-music.svg" alt="Amazon Music">
-    <span>Amazon Music</span>
-  </a>
-</div>
+              <a class="platform-tile" href="https://music.amazon.com/artists/B0028090Z6?ref=AM4APC_AR_P_en_US_B0028090Z6_HtIFXza" target="_blank" rel="noopener">
+                <img src="assets/icons/amazon-music.svg" alt="Amazon Music">
+                <span>Amazon Music</span>
+              </a>
+            </div>
+
           </div>
         </div>
       </div>
