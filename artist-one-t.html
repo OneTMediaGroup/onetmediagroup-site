@@ -93,6 +93,14 @@
 
     .nav-links a:hover{color:var(--text)}
 
+    .nav-active{
+      color:var(--text) !important;
+      background:rgba(20,20,28,.7);
+      border:1px solid rgba(35,35,54,.9);
+      padding:8px 12px;
+      border-radius:12px;
+    }
+
     .crafted-badge{
       height:50px;
       margin-left:12px;
@@ -302,6 +310,33 @@
       border:none;
     }
 
+    .listen-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:8px;
+    }
+
+    .listen-btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-height:46px;
+      padding:0 14px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:var(--panel-2);
+      color:var(--text);
+      font-weight:800;
+      transition:.2s ease;
+      text-align:center;
+    }
+
+    .listen-btn:hover{
+      transform:translateY(-1px);
+      border-color:rgba(217,179,106,.35);
+    }
+
     .footer{
       padding:18px 0 40px;
       color:var(--muted);
@@ -339,6 +374,10 @@
         height:42px;
         margin-left:6px;
       }
+
+      .listen-grid{
+        grid-template-columns:1fr;
+      }
     }
   </style>
 </head>
@@ -356,7 +395,7 @@
         <a href="apps.html">Apps</a>
         <a href="books.html">Books</a>
         <a href="raw-cuts.html">Raw Cuts</a>
-        <a href="artist-one-t.html">Artist Spotlight</a>
+        <a href="artist-one-t.html" class="nav-active">Artist Spotlight</a>
         <a href="clothing.html">Clothing</a>
         <a href="contact.html">Contact</a>
         <img src="assets/images/General/Crafted-In-The-North-Header.png"
@@ -501,6 +540,16 @@
                 </a>
               </div>
             </div>
+          </div>
+
+          <h2 style="margin-top:24px;">Listen Everywhere</h2>
+
+          <div class="listen-grid">
+            <a class="listen-btn" href="https://www.youtube.com/@OneTMediaGroup" target="_blank" rel="noopener">YouTube</a>
+            <a class="listen-btn" href="#" target="_blank" rel="noopener">Spotify</a>
+            <a class="listen-btn" href="#" target="_blank" rel="noopener">Apple Music</a>
+            <a class="listen-btn" href="#" target="_blank" rel="noopener">Amazon Music</a>
+            <a class="listen-btn" href="https://distrokid.com/hyperfollow/onet4/empire-mode" target="_blank" rel="noopener">HyperFollow</a>
           </div>
         </aside>
       </div>
