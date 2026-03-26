@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<title>Guru Crew App | iOS Personality Advice by One T Media Group</title>
+
+<meta name="description" content="Clarity is a daily fortune teller app thats offers a 3 card and 5 card daily reading. Created by One T Media Group." />
+
+<meta name="keywords" content="Clarity app, iOS advice app, personality advice app, One T Media Group app, Scot Anderson developer, Canadian app studio" />
+
+<meta name="author" content="Scot Anderson" />
+<meta name="theme-color" content="#0b0b0f" />
+
+<link rel="canonical" href="https://onetmediagroup.github.io/onetmediagroup-site/clarity.html" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Clarity — Daily Tarot fortune" />
+<meta property="og:description" content="3 Card and 5 Card reading availble. Synchronized audio. Coming soon on iOS." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/Clarity.html" />
+<meta property="og:image" content="https://onetmediagroup.github.io/onetmediagroup-site/assets/images/Clarity/clarityIcon.png" />
+
+<link rel="stylesheet" href="assets/css/styles.css" />
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "Clarity",
+  "operatingSystem": "iOS",
+  "applicationCategory": "Entertainment Application",
+  "creator": {
+    "@type": "Organization",
+    "name": "One T Media Group",
+    "url": "https://onetmediagroup.github.io/onetmediagroup-site/"
+  },
+  "description": Daily 3 and 5 Card Tarot readings"
+}
+</script>
+
+<style>
+
+/* === YOUR ORIGINAL STYLES UNCHANGED === */
+
+
+.guru-banner img {
+  width: 100%;
+  display: block;
+}
+
+.guru-hero {
+  padding: 60px 0 20px;
+  text-align: center;
+}
+
+.guru-hero h1 {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.guru-tagline {
+  font-size: 18px;
+  opacity: .75;
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+.music-feature {
+  border: 1px solid rgba(139,92,246,.35);
+  background: linear-gradient(
+    180deg,
+    rgba(139,92,246,.08),
+    rgba(20,20,28,.85)
+  );
+}
+
+.guru-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px,1fr));
+  gap: 32px;
+  margin-top: 80px;
+}
+
+.guru-card {
+  background: rgba(20,20,28,.85);
+  border: 1px solid rgba(35,35,54,.9);
+  border-radius: 26px;
+  padding: 34px 26px 30px;
+  text-align: center;
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+  transition: transform .3s ease, box-shadow .3s ease;
+}
+
+.guru-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 30px 70px rgba(0,0,0,.45);
+}
+
+.guru-card img {
+  width: 90px;
+  height: 90px;
+  object-fit: contain;
+  border-radius: 20px;
+  margin-bottom: 18px;
+  padding: 10px;
+  background: rgba(16,16,24,.8);
+  box-shadow: 0 10px 25px rgba(0,0,0,.25);
+}
+
+.guru-quote {
+  font-weight: 600;
+  font-size: 16px;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+audio {
+  width: 100%;
+  margin-top: 6px;
+}
+
+.screens-section {
+  margin-top: 140px;
+  text-align: center;
+}
+
+.screens-title {
+  font-size: 34px;
+  margin-bottom: 10px;
+}
+
+.screens-sub {
+  opacity: .65;
+  max-width: 600px;
+  margin: 0 auto 60px;
+}
+
+.screens-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px,1fr));
+  gap: 32px;
+}
+
+.screen-card {
+  border-radius: 28px;
+  overflow: hidden;
+  box-shadow: 0 30px 60px rgba(0,0,0,.35);
+  transition: transform .35s ease, box-shadow .35s ease;
+}
+
+.screen-card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 40px 80px rgba(0,0,0,.45);
+}
+
+.screen-card img {
+  width: 100%;
+  display: block;
+}
+
+.cta-section {
+  margin-top: 160px;
+  padding: 80px 0;
+  text-align: center;
+}
+
+.cta-button {
+  margin-top: 25px;
+}
+
+@media (max-width: 768px){
+  .guru-hero h1 { font-size: 36px; }
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Raw Cuts</a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
+        <img src="assets/images/General/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada - One T Media Group"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
+      </nav>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+
+<div class="guru-banner">
+  <img src="assets/images/GuruCrew/GuruCrewBanner1.png" alt="Guru Crew app banner">
+</div>
+
+<section class="guru-hero">
+  <h1>Clarity</h1>
+  <p class="guru-tagline">
+    Personality-driven advice. Five distinct voices. Visual cards with synchronized audio.
+  </p>
+</section>
+
+<!-- Screenshots section fix -->
+<section class="screens-section">
+  <h2 class="screens-title">In Action</h2>
+  <p class="screens-sub">A glimpse inside the Guru Crew iOS experience.</p>
+
+  <div class="screens-grid">
+    <div class="screen-card"><img src="assets/Clarity/clarity-screen-1.png" alt="Clarity App Screen 1"></div>
+    <div class="screen-card"><img src="assets/Clarity/clarity-screen-2.png" alt="Clarity App Screen 2"></div>
+    <div class="screen-card"><img src="assets/Clarity/clarity-screen-3.png" alt="Clarity App Screen 3"></div>
+    <div class="screen-card"><img src="assets/Clarity/clarity-screen-4.png" alt="Clarity App Screen 4"></div>
+    <div class="screen-card"><img src="assets/Clarity/clarity-screen-5.png" alt="Clarity App Screen 5"></div>
+  </div>
+</section>
+
+<section class="cta-section">
+  <h2>Coming Soon on iOS</h2>
+  <p>Full app experience launching soon.</p>
+  <div class="cta-button">
+    <a class="btn" href="#">In Production</a>
+  </div>
+</section>
+
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group</div>
+</div>
+
+</main>
+
+<script src="assets/js/main.js"></script>
+
+<audio id="ohCanadaAudio" src="assets/audio/OhCanada/OhCanada.mp3"></audio>
+
+<script>
+const badge = document.getElementById("canadaBadge");
+const anthem = document.getElementById("ohCanadaAudio");
+
+badge.addEventListener("click", () => {
+  if (anthem.paused) {
+    anthem.play();
+  } else {
+    anthem.pause();
+    anthem.currentTime = 0;
+  }
+});
+</script>
+
+</body>
+</html>
