@@ -4,47 +4,42 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-<title>Guru Crew App | iOS Personality Advice by One T Media Group</title>
+<title>Clarity App | Daily Tarot Readings | One T Media Group</title>
 
-<meta name="description" content="Clarity is a daily fortune teller app thats offers a 3 card and 5 card daily reading. Created by One T Media Group." />
+<meta name="description" content="Clarity is a daily tarot reading app offering 3-card and 5-card spreads with synchronized audio. Created by One T Media Group." />
 
-<meta name="keywords" content="Clarity app, iOS advice app, personality advice app, One T Media Group app, Scot Anderson developer, Canadian app studio" />
+<meta name="keywords" content="Clarity app, tarot app, daily tarot readings, iOS tarot app, One T Media Group app, Canadian app studio" />
 
-<meta name="author" content="Scot Anderson" />
+<meta name="author" content="One T Media Group" />
 <meta name="theme-color" content="#0b0b0f" />
 
 <link rel="canonical" href="https://onetmediagroup.github.io/onetmediagroup-site/clarity.html" />
 
-<!-- Open Graph -->
-<meta property="og:title" content="Clarity — Daily Tarot fortune" />
-<meta property="og:description" content="3 Card and 5 Card reading availble. Synchronized audio. Coming soon on iOS." />
+<meta property="og:title" content="Clarity — Daily Tarot Readings" />
+<meta property="og:description" content="3-card and 5-card readings with immersive audio. Coming soon on iOS." />
 <meta property="og:type" content="website" />
-<meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/Clarity.html" />
+<meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/clarity.html" />
 <meta property="og:image" content="https://onetmediagroup.github.io/onetmediagroup-site/assets/images/Clarity/clarityIcon.png" />
 
 <link rel="stylesheet" href="assets/css/styles.css" />
 
-<!-- Structured Data -->
 <script type="application/ld+json">
 {
   "@context": "https://schema.org",
   "@type": "SoftwareApplication",
   "name": "Clarity",
   "operatingSystem": "iOS",
-  "applicationCategory": "Entertainment Application",
+  "applicationCategory": "EntertainmentApplication",
   "creator": {
     "@type": "Organization",
     "name": "One T Media Group",
     "url": "https://onetmediagroup.github.io/onetmediagroup-site/"
   },
-  "description": Daily 3 and 5 Card Tarot readings"
+  "description": "Daily tarot app with 3-card and 5-card readings and synchronized audio."
 }
 </script>
 
 <style>
-
-/* === YOUR ORIGINAL STYLES UNCHANGED === */
-
 
 .guru-banner img {
   width: 100%;
@@ -61,7 +56,7 @@
   margin-bottom: 16px;
 }
 
-.guru-tagline {
+.clarity-tagline {
   font-size: 18px;
   opacity: .75;
   max-width: 640px;
@@ -190,12 +185,12 @@ audio {
 
       <nav class="nav-links">
         <a href="index.html">Home</a>
-          <a href="apps.html">Apps</a>
-          <a href="books.html">Books</a>
-          <a href="raw-cuts.html">Raw Cuts</a>
-          <a href="artist-one-t.html">Artist Spotlight</a>
-          <a href="clothing.html">Clothing</a>
-          <a href="contact.html">Contact</a>
+        <a href="apps.html">Apps</a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Raw Cuts</a>
+        <a href="artist-one-t.html">Artist Spotlight</a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
         <img src="assets/images/General/Crafted-In-The-North-Header.png"
              alt="Crafted in Canada - One T Media Group"
              class="crafted-badge"
@@ -209,20 +204,19 @@ audio {
 <main class="container">
 
 <div class="guru-banner">
-  <img src="assets/images/Clarity/clarityBanner.png" alt="Guru Crew app banner">
+  <img src="assets/images/Clarity/clarityBanner.png" alt="Clarity app banner">
 </div>
 
 <section class="guru-hero">
   <h1>Clarity</h1>
   <p class="clarity-tagline">
-    What will your future become. Visual cards with synchronized audio.
+    Daily tarot readings with 3-card and 5-card spreads, paired with synchronized audio.
   </p>
 </section>
 
-<!-- Screenshots section fix -->
 <section class="screens-section">
   <h2 class="screens-title">In Action</h2>
-  <p class="screens-sub">A glimpse inside the Guru Crew iOS experience.</p>
+  <p class="screens-sub">A glimpse inside the Clarity iOS experience.</p>
 
   <div class="screens-grid">
     <div class="screen-card"><img src="assets/images/Clarity/clarity-screen-1.png" alt="Clarity App Screen 1"></div>
@@ -237,7 +231,7 @@ audio {
   <h2>Coming Soon on iOS</h2>
   <p>Full app experience launching soon.</p>
   <div class="cta-button">
-    <a class="btn" href="#">In Production</a>
+    <a class="btn primary" href="#">Coming Soon on iOS</a>
   </div>
 </section>
 
@@ -255,14 +249,16 @@ audio {
 const badge = document.getElementById("canadaBadge");
 const anthem = document.getElementById("ohCanadaAudio");
 
-badge.addEventListener("click", () => {
-  if (anthem.paused) {
-    anthem.play();
-  } else {
-    anthem.pause();
-    anthem.currentTime = 0;
-  }
-});
+if (badge && anthem) {
+  badge.addEventListener("click", () => {
+    if (anthem.paused) {
+      anthem.play();
+    } else {
+      anthem.pause();
+      anthem.currentTime = 0;
+    }
+  });
+}
 </script>
 
 </body>
