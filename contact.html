@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+
+<title>Contact One T Media Group | Partnerships & Publishing Inquiries</title>
+
+<meta name="description" content="Contact One T Media Group for partnerships, publishing inquiries, collaborations, and creative projects. Based in Newmarket, Ontario. Working worldwide." />
+
+<meta name="keywords" content="Contact One T Media Group, Scot Anderson contact, publishing inquiries Canada, creative studio Ontario, One T Media Group email" />
+
+<meta name="author" content="One T Media Group" />
+<meta name="theme-color" content="#0b0b0f" />
+
+<link rel="canonical" href="https://onetmediagroup.github.io/onetmediagroup-site/contact.html" />
+
+<!-- Open Graph -->
+<meta property="og:title" content="Contact — One T Media Group" />
+<meta property="og:description" content="Partnerships, publishing, collaborations, and creative inquiries." />
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/contact.html" />
+<meta property="og:image" content="https://onetmediagroup.github.io/onetmediagroup-site/assets/images/General/Crafted-In-The-North-Header.png" />
+
+<link rel="stylesheet" href="assets/css/styles.css" />
+
+<!-- Structured Data -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  "name": "One T Media Group",
+  "url": "https://onetmediagroup.github.io/onetmediagroup-site/",
+  "email": "onetmediagroup@gmail.com",
+   "address": {
+    "@type": "PostalAddress",
+    "addressLocality": "Newmarket",
+    "addressRegion": "Ontario",
+    "addressCountry": "Canada"
+  }
+}
+</script>
+
+</head>
+
+<body>
+
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="One T Media Group Home">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+
+      <nav class="nav-links">
+       <a href="index.html">Home</a>
+        <a href="apps.html">Apps</a>
+          <a href="books.html">Books</a>
+          <a href="raw-cuts.html">Music</a>
+          <a href="one-t-industrial.html">Industrial</a>
+          <a href="clothing.html">Clothing</a>
+          <a href="contact.html">Contact</a>
+        </a>
+
+        <img src="assets/images/General/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada - One T Media Group"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
+      </nav>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+<div class="breadcrumb">Home / Contact</div>
+
+<section class="section">
+  <h1>Contact One T Media Group</h1>
+
+  <p class="sub">
+    Partnerships, collaborations, publishing inquiries, and general questions.
+  </p>
+
+  <div class="grid">
+    <div class="card uc">
+      <h3>Email</h3>
+      <p>
+        <a href="mailto:onetmediagroup@gmail.com">
+          onetmediagroup@gmail.com
+        </a>
+      </p>
+    </div>
+
+    <div class="card uc">
+      <h3>Location</h3>
+      <p>Newmarket, Ontario, Canada</p>
+      <p class="small">Working worldwide</p>
+    </div>
+  </div>
+</section>
+
+
+
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
+  <div class="small">Independent Canadian creative studio • Crafted in the North</div>
+</div>
+
+</main>
+
+<script src="assets/js/main.js"></script>
+
+<audio id="ohCanadaAudio" src="assets/audio/OhCanada/OhCanada.m4a"></audio>
+
+<script>
+const badge = document.getElementById("canadaBadge");
+const anthem = document.getElementById("ohCanadaAudio");
+
+badge.addEventListener("click", () => {
+  if (anthem.paused) {
+    anthem.play();
+  } else {
+    anthem.pause();
+    anthem.currentTime = 0;
+  }
+});
+</script>
+
+</body>
+</html>

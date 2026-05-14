@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en"> 
+<head>  
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+
+  <title>Apps — Guru Crew & Digital Products | One T Media Group</title>
+
+  <meta name="description" content="Explore Guru Crew and digital products from One T Media Group. Guru Crew is live on iOS. Independent Canadian development studio." />
+  <meta name="keywords" content="Guru Crew app, One T Media Group apps, iOS apps Canada, personality advice app, Canadian app studio" />
+  <meta name="author" content="One T Media Group" />
+  <meta name="theme-color" content="#0b0b0f" />
+
+  <meta property="og:title" content="Apps — One T Media Group" />
+  <meta property="og:description" content="Guru Crew is live on iOS. Explore apps and digital products by One T Media Group." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://onetmediagroup.github.io/onetmediagroup-site/apps.html" />
+  <meta property="og:image" content="https://onetmediagroup.github.io/onetmediagroup-site/assets/images/GuruCrew/GuruCrewLogo.png" />
+
+  <link rel="stylesheet" href="assets/css/styles.css" />
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "Guru Crew",
+    "operatingSystem": "iOS",
+    "applicationCategory": "EntertainmentApplication",
+    "url": "https://apps.apple.com/ca/app/guru-crew/id6763841432",
+    "creator": {
+      "@type": "Organization",
+      "name": "One T Media Group"
+    },
+    "description": "Personality-driven advice app featuring visual cards and synchronized audio. Designed for humor and clarity."
+  }
+  </script>
+</head>
+
+<body>
+
+<div class="nav">
+  <div class="container">
+    <div class="nav-inner">
+      <a class="brand" href="index.html" aria-label="One T Media Group Home">
+        <div class="brand-badge">1T</div>
+        <div>One T Media Group</div>
+      </a>
+
+      <nav class="nav-links">
+        <a href="index.html">Home</a>
+        <a href="apps.html"
+           style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)">
+          Apps
+        </a>
+        <a href="books.html">Books</a>
+        <a href="raw-cuts.html">Music</a>
+        <a href="one-t-industrial.html">Industrial</a>
+        <a href="clothing.html">Clothing</a>
+        <a href="contact.html">Contact</a>
+
+        <img src="assets/images/General/Crafted-In-The-North-Header.png"
+             alt="Crafted in Canada - One T Media Group"
+             class="crafted-badge"
+             id="canadaBadge"
+             style="cursor:pointer;" />
+      </nav>
+    </div>
+  </div>
+</div>
+
+<main class="container">
+
+<div class="breadcrumb">Home / Apps</div>
+
+<section class="section">
+
+  <h1>Apps & Digital Products</h1>
+
+  <p class="sub">
+    iOS applications and digital tools built by One T Media Group — combining humor, personality, and human-centered design.
+  </p>
+
+  <div class="card uc">
+    <div style="display:flex;gap:18px;flex-wrap:wrap;align-items:center">
+
+      <img
+        src="assets/images/GuruCrew/GuruCrewLogo.png"
+        alt="Guru Crew iOS App Logo"
+        style="width:96px;height:96px;border-radius:20px;object-fit:contain;
+               background:rgba(16,16,24,.6);
+               border:1px solid rgba(35,35,54,.9);
+               padding:12px;"
+      />
+
+      <div style="max-width:620px">
+        <h2 style="margin:0 0 6px 0">Guru Crew</h2>
+
+        <p class="small" style="opacity:.85;margin:0 0 12px 0">
+          Personality-driven advice delivered through bold visual cards and 
+          synchronized audio. Guru Crew blends humor, self-awareness, and 
+          sharp archetypes into a fast, engaging iOS experience.
+        </p>
+
+        <div class="pillrow" style="margin-bottom:14px">
+          <span class="pill">iOS</span>
+          <span class="pill">Advice</span>
+          <span class="pill">Live Now</span>
+        </div>
+
+        <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+
+  <a href="https://apps.apple.com/ca/app/guru-crew/id6763841432" target="_blank" rel="noopener">
+    <img
+      src="assets/images/General/download-on-app-store.svg"
+      alt="Download on the App Store"
+      style="height:46px;width:auto;"
+    />
+  </a>
+
+  <a class="btn" href="guru-crew.html">
+    View App Page →
+  </a>
+
+</div>
+      </div>
+
+    </div>
+  </div>
+<div class="card uc" style="margin-top:28px">
+    <h2>🚧 More Apps Coming</h2>
+    <p>
+      Additional tools and digital products are currently in development.
+      Future releases will expand across productivity, creativity, and
+      human-centered utility.
+    </p>
+    <div class="pillrow">
+      <span class="pill">Roadmap</span>
+      <span class="pill">Beta</span>
+      <span class="pill">Support</span>
+    </div>
+  </div>
+
+</section>
+
+<div class="footer">
+  <div>© <span id="year"></span> One T Media Group • <a href="index.html">Home</a></div>
+  <div class="small">Independent Canadian creative studio • Crafted in the North</div>
+</div>
+
+</main>
+
+<script src="assets/js/main.js"></script>
+
+<audio id="ohCanadaAudio" src="assets/audio/OhCanada/OhCanadaapps.m4a"></audio>
+
+<script>
+const badge = document.getElementById("canadaBadge");
+const anthem = document.getElementById("ohCanadaAudio");
+
+if (badge && anthem) {
+  badge.addEventListener("click", () => {
+    if (anthem.paused) {
+      anthem.play();
+    } else {
+      anthem.pause();
+      anthem.currentTime = 0;
+    }
+  });
+}
+</script>
+
+</body>
+</html>
