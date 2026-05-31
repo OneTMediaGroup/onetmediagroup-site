@@ -195,6 +195,56 @@ body{
   .icon-card{
     max-width:420px;
   }
+.hero-top{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:32px;
+  flex-wrap:wrap;
+  text-align:left;
+}
+
+.hero-icon{
+  width:180px;
+  height:auto;
+  border-radius:38px;
+  box-shadow:0 24px 60px rgba(0,0,0,.45);
+  flex-shrink:0;
+}
+
+.hero-content{
+  max-width:620px;
+}
+
+.tagline{
+  margin-top:12px;
+  font-size:1.35rem;
+  font-weight:900;
+  color:#24c8ff;
+  text-transform:uppercase;
+  letter-spacing:.08em;
+}
+
+.hero-copy{
+  margin-top:18px;
+  color:var(--muted);
+  font-size:1.05rem;
+  line-height:1.7;
+}
+
+@media(max-width:920px){
+
+  .hero-top{
+    text-align:center;
+  }
+
+  .hero-icon{
+    width:150px;
+  }
+}
+
+
+
 }
 </style>
 </head>
@@ -225,32 +275,50 @@ body{
 <main class="container">
 
   <section class="gridwars-hero">
-    <img src="assets/images/GridWars/gridicon.jpeg" alt="Grid Wars app icon" class="gridwars-logo">
 
-    <h1 class="gridwars-title">GRID WARS</h1>
-    <div class="gridwars-tag">
-      <span class="blue">Connect.</span>
-      <span class="red">Claim.</span>
-      <span class="red">Control.</span>
-    </div>
+  <div class="hero-top">
 
-    <p class="gridwars-sub">
-      Grid Wars is a fast-paced strategy game where every line matters.
-      Challenge friends locally, battle online, unlock achievements, build your crew,
-      and master boards ranging from classic strategy to full chaos.
-    </p>
+    <img
+      src="assets/images/GridWars/gridicon.jpeg"
+      alt="Grid Wars Icon"
+      class="hero-icon">
 
-    <div class="store-row">
-      <a href="#" target="_blank" rel="noopener">
-        <img
-          src="assets/images/General/download-on-app-store.svg"
-          alt="Download on the App Store"
-          class="app-store-badge">
+    <div class="hero-content">
+
+      <h1 class="gridwars-title">
+        GRID WARS
+      </h1>
+
+      <p class="tagline">
+        Connect. Claim. Control.
+      </p>
+
+      <p class="hero-copy">
+        Battle friends locally or online. Claim squares, outsmart opponents,
+        unlock achievements, choose your Guru, and master special Chaos Boards.
+      </p>
+
+      <div class="pillrow">
+        <span class="pill">Fast Strategy</span>
+        <span class="pill">Online PvP</span>
+        <span class="pill">Achievements</span>
+        <span class="pill">Chaos Boards</span>
+      </div>
+
+      <div style="height:18px"></div>
+
+      <a
+        class="btn primary"
+        href="https://apps.apple.com/ca/app/grid-wars/idYOURAPPID"
+        target="_blank">
+        Download on the App Store
       </a>
 
-      <a class="btn" href="#features">View Features</a>
     </div>
-  </section>
+
+  </div>
+
+</section>
 
   <section class="section-tight" id="features">
     <h2>Fast Strategy. Real Battles.</h2>
