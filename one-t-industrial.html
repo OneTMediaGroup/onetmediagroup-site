@@ -19,28 +19,12 @@
   --industrial-muted:#5f6b7a;
 }
 
-body{
-  background:#eef3f9;
-  color:#111827;
-}
+body{background:#eef3f9;color:#111827}
 
-.industrial-nav{
-  background:#0f172a;
-  border-bottom:1px solid rgba(255,255,255,.08);
-}
-
-.industrial-nav .brand,
-.industrial-nav .nav-links a{
-  color:white;
-}
-
-.industrial-nav .nav-links a{
-  opacity:.82;
-}
-
-.industrial-nav .nav-links a:hover{
-  opacity:1;
-}
+.industrial-nav{background:#0f172a;border-bottom:1px solid rgba(255,255,255,.08)}
+.industrial-nav .brand,.industrial-nav .nav-links a{color:white}
+.industrial-nav .nav-links a{opacity:.82}
+.industrial-nav .nav-links a:hover{opacity:1}
 
 .industrial-hero{
   margin-top:28px;
@@ -77,9 +61,7 @@ body{
   margin-bottom:16px;
 }
 
-.industrial-section{
-  padding:56px 0 0;
-}
+.industrial-section{padding:56px 0 0}
 
 .industrial-section h2{
   font-size:clamp(1.8rem,3.5vw,2.8rem);
@@ -110,18 +92,25 @@ body{
   box-shadow:0 14px 34px rgba(15,23,42,.09);
 }
 
+.system-image{
+  width:100%;
+  height:170px;
+  object-fit:cover;
+  object-position:left top;
+  border-radius:16px;
+  border:1px solid #d9e0ea;
+  margin-bottom:16px;
+  display:block;
+  background:#eef3f9;
+}
+
 .system-card h3,
 .focus-card h3,
-.path-card h3{
-  margin:0 0 8px;
-}
+.path-card h3{margin:0 0 8px}
 
 .system-card p,
 .focus-card p,
-.path-card p{
-  margin:0;
-  color:#5f6b7a;
-}
+.path-card p{margin:0;color:#5f6b7a}
 
 .badge{
   display:inline-flex;
@@ -137,10 +126,16 @@ body{
 }
 
 .system-actions{
-  margin-top:16px;
+  margin-top:18px;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
+}
+
+.system-actions .btn{
+  flex:1;
+  min-width:120px;
+  text-align:center;
 }
 
 .focus-grid{
@@ -174,13 +169,10 @@ body{
 @media(max-width:920px){
   .systems-grid,
   .focus-grid,
-  .path-grid{
-    grid-template-columns:1fr;
-  }
+  .path-grid{grid-template-columns:1fr}
 
-  .industrial-hero{
-    padding:34px 20px;
-  }
+  .industrial-hero{padding:34px 20px}
+  .system-image{height:220px}
 }
 </style>
 </head>
@@ -229,17 +221,9 @@ body{
   </p>
 
   <div class="hero-actions">
-    <a class="btn primary" href="#systems">
-      View Systems
-    </a>
-
-    <a class="btn" href="floor-flow.html">
-      Floor Flow
-    </a>
-
-    <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=One%20T%20Industrial%20Inquiry">
-      Contact
-    </a>
+    <a class="btn primary" href="#systems">View Systems</a>
+    <a class="btn" href="floor-flow.html">Floor Flow</a>
+    <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=One%20T%20Industrial%20Inquiry">Contact</a>
   </div>
 
 </section>
@@ -255,6 +239,11 @@ body{
   <div class="systems-grid">
 
     <div class="system-card">
+      <img
+        src="assets/images/FloorFlow/floor-flow-hero.png"
+        alt="Floor Flow preview"
+        class="system-image">
+
       <span class="badge">Live Demo</span>
       <h3>Floor Flow</h3>
       <p>
@@ -263,9 +252,7 @@ body{
       </p>
 
       <div class="system-actions">
-        <a class="btn primary" href="floor-flow.html">
-          View Page
-        </a>
+        <a class="btn primary" href="floor-flow.html">View System</a>
 
         <a class="btn"
            href="https://onetmediagroup.github.io/FloorFlow-Demo/onboarding.html"
@@ -338,97 +325,25 @@ body{
 
     <div class="focus-card">
       <h3>Visibility</h3>
-      <p>
-        Make current work, next setups, holds, calls, and handoffs easier to see.
-      </p>
+      <p>Make current work, next setups, holds, calls, and handoffs easier to see.</p>
     </div>
 
     <div class="focus-card">
       <h3>Accountability</h3>
-      <p>
-        Help teams know who owns what, what is waiting, and what needs attention.
-      </p>
+      <p>Help teams know who owns what, what is waiting, and what needs attention.</p>
     </div>
 
     <div class="focus-card">
       <h3>Flow</h3>
-      <p>
-        Reduce friction between shifts, roles, departments, and production steps.
-      </p>
+      <p>Reduce friction between shifts, roles, departments, and production steps.</p>
     </div>
 
   </div>
 
 </section>
 
-<section class="industrial-section">
 
-  <h2>How the launchpad works</h2>
 
-  <p class="industrial-sub">
-    Each system can stand alone, but they are designed to grow into a connected industrial toolkit.
-  </p>
-
-  <div class="path-grid">
-
-    <div class="path-card">
-      <span class="badge">Step 1</span>
-      <h3>Choose a system</h3>
-      <p>
-        Start with the tool that solves the clearest floor problem first.
-      </p>
-    </div>
-
-    <div class="path-card">
-      <span class="badge">Step 2</span>
-      <h3>Run a demo</h3>
-      <p>
-        Test the workflow with a simple demo before committing to a plant rollout.
-      </p>
-    </div>
-
-    <div class="path-card">
-      <span class="badge">Step 3</span>
-      <h3>Expand as needed</h3>
-      <p>
-        Add plant access, custom workflows, or future systems when the value is clear.
-      </p>
-    </div>
-
-  </div>
-
-</section>
-
-<section class="cta">
-
-  <h2>
-    Start with the system that solves today’s problem.
-  </h2>
-
-  <p class="industrial-sub" style="margin:0 auto 20px">
-    Floor Flow is the first full product page. Factory On Call, Quality Hold,
-    and other systems can be added as they become ready.
-  </p>
-
-  <div class="hero-actions" style="justify-content:center">
-    <a class="btn primary" href="floor-flow.html">
-      View Floor Flow
-    </a>
-
-    <a class="btn"
-       href="https://onetmediagroup.github.io/FloorFlow-Demo/onboarding.html"
-       target="_blank"
-       rel="noopener">
-      Launch Demo
-    </a>
-
-    <a class="btn"
-       href="mailto:onetmediagroup@gmail.com?subject=One%20T%20Industrial%20Demo%20Request">
-      Contact
-    </a>
-  </div>
-
-</section>
 
 </main>
 
