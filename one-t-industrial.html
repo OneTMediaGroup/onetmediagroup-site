@@ -19,12 +19,28 @@
   --industrial-muted:#5f6b7a;
 }
 
-body{background:#eef3f9;color:#111827}
+body{
+  background:#eef3f9;
+  color:#111827;
+}
 
-.industrial-nav{background:#0f172a;border-bottom:1px solid rgba(255,255,255,.08)}
-.industrial-nav .brand,.industrial-nav .nav-links a{color:white}
-.industrial-nav .nav-links a{opacity:.82}
-.industrial-nav .nav-links a:hover{opacity:1}
+.industrial-nav{
+  background:#0f172a;
+  border-bottom:1px solid rgba(255,255,255,.08);
+}
+
+.industrial-nav .brand,
+.industrial-nav .nav-links a{
+  color:white;
+}
+
+.industrial-nav .nav-links a{
+  opacity:.82;
+}
+
+.industrial-nav .nav-links a:hover{
+  opacity:1;
+}
 
 .industrial-hero{
   margin-top:28px;
@@ -61,7 +77,9 @@ body{background:#eef3f9;color:#111827}
   margin-bottom:16px;
 }
 
-.industrial-section{padding:56px 0 0}
+.industrial-section{
+  padding:56px 0 0;
+}
 
 .industrial-section h2{
   font-size:clamp(1.8rem,3.5vw,2.8rem);
@@ -83,13 +101,17 @@ body{background:#eef3f9;color:#111827}
 }
 
 .system-card,
-.focus-card,
-.path-card{
+.focus-card{
   background:white;
   border:1px solid #d9e0ea;
   border-radius:22px;
   padding:22px;
   box-shadow:0 14px 34px rgba(15,23,42,.09);
+}
+
+.system-card{
+  display:flex;
+  flex-direction:column;
 }
 
 .system-image{
@@ -99,43 +121,70 @@ body{background:#eef3f9;color:#111827}
   object-position:left top;
   border-radius:16px;
   border:1px solid #d9e0ea;
-  margin-bottom:16px;
+  margin-bottom:18px;
   display:block;
   background:#eef3f9;
 }
 
 .system-card h3,
-.focus-card h3,
-.path-card h3{margin:0 0 8px}
+.focus-card h3{
+  margin:0 0 8px;
+}
 
 .system-card p,
-.focus-card p,
-.path-card p{margin:0;color:#5f6b7a}
+.focus-card p{
+  margin:0;
+  color:#5f6b7a;
+}
 
 .badge{
+  align-self:center;
   display:inline-flex;
+  justify-content:center;
   border-radius:999px;
-  padding:7px 10px;
+  padding:8px 14px;
   background:#eaf2ff;
   color:#1455d9;
   font-weight:900;
   font-size:.75rem;
   text-transform:uppercase;
   letter-spacing:.08em;
-  margin-bottom:12px;
+  margin-bottom:14px;
 }
 
 .system-actions{
-  margin-top:18px;
+  margin-top:auto;
+  padding-top:20px;
   display:flex;
   gap:10px;
   flex-wrap:wrap;
 }
 
-.system-actions .btn{
+.system-button{
   flex:1;
   min-width:120px;
-  text-align:center;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:0 14px;
+  border-radius:14px;
+  border:1px solid #cbd5e1;
+  background:#f8fafc;
+  color:#111827;
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 8px 18px rgba(15,23,42,.08);
+}
+
+.system-button.primary{
+  background:#1455d9;
+  border-color:#1455d9;
+  color:white;
+}
+
+.system-button:hover{
+  transform:translateY(-1px);
 }
 
 .focus-grid{
@@ -144,35 +193,25 @@ body{background:#eef3f9;color:#111827}
   gap:16px;
 }
 
-.path-grid{
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:18px;
-}
-
-.cta{
-  margin:62px 0 46px;
-  background:white;
-  border:1px solid #d9e0ea;
-  border-radius:26px;
-  text-align:center;
-  padding:38px 22px;
-  box-shadow:0 14px 34px rgba(15,23,42,.09);
-}
-
 .footer{
   color:#5f6b7a;
   text-align:center;
-  padding:24px 0 40px;
+  padding:48px 0 40px;
 }
 
 @media(max-width:920px){
   .systems-grid,
-  .focus-grid,
-  .path-grid{grid-template-columns:1fr}
+  .focus-grid{
+    grid-template-columns:1fr;
+  }
 
-  .industrial-hero{padding:34px 20px}
-  .system-image{height:220px}
+  .industrial-hero{
+    padding:34px 20px;
+  }
+
+  .system-image{
+    height:220px;
+  }
 }
 </style>
 </head>
@@ -215,9 +254,8 @@ body{background:#eef3f9;color:#111827}
   </h1>
 
   <p>
-    One T Industrial is the hub for shop-floor systems built around visibility,
-    handoffs, response, quality, and daily production control. Each product has
-    its own purpose, its own workflow, and its own product page as it becomes ready.
+    One T Industrial is the launchpad for individual shop-floor systems.
+    Each product solves its own floor problem and opens into its own product page.
   </p>
 
   <div class="hero-actions">
@@ -233,7 +271,7 @@ body{background:#eef3f9;color:#111827}
   <h2>System Lineup</h2>
 
   <p class="industrial-sub">
-    Start with one focused system. Add more as production needs grow.
+    Select a system below to view its product page, demo, or contact path.
   </p>
 
   <div class="systems-grid">
@@ -245,16 +283,18 @@ body{background:#eef3f9;color:#111827}
         class="system-image">
 
       <span class="badge">Live Demo</span>
+
       <h3>Floor Flow</h3>
+
       <p>
         Real-time production visibility, supervisor queues, display boards,
         badge access, roles, and plant-level control.
       </p>
 
       <div class="system-actions">
-        <a class="btn primary" href="floor-flow.html">View System</a>
+        <a class="system-button primary" href="floor-flow.html">View System</a>
 
-        <a class="btn"
+        <a class="system-button"
            href="https://onetmediagroup.github.io/FloorFlow-Demo/onboarding.html"
            target="_blank"
            rel="noopener">
@@ -265,14 +305,16 @@ body{background:#eef3f9;color:#111827}
 
     <div class="system-card">
       <span class="badge">Next System</span>
+
       <h3>Factory On Call</h3>
+
       <p>
         Escalation, response tracking, support calls, and shift-to-shift visibility
         when the floor needs help fast.
       </p>
 
       <div class="system-actions">
-        <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Factory%20On%20Call%20Inquiry">
+        <a class="system-button" href="mailto:onetmediagroup@gmail.com?subject=Factory%20On%20Call%20Inquiry">
           Ask About It
         </a>
       </div>
@@ -280,14 +322,16 @@ body{background:#eef3f9;color:#111827}
 
     <div class="system-card">
       <span class="badge">Planned</span>
+
       <h3>Quality Hold</h3>
+
       <p>
         Hold tracking, ownership, status visibility, and resolution flow for
         quality issues that need control.
       </p>
 
       <div class="system-actions">
-        <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Quality%20Hold%20Inquiry">
+        <a class="system-button" href="mailto:onetmediagroup@gmail.com?subject=Quality%20Hold%20Inquiry">
           Ask About It
         </a>
       </div>
@@ -295,14 +339,16 @@ body{background:#eef3f9;color:#111827}
 
     <div class="system-card">
       <span class="badge">Roadmap</span>
+
       <h3>Future Systems</h3>
+
       <p>
         More focused shop-floor tools will be added system by system as needs
         become clear.
       </p>
 
       <div class="system-actions">
-        <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=One%20T%20Industrial%20Roadmap">
+        <a class="system-button" href="mailto:onetmediagroup@gmail.com?subject=One%20T%20Industrial%20Roadmap">
           Contact
         </a>
       </div>
@@ -317,8 +363,8 @@ body{background:#eef3f9;color:#111827}
   <h2>What One T Industrial focuses on</h2>
 
   <p class="industrial-sub">
-    The goal is not one giant bloated platform. The goal is a family of practical tools
-    that solve real floor problems clearly.
+    The goal is not one giant bloated platform. The goal is a launchpad of practical tools
+    that represent different production-floor systems.
   </p>
 
   <div class="focus-grid">
@@ -334,16 +380,13 @@ body{background:#eef3f9;color:#111827}
     </div>
 
     <div class="focus-card">
-      <h3>Flow</h3>
-      <p>Reduce friction between shifts, roles, departments, and production steps.</p>
+      <h3>Floor Control</h3>
+      <p>Give each system a clear purpose instead of forcing every problem into one tool.</p>
     </div>
 
   </div>
 
 </section>
-
-
-
 
 </main>
 
