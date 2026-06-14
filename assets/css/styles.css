@@ -429,3 +429,35 @@ h1{
   border-radius:18px;
   display:block;
 }
+
+
+.tutorial-grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:14px;
+  margin-top:20px;
+}
+
+.tutorial-link{
+  display:block;
+  background:white;
+  border:1px solid var(--ff-line);
+  border-radius:16px;
+  padding:14px 16px;
+  text-decoration:none;
+  color:var(--ff-text);
+  font-weight:700;
+  box-shadow:0 8px 20px rgba(15,23,42,.06);
+  transition:.2s;
+}
+
+.tutorial-link:hover{
+  border-color:var(--ff-blue);
+  transform:translateY(-2px);
+}
+
+@media(max-width:920px){
+  .tutorial-grid{
+    grid-template-columns:1fr;
+  }
+}
