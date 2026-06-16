@@ -461,3 +461,26 @@ h1{
     grid-template-columns:1fr;
   }
 }
+/* ===== One T Media Group corporate logo update ===== */
+.brand{
+  min-width:260px;
+}
+.brand-logo{
+  display:block;
+  width:300px;
+  max-width:32vw;
+  height:auto;
+  object-fit:contain;
+}
+
+@media (max-width:920px){
+  .brand{min-width:0;}
+  .brand-logo{
+    width:240px;
+    max-width:78vw;
+  }
+}
+
+@media (max-width:520px){
+  .brand-logo{width:210px;}
+}
