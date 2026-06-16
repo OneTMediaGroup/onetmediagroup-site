@@ -99,6 +99,60 @@ body{background:var(--ff-bg);color:var(--ff-text)}
 .cta-panel{margin:62px 0 46px;background:white;border:1px solid var(--ff-line);border-radius:28px;text-align:center;padding:42px 24px;box-shadow:0 14px 34px rgba(15,23,42,.09)}
 .cta-panel p{color:var(--ff-muted);max-width:720px;margin:0 auto 22px}
 
+
+/* Floor Flow page button treatment */
+.hero-actions{
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.ff-hero .btn,
+.pricing-card .btn,
+.cta-panel .btn,
+.ff-video-card + div .btn{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  min-height:46px;
+  padding:0 18px;
+  border-radius:14px;
+  border:1px solid #cbd5e1;
+  background:#ffffff;
+  color:#111827;
+  font-weight:900;
+  text-decoration:none;
+  box-shadow:0 10px 22px rgba(15,23,42,.12);
+}
+
+.ff-hero .btn.primary,
+.pricing-card .btn.primary,
+.cta-panel .btn.primary,
+.ff-video-card + div .btn.primary{
+  background:#ffffff;
+  border-color:#ffffff;
+  color:#1455d9;
+}
+
+.pricing-card .btn.primary,
+.cta-panel .btn.primary{
+  background:#1455d9;
+  border-color:#1455d9;
+  color:#ffffff;
+}
+
+.ff-hero .btn:hover,
+.pricing-card .btn:hover,
+.cta-panel .btn:hover,
+.ff-video-card + div .btn:hover{
+  transform:translateY(-1px);
+}
+
+.ff-hero .btn.primary{
+  box-shadow:0 14px 28px rgba(255,255,255,.18);
+}
+
 .ff-footer{color:var(--ff-muted);text-align:center;padding:24px 0 42px}
 
 @media(max-width:920px){
@@ -151,9 +205,17 @@ body{background:var(--ff-bg);color:var(--ff-text)}
       </p>
 
       <div class="hero-actions">
-        <a class="btn primary" href="https://onetmediagroup.github.io/FloorFlow-Demo/onboarding.html" target="_blank" rel="noopener">Launch Demo</a>
-        <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Demo%20Request">Request Demo</a>
-        <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Pricing%20Inquiry">Contact Us</a>
+        <a class="btn primary"
+           href="https://onetmediagroup.github.io/FloorFlow-Demo/onboarding.html"
+           target="_blank"
+           rel="noopener">
+          Launch Demo
+        </a>
+
+        <a class="btn"
+           href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Inquiry">
+          Contact Us
+        </a>
       </div>
     </div>
 
@@ -164,49 +226,10 @@ body{background:var(--ff-bg);color:var(--ff-text)}
 </section>
 
 <section class="ff-section">
-  <h2>Replace the chaos.</h2>
-  <p class="ff-sub">Floor Flow is designed to reduce the daily noise that comes from scattered floor information.</p>
-
-  <div class="problem-grid">
-    <div class="problem-card">Whiteboards</div>
-    <div class="problem-card">Spreadsheets</div>
-    <div class="problem-card">Setup Sheets</div>
-    <div class="problem-card">Sticky Notes</div>
-    <div class="problem-card">Guesswork</div>
-  </div>
-</section>
-
-<section class="ff-section">
-  <h2>What Floor Flow Does</h2>
-  <p class="ff-sub">A focused system for visibility, accountability, and production flow.</p>
-
-  <div class="feature-grid">
-    <div class="feature-card"><h3>Live Floor Board</h3><p>View equipment, jobs, setup status, and current floor activity.</p></div>
-    <div class="feature-card"><h3>Supervisor Queue</h3><p>Manage upcoming work, search equipment, and track what is next.</p></div>
-    <div class="feature-card"><h3>Badge System</h3><p>Support badge codes, user access, PINs, and role-based tools.</p></div>
-    <div class="feature-card"><h3>Display Boards</h3><p>Show live production status on shop-floor TVs and shared screens.</p></div>
-    <div class="feature-card"><h3>User Management</h3><p>Add users, roles, imports, and access levels from admin tools.</p></div>
-    <div class="feature-card"><h3>Plant Branding</h3><p>Customize the system with plant name, logo, and identity.</p></div>
-    <div class="feature-card"><h3>Cleaner Handoffs</h3><p>Make current jobs and next setups easier to see across shifts.</p></div>
-    <div class="feature-card"><h3>Focused Roles</h3><p>Admin, supervisor, floor, and display views keep screens simple.</p></div>
-  </div>
-</section>
-
-<section class="ff-section">
-  <h2>Built around real floor roles.</h2>
-  <p class="ff-sub">Each view is focused so users see what they need without extra noise.</p>
-
-  <div class="role-grid">
-    <div class="role-card"><h3>Operators</h3><p>Simple floor access for current work and production visibility.</p></div>
-    <div class="role-card"><h3>Supervisors</h3><p>Queue control, equipment searching, and shift-level awareness.</p></div>
-    <div class="role-card"><h3>Admins</h3><p>Users, badges, roles, imports, branding, and system setup.</p></div>
-    <div class="role-card"><h3>Display Boards</h3><p>Large-screen status views for team areas and production boards.</p></div>
-  </div>
-</section>
-
-<section class="ff-section">
-  <h2>System Preview</h2>
-  <p class="ff-sub">A closer look at the screens used across Floor Flow.</p>
+  <h2>See Floor Flow in action.</h2>
+  <p class="ff-sub">
+    Start with the demo, then use the walkthroughs below to jump into the screens your team needs.
+  </p>
 
   <div class="screen-grid">
     <div class="screen-card">
@@ -403,7 +426,7 @@ body{background:var(--ff-bg);color:var(--ff-text)}
 
   <div class="hero-actions" style="justify-content:center">
     <a class="btn primary" href="https://onetmediagroup.github.io/FloorFlow-Demo/onboarding.html" target="_blank" rel="noopener">Launch Demo</a>
-    <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Demo%20Request">Request Demo</a>
+    <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Inquiry">Contact Us</a>
   </div>
 </section>
 
