@@ -1,0 +1,170 @@
+[debug] [2026-06-17T20:50:43.505Z] ----------------------------------------------------------------------
+[debug] [2026-06-17T20:50:43.508Z] Command:       /Users/scotmacair/.nvm/versions/node/v22.21.1/bin/node /Users/scotmacair/.nvm/versions/node/v22.21.1/bin/firebase deploy --only functions:floorflow-functions
+[debug] [2026-06-17T20:50:43.509Z] CLI Version:   15.20.0
+[debug] [2026-06-17T20:50:43.509Z] Platform:      darwin
+[debug] [2026-06-17T20:50:43.510Z] Node Version:  v22.21.1
+[debug] [2026-06-17T20:50:43.511Z] Time:          Wed Jun 17 2026 16:50:43 GMT-0400 (Eastern Daylight Saving Time)
+[debug] [2026-06-17T20:50:43.512Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-17T20:50:44.997Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-17T20:50:44.998Z] > authorizing via signed-in user (scotfree@hotmail.com)
+[debug] [2026-06-17T20:50:44.999Z] [iam] checking project die-changeover-board for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-06-17T20:50:45.001Z] Checked if tokens are valid: false, expires at: 1781680796522
+[debug] [2026-06-17T20:50:45.001Z] Checked if tokens are valid: false, expires at: 1781680796522
+[debug] [2026-06-17T20:50:45.001Z] > refreshing access token with scopes: []
+[debug] [2026-06-17T20:50:45.003Z] >>> [apiv2][query] POST https://www.googleapis.com/oauth2/v3/token [none]
+[debug] [2026-06-17T20:50:45.003Z] >>> [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-17T20:50:45.375Z] <<< [apiv2][status] POST https://www.googleapis.com/oauth2/v3/token 200
+[debug] [2026-06-17T20:50:45.376Z] <<< [apiv2][body] POST https://www.googleapis.com/oauth2/v3/token [omitted]
+[debug] [2026-06-17T20:50:45.399Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions [none]
+[debug] [2026-06-17T20:50:45.399Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions  x-goog-user-project=die-changeover-board
+[debug] [2026-06-17T20:50:45.400Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-06-17T20:50:45.665Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions 200
+[debug] [2026-06-17T20:50:45.665Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-06-17T20:50:45.666Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T20:50:45.666Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T20:50:45.666Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-06-17T20:50:45.666Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2026-06-17T20:50:46.011Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions 404
+[debug] [2026-06-17T20:50:46.012Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions {"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}}
+[debug] [2026-06-17T20:50:46.015Z] [functions] service account IAM check errored, deploy may fail: Request to https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}},"response":{"statusCode":404}},"exit":1,"message":"Request to https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account","status":404}
+[info] 
+[info] === Deploying to 'die-changeover-board'...
+[info] 
+[info] i  deploying functions 
+[debug] [2026-06-17T20:50:46.024Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T20:50:46.024Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T20:50:46.025Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board [none]
+[debug] [2026-06-17T20:50:46.188Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board 200
+[debug] [2026-06-17T20:50:46.189Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board {"projectNumber":"511859053795","projectId":"die-changeover-board","lifecycleState":"ACTIVE","name":"die-changeover-board","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-04-16T04:28:46.978Z"}
+[info] i  functions: preparing codebase floorflow-functions for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2026-06-17T20:50:46.193Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T20:50:46.193Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T20:50:46.194Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/die-changeover-board/adminSdkConfig [none]
+[debug] [2026-06-17T20:50:46.553Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/die-changeover-board/adminSdkConfig 200
+[debug] [2026-06-17T20:50:46.553Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/die-changeover-board/adminSdkConfig {"projectId":"die-changeover-board","storageBucket":"die-changeover-board.firebasestorage.app"}
+[debug] [2026-06-17T20:50:46.556Z] Validating nodejs source
+[debug] [2026-06-17T20:50:47.434Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "24"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^13.10.0",
+    "firebase-functions": "^7.0.0",
+    "stripe": "^22.2.1",
+    "resend": "^6.6.0"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.4.1"
+  },
+  "private": true
+}
+[debug] [2026-06-17T20:50:47.434Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase floorflow-functions to determine what to deploy 
+[debug] [2026-06-17T20:50:47.436Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-06-17T20:50:47.447Z] Found firebase-functions binary at '/Users/scotmacair/Desktop/Allsites/onetmediagroup-site/floorflow/floorflow-functions/node_modules/.bin/firebase-functions'
+[debug] [2026-06-17T20:50:47.451Z] Error: spawn /Users/scotmacair/Desktop/Allsites/onetmediagroup-site/floorflow/floorflow-functions/node_modules/.bin/firebase-functions EACCES
+    at ChildProcess._handle.onexit (node:internal/child_process:285:19)
+    at onErrorNT (node:internal/child_process:483:16)
+    at process.processTicksAndRejections (node:internal/process/task_queues:90:21)
+[error] 
+[error] Error: An unexpected error has occurred.
+[debug] [2026-06-17T21:13:18.990Z] ----------------------------------------------------------------------
+[debug] [2026-06-17T21:13:18.998Z] Command:       /Users/scotmacair/.nvm/versions/node/v22.21.1/bin/node /Users/scotmacair/.nvm/versions/node/v22.21.1/bin/firebase deploy --only functions:floorflow-functions
+[debug] [2026-06-17T21:13:18.998Z] CLI Version:   15.20.0
+[debug] [2026-06-17T21:13:18.999Z] Platform:      darwin
+[debug] [2026-06-17T21:13:18.999Z] Node Version:  v22.21.1
+[debug] [2026-06-17T21:13:19.000Z] Time:          Wed Jun 17 2026 17:13:19 GMT-0400 (Eastern Daylight Saving Time)
+[debug] [2026-06-17T21:13:19.001Z] ----------------------------------------------------------------------
+[debug] 
+[debug] [2026-06-17T21:13:20.155Z] > command requires scopes: ["email","openid","https://www.googleapis.com/auth/cloudplatformprojects.readonly","https://www.googleapis.com/auth/firebase","https://www.googleapis.com/auth/cloud-platform"]
+[debug] [2026-06-17T21:13:20.156Z] > authorizing via signed-in user (scotfree@hotmail.com)
+[debug] [2026-06-17T21:13:20.157Z] [iam] checking project die-changeover-board for permissions ["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]
+[debug] [2026-06-17T21:13:20.159Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:20.159Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:20.160Z] >>> [apiv2][query] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions [none]
+[debug] [2026-06-17T21:13:20.160Z] >>> [apiv2][(partial)header] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions  x-goog-user-project=die-changeover-board
+[debug] [2026-06-17T21:13:20.161Z] >>> [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-06-17T21:13:20.648Z] <<< [apiv2][status] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions 200
+[debug] [2026-06-17T21:13:20.649Z] <<< [apiv2][body] POST https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board:testIamPermissions {"permissions":["cloudfunctions.functions.create","cloudfunctions.functions.delete","cloudfunctions.functions.get","cloudfunctions.functions.list","cloudfunctions.functions.update","cloudfunctions.operations.get","firebase.projects.get"]}
+[debug] [2026-06-17T21:13:20.650Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:20.650Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:20.650Z] >>> [apiv2][query] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions [none]
+[debug] [2026-06-17T21:13:20.650Z] >>> [apiv2][body] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions {"permissions":["iam.serviceAccounts.actAs"]}
+[debug] [2026-06-17T21:13:21.021Z] <<< [apiv2][status] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions 404
+[debug] [2026-06-17T21:13:21.023Z] <<< [apiv2][body] POST https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions {"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}}
+[debug] [2026-06-17T21:13:21.026Z] [functions] service account IAM check errored, deploy may fail: Request to https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account {"name":"FirebaseError","children":[],"context":{"body":{"error":{"code":404,"message":"Unknown service account","status":"NOT_FOUND"}},"response":{"statusCode":404}},"exit":1,"message":"Request to https://iam.googleapis.com/v1/projects/die-changeover-board/serviceAccounts/die-changeover-board@appspot.gserviceaccount.com:testIamPermissions had HTTP Error: 404, Unknown service account","status":404}
+[info] 
+[info] === Deploying to 'die-changeover-board'...
+[info] 
+[info] i  deploying functions 
+[debug] [2026-06-17T21:13:21.033Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:21.033Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:21.033Z] >>> [apiv2][query] GET https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board [none]
+[debug] [2026-06-17T21:13:21.136Z] <<< [apiv2][status] GET https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board 200
+[debug] [2026-06-17T21:13:21.136Z] <<< [apiv2][body] GET https://cloudresourcemanager.googleapis.com/v1/projects/die-changeover-board {"projectNumber":"511859053795","projectId":"die-changeover-board","lifecycleState":"ACTIVE","name":"die-changeover-board","labels":{"firebase":"enabled","firebase-core":"disabled"},"createTime":"2026-04-16T04:28:46.978Z"}
+[info] i  functions: preparing codebase floorflow-functions for deployment 
+[info] i  functions: ensuring required API cloudfunctions.googleapis.com is enabled... 
+[info] i  functions: ensuring required API cloudbuild.googleapis.com is enabled... 
+[info] i  artifactregistry: ensuring required API artifactregistry.googleapis.com is enabled... 
+[debug] [2026-06-17T21:13:21.142Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:21.143Z] Checked if tokens are valid: true, expires at: 1781733044376
+[debug] [2026-06-17T21:13:21.143Z] >>> [apiv2][query] GET https://firebase.googleapis.com/v1beta1/projects/die-changeover-board/adminSdkConfig [none]
+[debug] [2026-06-17T21:13:21.663Z] <<< [apiv2][status] GET https://firebase.googleapis.com/v1beta1/projects/die-changeover-board/adminSdkConfig 200
+[debug] [2026-06-17T21:13:21.664Z] <<< [apiv2][body] GET https://firebase.googleapis.com/v1beta1/projects/die-changeover-board/adminSdkConfig {"projectId":"die-changeover-board","storageBucket":"die-changeover-board.firebasestorage.app"}
+[debug] [2026-06-17T21:13:21.672Z] Validating nodejs source
+[debug] [2026-06-17T21:13:22.629Z] > [functions] package.json contents: {
+  "name": "functions",
+  "description": "Cloud Functions for Firebase",
+  "scripts": {
+    "serve": "firebase emulators:start --only functions",
+    "shell": "firebase functions:shell",
+    "start": "npm run shell",
+    "deploy": "firebase deploy --only functions",
+    "logs": "firebase functions:log"
+  },
+  "engines": {
+    "node": "24"
+  },
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^13.10.0",
+    "firebase-functions": "^7.0.0",
+    "stripe": "^22.2.1",
+    "resend": "^6.6.0"
+  },
+  "devDependencies": {
+    "firebase-functions-test": "^3.4.1"
+  },
+  "private": true
+}
+[debug] [2026-06-17T21:13:22.629Z] Building nodejs source
+[info] i  functions: Loading and analyzing source code for codebase floorflow-functions to determine what to deploy 
+[debug] [2026-06-17T21:13:22.631Z] Could not find functions.yaml. Must use http discovery
+[debug] [2026-06-17T21:13:22.643Z] Found firebase-functions binary at '/Users/scotmacair/Desktop/Allsites/onetmediagroup-site/floorflow/floorflow-functions/node_modules/.bin/firebase-functions'
+[debug] [2026-06-17T21:13:22.647Z] Error: spawn ENOEXEC
+    at ChildProcess.spawn (node:internal/child_process:420:11)
+    at Object.spawn (node:child_process:787:9)
+    at spawn (/Users/scotmacair/.nvm/versions/node/v22.21.1/lib/node_modules/firebase-tools/node_modules/cross-spawn/index.js:12:24)
+    at Delegate.spawnFunctionsProcess (/Users/scotmacair/.nvm/versions/node/v22.21.1/lib/node_modules/firebase-tools/lib/deploy/functions/runtimes/node/index.js:132:30)
+    at Delegate.serveAdmin (/Users/scotmacair/.nvm/versions/node/v22.21.1/lib/node_modules/firebase-tools/lib/deploy/functions/runtimes/node/index.js:152:35)
+    at Delegate.discoverBuild (/Users/scotmacair/.nvm/versions/node/v22.21.1/lib/node_modules/firebase-tools/lib/deploy/functions/runtimes/node/index.js:192:41)
+    at process.processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at async loadCodebases (/Users/scotmacair/.nvm/versions/node/v22.21.1/lib/node_modules/firebase-tools/lib/deploy/functions/prepare.js:393:33)
+    at async prepare (/Users/scotmacair/.nvm/versions/node/v22.21.1/lib/node_modules/firebase-tools/lib/deploy/functions/prepare.js:74:24)
+    at async chain (/Users/scotmacair/.nvm/versions/node/v22.21.1/lib/node_modules/firebase-tools/lib/deploy/index.js:45:9)
+[error] 
+[error] Error: An unexpected error has occurred.
