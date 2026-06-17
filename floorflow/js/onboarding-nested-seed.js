@@ -64,13 +64,16 @@ export function buildProductionAreas(areaName = 'Main Floor') {
   ];
 }
 
-export function buildDemoUsers(adminName = 'Plant Admin', adminPin = '1000') {
+export function buildDemoUsers(adminName = 'Plant Admin', adminPin = '1000', adminFirstName = '', adminLastName = '', adminEmail = '') {
   const cleanAdminPin = String(adminPin || '1000').trim() || '1000';
 
   return [
     {
       id: `admin-${cleanAdminPin}`,
       name: adminName || 'Plant Admin',
+      firstName: adminFirstName || '',
+      lastName: adminLastName || '',
+      email: adminEmail || '',
       role: 'admin',
       status: 'active',
       employeeId: cleanAdminPin,
@@ -125,13 +128,16 @@ export function buildDemoUsers(adminName = 'Plant Admin', adminPin = '1000') {
   ];
 }
 
-export function buildProductionUsers(adminName = 'Plant Admin', adminPin = '1000', badgeCode = '') {
+export function buildProductionUsers(adminName = 'Plant Admin', adminPin = '1000', badgeCode = '', adminFirstName = '', adminLastName = '', adminEmail = '') {
   const cleanAdminPin = String(adminPin || '1000').trim() || '1000';
 
   return [
     {
       id: `admin-${cleanAdminPin}`,
       name: adminName || 'Plant Admin',
+      firstName: adminFirstName || '',
+      lastName: adminLastName || '',
+      email: adminEmail || '',
       role: 'admin',
       status: 'active',
       employeeId: cleanAdminPin,
@@ -265,6 +271,9 @@ export async function seedOnboardingPlant({
   plantName = 'Floor Flow Plant',
   companyName = 'Floor Flow',
   adminName = 'Plant Admin',
+  adminFirstName = '',
+  adminLastName = '',
+  adminEmail = '',
   adminPin = '1000',
   adminBadgeCode = '',
   mode = 'demo',
@@ -283,8 +292,8 @@ export async function seedOnboardingPlant({
 
   const areas = isDemo ? buildDemoAreas() : buildProductionAreas(areaName);
   const users = isDemo
-    ? buildDemoUsers(adminName, adminPin)
-    : buildProductionUsers(adminName, adminPin, adminBadgeCode);
+    ? buildDemoUsers(adminName, adminPin, adminFirstName, adminLastName, adminEmail)
+    : buildProductionUsers(adminName, adminPin, adminBadgeCode, adminFirstName, adminLastName, adminEmail);
   const workCells = isDemo ? buildDemoWorkCells() : buildProductionWorkCells(equipmentName, areaName);
 
   await setDoc(doc(db, 'plants', plantId), {
@@ -293,6 +302,14 @@ export async function seedOnboardingPlant({
     plantName,
     name: plantName,
     companyName,
+    onboardingContact: {
+      firstName: adminFirstName || '',
+      lastName: adminLastName || '',
+      fullName: adminName || '',
+      email: adminEmail || ''
+    },
+    demoContactEmail: isDemo ? adminEmail || '' : '',
+    demoCreatedAt: isDemo ? now : '',
     mode: normalizedMode,
     environment: normalizedMode,
     isDemo,
@@ -312,6 +329,14 @@ export async function seedOnboardingPlant({
     plantId,
     plantName,
     companyName,
+    onboardingContact: {
+      firstName: adminFirstName || '',
+      lastName: adminLastName || '',
+      fullName: adminName || '',
+      email: adminEmail || ''
+    },
+    demoContactEmail: isDemo ? adminEmail || '' : '',
+    demoCreatedAt: isDemo ? now : '',
     mode: normalizedMode,
     environment: normalizedMode,
     isDemo,

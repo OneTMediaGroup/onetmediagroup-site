@@ -43,7 +43,10 @@ const state = {
   brandingMode: 'text',
   brandText: '',
   logoUrl: '',
+  adminFirstName: '',
+  adminLastName: '',
   adminName: '',
+  adminEmail: '',
   adminEmployeeId: '',
   adminBadgeCode: '',
   selectedPlan: getSelectedStripePlan(),
@@ -63,7 +66,7 @@ if (startupParams.get('mode') === 'production' || returnedFromStripeCheckout) {
 // When Stripe sends the customer back after successful checkout, land them
 // directly on the Production Checkout step so they can click Next and continue.
 if (returnedFromStripeCheckout) {
-  step = 2;
+  step = 3;
 }
 
 function getOnboardingSteps() {
@@ -80,8 +83,13 @@ function getOnboardingSteps() {
     return [
       renderWelcome,
       renderPlantType,
+      renderPlantSetup,
       renderProductionActivation,
-      ...sharedSteps
+      renderBranding,
+      renderAdmin,
+      renderArea,
+      renderEquipment,
+      renderComplete
     ];
   }
 
@@ -144,7 +152,7 @@ nextBtn.addEventListener('click', async () => {
 
     recoveryState = null;
     state.mode = 'production';
-    step = 3;
+    step = 4;
     render();
     return;
   }
@@ -448,21 +456,25 @@ function renderProductionActivation() {
 }
 
 function renderPlantSetup() {
+  const isProduction = state.mode === 'production';
+
   return `
-    <h2 class="step-title">Plant Details</h2>
+    <h2 class="step-title">${isProduction ? 'Production Plant Details' : 'Demo Plant Details'}</h2>
     <p class="step-copy">
-      Enter the plant name and timezone. The plant name will also be used as the default branding text.
+      ${isProduction
+        ? 'Enter the real plant name before checkout. This name appears in Stripe, welcome emails, and Admin.'
+        : 'Enter a demo plant name and timezone. This keeps your test plant easy to identify.'}
     </p>
 
-    <div class="selected-mode-strip ${state.mode === 'production' ? 'production' : 'demo'}">
-      <strong>${state.mode === 'production' ? 'Production Plant' : 'Demo Plant'}</strong>
-      <span>${state.mode === 'production' ? 'Clean plant · no demo data' : 'Sample data included · free demo mode'}</span>
+    <div class="selected-mode-strip ${isProduction ? 'production' : 'demo'}">
+      <strong>${isProduction ? 'Production Plant' : 'Demo Plant'}</strong>
+      <span>${isProduction ? 'Plant name required before Stripe checkout' : 'Sample data included · free demo mode'}</span>
     </div>
 
     <div class="form-grid">
       <label>
-        <span>Plant Name</span>
-        <input id="plantNameInput" value="${escapeAttr(state.plantName)}" placeholder="Example: Master Plant" />
+        <span>Plant Name *</span>
+        <input id="plantNameInput" value="${escapeAttr(state.plantName)}" placeholder="${isProduction ? 'Example: Magna Newmarket' : 'Example: Demo Plant'}" />
       </label>
 
       <label>
@@ -504,18 +516,34 @@ function renderBranding() {
 }
 
 function renderAdmin() {
+  const isDemo = state.mode === 'demo';
+
   return `
     <h2 class="step-title">Create First Admin</h2>
-    <p class="step-copy">This creates the first admin user for this plant. Badges can be printed later from Admin → Users.</p>
+    <p class="step-copy">
+      ${isDemo
+        ? 'Enter your contact details so we can follow up after your demo. This also creates the first admin user.'
+        : 'This creates the first admin user for this plant. Badges can be printed later from Admin → Users.'}
+    </p>
 
     <div class="form-grid">
       <label>
-        <span>Admin Name</span>
-        <input id="adminName" value="${escapeAttr(state.adminName)}" placeholder="Your name" />
+        <span>First Name *</span>
+        <input id="adminFirstName" value="${escapeAttr(state.adminFirstName)}" placeholder="First name" autocomplete="given-name" />
       </label>
 
       <label>
-        <span>Admin PIN / Employee ID</span>
+        <span>Last Name *</span>
+        <input id="adminLastName" value="${escapeAttr(state.adminLastName)}" placeholder="Last name" autocomplete="family-name" />
+      </label>
+
+      <label class="full">
+        <span>Email Address ${isDemo ? '*' : ''}</span>
+        <input id="adminEmail" type="email" value="${escapeAttr(state.adminEmail)}" placeholder="name@company.com" autocomplete="email" />
+      </label>
+
+      <label class="full">
+        <span>Admin PIN / Employee ID *</span>
         <input
           id="adminEmployeeId"
           type="tel"
@@ -610,12 +638,21 @@ function saveCurrentStep() {
   state.logoUrl = '';
   if (document.getElementById('brandText')) state.brandText = value('brandText') || state.plantName || '';
 
-  if (document.getElementById('adminName')) state.adminName = value('adminName') || '';
+  if (document.getElementById('adminFirstName')) state.adminFirstName = value('adminFirstName') || '';
+  if (document.getElementById('adminLastName')) state.adminLastName = value('adminLastName') || '';
+  if (document.getElementById('adminEmail')) state.adminEmail = value('adminEmail') || '';
+  if (document.getElementById('adminFirstName') || document.getElementById('adminLastName')) {
+    state.adminName = `${state.adminFirstName || ''} ${state.adminLastName || ''}`.trim();
+  }
   if (document.getElementById('adminEmployeeId')) state.adminEmployeeId = value('adminEmployeeId') || '';
   state.adminBadgeCode = '';
 
   if (document.getElementById('areaName')) state.areaName = value('areaName') || '';
   if (document.getElementById('equipmentName')) state.equipmentName = value('equipmentName') || '';
+}
+
+function isValidEmailAddress(email = '') {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email || '').trim());
 }
 
 function validateStep() {
@@ -636,8 +673,16 @@ function validateStep() {
     return fail('Plant name is required.');
   }
 
-  if (activeStep === renderAdmin && (!state.adminName || !state.adminEmployeeId)) {
-    return fail('Admin name and PIN / Employee ID are required.');
+  if (activeStep === renderAdmin && (!state.adminFirstName || !state.adminLastName || !state.adminEmployeeId)) {
+    return fail('First name, last name, and PIN / Employee ID are required.');
+  }
+
+  if (activeStep === renderAdmin && state.mode === 'demo' && !state.adminEmail) {
+    return fail('Email address is required for demo access.');
+  }
+
+  if (activeStep === renderAdmin && state.adminEmail && !isValidEmailAddress(state.adminEmail)) {
+    return fail('Enter a valid email address.');
   }
 
   if (activeStep === renderAdmin && !/^[0-9]+$/.test(state.adminEmployeeId)) {
@@ -668,7 +713,7 @@ async function ensurePendingProductionPlantId(plan = 'monthly') {
 
   const plantRef = doc(collection(db, 'plants'));
   const plantId = plantRef.id;
-  const plantName = state.plantName || state.companyName || 'Production Plant Setup';
+  const plantName = state.plantName || state.companyName || 'Production Plant';
 
   await setDoc(plantRef, {
     id: plantId,
@@ -685,6 +730,12 @@ async function ensurePendingProductionPlantId(plan = 'monthly') {
     subscriptionStatus: 'pending_checkout',
     productionUnlocked: false,
     pendingOnboarding: true,
+    onboardingContact: {
+      firstName: state.adminFirstName || '',
+      lastName: state.adminLastName || '',
+      fullName: state.adminName || '',
+      email: state.adminEmail || ''
+    },
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   }, { merge: true });
@@ -803,6 +854,9 @@ async function finishOnboarding() {
       plantName: state.plantName || 'Demo Plant',
       companyName: state.companyName || state.plantName || 'Demo Plant',
       adminName: state.adminName || 'Plant Admin',
+      adminFirstName: state.adminFirstName || '',
+      adminLastName: state.adminLastName || '',
+      adminEmail: state.adminEmail || '',
       adminPin: getOnboardingAdminPin(),
       adminBadgeCode: '',
       mode: state.mode || 'demo',
@@ -817,6 +871,14 @@ async function finishOnboarding() {
     await setDoc(doc(db, 'plants', plantId), {
       setupComplete: true,
       pendingOnboarding: false,
+      onboardingContact: {
+        firstName: state.adminFirstName || '',
+        lastName: state.adminLastName || '',
+        fullName: state.adminName || '',
+        email: state.adminEmail || ''
+      },
+      demoContactEmail: state.mode === 'demo' ? state.adminEmail || '' : '',
+      demoCreatedAt: state.mode === 'demo' ? serverTimestamp() : null,
       onboardingCompletedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }, { merge: true });
