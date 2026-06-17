@@ -1,0 +1,411 @@
+const { onRequest } = require("firebase-functions/v2/https");
+const { defineSecret } = require("firebase-functions/params");
+const admin = require("firebase-admin");
+const Stripe = require("stripe");
+
+admin.initializeApp();
+
+const STRIPE_SECRET_KEY = defineSecret("STRIPE_SECRET_KEY");
+const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
+const STRIPE_MONTHLY_PRICE_ID = defineSecret("STRIPE_MONTHLY_PRICE_ID");
+const STRIPE_YEARLY_PRICE_ID = defineSecret("STRIPE_YEARLY_PRICE_ID");
+
+const db = admin.firestore();
+
+
+function normalizePlan(plan = "monthly") {
+  return plan === "yearly" || plan === "annual" ? "yearly" : "monthly";
+}
+
+function allowedCorsOrigin(origin = "") {
+  // Local dev, Firebase Hosting, GitHub Pages/custom domain later.
+  if (!origin) return "*";
+  if (/^https?:\/\/(127\.0\.0\.1|localhost)(:\d+)?$/i.test(origin)) return origin;
+  if (/^https:\/\/.*\.web\.app$/i.test(origin)) return origin;
+  if (/^https:\/\/.*\.firebaseapp\.com$/i.test(origin)) return origin;
+  if (/^https:\/\/.*github\.io$/i.test(origin)) return origin;
+  return origin;
+}
+
+function applyCors(req, res) {
+  res.set("Access-Control-Allow-Origin", allowedCorsOrigin(req.headers.origin || ""));
+  res.set("Vary", "Origin");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+}
+
+
+function normalizePlanFromSession(session) {
+  const metadataPlan = session?.metadata?.plan || session?.metadata?.billingPlan;
+  const clientRef = session?.client_reference_id || "";
+  const paymentLink = session?.payment_link || "";
+
+  if (metadataPlan === "yearly" || metadataPlan === "annual") return "yearly";
+  if (metadataPlan === "monthly") return "monthly";
+
+  if (String(clientRef).toLowerCase().includes("year")) return "yearly";
+  if (String(clientRef).toLowerCase().includes("month")) return "monthly";
+
+  if (paymentLink) return "unknown";
+
+  return "unknown";
+}
+
+function getPlantIdFromSession(session) {
+  return (
+    session?.metadata?.plantId ||
+    session?.metadata?.plant_id ||
+    session?.client_reference_id ||
+    ""
+  ).trim();
+}
+
+async function findPlantByStripeCustomer(stripeCustomerId) {
+  if (!stripeCustomerId) return null;
+
+  const snap = await db
+    .collection("plants")
+    .where("stripeCustomerId", "==", stripeCustomerId)
+    .limit(1)
+    .get();
+
+  if (snap.empty) return null;
+  return snap.docs[0].ref;
+}
+
+function isValidEmail(email = "") {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim());
+}
+
+async function sendWelcomeEmailIfNeeded({ plantRef, email, billingPlan }) {
+  const cleanEmail = String(email || "").trim();
+  if (!plantRef || !isValidEmail(cleanEmail)) {
+    return { emailQueued: false, reason: "missing_or_invalid_email" };
+  }
+
+  const plantSnap = await plantRef.get();
+  const plantData = plantSnap.exists ? plantSnap.data() || {} : {};
+
+  if (plantData.welcomeEmailSentAt) {
+    return { emailQueued: false, reason: "already_sent" };
+  }
+
+  const plantId = plantRef.id;
+  const plantName = plantData.plantName || plantData.name || "Floor Flow Plant";
+  const planText = billingPlan === "yearly" ? "Annual" : billingPlan === "monthly" ? "Monthly" : "Active";
+
+  const text = `Thank you for subscribing to Floor Flow Pro.
+
+Your production plant has been activated.
+
+Plant Name: ${plantName}
+Plant Code: ${plantId}
+Plan: ${planText}
+
+Keep this Plant Code in a safe place. If onboarding is interrupted, you can return to Floor Flow onboarding and continue setup using this plant.
+
+Your plant links are available inside the Admin panel after setup is complete.
+
+Questions?
+onetmediagroup@gmail.com
+
+One T Media Group
+Floor Flow`;
+
+  await db.collection("mail").add({
+    to: [cleanEmail],
+    message: {
+      subject: "Welcome to Floor Flow Pro",
+      text
+    },
+    plantId,
+    type: "floorflow_welcome",
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
+  });
+
+  await plantRef.set({
+    welcomeEmailSentAt: admin.firestore.FieldValue.serverTimestamp(),
+    welcomeEmailTo: cleanEmail
+  }, { merge: true });
+
+  return { emailQueued: true, to: cleanEmail };
+}
+
+async function markPlantActive({ plantId, stripeCustomerId, stripeSubscriptionId, billingPlan, email }) {
+  let plantRef = plantId ? db.collection("plants").doc(plantId) : null;
+
+  if (!plantRef && stripeCustomerId) {
+    plantRef = await findPlantByStripeCustomer(stripeCustomerId);
+  }
+
+  const payload = {
+    billingStatus: "active",
+    subscriptionStatus: "active",
+    productionUnlocked: true,
+    paid: true,
+    billingPlan: billingPlan || "unknown",
+    stripeCustomerId: stripeCustomerId || "",
+    stripeSubscriptionId: stripeSubscriptionId || "",
+    billingEmail: email || "",
+    billingUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+  };
+
+  if (plantRef) {
+    await plantRef.set(payload, { merge: true });
+    const emailResult = await sendWelcomeEmailIfNeeded({
+      plantRef,
+      email,
+      billingPlan: payload.billingPlan
+    });
+    return { updatedPlant: plantRef.id, ...emailResult };
+  }
+
+  const fallbackId = stripeCustomerId || stripeSubscriptionId || `unlinked-${Date.now()}`;
+  await db.collection("billingCustomers").doc(fallbackId).set({
+    ...payload,
+    plantId: plantId || "",
+    needsPlantLink: true,
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  return { updatedPlant: null, fallbackId };
+}
+
+async function markPlantInactive({ stripeCustomerId, stripeSubscriptionId, reason }) {
+  let plantRef = null;
+
+  if (stripeCustomerId) {
+    plantRef = await findPlantByStripeCustomer(stripeCustomerId);
+  }
+
+  const payload = {
+    billingStatus: "inactive",
+    subscriptionStatus: "inactive",
+    productionUnlocked: false,
+    paid: false,
+    stripeSubscriptionId: stripeSubscriptionId || "",
+    billingLockReason: reason || "subscription_inactive",
+    billingUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+  };
+
+  if (plantRef) {
+    await plantRef.set(payload, { merge: true });
+    return { lockedPlant: plantRef.id };
+  }
+
+  if (stripeCustomerId || stripeSubscriptionId) {
+    const fallbackId = stripeCustomerId || stripeSubscriptionId;
+    await db.collection("billingCustomers").doc(fallbackId).set(payload, { merge: true });
+    return { lockedPlant: null, fallbackId };
+  }
+
+  return { lockedPlant: null };
+}
+
+
+exports.createCheckoutSession = onRequest(
+  {
+    region: "northamerica-northeast1",
+    secrets: [STRIPE_SECRET_KEY, STRIPE_MONTHLY_PRICE_ID, STRIPE_YEARLY_PRICE_ID]
+  },
+  async (req, res) => {
+    applyCors(req, res);
+
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method Not Allowed" });
+      return;
+    }
+
+    try {
+      const stripe = new Stripe(STRIPE_SECRET_KEY.value());
+      const body = typeof req.body === "object" && req.body ? req.body : {};
+      const plantId = String(body.plantId || "").trim();
+      const plan = normalizePlan(body.plan || "monthly");
+      const plantName = String(body.plantName || "Floor Flow Plant").trim().slice(0, 120);
+      const customerEmail = String(body.customerEmail || "").trim();
+      const origin = body.origin || req.headers.origin || "";
+      const successUrl = body.successUrl || `${origin}/onboarding.html?mode=production&payment=success&plan=${plan}&plantId=${encodeURIComponent(plantId)}&session_id={CHECKOUT_SESSION_ID}`;
+      const cancelUrl = body.cancelUrl || `${origin}/onboarding.html?mode=production&checkout=cancelled&plan=${plan}&plantId=${encodeURIComponent(plantId)}`;
+
+      if (!plantId) {
+        res.status(400).json({ error: "Missing plantId." });
+        return;
+      }
+
+      const priceId = plan === "yearly" ? STRIPE_YEARLY_PRICE_ID.value() : STRIPE_MONTHLY_PRICE_ID.value();
+
+      if (!priceId || !priceId.startsWith("price_")) {
+        res.status(500).json({ error: `Stripe ${plan} price ID is not configured.` });
+        return;
+      }
+
+      await db.collection("plants").doc(plantId).set({
+        plantId,
+        id: plantId,
+        plantName,
+        name: plantName,
+        environment: "production",
+        mode: "production",
+        isDemo: false,
+        billingPlan: plan,
+        billingStatus: "checkout_started",
+        subscriptionStatus: "pending_checkout",
+        productionUnlocked: false,
+        checkoutStartedAt: admin.firestore.FieldValue.serverTimestamp(),
+        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      }, { merge: true });
+
+      const sessionConfig = {
+        mode: "subscription",
+        line_items: [{ price: priceId, quantity: 1 }],
+        client_reference_id: plantId,
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: {
+          plantId,
+          plan,
+          billingPlan: plan,
+          plantName
+        },
+        subscription_data: {
+          metadata: {
+            plantId,
+            plan,
+            billingPlan: plan,
+            plantName
+          }
+        },
+     
+        allow_promotion_codes: true,
+        billing_address_collection: "required",
+        
+      };
+
+      if (customerEmail && customerEmail.includes("@")) {
+        sessionConfig.customer_email = customerEmail;
+      }
+
+      const session = await stripe.checkout.sessions.create(sessionConfig);
+
+      res.status(200).json({ url: session.url, id: session.id });
+    } catch (error) {
+      console.error("createCheckoutSession failed:", error);
+      res.status(500).json({ error: error.message || "Could not create checkout session." });
+    }
+  }
+);
+
+exports.stripeWebhook = onRequest(
+  {
+    region: "northamerica-northeast1",
+    secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET]
+  },
+  async (req, res) => {
+    if (req.method !== "POST") {
+      res.status(405).send("Method Not Allowed");
+      return;
+    }
+
+    const stripe = new Stripe(STRIPE_SECRET_KEY.value());
+    const signature = req.headers["stripe-signature"];
+
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(
+        req.rawBody,
+        signature,
+        STRIPE_WEBHOOK_SECRET.value()
+      );
+    } catch (error) {
+      console.error("Stripe webhook signature verification failed:", error.message);
+      res.status(400).send(`Webhook Error: ${error.message}`);
+      return;
+    }
+
+    try {
+      switch (event.type) {
+        case "checkout.session.completed": {
+          const session = event.data.object;
+
+          const result = await markPlantActive({
+            plantId: getPlantIdFromSession(session),
+            stripeCustomerId: session.customer || "",
+            stripeSubscriptionId: session.subscription || "",
+            billingPlan: normalizePlanFromSession(session),
+            email: session.customer_details?.email || session.customer_email || ""
+          });
+
+          console.log("checkout.session.completed processed", result);
+          break;
+        }
+
+        case "customer.subscription.created":
+        case "customer.subscription.updated": {
+          const subscription = event.data.object;
+          const activeStates = new Set(["active", "trialing"]);
+
+          if (activeStates.has(subscription.status)) {
+            const result = await markPlantActive({
+              plantId: subscription.metadata?.plantId || subscription.metadata?.plant_id || "",
+              stripeCustomerId: subscription.customer || "",
+              stripeSubscriptionId: subscription.id || "",
+              billingPlan: subscription.metadata?.plan || subscription.metadata?.billingPlan || "unknown",
+              email: ""
+            });
+
+            console.log(`${event.type} active processed`, result);
+          } else {
+            const result = await markPlantInactive({
+              stripeCustomerId: subscription.customer || "",
+              stripeSubscriptionId: subscription.id || "",
+              reason: `subscription_${subscription.status}`
+            });
+
+            console.log(`${event.type} inactive processed`, result);
+          }
+          break;
+        }
+
+        case "customer.subscription.deleted": {
+          const subscription = event.data.object;
+
+          const result = await markPlantInactive({
+            stripeCustomerId: subscription.customer || "",
+            stripeSubscriptionId: subscription.id || "",
+            reason: "subscription_deleted"
+          });
+
+          console.log("customer.subscription.deleted processed", result);
+          break;
+        }
+
+        case "invoice.payment_failed": {
+          const invoice = event.data.object;
+
+          const result = await markPlantInactive({
+            stripeCustomerId: invoice.customer || "",
+            stripeSubscriptionId: invoice.subscription || "",
+            reason: "invoice_payment_failed"
+          });
+
+          console.log("invoice.payment_failed processed", result);
+          break;
+        }
+
+        default:
+          console.log(`Unhandled Stripe event type: ${event.type}`);
+      }
+
+      res.status(200).json({ received: true });
+    } catch (error) {
+      console.error("Stripe webhook processing failed:", error);
+      res.status(500).send("Webhook handler failed");
+    }
+  }
+);

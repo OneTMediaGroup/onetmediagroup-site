@@ -1,0 +1,29 @@
+Floor Flow Stripe Checkout Session Patch
+
+What changed:
+- Added Firebase Function: createCheckoutSession
+  - Creates Stripe subscription Checkout Sessions from the backend.
+  - Sends plantId, plan, and plantName into Stripe metadata.
+  - Writes pending checkout status to plants/{plantId} before redirecting.
+
+- Updated Firebase Function: stripeWebhook
+  - Existing webhook now receives checkout/session metadata and can unlock the exact plant document.
+
+- Updated js/activation.js
+  - Replaced direct Stripe Payment Link flow with backend Checkout Session flow.
+  - Adds support for plantId return from Stripe success URL.
+  - Keeps local browser state only as UI state; real subscription status is written by webhook.
+
+- Updated js/onboarding.js
+  - Production checkout now creates a pending plants/{plantId} document before opening Stripe.
+  - Monthly/Annual checkout cards call createCheckoutSession.
+  - Finish Setup reuses the same plantId that was paid for instead of creating a second production plant.
+
+Required Firebase secrets before deploy:
+- STRIPE_SECRET_KEY
+- STRIPE_WEBHOOK_SECRET
+- STRIPE_MONTHLY_PRICE_ID
+- STRIPE_YEARLY_PRICE_ID
+
+Deploy command:
+firebase deploy --only functions:floorflow-functions

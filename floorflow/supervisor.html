@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Supervisor View</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+
+<body>
+  <div class="admin-app-shell">
+
+    <aside class="admin-sidebar">
+      <div class="branding-block">
+  <img id="plantLogo" alt="Plant Logo" />
+</div>
+
+
+
+      <div class="admin-side-section">
+  <div class="admin-side-label">Supervisor Tools</div>
+
+  <button class="admin-tool-link active" data-supervisor-tool="queue">
+    Current Queue
+  </button>
+
+  <button class="admin-tool-link" data-supervisor-tool="areas">
+    Area View
+  </button>
+
+  <button class="admin-tool-link" data-supervisor-tool="activity">
+    Activity Feed
+  </button>
+
+  <button class="admin-tool-link" data-supervisor-tool="reports">
+    Reports
+  </button>
+
+  <button id="logoutBtn" class="button danger-outline">
+    Sign Out
+  </button>
+</div>
+
+      <div class="admin-side-section admin-screen-links">
+        <div class="admin-side-label">Plant Screens</div>
+        <a class="admin-screen-link" href="display.html">Display Board</a>
+        <a class="admin-screen-link" href="board.html">Floor Board</a>
+        <a class="admin-screen-link active" href="supervisor.html">Supervisor</a>
+        <a class="admin-screen-link" href="admin.html">Admin / Maintenance</a>
+        <a class="admin-screen-link" href="index.html">Home</a>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-page-header">
+        <div>
+          <h1>Supervisor View</h1>
+          <p class="muted">Daily setup planning, queue control, and plant floor activity.</p>
+        </div>
+      </header>
+
+      <section id="supervisorContent" class="admin-workspace">
+        <div class="admin-loading">Loading supervisor tools...</div>
+      </section>
+
+      <footer class="display-footer">
+        © One T Media Group
+      </footer>
+    </main>
+
+  </div>
+
+  <script type="module" src="js/branding-loader.js"></script>
+  <script type="module" src="js/supervisor.js"></script>
+  <script type="module" src="js/mobile-nav.js"></script>
+  <script type="module" src="js/offline-resilience.js"></script>
+  <script type="module" src="js/production-readiness.js"></script>
+  <script type="module" src="js/plant-link-retainer.js"></script>
+</body>
+</html>
