@@ -55,9 +55,16 @@
         </div>
 
         <div class="admin-card">
-          <label class="form-label">Recipients</label>
+          <div class="contacts-header-row">
+            <div>
+              <label class="form-label">Recipients</label>
+              <p class="muted small">One email per line or comma separated. Start with your own email for testing.</p>
+            </div>
+            <button id="loadContactsBtn" class="button secondary" type="button">Load Saved Contacts</button>
+          </div>
           <textarea id="recipients" class="input tall-textarea" placeholder="one@email.com\ntwo@email.com"></textarea>
-          <p class="muted small">One email per line or comma separated. Start with your own email for testing.</p>
+          <div id="contactsStatus" class="muted small"></div>
+          <div id="contactsList" class="contact-chip-grid"></div>
         </div>
 
         <div class="admin-card">

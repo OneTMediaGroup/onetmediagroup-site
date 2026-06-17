@@ -1,4 +1,5 @@
 const SEND_ENDPOINT = "https://northamerica-northeast1-die-changeover-board.cloudfunctions.net/sendFloorFlowCommunication";
+const LIST_CONTACTS_ENDPOINT = "https://northamerica-northeast1-die-changeover-board.cloudfunctions.net/listFloorFlowContacts";
 
 const templates = [
   {
@@ -117,6 +118,7 @@ function init() {
   $("saveKeyBtn").addEventListener("click", saveKey);
   $("sendTestBtn").addEventListener("click", () => sendEmail(true));
   $("sendBtn").addEventListener("click", () => sendEmail(false));
+  $("loadContactsBtn")?.addEventListener("click", loadSavedContacts);
 
   applySelectedTemplate();
 }
@@ -143,6 +145,77 @@ function setStatus(message, isError = false) {
   const status = $("sendStatus");
   status.textContent = message;
   status.classList.toggle("error-text", Boolean(isError));
+}
+
+
+function mergeRecipients(newEmails) {
+  const current = parseRecipients($("recipients").value);
+  const merged = [...new Set([...current, ...newEmails])];
+  $("recipients").value = merged.join("\n");
+}
+
+function setContactsStatus(message, isError = false) {
+  const el = $("contactsStatus");
+  if (!el) return;
+  el.textContent = message;
+  el.classList.toggle("error-text", Boolean(isError));
+}
+
+async function loadSavedContacts() {
+  const adminKey = $("sendKey").value.trim();
+
+  if (!adminKey) {
+    setContactsStatus("Enter the private send key first.", true);
+    return;
+  }
+
+  setContactsStatus("Loading saved contacts...");
+
+  try {
+    const response = await fetch(LIST_CONTACTS_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ adminKey })
+    });
+
+    const result = await response.json().catch(() => ({}));
+
+    if (!response.ok) {
+      throw new Error(result.error || "Could not load contacts.");
+    }
+
+    const contacts = Array.isArray(result.contacts) ? result.contacts : [];
+    const emails = contacts.map((contact) => contact.email).filter(Boolean);
+
+    mergeRecipients(emails);
+    renderContacts(contacts);
+    setContactsStatus(`Loaded ${emails.length} saved contact(s).`);
+  } catch (error) {
+    console.error(error);
+    setContactsStatus(error.message || "Could not load contacts.", true);
+  }
+}
+
+function renderContacts(contacts) {
+  const list = $("contactsList");
+  if (!list) return;
+
+  list.innerHTML = contacts.slice(0, 120).map((contact) => {
+    const label = contact.fullName || `${contact.firstName || ""} ${contact.lastName || ""}`.trim() || contact.email;
+    const meta = [contact.source, contact.status, contact.plan].filter(Boolean).join(" · ");
+    return `<button type="button" class="contact-chip" data-contact-email="${contact.email}">
+      <strong>${label}</strong>
+      <span>${contact.email}</span>
+      ${meta ? `<em>${meta}</em>` : ""}
+    </button>`;
+  }).join("");
+
+  list.querySelectorAll("[data-contact-email]").forEach((button) => {
+    button.addEventListener("click", () => {
+      mergeRecipients([button.dataset.contactEmail]);
+      setContactsStatus(`Added ${button.dataset.contactEmail}`);
+    });
+  });
 }
 
 async function sendEmail(testOnly) {

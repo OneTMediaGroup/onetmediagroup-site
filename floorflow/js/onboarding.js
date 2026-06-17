@@ -15,6 +15,7 @@ const nextBtn = document.getElementById('nextBtn');
 const backBtn = document.getElementById('backBtn');
 const progressText = document.getElementById('progressText');
 const progressFill = document.getElementById('progressFill');
+const FLOORFLOW_DEMO_WELCOME_ENDPOINT = 'https://northamerica-northeast1-die-changeover-board.cloudfunctions.net/sendFloorFlowDemoWelcome';
 
 let step = 0;
 let onboardingCreateInProgress = false;
@@ -129,6 +130,10 @@ async function detectProductionRecovery() {
     state.companyName = plant.companyName || state.plantName;
     state.brandText = plant.brandText || plant.branding?.brandText || state.brandText || state.plantName;
     state.timezone = plant.timezone || state.timezone;
+    if (state.mode === 'demo') {
+      await sendDemoWelcomeEmail(plantId);
+    }
+
     setActivePlantId(plantId);
     localStorage.setItem('floor_flow_pending_plant_id', plantId);
 
@@ -834,6 +839,24 @@ function getOnboardingAdminPin() {
   return String(state.adminEmployeeId || '1000').trim() || '1000';
 }
 
+
+async function sendDemoWelcomeEmail(plantId) {
+  if (state.mode !== 'demo' || !state.adminEmail || !plantId) return;
+
+  try {
+    await fetch(FLOORFLOW_DEMO_WELCOME_ENDPOINT, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        plantId,
+        email: state.adminEmail
+      })
+    });
+  } catch (error) {
+    console.warn('Demo welcome email skipped:', error);
+  }
+}
+
 async function finishOnboarding() {
   if (onboardingCreateInProgress) return;
 
@@ -882,6 +905,10 @@ async function finishOnboarding() {
       onboardingCompletedAt: serverTimestamp(),
       updatedAt: serverTimestamp()
     }, { merge: true });
+
+    if (state.mode === 'demo') {
+      await sendDemoWelcomeEmail(plantId);
+    }
 
     setActivePlantId(plantId);
     saveActivationState({

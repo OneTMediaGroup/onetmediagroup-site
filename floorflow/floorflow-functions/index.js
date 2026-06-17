@@ -76,6 +76,83 @@ async function findPlantByStripeCustomer(stripeCustomerId) {
   return snap.docs[0].ref;
 }
 
+async function upsertFloorFlowContact({
+  email,
+  firstName = "",
+  lastName = "",
+  fullName = "",
+  source = "unknown",
+  plantId = "",
+  plantName = "",
+  plan = "",
+  status = "active"
+}) {
+  const cleanEmail = String(email || "").trim().toLowerCase();
+
+  if (!isValidEmail(cleanEmail)) {
+    return { saved: false, reason: "invalid_email" };
+  }
+
+  const contactId = cleanEmail.replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase();
+  const now = admin.firestore.FieldValue.serverTimestamp();
+
+  await db.collection("floorFlowContacts").doc(contactId).set({
+    email: cleanEmail,
+    firstName: firstName || "",
+    lastName: lastName || "",
+    fullName: fullName || `${firstName || ""} ${lastName || ""}`.trim(),
+    source,
+    plantId: plantId || "",
+    plantName: plantName || "",
+    plan: plan || "",
+    status,
+    tags: admin.firestore.FieldValue.arrayUnion(source),
+    updatedAt: now,
+    createdAt: now
+  }, { merge: true });
+
+  return { saved: true, contactId };
+}
+
+function buildDemoWelcomeText({ firstName = "", plantName = "Demo Plant", plantId = "" } = {}) {
+  const greeting = firstName ? `Hi ${firstName},` : "Hello,";
+
+  return `${greeting}
+
+Thanks for your interest in Floor Flow.
+
+Your demo plant has been created so you can explore the system before setting up a production plant.
+
+Demo Plant: ${plantName}
+Demo Plant Code: ${plantId}
+
+You can continue testing Floor Flow here:
+https://onetmediagroup.ca/floorflow/onboarding.html?plantId=${plantId}
+
+Floor Flow gives production teams:
+- Live display boards
+- Supervisor queue control
+- Touch screen floor views
+- Parts library support
+- Production reports
+- Plant-specific access links
+
+When you are ready to create a production plant, start here:
+https://onetmediagroup.ca/floorflow/onboarding.html
+
+Floor Flow tutorials and updates will be available here:
+https://onetmediagroup.ca/floor-flow.html
+
+Questions or support:
+floorflow@onetmediagroup.ca
+
+Thanks,
+
+The Floor Flow Team
+One T Media Group`;
+}
+
+
 function isValidEmail(email = "") {
   return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(email).trim());
 }
@@ -109,21 +186,39 @@ Keep this Plant Code in a safe place. If onboarding is interrupted, you can retu
 
 Your plant links are available inside the Admin panel after setup is complete.
 
-Questions?
+Questions or Support?
 floorflow@onetmediagroup.ca
 
 One T Media Group
 Floor Flow`;
 
+  await sendWithResend({
+    to: cleanEmail,
+    subject: "Welcome to Floor Flow Pro",
+    text
+  });
+
   await db.collection("mail").add({
     to: [cleanEmail],
     message: {
       subject: "Welcome to Floor Flow Pro",
-      text
+      text,
+      sentBy: "resend",
+      from: "Floor Flow <floorflow@onetmediagroup.ca>",
+      replyTo: "floorflow@onetmediagroup.ca"
     },
     plantId,
     type: "floorflow_welcome",
     createdAt: admin.firestore.FieldValue.serverTimestamp()
+  });
+
+  await upsertFloorFlowContact({
+    email: cleanEmail,
+    source: "paid_customer",
+    plantId,
+    plantName,
+    plan: billingPlan || "",
+    status: "customer"
   });
 
   await plantRef.set({
@@ -445,6 +540,168 @@ exports.stripeWebhook = onRequest(
 );
 
 
+
+exports.sendFloorFlowDemoWelcome = onRequest(
+  {
+    region: "northamerica-northeast1",
+    secrets: [RESEND_API_KEY]
+  },
+  async (req, res) => {
+    applyCors(req, res);
+
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method Not Allowed" });
+      return;
+    }
+
+    try {
+      const body = typeof req.body === "object" && req.body ? req.body : {};
+      const plantId = String(body.plantId || "").trim();
+      const email = String(body.email || "").trim().toLowerCase();
+
+      if (!plantId || !isValidEmail(email)) {
+        res.status(400).json({ error: "Valid plantId and email are required." });
+        return;
+      }
+
+      const plantRef = db.collection("plants").doc(plantId);
+      const snap = await plantRef.get();
+
+      if (!snap.exists) {
+        res.status(404).json({ error: "Demo plant not found." });
+        return;
+      }
+
+      const plant = snap.data() || {};
+      const isDemo = plant.isDemo === true || plant.mode === "demo" || plant.environment === "demo";
+      const contact = plant.onboardingContact || {};
+      const registeredEmail = String(contact.email || plant.demoContactEmail || "").trim().toLowerCase();
+
+      if (!isDemo) {
+        res.status(403).json({ error: "Demo welcome email is only available for demo plants." });
+        return;
+      }
+
+      if (registeredEmail && registeredEmail !== email) {
+        res.status(403).json({ error: "Email does not match this demo plant." });
+        return;
+      }
+
+      if (plant.demoWelcomeEmailSentAt) {
+        await upsertFloorFlowContact({
+          email,
+          firstName: contact.firstName || "",
+          lastName: contact.lastName || "",
+          fullName: contact.fullName || "",
+          source: "demo_user",
+          plantId,
+          plantName: plant.plantName || plant.name || "Demo Plant",
+          status: "demo"
+        });
+
+        res.status(200).json({ ok: true, alreadySent: true });
+        return;
+      }
+
+      const firstName = contact.firstName || "";
+      const text = buildDemoWelcomeText({
+        firstName,
+        plantName: plant.plantName || plant.name || "Demo Plant",
+        plantId
+      });
+
+      await sendWithResend({
+        to: email,
+        subject: "Thanks for trying the Floor Flow Demo",
+        text
+      });
+
+      await upsertFloorFlowContact({
+        email,
+        firstName: contact.firstName || "",
+        lastName: contact.lastName || "",
+        fullName: contact.fullName || "",
+        source: "demo_user",
+        plantId,
+        plantName: plant.plantName || plant.name || "Demo Plant",
+        status: "demo"
+      });
+
+      await plantRef.set({
+        demoWelcomeEmailSentAt: admin.firestore.FieldValue.serverTimestamp(),
+        demoWelcomeEmailTo: email
+      }, { merge: true });
+
+      res.status(200).json({ ok: true, sent: true });
+    } catch (error) {
+      console.error("sendFloorFlowDemoWelcome failed:", error);
+      res.status(500).json({ error: error.message || "Demo welcome email failed." });
+    }
+  }
+);
+
+exports.listFloorFlowContacts = onRequest(
+  {
+    region: "northamerica-northeast1",
+    secrets: [ONET_ADMIN_SEND_KEY]
+  },
+  async (req, res) => {
+    applyCors(req, res);
+
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method Not Allowed" });
+      return;
+    }
+
+    try {
+      const body = typeof req.body === "object" && req.body ? req.body : {};
+      const adminKey = String(body.adminKey || "").trim();
+
+      if (!adminKey || adminKey !== ONET_ADMIN_SEND_KEY.value()) {
+        res.status(403).json({ error: "Not authorized." });
+        return;
+      }
+
+      const snap = await db.collection("floorFlowContacts")
+        .orderBy("updatedAt", "desc")
+        .limit(500)
+        .get();
+
+      const contacts = snap.docs.map((docSnap) => {
+        const data = docSnap.data() || {};
+        return {
+          id: docSnap.id,
+          email: data.email || "",
+          firstName: data.firstName || "",
+          lastName: data.lastName || "",
+          fullName: data.fullName || "",
+          source: data.source || "",
+          status: data.status || "",
+          plantId: data.plantId || "",
+          plantName: data.plantName || "",
+          plan: data.plan || ""
+        };
+      }).filter((contact) => contact.email);
+
+      res.status(200).json({ ok: true, contacts });
+    } catch (error) {
+      console.error("listFloorFlowContacts failed:", error);
+      res.status(500).json({ error: error.message || "Could not load contacts." });
+    }
+  }
+);
+
+
 exports.sendFloorFlowCommunication = onRequest(
   {
     region: "northamerica-northeast1",
@@ -510,6 +767,14 @@ exports.sendFloorFlowCommunication = onRequest(
           to: recipient,
           id: result?.data?.id || result?.id || "",
           error: result?.error?.message || ""
+        });
+      }
+
+      for (const recipient of to) {
+        await upsertFloorFlowContact({
+          email: recipient,
+          source: "manual_send",
+          status: "contact"
         });
       }
 
