@@ -106,7 +106,7 @@ Keep this Plant Code in a safe place. If onboarding is interrupted, you can retu
 
 Your plant links are available inside the Admin panel after setup is complete.
 
-Questions?
+Questions or Support?
 floorflow@onetmediagroup.ca
 
 One T Media Group
