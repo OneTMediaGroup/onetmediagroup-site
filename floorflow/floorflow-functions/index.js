@@ -2,6 +2,7 @@ const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const admin = require("firebase-admin");
 const Stripe = require("stripe");
+const { Resend } = require("resend");
 
 admin.initializeApp();
 
@@ -9,6 +10,7 @@ const STRIPE_SECRET_KEY = defineSecret("STRIPE_SECRET_KEY");
 const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
 const STRIPE_MONTHLY_PRICE_ID = defineSecret("STRIPE_MONTHLY_PRICE_ID");
 const STRIPE_YEARLY_PRICE_ID = defineSecret("STRIPE_YEARLY_PRICE_ID");
+const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
 
 const db = admin.firestore();
 
@@ -112,16 +114,14 @@ floorflow@onetmediagroup.ca
 One T Media Group
 Floor Flow`;
 
-  await db.collection("mail").add({
-    to: [cleanEmail],
-    message: {
-      subject: "Welcome to Floor Flow Pro",
-      text,
-      replyTo: "floorflow@onetmediagroup.ca"
-    },
-    plantId,
-    type: "floorflow_welcome",
-    createdAt: admin.firestore.FieldValue.serverTimestamp()
+    const resend = new Resend(RESEND_API_KEY.value());
+
+  await resend.emails.send({
+    from: "Floor Flow <floorflow@onetmediagroup.ca>",
+    to: cleanEmail,
+    replyTo: "floorflow@onetmediagroup.ca",
+    subject: "Welcome to Floor Flow Pro",
+    text
   });
 
   await plantRef.set({
@@ -304,7 +304,7 @@ exports.createCheckoutSession = onRequest(
 exports.stripeWebhook = onRequest(
   {
     region: "northamerica-northeast1",
-    secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET]
+    secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, RESEND_API_KEY]
   },
   async (req, res) => {
     if (req.method !== "POST") {
