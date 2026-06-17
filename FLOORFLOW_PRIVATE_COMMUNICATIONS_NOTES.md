@@ -34,7 +34,7 @@ Setup after copying files:
    `floorflow/js/communications.js`
 
 5. Replace:
-   `PASTE_SEND_FLOOR_FLOW_COMMUNICATION_FUNCTION_URL_HERE`
+   `https://northamerica-northeast1-die-changeover-board.cloudfunctions.net/sendFloorFlowCommunication`
 
    with the function URL.
 

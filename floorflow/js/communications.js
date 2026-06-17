@@ -1,4 +1,4 @@
-const SEND_ENDPOINT = "PASTE_SEND_FLOOR_FLOW_COMMUNICATION_FUNCTION_URL_HERE";
+const SEND_ENDPOINT = "https://northamerica-northeast1-die-changeover-board.cloudfunctions.net/sendFloorFlowCommunication";
 
 const templates = [
   {
