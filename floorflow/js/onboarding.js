@@ -479,7 +479,7 @@ function renderPlantSetup() {
     <div class="form-grid">
       <label>
         <span>Plant Name *</span>
-        <input id="plantNameInput" value="${escapeAttr(state.plantName)}" placeholder="${isProduction ? 'Example: Magna Newmarket' : 'Example: Demo Plant'}" />
+        <input id="plantNameInput" value="${escapeAttr(state.plantName)}" placeholder="${isProduction ? 'Example: West Newmarket' : 'Example: Demo Plant'}" />
       </label>
 
       <label>
