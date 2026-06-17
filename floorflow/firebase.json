@@ -40,7 +40,7 @@
   "firestore": {
     "database": "(default)",
     "location": "northamerica-northeast1",
-    "rules": "yes",
-    "indexes": "yes"
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
   }
 }
