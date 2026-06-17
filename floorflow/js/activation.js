@@ -52,15 +52,13 @@ export async function createStripeCheckoutSession({
     throw new Error('Stripe checkout function is not configured.');
   }
 
-  // Always return Stripe Checkout to the live Floor Flow path.
-  // This prevents old GitHub Pages / FloorFlow-Demo URLs from being reused by yearly/monthly sessions.
-  const url = new URL('https://onetmediagroup.ca/floorflow/onboarding.html');
+  const url = new URL(window.location.href);
   url.searchParams.set('mode', 'production');
   url.searchParams.set('payment', 'success');
   url.searchParams.set('plan', cleanPlan);
   url.searchParams.set('plantId', plantId);
 
-  const cancelUrl = new URL('https://onetmediagroup.ca/floorflow/onboarding.html');
+  const cancelUrl = new URL(window.location.href);
   cancelUrl.searchParams.set('mode', 'production');
   cancelUrl.searchParams.set('checkout', 'cancelled');
   cancelUrl.searchParams.set('plan', cleanPlan);

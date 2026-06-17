@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Floor Flow | Communications</title>
+  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="icon" type="image/png" href="/assets/images/General/floorflow-favicon.png" />
+  <link rel="apple-touch-icon" href="/assets/images/General/floorflow-favicon.png" />
+</head>
+<body>
+  <div class="admin-app-shell">
+    <aside class="admin-sidebar">
+      <div class="branding-block">
+        <img id="plantLogo" alt="Floor Flow" />
+      </div>
+
+      <div class="admin-side-section">
+        <div class="admin-side-label">One T Private</div>
+        <a class="admin-tool-link active" href="communications.html">Communications</a>
+        <a class="admin-tool-link" href="admin.html">Back to Admin</a>
+      </div>
+
+      <div class="admin-side-section">
+        <div class="admin-side-label">Sender</div>
+        <p class="muted small">Floor Flow<br />floorflow@onetmediagroup.ca</p>
+      </div>
+    </aside>
+
+    <main class="admin-main">
+      <header class="admin-page-header">
+        <div>
+          <h1>Floor Flow Communications</h1>
+          <p class="muted">Private One T Media Group email sender for launch updates, maintenance notices, and customer messages.</p>
+        </div>
+      </header>
+
+      <section class="admin-workspace communications-workspace">
+        <div class="admin-card warning-card">
+          <h2>Private Access</h2>
+          <p class="muted">This page still requires the private send key. The Firebase Function also rejects requests without the correct key, so the real protection is server-side.</p>
+        </div>
+
+        <div class="admin-card communications-grid">
+          <div>
+            <label class="form-label">Private Send Key</label>
+            <input id="sendKey" class="input" type="password" placeholder="Enter private One T send key" autocomplete="off" />
+            <button id="saveKeyBtn" class="button secondary" type="button">Save Key For This Session</button>
+          </div>
+
+          <div>
+            <label class="form-label">Template</label>
+            <select id="templateSelect" class="input"></select>
+          </div>
+        </div>
+
+        <div class="admin-card">
+          <label class="form-label">Recipients</label>
+          <textarea id="recipients" class="input tall-textarea" placeholder="one@email.com\ntwo@email.com"></textarea>
+          <p class="muted small">One email per line or comma separated. Start with your own email for testing.</p>
+        </div>
+
+        <div class="admin-card">
+          <label class="form-label">Subject</label>
+          <input id="subject" class="input" type="text" placeholder="Floor Flow Update" />
+
+          <label class="form-label top-gap">Message</label>
+          <textarea id="message" class="input message-textarea" placeholder="Write your email message here..."></textarea>
+        </div>
+
+        <div class="admin-card send-actions">
+          <button id="sendTestBtn" class="button secondary" type="button">Send Test To First Recipient</button>
+          <button id="sendBtn" class="button primary" type="button">Send Email</button>
+          <div id="sendStatus" class="muted"></div>
+        </div>
+
+        <div class="admin-card">
+          <h2>Suggested Use</h2>
+          <p class="muted">Use this for feeler emails, launch notices, feature updates, and customer announcements. Keep support replies routed through Cloudflare/Gmail for now.</p>
+        </div>
+      </section>
+
+      <footer class="display-footer">
+        © One T Media Group · Floor Flow
+      </footer>
+    </main>
+  </div>
+
+  <script type="module" src="js/branding-loader.js"></script>
+  <script type="module" src="js/communications.js"></script>
+</body>
+</html>

@@ -11,6 +11,7 @@ const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
 const STRIPE_MONTHLY_PRICE_ID = defineSecret("STRIPE_MONTHLY_PRICE_ID");
 const STRIPE_YEARLY_PRICE_ID = defineSecret("STRIPE_YEARLY_PRICE_ID");
 const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
+const ONET_ADMIN_SEND_KEY = defineSecret("ONET_ADMIN_SEND_KEY");
 
 const db = admin.firestore();
 
@@ -108,20 +109,21 @@ Keep this Plant Code in a safe place. If onboarding is interrupted, you can retu
 
 Your plant links are available inside the Admin panel after setup is complete.
 
-Questions or Support?
+Questions?
 floorflow@onetmediagroup.ca
 
 One T Media Group
 Floor Flow`;
 
-    const resend = new Resend(RESEND_API_KEY.value());
-
-  await resend.emails.send({
-    from: "Floor Flow <floorflow@onetmediagroup.ca>",
-    to: cleanEmail,
-    replyTo: "floorflow@onetmediagroup.ca",
-    subject: "Welcome to Floor Flow Pro",
-    text
+  await db.collection("mail").add({
+    to: [cleanEmail],
+    message: {
+      subject: "Welcome to Floor Flow Pro",
+      text
+    },
+    plantId,
+    type: "floorflow_welcome",
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
   });
 
   await plantRef.set({
@@ -201,6 +203,37 @@ async function markPlantInactive({ stripeCustomerId, stripeSubscriptionId, reaso
   }
 
   return { lockedPlant: null };
+}
+
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function textToHtml(value = "") {
+  return escapeHtml(value).replace(/\n/g, "<br>");
+}
+
+function parseEmailList(value) {
+  const raw = Array.isArray(value) ? value : String(value || "").split(/[\n,;]/);
+  return [...new Set(raw.map((item) => String(item || "").trim()).filter(isValidEmail))];
+}
+
+async function sendWithResend({ to, subject, text }) {
+  const resend = new Resend(RESEND_API_KEY.value());
+  return resend.emails.send({
+    from: "Floor Flow <floorflow@onetmediagroup.ca>",
+    to,
+    replyTo: "floorflow@onetmediagroup.ca",
+    subject,
+    text,
+    html: textToHtml(text)
+  });
 }
 
 
@@ -407,6 +440,92 @@ exports.stripeWebhook = onRequest(
     } catch (error) {
       console.error("Stripe webhook processing failed:", error);
       res.status(500).send("Webhook handler failed");
+    }
+  }
+);
+
+
+exports.sendFloorFlowCommunication = onRequest(
+  {
+    region: "northamerica-northeast1",
+    secrets: [RESEND_API_KEY, ONET_ADMIN_SEND_KEY]
+  },
+  async (req, res) => {
+    applyCors(req, res);
+
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method Not Allowed" });
+      return;
+    }
+
+    try {
+      const body = typeof req.body === "object" && req.body ? req.body : {};
+      const adminKey = String(body.adminKey || "").trim();
+
+      if (!adminKey || adminKey !== ONET_ADMIN_SEND_KEY.value()) {
+        res.status(403).json({ error: "Not authorized." });
+        return;
+      }
+
+      const to = parseEmailList(body.to);
+      const subject = String(body.subject || "").trim().slice(0, 160);
+      const text = String(body.text || "").trim();
+
+      if (!to.length) {
+        res.status(400).json({ error: "At least one valid recipient is required." });
+        return;
+      }
+
+      if (to.length > 100) {
+        res.status(400).json({ error: "Limit each send to 100 recipients or fewer." });
+        return;
+      }
+
+      if (!subject || !text) {
+        res.status(400).json({ error: "Subject and message are required." });
+        return;
+      }
+
+      const resend = new Resend(RESEND_API_KEY.value());
+      const html = textToHtml(text);
+
+      const sendResults = [];
+
+      for (const recipient of to) {
+        const result = await resend.emails.send({
+          from: "Floor Flow <floorflow@onetmediagroup.ca>",
+          to: recipient,
+          replyTo: "floorflow@onetmediagroup.ca",
+          subject,
+          text,
+          html
+        });
+
+        sendResults.push({
+          to: recipient,
+          id: result?.data?.id || result?.id || "",
+          error: result?.error?.message || ""
+        });
+      }
+
+      await db.collection("floorFlowCommunications").add({
+        to,
+        subject,
+        preview: text.slice(0, 240),
+        sent: sendResults.length,
+        sendResults,
+        createdAt: admin.firestore.FieldValue.serverTimestamp()
+      });
+
+      res.status(200).json({ ok: true, sent: sendResults.length, results: sendResults });
+    } catch (error) {
+      console.error("sendFloorFlowCommunication failed:", error);
+      res.status(500).json({ error: error.message || "Email send failed." });
     }
   }
 );
