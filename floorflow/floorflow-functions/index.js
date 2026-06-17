@@ -116,7 +116,8 @@ Floor Flow`;
     to: [cleanEmail],
     message: {
       subject: "Welcome to Floor Flow Pro",
-      text
+      text,
+      replyTo: "floorflow@onetmediagroup.ca"
     },
     plantId,
     type: "floorflow_welcome",
