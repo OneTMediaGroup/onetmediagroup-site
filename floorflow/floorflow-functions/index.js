@@ -198,20 +198,7 @@ Floor Flow`;
     text
   });
 
-  await db.collection("mail").add({
-    to: [cleanEmail],
-    message: {
-      subject: "Welcome to Floor Flow Pro",
-      text,
-      sentBy: "resend",
-      from: "Floor Flow <floorflow@onetmediagroup.ca>",
-      replyTo: "floorflow@onetmediagroup.ca"
-    },
-    plantId,
-    type: "floorflow_welcome",
-    createdAt: admin.firestore.FieldValue.serverTimestamp()
-  });
-
+ 
   await upsertFloorFlowContact({
     email: cleanEmail,
     source: "paid_customer",
