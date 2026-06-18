@@ -157,8 +157,122 @@ body{background:var(--ff-bg);color:var(--ff-text)}
 
 .ff-footer{color:var(--ff-muted);text-align:center;padding:24px 0 42px}
 
+
+.ff-proof-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-top:24px;
+}
+
+.ff-proof-card{
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.16);
+  border-radius:18px;
+  padding:16px;
+}
+
+.ff-proof-card strong{
+  display:block;
+  font-size:1.05rem;
+  margin-bottom:4px;
+}
+
+.ff-proof-card span{
+  display:block;
+  color:rgba(255,255,255,.75);
+  font-size:.9rem;
+}
+
+.ff-before-after{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:18px;
+}
+
+.ff-ba-card{
+  background:white;
+  border:1px solid var(--ff-line);
+  border-radius:24px;
+  padding:24px;
+  box-shadow:0 14px 34px rgba(15,23,42,.09);
+}
+
+.ff-ba-card h3{
+  margin:0 0 12px;
+  font-size:1.35rem;
+}
+
+.ff-ba-card ul{
+  margin:0;
+  padding-left:20px;
+  color:#334155;
+}
+
+.ff-ba-card li{
+  margin:8px 0;
+}
+
+.ff-ba-card.old{
+  border-color:#fecaca;
+  background:linear-gradient(180deg,#fff,#fff7f7);
+}
+
+.ff-ba-card.new{
+  border-color:#bbf7d0;
+  background:linear-gradient(180deg,#fff,#f4fff8);
+}
+
+.ff-step-row{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:16px;
+}
+
+.ff-step{
+  background:white;
+  border:1px solid var(--ff-line);
+  border-radius:22px;
+  padding:22px;
+  box-shadow:0 14px 34px rgba(15,23,42,.09);
+}
+
+.ff-step-number{
+  width:38px;
+  height:38px;
+  border-radius:14px;
+  background:var(--ff-blue);
+  color:white;
+  display:grid;
+  place-items:center;
+  font-weight:950;
+  margin-bottom:12px;
+}
+
+.ff-step h3{
+  margin:0 0 8px;
+}
+
+.ff-step p{
+  margin:0;
+  color:var(--ff-muted);
+}
+
+.ff-launch-banner{
+  margin-top:22px;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.18);
+  border-radius:20px;
+  padding:18px;
+  color:rgba(255,255,255,.86);
+}
+
+.ff-launch-banner strong{
+  color:white;
+}
+
 @media(max-width:920px){
-  .ff-hero-grid,.screen-grid,.pricing-grid{grid-template-columns:1fr}
+  .ff-hero-grid,.screen-grid,.pricing-grid,.ff-before-after,.ff-step-row,.ff-proof-strip{grid-template-columns:1fr}
   .problem-grid,.feature-grid,.role-grid{grid-template-columns:1fr 1fr}
   .ff-preview img,.screen-card img{max-height:230px}
 }
@@ -168,8 +282,8 @@ body{background:var(--ff-bg);color:var(--ff-text)}
   .ff-hero{padding:34px 20px}
 }
 </style>
-  <meta name="twitter:image" content="https://onetmediagroup.ca/assets/images/General/onet-social-card.png" />
-<meta property="og:image" content="https://onetmediagroup.ca/assets/images/General/onet-social-card.png" />
+  <meta name="twitter:image" content="https://onetmediagroup.ca/assets/images/FloorFlow/floorflow-banner.png" />
+<meta property="og:image" content="https://onetmediagroup.ca/assets/images/FloorFlow/floorflow-banner.png" />
   <link rel="icon" type="image/png" href="/assets/images/General/onet-favicon.png" />
   <link rel="apple-touch-icon" href="/assets/images/General/onet-apple-touch-icon.png" />
 </head>
@@ -212,18 +326,82 @@ body{background:var(--ff-bg);color:var(--ff-text)}
            href="https://onetmediagroup.ca/floorflow/onboarding.html"
            target="_blank"
            rel="noopener">
-          Launch Demo
+          Start Free Demo
         </a>
 
         <a class="btn"
-           href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Inquiry">
-          Contact Us
+           href="#pricing">
+          View Pricing
         </a>
+      </div>
+
+      <div class="ff-launch-banner">
+        <strong>Built from real plant-floor experience.</strong>
+        Floor Flow was designed to replace the confusion of whiteboards, spreadsheets,
+        paper setup sheets, and disconnected production updates.
       </div>
     </div>
 
     <div class="ff-preview">
       <img src="assets/images/FloorFlow/floor-flow-hero.png" alt="Floor Flow system preview">
+    </div>
+  </div>
+</section>
+
+<section class="ff-section">
+  <h2>From shop-floor chaos to live production flow.</h2>
+  <p class="ff-sub">
+    Floor Flow gives supervisors, operators, managers, and display boards one shared view of the plant.
+  </p>
+
+  <div class="ff-before-after">
+    <div class="ff-ba-card old">
+      <h3>Before Floor Flow</h3>
+      <ul>
+        <li>Spreadsheets that fall out of date</li>
+        <li>Whiteboards that need constant updating</li>
+        <li>Paper setup sheets and sticky notes</li>
+        <li>Supervisors answering the same questions all day</li>
+        <li>Operators unsure what is current and what is next</li>
+      </ul>
+    </div>
+
+    <div class="ff-ba-card new">
+      <h3>With Floor Flow</h3>
+      <ul>
+        <li>Live work-cell visibility</li>
+        <li>Supervisor queue management</li>
+        <li>TV display board for shared plant awareness</li>
+        <li>Touchscreen floor board for quick updates</li>
+        <li>Parts library, reports, roles, and plant access links</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="ff-section">
+  <h2>Simple path from demo to production.</h2>
+  <p class="ff-sub">
+    Start safely with a demo plant, then activate a clean production plant when your team is ready.
+  </p>
+
+  <div class="ff-step-row">
+    <div class="ff-step">
+      <div class="ff-step-number">1</div>
+      <h3>Try the Demo</h3>
+      <p>Explore Floor Flow with preloaded sample data, no setup required.</p>
+    </div>
+
+    <div class="ff-step">
+      <div class="ff-step-number">2</div>
+      <h3>Watch the Tutorials</h3>
+      <p>Follow short walkthroughs for onboarding, admin, supervisor, display, parts, and reports.</p>
+    </div>
+
+    <div class="ff-step">
+      <div class="ff-step-number">3</div>
+      <h3>Launch a Pro Plant</h3>
+      <p>Create a clean production plant, connect your subscription, and set up your real floor.</p>
     </div>
   </div>
 </section>
@@ -392,7 +570,7 @@ body{background:var(--ff-bg);color:var(--ff-text)}
         <li>Preview workflows</li>
         <li>Good for review</li>
       </ul>
-      <a class="btn primary" href="https://onetmediagroup.ca/floorflow/onboarding.html" target="_blank" rel="noopener">Try Demo</a>
+      <a class="btn primary" href="https://onetmediagroup.ca/floorflow/onboarding.html" target="_blank" rel="noopener">Start Free Demo</a>
     </div>
 
     <div class="pricing-card featured">
@@ -405,7 +583,7 @@ body{background:var(--ff-bg);color:var(--ff-text)}
         <li>Users, roles, badges</li>
         <li>Supervisor and display views</li>
       </ul>
-      <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Subscription">Get Started</a>
+      <a class="btn" href="mailto:floorflow@onetmediagroup.ca?subject=Floor%20Flow%20Subscription">Get Started</a>
     </div>
 
     <div class="pricing-card">
@@ -418,18 +596,18 @@ body{background:var(--ff-bg);color:var(--ff-text)}
         <li>Workflow adjustments</li>
         <li>Priority support discussion</li>
       </ul>
-      <a class="btn primary" href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Enterprise">Let's Talk</a>
+      <a class="btn primary" href="mailto:floorflow@onetmediagroup.ca?subject=Floor%20Flow%20Enterprise">Contact Floor Flow</a>
     </div>
   </div>
 </section>
 
 <section class="cta-panel">
-  <h2>Ready to modernize your floor?</h2>
-  <p>Replace spreadsheets, whiteboards, setup sheets, and guesswork with real-time production visibility.</p>
+  <h2>Ready to move past the whiteboard?</h2>
+  <p>Start with the free demo, watch the tutorials, and move into a production plant when your team is ready.</p>
 
   <div class="hero-actions" style="justify-content:center">
-    <a class="btn primary" href="https://onetmediagroup.ca/floorflow/onboarding.html" target="_blank" rel="noopener">Launch Demo</a>
-    <a class="btn" href="mailto:onetmediagroup@gmail.com?subject=Floor%20Flow%20Inquiry">Contact Us</a>
+    <a class="btn primary" href="https://onetmediagroup.ca/floorflow/onboarding.html" target="_blank" rel="noopener">Start Free Demo</a>
+    <a class="btn" href="mailto:floorflow@onetmediagroup.ca?subject=Floor%20Flow%20Inquiry">Contact Us</a>
   </div>
 </section>
 
