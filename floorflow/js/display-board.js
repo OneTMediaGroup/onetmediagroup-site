@@ -1,5 +1,6 @@
 import { watchPressesFromFirestore } from './firestore-presses.js';
 import { formatTime, normalizedSlotStatus } from './utils.js';
+import { requireActiveBillingAccess } from './billing-guard.js';
 
 const areaFilter = document.getElementById('displayAreaFilter');
 const autoScrollSelect = document.getElementById('displayAutoScroll');
@@ -14,6 +15,7 @@ let scrollTimer = null;
 let scrollDirection = 1;
 let scrollHoldUntil = 0;
 
+await requireActiveBillingAccess();
 initDisplayBoard();
 
 fullscreenBtn?.addEventListener('click', async () => {

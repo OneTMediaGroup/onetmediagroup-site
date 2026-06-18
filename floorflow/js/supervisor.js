@@ -1,5 +1,6 @@
 import { initStore, getSession } from './store.js';
 import { requireRoleAccess } from './auth-lock.js';
+import { requireActiveBillingAccess } from './billing-guard.js';
 import { clearStoredSessionUser } from './session-user.js';
 import { setSession } from './store.js';
 
@@ -11,6 +12,7 @@ import { mountReportsTool } from './admin-reports.js';
 
 initStore();
 
+await requireActiveBillingAccess();
 await requireRoleAccess(['supervisor', 'admin']);
 
 const currentUserSupervisor = document.getElementById('currentUserSupervisor');

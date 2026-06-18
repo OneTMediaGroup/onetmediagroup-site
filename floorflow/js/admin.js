@@ -1,5 +1,7 @@
 import { requireRoleAccess } from './auth-lock.js';
+import { requireActiveBillingAccess } from './billing-guard.js';
 
+await requireActiveBillingAccess();
 await requireRoleAccess(['admin']);
 
 

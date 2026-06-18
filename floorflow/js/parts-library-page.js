@@ -7,6 +7,7 @@ import {
   downloadPartsCsv,
   downloadPartsTemplate
 } from './part-library.js';
+import { requireActiveBillingAccess } from './billing-guard.js';
 
 
 
@@ -20,6 +21,7 @@ const state = {
 
 const root = document.getElementById('partsLibraryApp');
 
+await requireActiveBillingAccess();
 init();
 
 async function init() {

@@ -6,6 +6,7 @@ import { updateSetupInFirestore, completeAndShiftSetupInFirestore } from './fire
 import { fetchUsersFromFirestore } from './firestore-users.js';
 import { getStoredSessionUser, setStoredSessionUser } from './session-user.js';
 import { requirePlantId } from './plant-session.js';
+import { requireActiveBillingAccess } from './billing-guard.js';
 
 
 
@@ -55,6 +56,7 @@ function getLiveSlotClass(setup = {}) {
 }
 
 initStore();
+await requireActiveBillingAccess();
 requirePlantId();
 const pressGrid = document.getElementById('pressGrid');
 const syncTimeBoard = document.getElementById('syncTimeBoard');
