@@ -30,7 +30,7 @@ function lockReasonText(plant = {}) {
 
 function renderBillingLockedScreen(plantId, plant = {}) {
   const plantName = plant.plantName || plant.name || 'This production plant';
-  const onboardingLink = buildRelativePlantLink('onboarding.html', plantId);
+  const onboardingLink = `${buildRelativePlantLink('onboarding.html', plantId)}&mode=production&reactivate=true`;
 
   document.body.innerHTML = `
     <main style="

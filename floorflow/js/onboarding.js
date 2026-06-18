@@ -57,16 +57,17 @@ const state = {
 };
 
 const startupParams = new URLSearchParams(window.location.search);
+const isReactivateMode = startupParams.get('reactivate') === 'true';
 const returnedFromStripeCheckout = isProductionPaymentComplete();
 
-if (startupParams.get('mode') === 'production' || returnedFromStripeCheckout) {
+if (startupParams.get('mode') === 'production' || returnedFromStripeCheckout || isReactivateMode) {
   state.mode = 'production';
   if (state.plantName === 'Demo Plant') state.plantName = '';
 }
 
 // When Stripe sends the customer back after successful checkout, land them
 // directly on the Production Checkout step so they can click Next and continue.
-if (returnedFromStripeCheckout) {
+if (returnedFromStripeCheckout || isReactivateMode) {
   step = 3;
 }
 
@@ -121,7 +122,8 @@ async function detectProductionRecovery() {
     const isProduction = plant.mode === 'production' || plant.environment === 'production' || plant.isDemo === false;
     const isUnlocked = plant.productionUnlocked === true || plant.paid === true || plant.subscriptionStatus === 'active' || plant.billingStatus === 'active';
 
-    if (!isProduction || !isUnlocked) return;
+    if (!isProduction) return;
+    if (!isUnlocked && !isReactivateMode) return;
 
     state.mode = 'production';
     state.pendingPlantId = plantId;
@@ -141,8 +143,15 @@ async function detectProductionRecovery() {
       plantId,
       plant,
       setupComplete: plant.setupComplete === true,
-      pendingOnboarding: plant.pendingOnboarding !== false
+      pendingOnboarding: plant.pendingOnboarding !== false,
+      reactivate: isReactivateMode,
+      isUnlocked
     };
+
+    if (isReactivateMode && !isUnlocked) {
+      step = 3;
+      recoveryState = null;
+    }
   } catch (error) {
     console.warn('Onboarding recovery check skipped:', error);
   }
@@ -150,7 +159,7 @@ async function detectProductionRecovery() {
 
 nextBtn.addEventListener('click', async () => {
   if (recoveryState) {
-    if (recoveryState.setupComplete) {
+    if (recoveryState.setupComplete && !recoveryState.reactivate) {
       window.location.href = buildRelativePlantLink('admin.html', recoveryState.plantId);
       return;
     }
@@ -324,6 +333,25 @@ function wireRecoveryActions() {
 }
 
 function renderWelcome() {
+  if (isReactivateMode) {
+    return `
+      <h2 class="step-title">Reactivate Floor Flow</h2>
+      <p class="step-copy">
+        This production plant already exists. Continue to reactivate the same Plant Code instead of creating a new plant.
+      </p>
+
+      <div class="selected-mode-strip production">
+        <strong>Reactivate Production Plant</strong>
+        <span>Plant Code: ${escapeHtml(state.pendingPlantId || startupParams.get('plantId') || '')}</span>
+      </div>
+
+      <div class="feature-list">
+        <div class="feature"><strong>Same plant</strong><span>Your plant setup, users, work cells, parts, and links stay connected.</span></div>
+        <div class="feature"><strong>Stripe checkout</strong><span>Choose a new subscription to unlock production access again.</span></div>
+      </div>
+    `;
+  }
+
   return `
     <h2 class="step-title">Welcome to Floor Flow</h2>
     <p class="step-copy">
@@ -389,16 +417,16 @@ function renderProductionActivation() {
   const yearlyUrl = buildStripeCheckoutUrl({ plantName: state.plantName, mode: 'production', plan: 'yearly' });
 
   return `
-    <h2 class="step-title">Production Checkout</h2>
+    <h2 class="step-title">${isReactivateMode ? 'Reactivate Production Plant' : 'Production Checkout'}</h2>
     <p class="step-copy">
-      Choose a Floor Flow Pro plan. Demo Plant remains free for testing.
+      ${isReactivateMode ? 'Choose a new subscription to unlock this existing production plant.' : 'Choose a Floor Flow Pro plan. Demo Plant remains free for testing.'}
     </p>
 
     <div class="activation-step-card ${paid ? 'payment-confirmed-card' : ''}">
       <div class="activation-step-header">
         <div>
           <div class="launch-kicker">Stripe Subscription</div>
-          <h3>${paid ? 'Payment Confirmed' : 'Activate Production Plant'}</h3>
+          <h3>${paid ? 'Payment Confirmed' : isReactivateMode ? 'Reactivate Existing Plant' : 'Activate Production Plant'}</h3>
         </div>
         <span class="plant-type-badge production">Production</span>
       </div>
@@ -406,7 +434,7 @@ function renderProductionActivation() {
       <div class="activation-help">
         ${paid
           ? `Stripe payment confirmed. Selected plan: ${escapeHtml(FLOORFLOW_PLAN_PRICES[selectedPlan])}. Continue to finish creating your production plant.`
-          : 'Production plants require an active Stripe subscription. Choose Monthly or Annual below. Floor Flow will connect this subscription to this plant automatically.'}
+          : isReactivateMode ? 'This existing plant is currently locked. Choose Monthly or Annual below to reactivate the same Plant Code.' : 'Production plants require an active Stripe subscription. Choose Monthly or Annual below. Floor Flow will connect this subscription to this plant automatically.'}
       </div>
 
       ${paid ? `
