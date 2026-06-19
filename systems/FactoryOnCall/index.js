@@ -5,11 +5,14 @@
  Seeds Factory On Call demo company using Firebase Admin.
 */
 
-import admin from "firebase-admin";
+import { initializeApp, applicationDefault } from "firebase-admin/app";
+import { getFirestore, FieldValue } from "firebase-admin/firestore";
 
-admin.initializeApp();
+initializeApp({
+  credential: applicationDefault()
+});
 
-const db = admin.firestore();
+const db = getFirestore();
 
 const COMPANY_ID = "demo-company";
 
@@ -23,16 +26,16 @@ async function seed() {
     companyName: "Factory On Call Demo",
     mode: "demo",
     active: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
   }, { merge: true });
 
   await companyRef.collection("settings").doc("main").set({
     autoRefreshMinutes: 60,
     allowSharedStations: true,
     requirePinForCalls: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
   }, { merge: true });
 
   await companyRef.collection("branding").doc("main").set({
@@ -40,7 +43,7 @@ async function seed() {
     primaryColor: "#1E90FF",
     secondaryColor: "#003366",
     logoUrl: "",
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    updatedAt: FieldValue.serverTimestamp()
   }, { merge: true });
 
   const roles = [
@@ -56,7 +59,7 @@ async function seed() {
     await companyRef.collection("roles").doc(role).set({
       name: role,
       active: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp()
     }, { merge: true });
   }
 
@@ -75,7 +78,7 @@ async function seed() {
       name: user.name,
       role: user.role,
       active: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp()
     }, { merge: true });
   }
 
@@ -93,19 +96,19 @@ async function seed() {
     await companyRef.collection("stations").doc(stationId).set({
       name: station,
       active: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp()
     }, { merge: true });
   }
 
   await companyRef.collection("calls").doc("_seed_marker").set({
     marker: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp(),
     note: "Keeps calls collection initialized."
   }, { merge: true });
 
   await companyRef.collection("activity").doc("_seed_marker").set({
     marker: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    createdAt: FieldValue.serverTimestamp(),
     note: "Keeps activity collection initialized."
   }, { merge: true });
 

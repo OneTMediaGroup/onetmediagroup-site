@@ -94,7 +94,7 @@ async function upsertFloorFlowContact({
   }
 
   const contactId = cleanEmail.replace(/[^a-z0-9]+/gi, "_").replace(/^_+|_+$/g, "").toLowerCase();
-  const now = admin.firestore.FieldValue.serverTimestamp();
+  const now = FieldValue.serverTimestamp();
 
   await db.collection("floorFlowContacts").doc(contactId).set({
     email: cleanEmail,
@@ -208,7 +208,7 @@ Floor Flow`;
   });
 
   await plantRef.set({
-    welcomeEmailSentAt: admin.firestore.FieldValue.serverTimestamp(),
+    welcomeEmailSentAt: FieldValue.serverTimestamp(),
     welcomeEmailTo: cleanEmail
   }, { merge: true });
 
@@ -231,7 +231,7 @@ async function markPlantActive({ plantId, stripeCustomerId, stripeSubscriptionId
     stripeCustomerId: stripeCustomerId || "",
     stripeSubscriptionId: stripeSubscriptionId || "",
     billingEmail: email || "",
-    billingUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+    billingUpdatedAt: FieldValue.serverTimestamp()
   };
 
   if (plantRef) {
@@ -249,7 +249,7 @@ async function markPlantActive({ plantId, stripeCustomerId, stripeSubscriptionId
     ...payload,
     plantId: plantId || "",
     needsPlantLink: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp()
+    createdAt: FieldValue.serverTimestamp()
   }, { merge: true });
 
   return { updatedPlant: null, fallbackId };
@@ -269,7 +269,7 @@ async function markPlantInactive({ stripeCustomerId, stripeSubscriptionId, reaso
     paid: false,
     stripeSubscriptionId: stripeSubscriptionId || "",
     billingLockReason: reason || "subscription_inactive",
-    billingUpdatedAt: admin.firestore.FieldValue.serverTimestamp()
+    billingUpdatedAt: FieldValue.serverTimestamp()
   };
 
   if (plantRef) {
@@ -371,8 +371,8 @@ exports.createCheckoutSession = onRequest(
         billingStatus: "checkout_started",
         subscriptionStatus: "pending_checkout",
         productionUnlocked: false,
-        checkoutStartedAt: admin.firestore.FieldValue.serverTimestamp(),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        checkoutStartedAt: FieldValue.serverTimestamp(),
+        updatedAt: FieldValue.serverTimestamp()
       }, { merge: true });
 
       const sessionConfig = {
@@ -619,7 +619,7 @@ exports.sendFloorFlowDemoWelcome = onRequest(
       });
 
       await plantRef.set({
-        demoWelcomeEmailSentAt: admin.firestore.FieldValue.serverTimestamp(),
+        demoWelcomeEmailSentAt: FieldValue.serverTimestamp(),
         demoWelcomeEmailTo: email
       }, { merge: true });
 
@@ -770,7 +770,7 @@ exports.sendFloorFlowCommunication = onRequest(
         preview: text.slice(0, 240),
         sent: sendResults.length,
         sendResults,
-        createdAt: admin.firestore.FieldValue.serverTimestamp()
+        createdAt: FieldValue.serverTimestamp()
       });
 
       res.status(200).json({ ok: true, sent: sendResults.length, results: sendResults });
