@@ -87,8 +87,9 @@ const COMPANY_ID = getActiveCompanyId();
       .filter(Boolean);
 
   const COMPANY_NAME =
-    params.get("companyName") ||
-    "Demo Company";
+  params.get("companyName") ||
+  localStorage.getItem("factory_on_call_company_name") ||
+  "Factory On Call";
 
   const FALLBACK_ROLE_DEFINITIONS = [
     "Team Lead",
