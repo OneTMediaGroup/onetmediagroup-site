@@ -3,23 +3,41 @@ const LIST_CONTACTS_ENDPOINT = "https://northamerica-northeast1-die-changeover-b
 
 const templates = [
   {
-    id: "launch-feeler",
-    name: "Launch Feeler",
-    subject: "Floor Flow is getting close",
+    id: "launch-live",
+    name: "Launch Live",
+    subject: "Floor Flow Is Officially Live",
     message: `Hello,
 
-I wanted to send a quick update that Floor Flow is getting close to launch.
+I’m excited to announce that Floor Flow is now officially available.
 
-Floor Flow is a practical plant-floor system built to help teams manage work-cell flow, supervisor queues, live display boards, setup visibility, parts, and production communication from one clean system.
+What started as a simple idea to improve communication and visibility on the production floor has grown into a complete production management platform designed specifically for manufacturing teams.
 
-Floor Flow is now available and designed to help production teams improve visibility, communication, scheduling, and changeover readiness.
+Over the past several months, Floor Flow has been built, tested, refined, and challenged through hundreds of development iterations to ensure it is practical, reliable, and easy to use in real production environments.
 
-If you would like early access or want to see the system when it is ready, reply to this email and I will keep you on the update list.
+Floor Flow includes:
 
-Thanks,
+• Live Production Display Boards
+• Supervisor Queue Management
+• Touch Screen Floor Views
+• Parts Library Support
+• Production Reporting
+• Secure Plant-Specific Access Controls
 
-The Floor Flow Team
-One T Media Group`
+The goal has always been simple: provide production teams with a clear, organized view of what is happening across the plant while reducing confusion and improving communication.
+
+You can learn more here:
+
+https://onetmediagroup.ca/floor-flow.html
+
+Thank you to everyone who provided feedback, ideas, and encouragement throughout the development process.
+
+This is only the beginning.
+
+Scot Anderson
+Founder
+One T Media Group
+Floor Flow
+https://onetmediagroup.ca`
   },
   {
     id: "launch-live",
