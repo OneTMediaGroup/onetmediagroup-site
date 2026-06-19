@@ -22,7 +22,7 @@ function getActiveCompanyId() {
 }
 
 const COMPANY_ID = getActiveCompanyId();
-const COMPANY_NAME = "Factory On Call";
+let COMPANY_NAME = "Factory On Call";
 
 (async function () {
   // ---------- LOAD FIREBASE COMPAT IF NEEDED ----------
@@ -150,6 +150,7 @@ const COMPANY_NAME = "Factory On Call";
   function buildCallUrl(stationName, cells) {
     const base = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "call.html")}`;
     const params = new URLSearchParams({
+      companyId: COMPANY_ID,
       station: stationName || "",
       cells: Array.isArray(cells) ? cells.join(",") : "",
       companyName: COMPANY_NAME
@@ -221,6 +222,75 @@ const COMPANY_NAME = "Factory On Call";
   let cachedStations = [];
   let cachedRoles = [];
   let cachedUsers = [];
+
+  function splitName(fullName = "") {
+    const cleaned = String(fullName || "").trim();
+    if (!cleaned) return { firstName: "", lastName: "" };
+
+    const parts = cleaned.split(/\s+/);
+    return {
+      firstName: parts.shift() || "",
+      lastName: parts.join(" ")
+    };
+  }
+
+  function normalizeUser(row) {
+    const u = row.data || {};
+    const split = splitName(u.name || "");
+
+    return {
+      ...u,
+      firstName: u.firstName || split.firstName || "",
+      lastName: u.lastName || split.lastName || "",
+      uid: u.uid || u.employeeNumber || row.id || "",
+      email: u.email || "",
+      dept: u.dept || "",
+      role: u.role || "",
+      pin: u.pin || "",
+      active: u.active !== false
+    };
+  }
+
+  function normalizeRows(rows) {
+    return rows.map(row => ({
+      ...row,
+      data: normalizeUser(row)
+    }));
+  }
+
+  function makeSafeId(value = "") {
+    return String(value || "")
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "") || String(Date.now());
+  }
+
+  async function loadCompanyBranding() {
+    try {
+      const rootSnap = await companyRef.get();
+      const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
+
+      let branding = {};
+      try {
+        const brandingSnap = await companyRef.collection("branding").doc("main").get();
+        branding = brandingSnap.exists ? brandingSnap.data() || {} : {};
+      } catch (innerError) {
+        console.warn("Branding document unavailable:", innerError);
+      }
+
+      COMPANY_NAME =
+        branding.companyName ||
+        rootData.companyName ||
+        localStorage.getItem("factory_on_call_company_name") ||
+        "Factory On Call";
+
+      localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+    } catch (error) {
+      console.warn("Could not load company branding:", error);
+    }
+  }
+
 
   // ---------- STATIONS ----------
   function renderStations(rows) {
@@ -439,13 +509,13 @@ const COMPANY_NAME = "Factory On Call";
 
     usersTableBody.innerHTML = "";
 
-    rows.forEach(row => {
+    normalizeRows(rows).forEach(row => {
       const u = row.data;
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${u.firstName || ""}</td>
         <td>${u.lastName || ""}</td>
-        <td>${u.email || ""}</td>
+        <td>${u.uid || u.email || ""}</td>
         <td>${u.dept || ""}</td>
         <td>${u.role || ""}</td>
         <td>${u.active ? "Yes" : "No"}</td>
@@ -466,7 +536,7 @@ const COMPANY_NAME = "Factory On Call";
         const found = cachedUsers.find(x => x.id === id);
         if (!found) return;
 
-        const u = found.data;
+        const u = normalizeUser(found);
         if (userId) userId.value = found.id;
         if (userFirstName) userFirstName.value = u.firstName || "";
         if (userLastName) userLastName.value = u.lastName || "";
@@ -474,7 +544,7 @@ const COMPANY_NAME = "Factory On Call";
         if (userRole) userRole.value = u.role || "";
         if (userUID) userUID.value = u.uid || "";
         if (userPin) userPin.value = u.pin || "";
-        if (userActive) userActive.checked = !!u.active;
+        if (userActive) userActive.checked = u.active !== false;
         if (userFormTitle) userFormTitle.textContent = "Edit User";
         activateTab("users");
       };
@@ -631,14 +701,20 @@ const COMPANY_NAME = "Factory On Call";
     userForm?.addEventListener("submit", async e => {
       e.preventDefault();
 
+      const firstName = userFirstName?.value.trim() || "";
+      const lastName = userLastName?.value.trim() || "";
+      const uid = userUID?.value.trim() || "";
+
       const payload = {
         companyId: COMPANY_ID,
-        firstName: userFirstName?.value.trim() || "",
-        lastName: userLastName?.value.trim() || "",
+        firstName,
+        lastName,
+        name: `${firstName} ${lastName}`.trim(),
         email: "",
         dept: userDept?.value || "",
         role: userRole?.value || "",
-        uid: userUID?.value.trim() || "",
+        uid,
+        employeeNumber: uid,
         pin: userPin?.value.trim() || "",
         active: !!userActive?.checked,
         updatedAt: Date.now()
@@ -660,11 +736,13 @@ const COMPANY_NAME = "Factory On Call";
       }
 
       try {
+        const docId = userId?.value || makeSafeId(payload.uid);
+
         if (userId?.value) {
-          await usersRef.doc(userId.value).update(payload);
+          await usersRef.doc(docId).update(payload);
         } else {
           payload.createdAt = Date.now();
-          await usersRef.add(payload);
+          await usersRef.doc(docId).set(payload, { merge: true });
         }
 
         resetUserForm();
@@ -683,7 +761,7 @@ const COMPANY_NAME = "Factory On Call";
         return;
       }
 
-      const filtered = cachedUsers.filter(x => {
+      const filtered = normalizeRows(cachedUsers).filter(x => {
         const u = x.data;
         return [
           u.firstName || "",
@@ -691,7 +769,9 @@ const COMPANY_NAME = "Factory On Call";
           u.email || "",
           u.dept || "",
           u.role || "",
-          u.uid || ""
+          u.uid || "",
+          u.employeeNumber || "",
+          u.name || ""
         ]
           .join(" ")
           .toLowerCase()
@@ -752,12 +832,16 @@ const COMPANY_NAME = "Factory On Call";
         }
       );
 
-      usersRef.orderBy("firstName").onSnapshot(
+      usersRef.onSnapshot(
         snapshot => {
-          cachedUsers = snapshot.docs.map(doc => ({
+          cachedUsers = normalizeRows(snapshot.docs.map(doc => ({
             id: doc.id,
             data: doc.data()
-          }));
+          }))).sort((a, b) => {
+            const an = `${a.data.firstName || ""} ${a.data.lastName || ""}`.trim();
+            const bn = `${b.data.firstName || ""} ${b.data.lastName || ""}`.trim();
+            return an.localeCompare(bn);
+          });
 
           renderUsers(cachedUsers);
         },
@@ -772,8 +856,9 @@ const COMPANY_NAME = "Factory On Call";
   }
 
   // ---------- BOOT ----------
-  function boot() {
+  async function boot() {
     setConn(false);
+    await loadCompanyBranding();
     initTabs();
     initPlaceholders();
     wireEvents();

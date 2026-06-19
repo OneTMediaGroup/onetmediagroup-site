@@ -87,9 +87,11 @@ const COMPANY_ID = getActiveCompanyId();
       .filter(Boolean);
 
   const COMPANY_NAME =
-  params.get("companyName") ||
-  localStorage.getItem("factory_on_call_company_name") ||
-  "Factory On Call";
+    params.get("companyName") ||
+    localStorage.getItem("factory_on_call_company_name") ||
+    "Factory On Call";
+
+  localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
 
   const FALLBACK_ROLE_DEFINITIONS = [
     "Team Lead",
@@ -107,6 +109,27 @@ const COMPANY_ID = getActiveCompanyId();
     "Engineering",
     "Electrician"
   ];
+
+  function splitName(fullName = "") {
+    const cleaned = String(fullName || "").trim();
+    if (!cleaned) return { firstName: "", lastName: "" };
+    const parts = cleaned.split(/\s+/);
+    return {
+      firstName: parts.shift() || "",
+      lastName: parts.join(" ")
+    };
+  }
+
+  function normalizeUser(user = {}, id = "") {
+    const split = splitName(user.name || "");
+    return {
+      ...user,
+      firstName: user.firstName || split.firstName || "",
+      lastName: user.lastName || split.lastName || "",
+      uid: user.uid || user.employeeNumber || id || "",
+      active: user.active !== false
+    };
+  }
 
   const rolesGrid = document.getElementById("rolesGrid");
   const sendCallBtn = document.getElementById("sendCallBtn");
@@ -296,6 +319,7 @@ const COMPANY_ID = getActiveCompanyId();
 
     const payload = {
       companyId: COMPANY_ID,
+      companyName: COMPANY_NAME,
       station: STATION_NAME,
       cells: STATION_CELLS,
       roles: selectedRoles,
@@ -375,9 +399,9 @@ const COMPANY_ID = getActiveCompanyId();
       const snap = await usersRef.get();
 
       const match = snap.docs
-        .map(d => d.data())
+        .map(d => normalizeUser(d.data(), d.id))
         .find(u =>
-          String(u.uid || "") === uid &&
+          String(u.uid || u.employeeNumber || "") === uid &&
           String(u.pin || "") === pin &&
           u.active !== false
         );
@@ -390,7 +414,7 @@ const COMPANY_ID = getActiveCompanyId();
       currentCaller = {
         firstName: match.firstName || "",
         lastName: match.lastName || "",
-        uid: match.uid || ""
+        uid: match.uid || match.employeeNumber || ""
       };
 
       const activeDoc = await findActiveCallForStation();
@@ -404,6 +428,8 @@ const COMPANY_ID = getActiveCompanyId();
 
         await callsRef.doc(activeDoc.id).update({
           status: "closed",
+          closedBy: `${currentCaller.firstName || ""} ${currentCaller.lastName || ""}`.trim() || currentCaller.uid || "Caller",
+          closedByUid: currentCaller.uid || "",
           timeClosed,
           duration
         });

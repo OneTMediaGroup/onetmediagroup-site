@@ -75,6 +75,8 @@ const COMPANY_ID = getActiveCompanyId();
 
   const params = new URLSearchParams(window.location.search);
   const viewerUid = params.get("uid") || "";
+  const companyName = params.get("companyName") || localStorage.getItem("factory_on_call_company_name") || "Factory On Call";
+  localStorage.setItem("factory_on_call_company_name", companyName);
 
   let viewerIsAdmin = true;
   let viewerUserName = "ViewerUser";
@@ -107,15 +109,38 @@ const COMPANY_ID = getActiveCompanyId();
     );
   }
 
+  function splitName(fullName = "") {
+    const cleaned = String(fullName || "").trim();
+    if (!cleaned) return { firstName: "", lastName: "" };
+
+    const parts = cleaned.split(/\s+/);
+    return {
+      firstName: parts.shift() || "",
+      lastName: parts.join(" ")
+    };
+  }
+
+  function normalizeUser(user = {}, id = "") {
+    const split = splitName(user.name || "");
+    return {
+      ...user,
+      firstName: user.firstName || split.firstName || "",
+      lastName: user.lastName || split.lastName || "",
+      uid: user.uid || user.employeeNumber || id || "",
+      active: user.active !== false
+    };
+  }
+
+
   async function loadViewerUser() {
     try {
       const snap = await usersRef.get();
-      const users = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      const users = snap.docs.map(d => normalizeUser(d.data(), d.id));
 
       let match = null;
 
       if (viewerUid) {
-        match = users.find(u => String(u.uid || "") === viewerUid && u.active !== false);
+        match = users.find(u => String(u.uid || u.employeeNumber || "") === viewerUid && u.active !== false);
       }
 
       if (!match) {
@@ -126,7 +151,7 @@ const COMPANY_ID = getActiveCompanyId();
         const first = match.firstName || "";
         const last = match.lastName || "";
         const full = `${first} ${last}`.trim();
-        viewerUserName = full || "ViewerUser";
+        viewerUserName = full || match.name || match.uid || "ViewerUser";
       }
     } catch (err) {
       console.error("Could not load viewer user:", err);
@@ -176,6 +201,7 @@ const COMPANY_ID = getActiveCompanyId();
           status: "ack",
           ackBy: viewerUserName,
           assignedTo: viewerUserName,
+          ackByUid: viewerUid || "",
           timeAck: Date.now()
         });
       };
@@ -200,6 +226,8 @@ const COMPANY_ID = getActiveCompanyId();
 
         await ref.update({
           status: "closed",
+          closedBy: viewerUserName,
+          closedByUid: viewerUid || "",
           timeClosed,
           duration
         });

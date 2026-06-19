@@ -73,41 +73,51 @@ async function seed() {
   }
 
   const users = [
-    { id: "1001", pin: "1111", name: "Jake", role: "Maintenance" },
-    { id: "1002", pin: "2222", name: "A. Patel", role: "Quality" },
-    { id: "1003", pin: "3333", name: "J. Smith", role: "Supervisor" },
-    { id: "1004", pin: "4444", name: "Maria", role: "Material Handler" },
-    { id: "1005", pin: "5555", name: "Lee", role: "Team Lead" }
+    { id: "1001", pin: "1111", firstName: "Jake", lastName: "Miller", role: "Maintenance", dept: "Production" },
+    { id: "1002", pin: "2222", firstName: "A.", lastName: "Patel", role: "Quality", dept: "Quality" },
+    { id: "1003", pin: "3333", firstName: "J.", lastName: "Smith", role: "Supervisor", dept: "Production" },
+    { id: "1004", pin: "4444", firstName: "Maria", lastName: "Rossi", role: "Material Handler", dept: "Materials" },
+    { id: "1005", pin: "5555", firstName: "Lee", lastName: "Chen", role: "Team Lead", dept: "Production" }
   ];
 
   for (const user of users) {
     await setDoc(doc(db, "companies", COMPANY_ID, "users", user.id), {
+      companyId: COMPANY_ID,
+      uid: user.id,
       employeeNumber: user.id,
       pin: user.pin,
-      name: user.name,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      name: `${user.firstName} ${user.lastName}`.trim(),
       role: user.role,
+      dept: user.dept,
+      email: "",
       active: true,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     }, { merge: true });
   }
 
   const stations = [
-    "Press 1",
-    "Press 2",
-    "Assembly 1",
-    "Assembly 2",
-    "Packaging",
-    "Receiving"
+    { name: "Press 1", description: "Production", cells: ["Cell 1", "Cell 2"] },
+    { name: "Press 2", description: "Production", cells: ["Cell 3", "Cell 4"] },
+    { name: "Assembly 1", description: "Assembly", cells: ["Assembly A"] },
+    { name: "Assembly 2", description: "Assembly", cells: ["Assembly B"] },
+    { name: "Packaging", description: "Packaging", cells: ["Pack Line"] },
+    { name: "Receiving", description: "Materials", cells: ["Dock"] }
   ];
 
   for (const station of stations) {
-    const stationId = station.toLowerCase().replaceAll(" ", "-");
+    const stationId = station.name.toLowerCase().replaceAll(" ", "-");
 
     await setDoc(doc(db, "companies", COMPANY_ID, "stations", stationId), {
       stationId,
-      name: station,
+      name: station.name,
+      description: station.description,
+      cells: station.cells,
       active: true,
-      createdAt: serverTimestamp()
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     }, { merge: true });
   }
 
