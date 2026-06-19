@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Factory On Call – Viewer</title>
+    <link rel="stylesheet" href="viewer.css" />
+</head>
+
+<body>
+<div id="viewer-root">
+
+    <!-- HEADER -->
+    <header class="viewer-header">
+        <div class="vh-left">
+            <img src="factory_logo.png" class="vh-logo" alt="Factory On Call" />
+            <div class="vh-title">FACTORY ON CALL</div>
+        </div>
+
+        <div class="vh-center">
+            <div class="vh-company-name">Your Company</div>
+        </div>
+
+        <div class="vh-right">
+            <span class="vh-status-dot" id="connDot"></span>
+            <span id="connLabel">Connecting…</span>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT -->
+    <main class="viewer-main">
+        <!-- ACTIVE CALLS -->
+        <section class="viewer-section">
+            <h2 class="section-title">Active Calls</h2>
+
+            <!-- Vertical scroll area JUST for active calls -->
+            <div id="activeCalls" class="call-list scroll-vertical">
+                <!-- Cards injected by viewer.js -->
+            </div>
+        </section>
+    </main>
+
+    <!-- BOTTOM SUMMARY BOXES (fixed at bottom, no scroll) -->
+    <footer class="viewer-footer">
+        <div class="summary-box">
+            <div class="sb-label">ACTIVE CALLS</div>
+            <div class="sb-value" id="sbActive">0</div>
+        </div>
+
+        <div class="summary-box">
+            <div class="sb-label">WAITING</div>
+            <div class="sb-value" id="sbWaiting">0</div>
+        </div>
+
+        <div class="summary-box">
+            <div class="sb-label">ON THE WAY</div>
+            <div class="sb-value" id="sbOnWay">0</div>
+        </div>
+
+        <div class="summary-box">
+            <div class="sb-label">CLOSED TODAY</div>
+            <div class="sb-value" id="sbClosed">0</div>
+        </div>
+    </footer>
+
+</div>
+
+<script src="viewer.js"></script>
+</body>
+</html>

@@ -1,0 +1,230 @@
+:root {
+    --bg-main: #020617;
+    --fg-text: #e5e7eb;
+    --fg-muted: #94a3b8;
+    --accent-green: #22c55e;
+    --accent-red: #ef4444;
+    --panel-bg: #0f172a;
+    --radius: 14px;
+}
+
+/* GLOBAL */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+        sans-serif;
+    color: var(--fg-text);
+    background: var(--bg-main);
+    overflow: hidden; /* no page scroll – only list scrolls */
+}
+
+#viewer-root {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+}
+
+/* HEADER */
+
+.viewer-header {
+    height: 64px;
+    background: #020617;
+    border-bottom: 1px solid #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+}
+
+.vh-left,
+.vh-center,
+.vh-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.vh-logo {
+    height: 26px;
+}
+
+.vh-title {
+    letter-spacing: 0.15em;
+    font-size: 13px;
+    opacity: 0.8;
+}
+
+.vh-company-name {
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.vh-status-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 999px;
+    background: #ef4444;
+}
+
+/* MAIN LAYOUT */
+
+.viewer-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 18px 26px 0;
+}
+
+/* ACTIVE CALLS SECTION */
+
+.viewer-section {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 12px;
+}
+
+/* Vertical scroll ONLY inside this area */
+.scroll-vertical {
+    flex: 1;
+    overflow-y: auto;
+    padding-right: 6px;
+}
+
+/* Hide any horizontal scroll – layout should fit width */
+.scroll-vertical::-webkit-scrollbar {
+    width: 6px;
+}
+.scroll-vertical::-webkit-scrollbar-thumb {
+    background: #334155;
+    border-radius: 6px;
+}
+
+.call-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 10px;
+}
+
+/* CALL CARDS – WIDE ROWS */
+
+.call-card {
+    width: 100%;
+    background: var(--panel-bg);
+    border-radius: var(--radius);
+    border: 1px solid #1f2937;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+    padding: 10px 16px;
+}
+
+.call-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    white-space: nowrap;
+}
+
+/* left-side info */
+
+.call-role {
+    font-size: 15px;
+    font-weight: 700;
+    min-width: 130px;
+}
+
+.call-cell {
+    font-size: 14px;
+    color: var(--fg-text);
+    opacity: 0.9;
+    min-width: 120px;
+}
+
+.call-time {
+    font-size: 13px;
+    color: var(--fg-muted);
+    min-width: 90px;
+}
+
+.call-ack {
+    font-size: 13px;
+    color: var(--accent-green);
+    min-width: 120px;
+}
+
+/* right-side actions */
+
+.call-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.btn-green,
+.btn-red {
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 600;
+    color: #ffffff;
+    white-space: nowrap;
+}
+
+.btn-green {
+    background: var(--accent-green);
+}
+
+.btn-red {
+    background: var(--accent-red);
+}
+
+/* FOOTER SUMMARY BOXES – FIXED AT BOTTOM */
+
+.viewer-footer {
+    padding: 0 26px 18px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.summary-box {
+    background: var(--panel-bg);
+    border-radius: var(--radius);
+    border: 1px solid #1f2937;
+    padding: 10px 16px;
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.55);
+}
+
+.sb-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: var(--fg-muted);
+    margin-bottom: 4px;
+}
+
+.sb-value {
+    font-size: 18px;
+    font-weight: 700;
+}
+
+/* Prevent any horizontal scrollbars at page level */
+html, body {
+    overflow-x: hidden;
+}

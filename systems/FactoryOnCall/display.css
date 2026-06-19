@@ -1,0 +1,152 @@
+:root {
+    --bg-main: #020617;
+    --fg-text: #e5e7eb;
+    --fg-muted: #94a3b8;
+    --panel-bg: #0f172a;
+    --radius: 14px;
+}
+
+/* PAGE */
+body {
+    margin: 0;
+    background: var(--bg-main);
+    font-family: system-ui, sans-serif;
+    color: var(--fg-text);
+    overflow: hidden;
+}
+
+#display-root {
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* HEADER */
+.display-header {
+    height: 64px;
+    background: #020617;
+    border-bottom: 1px solid #1e293b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 22px;
+}
+
+.dh-left, .dh-center, .dh-right {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dh-logo {
+    height: 26px;
+}
+
+.dh-title {
+    letter-spacing: 0.15em;
+    font-size: 14px;
+    opacity: 0.75;
+}
+
+.dh-company-name {
+    font-size: 18px;
+    font-weight: 600;
+}
+
+.dh-status-dot {
+    width: 12px;
+    height: 12px;
+    background: red;
+    border-radius: 50%;
+}
+
+/* ACTIVE CALLS SECTION */
+.display-section {
+    padding: 20px 26px;
+    flex: 1;                /* TAKE ALL REMAINING SPACE */
+    overflow: hidden;       /* keep bottom bar visible */
+}
+
+.section-title {
+    font-size: 20px;
+    margin-bottom: 14px;
+}
+
+/* VERTICAL SCROLL AREA */
+.scroll-area {
+    height: calc(100% - 20px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 6px;
+}
+
+.call-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.call-card {
+    background: var(--panel-bg);
+    border: 1px solid #1e293b;
+    border-radius: var(--radius);
+    padding: 14px 20px;
+}
+
+.call-row {
+    display: grid;
+    grid-template-columns: 200px 1fr 150px 160px;
+    align-items: center;
+    gap: 20px;
+}
+
+.call-role {
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.call-cell, .call-time {
+    font-size: 15px;
+    opacity: 0.8;
+}
+
+.call-ack {
+    font-size: 15px;
+    color: var(--fg-muted);
+}
+
+/* BOTTOM BAR */
+.bottom-bar {
+    height: 110px;
+    background: #020617;
+    border-top: 1px solid #1e293b;
+    display: flex;
+    justify-content: space-between;
+    padding: 20px 40px;
+}
+
+.stat-box {
+    background: var(--panel-bg);
+    border: 1px solid #1e293b;
+    border-radius: var(--radius);
+    width: 22%;
+    padding: 18px 24px;
+    text-align: center;
+}
+
+.stat-title {
+    font-size: 13px;
+    opacity: 0.8;
+    margin-bottom: 4px;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.stat-desc {
+    font-size: 12px;
+    opacity: 0.7;
+}

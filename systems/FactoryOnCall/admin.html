@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Factory On Call – Admin Panel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+<div id="app-root">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <div class="brand-title">Factory On Call</div>
+            <div class="brand-subtitle">Admin Panel</div>
+        </div>
+
+        <nav class="nav">
+            <button class="nav-item active" data-tab="dashboard">Dashboard</button>
+            <button class="nav-item" data-tab="callbuttons">Call Buttons</button>
+            <button class="nav-item" data-tab="logs">Call Logs</button>
+            <button class="nav-item" data-tab="users">Users</button>
+            <button class="nav-item" data-tab="stations">Stations</button>
+            <button class="nav-item" data-tab="roles">Roles & Permissions</button>
+            <button class="nav-item" data-tab="branding">Branding</button>
+            <button class="nav-item" data-tab="settings">System Settings</button>
+            <button class="nav-item" data-tab="analytics">Analytics</button>
+        </nav>
+
+        <div class="sidebar-footer">
+            <div class="admin-user-display">
+                Logged in as: <span id="adminUserName">Admin</span>
+            </div>
+            <button id="logoutBtn" class="logout-btn">Log out</button>
+        </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <div class="topbar-left">
+                <h1 id="pageTitle">Dashboard</h1>
+                <p id="pageSubtitle">Live overview of your factory call system.</p>
+            </div>
+            <div class="topbar-right">
+                <img id="companyLogoImg" class="company-logo" src="" alt="Company Logo" />
+                <span class="status-dot" id="firebaseStatusDot"></span>
+                <span id="firebaseStatusText">Connecting...</span>
+            </div>
+        </header>
+
+        <!-- TOASTS -->
+        <div id="toastContainer" class="toast-container"></div>
+
+        <!-- DASHBOARD TAB -->
+        <section id="tab-dashboard" class="tab active">
+            <div class="grid grid-3">
+                <div class="card stat-card">
+                    <h2>Today’s Calls</h2>
+                    <p class="stat-big" id="statTotalCalls">–</p>
+                    <p class="muted">Calls started since midnight.</p>
+                </div>
+
+                <div class="card stat-card">
+                    <h2>Active Calls</h2>
+                    <p class="stat-big" id="statActiveCalls">–</p>
+                    <p class="muted">Currently open or in progress.</p>
+                </div>
+
+                <div class="card stat-card">
+                    <h2>Closed Today</h2>
+                    <p class="stat-big" id="statClosedCalls">–</p>
+                    <p class="muted">Calls fully resolved today.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <h2>Quick Statistics</h2>
+                    <ul class="simple-list" id="dashQuickList"></ul>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Quick Actions</h2>
+                    </div>
+                    <div class="button-row">
+                        <button id="btnBroadcast" class="btn secondary">Broadcast Message</button>
+                        <button id="btnFreeze" class="btn danger">Toggle Maintenance Mode</button>
+                        <button id="btnForceLogout" class="btn">Force Logout All</button>
+                    </div>
+                    <p class="muted" style="margin-top:10px;">
+                        Use carefully – these actions affect all connected users and stations.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Activity</h2>
+                <div id="recentActivity" class="activity-list"></div>
+            </div>
+        </section>
+
+        <!-- CALL BUTTONS TAB -->
+        <section id="tab-callbuttons" class="tab">
+            <div class="card">
+                <h2>Create Work Cell Call Buttons</h2>
+                <p class="muted">
+                    Generate dynamic or static call buttons for stations and work cells.
+                </p>
+
+                <form id="callButtonForm" class="form">
+                    <label>
+                        Select Station
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <select id="cbStation" style="flex:1;"></select>
+                            <button type="button"
+                                    class="btn small secondary"
+                                    onclick="document.querySelector('.nav-item[data-tab=&quot;stations&quot;]').click();">
+                                Add Station
+                            </button>
+                        </div>
+                    </label>
+
+                    <label>
+                        Department (optional)
+                        <select id="cbDepartment"></select>
+                    </label>
+
+                    <label>
+                        Work Cells (select one or multiple)
+                        <select id="cbCells" multiple size="6"></select>
+                    </label>
+
+                    <div class="button-row">
+                        <button type="button" id="btnGenerateDynamic" class="btn">
+                            Generate Dynamic URL
+                        </button>
+                        <button type="button" id="btnGenerateStatic" class="btn secondary">
+                            Generate Static HTML File
+                        </button>
+                    </div>
+                </form>
+
+                <div class="card">
+                    <h3>Generated Output</h3>
+                    <textarea id="cbOutput" class="output-box" rows="4" readonly></textarea>
+                    <button id="btnCopyOutput" class="btn small">Copy</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Auto-Generate From Station Cells</h2>
+                <p class="muted">
+                    Generate all call buttons for a station’s work cells automatically.
+                </p>
+
+                <label>
+                    Select Station
+                    <select id="cbAutoStation"></select>
+                </label>
+
+                <div class="button-row">
+                    <button id="btnGenerateAllDynamic" class="btn">Generate All Dynamic URLs</button>
+                    <button id="btnGenerateAllStatic" class="btn secondary">Generate All Static Files</button>
+                </div>
+
+                <textarea id="cbAutoOutput" class="output-box" rows="6" readonly></textarea>
+            </div>
+        </section>
+
+        <!-- CALL LOGS TAB -->
+        <section id="tab-logs" class="tab">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Call Logs</h2>
+                    <div class="card-actions">
+                        <button id="exportLogsBtn" class="btn secondary">Export CSV</button>
+                        <button id="purgeLogsBtn" class="btn danger">Purge Old Logs</button>
+                    </div>
+                </div>
+
+                <div class="filters">
+                    <input id="logsSearch" type="text" placeholder="Search logs..." />
+                    <input id="logsDateFrom" type="date" />
+                    <input id="logsDateTo" type="date" />
+                    <button id="logsFilterBtn" class="btn small">Apply</button>
+                    <button id="logsClearBtn" class="btn small secondary">Clear</button>
+                </div>
+
+                <div class="table-wrapper">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Station</th>
+                                <th>Cells</th>
+                                <th>Caller First</th>
+                                <th>Caller Last</th>
+                                <th>Status</th>
+                                <th>Assigned To</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- USERS TAB -->
+        <section id="tab-users" class="tab">
+            <div class="grid-2">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Users</h2>
+                        <input id="userSearch" type="text" placeholder="Search users..." />
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>First</th>
+                                    <th>Last</th>
+                                    <th>Email</th>
+                                    <th>Dept</th>
+                                    <th>Role</th>
+                                    <th>Active</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 id="userFormTitle">Add User</h2>
+                    <form id="userForm" class="form">
+                        <input type="hidden" id="userId" />
+
+                        <label>
+                            First Name
+                            <input type="text" id="userFirstName" required />
+                        </label>
+
+                        <label>
+                            Last Name
+                            <input type="text" id="userLastName" required />
+                        </label>
+
+                        <label>
+                            Department
+                            <select id="userDept"></select>
+                        </label>
+
+                        <label>
+                            Role
+                            <select id="userRole"></select>
+                        </label>
+
+                        <label>
+                            User ID (4 digits, used for login & unlocking stations)
+                            <input type="text" id="userUID" maxlength="4" />
+                        </label>
+
+                        <label>
+                            PIN (4 digits, used for unlocking call stations)
+                            <input type="password" id="userPin" maxlength="4" />
+                        </label>
+
+                        <label class="checkbox-row">
+                            <input type="checkbox" id="userActive" checked />
+                            <span>Active</span>
+                        </label>
+
+                        <div class="button-row">
+                            <button type="submit" class="btn">Save</button>
+                            <button type="button" id="userFormReset" class="btn secondary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- STATIONS TAB -->
+        <section id="tab-stations" class="tab">
+            <div class="grid-2">
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Stations</h2>
+                        <input id="stationSearch" type="text" placeholder="Search stations..." />
+                    </div>
+
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Work Cells</th>
+                                    <th>Active</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="stationsTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 id="stationFormTitle">Add Station</h2>
+                    <form id="stationForm" class="form">
+                        <input type="hidden" id="stationId" />
+
+                        <label>
+                            Name
+                            <input type="text" id="stationName" required />
+                        </label>
+
+                        <label>
+                            Description
+                            <textarea id="stationDescription" rows="3"></textarea>
+                        </label>
+
+                        <label>
+                            Work Cells (comma-separated)
+                            <input type="text" id="stationCells" placeholder="A1,A2,A3" />
+                        </label>
+
+                        <label class="checkbox-row">
+                            <input type="checkbox" id="stationActive" checked />
+                            <span>Active</span>
+                        </label>
+
+                        <div class="button-row">
+                            <button type="submit" class="btn">Save</button>
+                            <button type="button" id="stationFormReset" class="btn secondary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ROLES TAB -->
+        <section id="tab-roles" class="tab">
+            <div class="grid-2">
+                <div class="card">
+                    <h2>Roles</h2>
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Role</th>
+                                    <th>Permissions</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="rolesTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2 id="roleFormTitle">Add Role</h2>
+                    <form id="roleForm" class="form">
+                        <input type="hidden" id="roleId" />
+                        <label>
+                            Role Name
+                            <input type="text" id="roleName" required />
+                        </label>
+
+                        <div class="permissions-grid">
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="makeCall" />
+                                <span>Make Call</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="viewCalls" />
+                                <span>View Calls</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="acceptCall" />
+                                <span>Accept Call</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="closeCall" />
+                                <span>Close Call</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="manageUsers" />
+                                <span>Manage Users</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="manageStations" />
+                                <span>Manage Stations</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="manageRoles" />
+                                <span>Manage Roles</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="viewLogs" />
+                                <span>View Logs</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="exportLogs" />
+                                <span>Export Logs</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="branding" />
+                                <span>Branding Changes</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-permission="systemSettings" />
+                                <span>System Settings</span>
+                            </label>
+                        </div>
+
+                        <div class="button-row">
+                            <button type="submit" class="btn">Save</button>
+                            <button type="button" id="roleFormReset" class="btn secondary">Reset</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+        <!-- BRANDING TAB -->
+        <section id="tab-branding" class="tab">
+            <div class="grid-2">
+
+                <div class="card">
+                    <h2>Branding</h2>
+                    <p class="muted">
+                        Update your company branding. Factory On Call logo is fixed and cannot be changed by admins.
+                    </p>
+
+                    <form id="brandingForm" class="form">
+                        <label>
+                            Company Name
+                            <input type="text" id="brandCompanyName" />
+                        </label>
+
+                        <label>
+                            Primary Color
+                            <div class="color-row">
+                                <input type="color" id="brandPrimaryColorPicker" />
+                                <input type="text" id="brandPrimaryColor" placeholder="#1e88e5" />
+                            </div>
+                        </label>
+
+                        <label>
+                            Accent Color
+                            <div class="color-row">
+                                <input type="color" id="brandAccentColorPicker" />
+                                <input type="text" id="brandAccentColor" placeholder="#ffb300" />
+                            </div>
+                        </label>
+
+                        <label>
+                            Company Logo (max 4 MB)
+                            <input type="file" id="brandLogo" accept="image/*" />
+                        </label>
+
+                        <div class="button-row">
+                            <button class="btn" type="submit">Save Branding</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="card">
+                    <h2>Live Preview</h2>
+                    <p class="muted">Preview how your branding appears in headers, cards, and buttons.</p>
+
+                    <div id="brandPreviewHeader" class="brand-preview-header">
+                        <img id="brandPreviewLogo" class="company-logo" src="" alt="Brand Logo" />
+                        <div class="brand-preview-text">
+                            <div id="brandPreviewCompany" class="brand-preview-company">Your Company</div>
+                            <div class="muted">Factory On Call – Example Viewer</div>
+                        </div>
+                    </div>
+
+                    <div id="brandPreviewCard" class="brand-preview-card">
+                        <div class="brand-preview-card-title">Sample Card</div>
+                        <div class="brand-preview-card-body">
+                            This is an example tile using your card background, text, and accent colors.
+                        </div>
+                    </div>
+
+                    <button id="brandPreviewButton" type="button" class="btn" style="margin-top:12px;">
+                        Sample Button
+                    </button>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- SYSTEM SETTINGS TAB -->
+        <section id="tab-settings" class="tab">
+            <div class="card">
+                <h2>System Settings</h2>
+                <p class="muted">
+                    Control system-level behaviors like auto-close and viewer refresh intervals.
+                </p>
+
+                <form id="systemSettingsForm" class="form">
+                    <label>
+                        Auto-close after (minutes)
+                        <input type="number" id="settingAutoClose" min="0" />
+                    </label>
+
+                    <label>
+                        Require Note on Close
+                        <select id="settingRequireNote">
+                            <option value="false">No</option>
+                            <option value="true">Yes</option>
+                        </select>
+                    </label>
+
+                    <label>
+                        Viewer Refresh Rate (seconds)
+                        <input type="number" id="settingViewerRefresh" min="1" />
+                    </label>
+
+                    <div class="button-row">
+                        <button class="btn" type="submit">Save Settings</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- ANALYTICS TAB -->
+        <section id="tab-analytics" class="tab">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Analytics Overview</h2>
+                    <button id="analyticsExportBtn" class="btn secondary">Export CSV</button>
+                </div>
+                <p class="muted">Basic analytics. For deeper analysis, export CSV and use Excel or BI tools.</p>
+
+                <div class="grid">
+                    <div class="analytics-card">
+                        <h3>Calls by Station</h3>
+                        <ul id="analyticsStationList" class="simple-list"></ul>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Calls by Cell</h3>
+                        <ul id="analyticsCellList" class="simple-list"></ul>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Calls by User</h3>
+                        <ul id="analyticsUserList" class="simple-list"></ul>
+                    </div>
+
+                    <div class="analytics-card">
+                        <h3>Peak Hour</h3>
+                        <p id="analyticsPeakHour" class="stat-big">–</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CSV EXPORT MODAL -->
+        <div id="csvExportModal" class="csv-modal" style="display:none;">
+            <div class="csv-modal-backdrop"></div>
+            <div class="csv-modal-content">
+                <h2>Export CSV</h2>
+
+                <div class="form">
+                    <label>
+                        Data Range
+                        <select id="csvRange">
+                            <option value="full">Full Call Log</option>
+                            <option value="today">Today Only</option>
+                            <option value="7days">Last 7 Days</option>
+                            <option value="30days">Last 30 Days</option>
+                            <option value="custom">Custom Range</option>
+                        </select>
+                    </label>
+
+                    <div id="csvCustomRange" style="display:none;">
+                        <label>
+                            From
+                            <input type="date" id="csvFromDate" />
+                        </label>
+                        <label>
+                            To
+                            <input type="date" id="csvToDate" />
+                        </label>
+                    </div>
+
+                    <label>
+                        Columns to include
+                        <div class="csv-columns">
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="timeStarted" checked />
+                                <span>Time Started</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="timeClosed" checked />
+                                <span>Time Closed</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="station" checked />
+                                <span>Station</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="cells" checked />
+                                <span>Work Cells</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="callerFirst" checked />
+                                <span>Caller First</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="callerLast" checked />
+                                <span>Caller Last</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="status" checked />
+                                <span>Status</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="assignedTo" checked />
+                                <span>Assigned To</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="duration" checked />
+                                <span>Duration (min)</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="department" />
+                                <span>Department</span>
+                            </label>
+                            <label class="checkbox-row">
+                                <input type="checkbox" data-csv-col="uid" />
+                                <span>User ID</span>
+                            </label>
+                        </div>
+                    </label>
+
+                    <label class="checkbox-row">
+                        <input type="checkbox" id="csvIncludeHeader" checked />
+                        <span>Include column header row</span>
+                    </label>
+
+                    <label class="checkbox-row">
+                        <input type="checkbox" id="csvUse24Hour" checked />
+                        <span>Use 24-hour time</span>
+                    </label>
+
+                    <div class="button-row" style="margin-top:16px;">
+                        <button id="csvExportGenerateBtn" class="btn">Generate CSV</button>
+                        <button id="csvExportCloseBtn" type="button" class="btn secondary">Cancel</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<script src="firebase.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

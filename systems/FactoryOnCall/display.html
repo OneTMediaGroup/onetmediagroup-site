@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Factory On Call – Display</title>
+    <link rel="stylesheet" href="display.css" />
+</head>
+
+<body>
+<div id="display-root">
+
+    <!-- HEADER -->
+    <header class="display-header">
+        <div class="dh-left">
+            <img src="factory_logo.png" class="dh-logo" />
+            <div class="dh-title">FACTORY ON CALL</div>
+        </div>
+
+        <div class="dh-center">
+            <div class="dh-company-name">Your Company</div>
+        </div>
+
+        <div class="dh-right">
+            <span class="dh-status-dot" id="connDot"></span>
+            <span id="connLabel">Connecting…</span>
+        </div>
+    </header>
+
+    <!-- ACTIVE CALLS SECTION -->
+    <section class="display-section">
+        <h2 class="section-title">Active Calls</h2>
+
+        <div id="activeCalls" class="scroll-area"></div>
+    </section>
+
+    <!-- FIXED BOTTOM BAR -->
+    <section class="bottom-bar">
+        <div class="stat-box">
+            <div class="stat-title">ACTIVE CALLS</div>
+            <div class="stat-value" id="statActive">0</div>
+            <div class="stat-desc">Open or in progress</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-title">WAITING</div>
+            <div class="stat-value" id="statWaiting">0</div>
+            <div class="stat-desc">Not yet acknowledged</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-title">ON THE WAY</div>
+            <div class="stat-value" id="statOnWay">0</div>
+            <div class="stat-desc">Acknowledged</div>
+        </div>
+
+        <div class="stat-box">
+            <div class="stat-title">CLOSED TODAY</div>
+            <div class="stat-value" id="statClosed">0</div>
+            <div class="stat-desc">Completed since midnight</div>
+        </div>
+    </section>
+
+</div>
+
+<script src="display.js"></script>
+</body>
+</html>

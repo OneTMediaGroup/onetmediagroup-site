@@ -1,0 +1,206 @@
+/* === GLOBAL VARIABLES === */
+:root {
+    --bg-main: #020617;
+    --bg-panel: #020617;
+    --accent: #38bdf8;
+    --accent-strong: #0ea5e9;
+    --accent-green: #22c55e;
+    --text-main: #e5e7eb;
+    --text-muted: #9ca3af;
+    --radius-lg: 18px;
+    --radius-pill: 999px;
+    --shadow-soft: 0 18px 40px rgba(0,0,0,0.7);
+    --shadow-glow: 0 0 35px rgba(56,189,248,0.9);
+}
+
+/* GENERAL RESET */
+*,
+*::before,
+*::after { box-sizing: border-box; }
+
+html, body {
+    margin: 0; padding: 0; height: 100%;
+    font-family: system-ui, sans-serif;
+    color: var(--text-main);
+    background: radial-gradient(circle at top, #0f172a 0, #020617 55%);
+}
+
+.hidden { display: none !important; }
+
+/* === APP SHELL === */
+.app-shell {
+    display: flex; flex-direction: column;
+    min-height: 100vh;
+}
+
+/* === HEADER === */
+.app-header {
+    height: 64px;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 22px;
+    background: #020617;
+    border-bottom: 1px solid #111827;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.7);
+}
+
+.header-left, .header-center, .header-right {
+    display: flex; align-items: center; gap: 10px;
+}
+
+.factory-logo { height: 24px; }
+
+.status-pill {
+    padding: 6px 14px;
+    border-radius: var(--radius-pill);
+    font-size: 13px; font-weight: 600;
+    border: 1px solid rgba(148,163,184,0.6);
+}
+.status-ready { color: var(--accent-green); border-color: #38ff67; }
+.status-locked { color: #ff9d43; border-color: #ff9d43; }
+
+/* === MAIN PANEL === */
+.app-main { flex: 1; display: flex; justify-content: center; padding: 18px 32px; }
+
+.call-panel {
+    width: 100%; max-width: 1200px; height: 100%;
+    border-radius: var(--radius-lg);
+    border: 1px solid #1f2937;
+    background: radial-gradient(circle at top, #020617 0, #020617 58%);
+    box-shadow: var(--shadow-soft);
+    display: flex; flex-direction: column; align-items: center;
+    padding: 50px 40px;
+}
+
+/* === CIRCLE === */
+.circle-wrapper {
+    position: relative;
+    width: min(42vh,42vw,360px);
+    height: min(42vh,42vw,360px);
+    margin-bottom: 28px;
+}
+
+.circle-outer,
+.circle-middle,
+.circle-inner {
+    position: absolute;
+    border-radius: 50%; left: 50%; top: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.circle-outer {
+    width:100%; height:100%;
+    border:2px solid rgba(148,163,184,0.25);
+}
+
+.circle-middle {
+    width:80%; height:80%;
+    border:2px solid rgba(37,99,235,0.4);
+}
+
+.circle-inner {
+    width:64%; height:64%;
+    border:2px solid rgba(56,189,248,0.95);
+    display:flex; align-items:center; justify-content:center;
+    flex-direction:column;
+    background: radial-gradient(circle at 25% 0,#0ea5e9 0,#020617 72%);
+}
+
+/* FIXED center text — perfect centering */
+.circle-label-main {
+    font-size: 22px;
+    font-weight: 700;
+    text-align: center;
+}
+.circle-label-sub {
+    font-size: 13px;
+    text-transform: uppercase;
+    text-align: center;
+    letter-spacing: 0.12em;
+}
+
+/* === SEND BUTTON === */
+.send-btn {
+    margin-top: 20px;
+    padding: 12px 40px;
+    border-radius: var(--radius-pill);
+    background: linear-gradient(135deg, var(--accent-green), #4ade80);
+    font-weight: 600; font-size: 16px;
+    border: none; cursor: pointer;
+}
+.send-btn:disabled { opacity: 0.3; cursor: default; }
+
+/* === ROLES GRID === */
+.roles-grid {
+    margin-top: 14px;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px,1fr));
+    gap: 10px;
+    padding: 0 40px;
+}
+
+.role-pill {
+    border-radius: var(--radius-pill);
+    border: 1px solid rgba(148,163,184,0.45);
+    padding: 9px 16px;
+    font-size: 14px;
+    font-weight: 600;                      /* <- FIXED text opacity */
+    color: white;                          /* <- FIXED */
+    text-align: center;
+    background: #020617;
+    cursor: pointer;
+}
+.role-pill.selected {
+    background: #22c55e;
+    color: black;
+}
+
+/* === SIGN IN BUTTON === */
+.sign-in-btn {
+    margin-top: 25px;
+    padding: 10px 26px;
+    border-radius: var(--radius-pill);
+    background: #020617;
+    border: 1px solid #9ca3af;
+    color: var(--text-main);
+}
+
+/* === LOCK OVERLAY === */
+.lock-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999;
+}
+
+.lock-card {
+    width: 420px;
+    background: #0f172a;
+    padding: 26px;
+    border-radius: 16px;
+    border: 1px solid #1f2937;
+    text-align: center;
+}
+
+/* keypad */
+.lock-keypad {
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 10px;
+    margin: 16px 0;
+}
+.lock-keypad button {
+    padding: 10px 0;
+    border-radius: 10px;
+    background: #1e293b;
+    border: 1px solid #334155;
+    color: white;
+    font-size: 20px;
+}
+.unlock-btn {
+    padding: 10px;
+    border-radius: var(--radius-pill);
+    background: #22c55e;
+    font-weight: 700;
+}

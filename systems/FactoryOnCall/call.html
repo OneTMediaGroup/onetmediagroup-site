@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Factory On Call – Call Station</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="call.css" />
+</head>
+
+<body>
+    <div class="app-shell">
+
+        <header class="app-header">
+            <div class="header-left">
+                <img src="../Assets/factory-logo.png" class="factory-logo" />
+                <div class="app-title">Factory On Call</div>
+            </div>
+
+            <div class="header-center">
+                <span id="customerName">Your Company</span>
+            </div>
+
+            <div class="header-right">
+                <span id="stationStatus" class="status-pill status-ready">Ready</span>
+            </div>
+        </header>
+
+        <main class="app-main">
+            <section id="callScreen" class="call-panel">
+
+                <div class="circle-wrapper">
+                    <div class="circle-outer"></div>
+                    <div class="circle-middle"></div>
+                    <div class="circle-inner">
+                        <div id="circleMainLabel" class="circle-label-main">Roles</div>
+                        <div id="circleSubLabel" class="circle-label-sub">Select then send call</div>
+                    </div>
+                </div>
+
+                <button id="sendCallBtn" class="send-btn" disabled>Send Call</button>
+
+                <p id="hintText" class="hint-text">
+                    Select one or more roles below, then press <strong>Send Call</strong>.
+                </p>
+
+                <h2 class="roles-heading">Available Roles</h2>
+                <div id="rolesGrid" class="roles-grid"></div>
+
+                <button id="signInBtn" class="sign-in-btn hidden">Sign in to unlock</button>
+
+            </section>
+        </main>
+
+    </div>
+
+    <!-- UNLOCK OVERLAY -->
+    <div id="lockOverlay" class="lock-overlay hidden">
+        <div class="lock-card">
+
+            <div class="lock-company">Your Company</div>
+            <div class="lock-title">Station Locked</div>
+            <p class="lock-desc">Enter your User ID and PIN</p>
+
+            <div class="lock-input-row">
+                <input id="lockUserId" type="password" placeholder="User ID" readonly />
+                <input id="lockPin" type="password" placeholder="PIN" readonly />
+            </div>
+
+            <div class="lock-keypad">
+                <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+                <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+                <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+                <button data-action="clear">CLR</button><button data-key="0">0</button>
+                <button data-action="backspace">⌫</button>
+            </div>
+
+            <button id="unlockBtn" class="unlock-btn">Unlock</button>
+
+        </div>
+    </div>
+
+    <script src="call.js"></script>
+</body>
+</html>
