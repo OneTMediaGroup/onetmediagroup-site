@@ -1,88 +1,46 @@
 /*
-  Factory On Call Firestore Seeder
-
-  Run from this folder with Node:
+ Run this with Node:
     node index.js
 
-  Seeds the new company-first structure:
-    companies/{companyId}
-      settings/main
-      branding/main
-      roles/{roleId}
-      users/{userId}
-      stations/{stationId}
-      calls/_seed_marker
-      activity/_seed_marker
+ Seeds Factory On Call demo company using Firebase Admin.
 */
 
-import { initializeApp } from "firebase/app";
-import {
-  getFirestore,
-  doc,
-  setDoc
-} from "firebase/firestore";
+import admin from "firebase-admin";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyD5n-Ykf5LoYE_2u0pbRKfektav75GZIZE",
-  authDomain: "factoryoncall.firebaseapp.com",
-  projectId: "factoryoncall",
-  storageBucket: "factoryoncall.firebasestorage.app",
-  messagingSenderId: "586355508568",
-  appId: "1:586355508568:web:40c4803ef1fd749811512d"
-};
+admin.initializeApp();
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const db = admin.firestore();
 
 const COMPANY_ID = "demo-company";
-const COMPANY_NAME = "Factory On Call Demo";
-
-function safeId(value = "") {
-  return String(value || "")
-    .trim()
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "") || "item";
-}
 
 async function seed() {
-  const now = new Date().toISOString();
-
   console.log(`🚀 Seeding Factory On Call company: ${COMPANY_ID}`);
 
-  await setDoc(doc(db, "companies", COMPANY_ID), {
+  const companyRef = db.collection("companies").doc(COMPANY_ID);
+
+  await companyRef.set({
     companyId: COMPANY_ID,
-    companyName: COMPANY_NAME,
-    name: COMPANY_NAME,
+    companyName: "Factory On Call Demo",
     mode: "demo",
-    environment: "demo",
-    isDemo: true,
-    billingStatus: "demo",
-    subscriptionStatus: "demo",
-    productionUnlocked: false,
-    paid: false,
-    createdAt: now,
-    updatedAt: now
+    active: true,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
-  await setDoc(doc(db, "companies", COMPANY_ID, "settings", "main"), {
-    companyId: COMPANY_ID,
+  await companyRef.collection("settings").doc("main").set({
     autoRefreshMinutes: 60,
     allowSharedStations: true,
     requirePinForCalls: true,
-    allowViewerClose: true,
-    showClosedCallsToday: true,
-    updatedAt: now
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
-  await setDoc(doc(db, "companies", COMPANY_ID, "branding", "main"), {
-    companyId: COMPANY_ID,
-    companyName: COMPANY_NAME,
-    productName: "Factory On Call",
+  await companyRef.collection("branding").doc("main").set({
+    companyName: "Factory On Call Demo",
     primaryColor: "#1E90FF",
     secondaryColor: "#003366",
     logoUrl: "",
-    updatedAt: now
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
   const roles = [
@@ -94,14 +52,11 @@ async function seed() {
     "Production Support"
   ];
 
-  for (const roleName of roles) {
-    await setDoc(doc(db, "companies", COMPANY_ID, "roles", safeId(roleName)), {
-      companyId: COMPANY_ID,
-      name: roleName,
-      roleName,
+  for (const role of roles) {
+    await companyRef.collection("roles").doc(role).set({
+      name: role,
       active: true,
-      createdAt: now,
-      updatedAt: now
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   }
 
@@ -114,62 +69,47 @@ async function seed() {
   ];
 
   for (const user of users) {
-    await setDoc(doc(db, "companies", COMPANY_ID, "users", user.id), {
-      companyId: COMPANY_ID,
+    await companyRef.collection("users").doc(user.id).set({
       employeeNumber: user.id,
-      employeeId: user.id,
       pin: user.pin,
       name: user.name,
-      displayName: user.name,
       role: user.role,
       active: true,
-      status: "active",
-      createdAt: now,
-      updatedAt: now
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   }
 
   const stations = [
-    { id: "press-1", name: "Press 1", area: "Press Area" },
-    { id: "press-2", name: "Press 2", area: "Press Area" },
-    { id: "assembly-1", name: "Assembly 1", area: "Assembly" },
-    { id: "assembly-2", name: "Assembly 2", area: "Assembly" },
-    { id: "packaging", name: "Packaging", area: "Shipping" },
-    { id: "receiving", name: "Receiving", area: "Material Flow" }
+    "Press 1",
+    "Press 2",
+    "Assembly 1",
+    "Assembly 2",
+    "Packaging",
+    "Receiving"
   ];
 
-  for (let index = 0; index < stations.length; index += 1) {
-    const station = stations[index];
-    await setDoc(doc(db, "companies", COMPANY_ID, "stations", station.id), {
-      companyId: COMPANY_ID,
-      stationId: station.id,
-      stationName: station.name,
-      name: station.name,
-      area: station.area,
+  for (const station of stations) {
+    const stationId = station.toLowerCase().replaceAll(" ", "-");
+    await companyRef.collection("stations").doc(stationId).set({
+      name: station,
       active: true,
-      order: index + 1,
-      createdAt: now,
-      updatedAt: now
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   }
 
-  await setDoc(doc(db, "companies", COMPANY_ID, "calls", "_seed_marker"), {
-    companyId: COMPANY_ID,
+  await companyRef.collection("calls").doc("_seed_marker").set({
     marker: true,
-    status: "seed",
-    createdAt: now,
-    note: "Keeps the calls subcollection visible before live calls are created."
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    note: "Keeps calls collection initialized."
   }, { merge: true });
 
-  await setDoc(doc(db, "companies", COMPANY_ID, "activity", "_seed_marker"), {
-    companyId: COMPANY_ID,
+  await companyRef.collection("activity").doc("_seed_marker").set({
     marker: true,
-    type: "seed",
-    createdAt: now,
-    note: "Keeps the activity subcollection visible before activity is created."
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    note: "Keeps activity collection initialized."
   }, { merge: true });
 
-  console.log("✅ DONE — Factory On Call demo-company seeded with company-first structure.");
+  console.log("✅ DONE — Factory On Call demo company seeded.");
 }
 
 seed().catch((error) => {
