@@ -9,8 +9,11 @@ import { initializeApp, applicationDefault } from "firebase-admin/app";
 import { getFirestore, FieldValue } from "firebase-admin/firestore";
 
 initializeApp({
-  credential: applicationDefault()
+  credential: applicationDefault(),
+  projectId: "factoryoncall"
 });
+
+const db = getFirestore();
 
 const db = getFirestore();
 
