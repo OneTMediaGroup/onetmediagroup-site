@@ -126,7 +126,7 @@ Your demo plant has been created so you can explore the system before setting up
 Demo Plant: ${plantName}
 Demo Plant Code: ${plantId}
 
-You can continue testing Floor Flow here:
+Open your Demo Plant Admin Console here:
 https://onetmediagroup.ca/floorflow/admin.html?plantId=${plantId}
 
 Floor Flow gives production teams:
@@ -145,7 +145,7 @@ https://onetmediagroup.ca/floor-flow.html
 Questions or support:
 floorflow@onetmediagroup.ca
 
-Thank Your For Chosing Floor Flow!
+Thank you for choosing Floor Flow!
 The Floor Flow Team
 One T Media Group`;
 }
@@ -187,7 +187,7 @@ Your plant links are available inside the Admin panel after setup is complete.
 Questions or Support?
 floorflow@onetmediagroup.ca
 
-Thanks for chosing Floor Flow!
+Thanks for choosing Floor Flow!
 One T Media Group
 Floor Flow`;
 
