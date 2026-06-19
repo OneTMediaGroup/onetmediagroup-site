@@ -134,7 +134,6 @@ Floor Flow gives production teams:
 - Supervisor queue control
 - Touch screen floor views
 - Parts library support
-- Production reports
 - Plant-specific access links
 
 When you are ready to create a production plant, start here:
