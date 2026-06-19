@@ -12,7 +12,7 @@ I wanted to send a quick update that Floor Flow is getting close to launch.
 
 Floor Flow is a practical plant-floor system built to help teams manage work-cell flow, supervisor queues, live display boards, setup visibility, parts, and production communication from one clean system.
 
-We are currently finishing final launch testing around onboarding, subscriptions, and production plant setup.
+Floor Flow is now available and designed to help production teams improve visibility, communication, scheduling, and changeover readiness.
 
 If you would like early access or want to see the system when it is ready, reply to this email and I will keep you on the update list.
 

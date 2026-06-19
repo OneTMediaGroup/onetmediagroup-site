@@ -419,7 +419,7 @@ function renderProductionActivation() {
   return `
     <h2 class="step-title">${isReactivateMode ? 'Reactivate Production Plant' : 'Production Checkout'}</h2>
     <p class="step-copy">
-      ${isReactivateMode ? 'Choose a new subscription to unlock this existing production plant.' : 'Choose a Floor Flow Pro plan. Demo Plant remains free for testing.'}
+      ${isReactivateMode ? 'Choose a new subscription to unlock this existing production plant.' : 'Choose a Floor Flow Pro plan. Demo Plant remains available for product evaluation.'}
     </p>
 
     <div class="activation-step-card ${paid ? 'payment-confirmed-card' : ''}">
