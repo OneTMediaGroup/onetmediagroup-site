@@ -127,7 +127,7 @@ Demo Plant: ${plantName}
 Demo Plant Code: ${plantId}
 
 You can continue testing Floor Flow here:
-https://onetmediagroup.ca/floorflow/onboarding.html?plantId=${plantId}
+https://onetmediagroup.ca/floorflow/admin.html?plantId=${plantId}
 
 Floor Flow gives production teams:
 - Live display boards
@@ -146,8 +146,7 @@ https://onetmediagroup.ca/floor-flow.html
 Questions or support:
 floorflow@onetmediagroup.ca
 
-Thanks,
-
+Thank Your For Chosing Floor Flow!
 The Floor Flow Team
 One T Media Group`;
 }
@@ -189,6 +188,7 @@ Your plant links are available inside the Admin panel after setup is complete.
 Questions or Support?
 floorflow@onetmediagroup.ca
 
+Thanks for chosing Floor Flow!
 One T Media Group
 Floor Flow`;
 
