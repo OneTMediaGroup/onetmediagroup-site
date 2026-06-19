@@ -2,51 +2,57 @@
  Run this with Node:
     node index.js
 
- Seeds Factory On Call demo company using Firebase Admin.
+ Seeds Factory On Call demo company using temporary open Firestore rules.
 */
 
-import { initializeApp, applicationDefault } from "firebase-admin/app";
-import { getFirestore, FieldValue } from "firebase-admin/firestore";
+import { initializeApp } from "firebase/app";
+import {
+  getFirestore,
+  doc,
+  setDoc,
+  serverTimestamp
+} from "firebase/firestore";
 
-initializeApp({
-  credential: applicationDefault(),
-  projectId: "factoryoncall"
-});
+const firebaseConfig = {
+  apiKey: "AIzaSyD5n-Ykf5LoYE_2u0pbRKfektav75GZIZE",
+  authDomain: "factoryoncall.firebaseapp.com",
+  projectId: "factoryoncall",
+  storageBucket: "factoryoncall.firebasestorage.app",
+  messagingSenderId: "586355508568",
+  appId: "1:586355508568:web:40c4803ef1fd749811512d"
+};
 
-const db = getFirestore();
-
-
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
 const COMPANY_ID = "demo-company";
 
 async function seed() {
   console.log(`🚀 Seeding Factory On Call company: ${COMPANY_ID}`);
 
-  const companyRef = db.collection("companies").doc(COMPANY_ID);
-
-  await companyRef.set({
+  await setDoc(doc(db, "companies", COMPANY_ID), {
     companyId: COMPANY_ID,
     companyName: "Factory On Call Demo",
     mode: "demo",
     active: true,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp()
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
   }, { merge: true });
 
-  await companyRef.collection("settings").doc("main").set({
+  await setDoc(doc(db, "companies", COMPANY_ID, "settings", "main"), {
     autoRefreshMinutes: 60,
     allowSharedStations: true,
     requirePinForCalls: true,
-    createdAt: FieldValue.serverTimestamp(),
-    updatedAt: FieldValue.serverTimestamp()
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
   }, { merge: true });
 
-  await companyRef.collection("branding").doc("main").set({
+  await setDoc(doc(db, "companies", COMPANY_ID, "branding", "main"), {
     companyName: "Factory On Call Demo",
     primaryColor: "#1E90FF",
     secondaryColor: "#003366",
     logoUrl: "",
-    updatedAt: FieldValue.serverTimestamp()
+    updatedAt: serverTimestamp()
   }, { merge: true });
 
   const roles = [
@@ -59,10 +65,10 @@ async function seed() {
   ];
 
   for (const role of roles) {
-    await companyRef.collection("roles").doc(role).set({
+    await setDoc(doc(db, "companies", COMPANY_ID, "roles", role), {
       name: role,
       active: true,
-      createdAt: FieldValue.serverTimestamp()
+      createdAt: serverTimestamp()
     }, { merge: true });
   }
 
@@ -75,13 +81,13 @@ async function seed() {
   ];
 
   for (const user of users) {
-    await companyRef.collection("users").doc(user.id).set({
+    await setDoc(doc(db, "companies", COMPANY_ID, "users", user.id), {
       employeeNumber: user.id,
       pin: user.pin,
       name: user.name,
       role: user.role,
       active: true,
-      createdAt: FieldValue.serverTimestamp()
+      createdAt: serverTimestamp()
     }, { merge: true });
   }
 
@@ -96,22 +102,24 @@ async function seed() {
 
   for (const station of stations) {
     const stationId = station.toLowerCase().replaceAll(" ", "-");
-    await companyRef.collection("stations").doc(stationId).set({
+
+    await setDoc(doc(db, "companies", COMPANY_ID, "stations", stationId), {
+      stationId,
       name: station,
       active: true,
-      createdAt: FieldValue.serverTimestamp()
+      createdAt: serverTimestamp()
     }, { merge: true });
   }
 
-  await companyRef.collection("calls").doc("_seed_marker").set({
+  await setDoc(doc(db, "companies", COMPANY_ID, "calls", "_seed_marker"), {
     marker: true,
-    createdAt: FieldValue.serverTimestamp(),
+    createdAt: serverTimestamp(),
     note: "Keeps calls collection initialized."
   }, { merge: true });
 
-  await companyRef.collection("activity").doc("_seed_marker").set({
+  await setDoc(doc(db, "companies", COMPANY_ID, "activity", "_seed_marker"), {
     marker: true,
-    createdAt: FieldValue.serverTimestamp(),
+    createdAt: serverTimestamp(),
     note: "Keeps activity collection initialized."
   }, { merge: true });
 
