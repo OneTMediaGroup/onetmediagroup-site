@@ -182,7 +182,7 @@ Plan: ${planText}
 
 Keep this Plant Code in a safe place. If onboarding is interrupted, you can return to Floor Flow onboarding and continue setup using this plant.
 
-Your plant links are available inside the Admin panel after setup is complete.
+Your Admin Console:\nhttps://onetmediagroup.ca/floorflow/admin.html?plantId=${plantId}\n\nUse this link to access your Floor Flow administration panel.
 
 Questions or Support?
 floorflow@onetmediagroup.ca
