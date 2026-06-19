@@ -3,8 +3,26 @@
 // Full Admin: Stations + Call Buttons + Roles + Users
 // -------------------------------------------------------------
 
-const COMPANY_ID = "demo-company";
-const COMPANY_NAME = "Demo Company";
+const COMPANY_STORAGE_KEY = "factory_on_call_active_company_id";
+
+function getCompanyIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("companyId") || params.get("company") || "";
+}
+
+function getActiveCompanyId() {
+  const urlCompanyId = getCompanyIdFromUrl();
+
+  if (urlCompanyId) {
+    localStorage.setItem(COMPANY_STORAGE_KEY, urlCompanyId);
+    return urlCompanyId;
+  }
+
+  return localStorage.getItem(COMPANY_STORAGE_KEY) || "demo-company";
+}
+
+const COMPANY_ID = getActiveCompanyId();
+const COMPANY_NAME = "Factory On Call";
 
 (async function () {
   // ---------- LOAD FIREBASE COMPAT IF NEEDED ----------
