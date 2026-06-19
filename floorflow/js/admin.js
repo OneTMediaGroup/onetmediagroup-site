@@ -1,5 +1,6 @@
 import { requireRoleAccess } from './auth-lock.js';
 import { requireActiveBillingAccess } from './billing-guard.js';
+import { getActivePlantInfo, demoNoticeHtml } from './demo-restrictions.js';
 
 await requireActiveBillingAccess();
 await requireRoleAccess(['admin']);
@@ -78,6 +79,18 @@ async function selectTool(toolName) {
   else if (toolName === 'reports') cleanupCurrentTool = await mountReportsTool(adminContent);
   else if (toolName === 'system') cleanupCurrentTool = await mountSystemTool(adminContent);
   else adminContent.innerHTML = `<div class="admin-card"><div class="muted">Unknown tool.</div></div>`;
+
+  await prependDemoNoticeIfNeeded();
+}
+
+async function prependDemoNoticeIfNeeded() {
+  try {
+    const info = await getActivePlantInfo();
+    if (!info.isDemo || !adminContent || adminContent.querySelector('.demo-restriction-notice')) return;
+    adminContent.insertAdjacentHTML('afterbegin', demoNoticeHtml());
+  } catch (error) {
+    console.warn('Demo notice skipped:', error);
+  }
 }
 
 window.addEventListener('beforeunload', () => {

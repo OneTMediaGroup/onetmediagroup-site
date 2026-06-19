@@ -8,6 +8,7 @@ import {
   downloadPartsTemplate
 } from './part-library.js';
 import { requireActiveBillingAccess } from './billing-guard.js';
+import { blockDemoProductionAction } from './demo-restrictions.js';
 
 
 
@@ -178,6 +179,7 @@ function bindPartRowEvents() {
   root.querySelectorAll('[data-delete-part]').forEach((button) => {
     button.addEventListener('click', async () => {
       const partNumber = button.dataset.deletePart;
+      if (await blockDemoProductionAction('Delete part')) return;
       if (!confirm(`Delete ${partNumber} from the parts library?`)) return;
       await deletePart(partNumber);
       await refreshParts();
@@ -217,6 +219,7 @@ function bindEvents() {
     importInput.addEventListener('change', async () => {
       const file = importInput.files?.[0];
       if (!file) return;
+      if (await blockDemoProductionAction('Import parts')) { importInput.value = ''; return; }
       const result = await importPartsCsv(file);
       alert(`Import complete. Imported: ${result.imported}. Updated: ${result.updated}. Skipped: ${result.skipped}.`);
       state.editing = null;
@@ -244,6 +247,7 @@ const exportButton = root.querySelector('[data-export-parts]');
 
 async function saveForm(event) {
   event.preventDefault();
+  if (await blockDemoProductionAction(state.editing ? 'Edit part' : 'Create part')) return;
 
   const form = event.currentTarget;
   const formData = new FormData(form);

@@ -7,6 +7,7 @@ import {
   downloadPartsCsv,
   downloadPartsTemplate
 } from './part-library.js';
+import { blockDemoProductionAction } from './demo-restrictions.js';
 
 export async function mountPartsTool(container) {
   const state = {
@@ -161,6 +162,7 @@ export async function mountPartsTool(container) {
     container.querySelectorAll('[data-delete-part]').forEach((button) => {
       button.addEventListener('click', async () => {
         const partNumber = button.dataset.deletePart;
+        if (await blockDemoProductionAction('Delete part')) return;
         if (!confirm(`Delete ${partNumber} from the parts library?`)) return;
         await deletePart(partNumber);
         await refreshParts();
@@ -188,6 +190,7 @@ export async function mountPartsTool(container) {
     container.querySelector('[data-import-parts]')?.addEventListener('change', async (event) => {
       const file = event.currentTarget.files?.[0];
       if (!file) return;
+      if (await blockDemoProductionAction('Import parts')) { event.currentTarget.value = ''; return; }
 
       const result = await importPartsCsv(file);
       alert(`Import complete. Imported: ${result.imported}. Updated: ${result.updated}. Skipped: ${result.skipped}.`);
@@ -214,6 +217,7 @@ export async function mountPartsTool(container) {
   
   async function saveForm(event) {
     event.preventDefault();
+    if (await blockDemoProductionAction(state.editing ? 'Edit part' : 'Create part')) return;
 
     const form = event.currentTarget;
     const formData = new FormData(form);

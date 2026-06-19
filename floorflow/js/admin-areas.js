@@ -15,6 +15,7 @@ import { fetchPressesFromFirestore } from './firestore-press-admin.js';
 import { addAdminLog, equipmentLabel } from './admin-helpers.js';
 import { requirePlantId } from './plant-session.js';
 import { assertAdminSession, sanitizeText, sanitizeColor } from './security-guard.js';
+import { blockDemoProductionAction } from './demo-restrictions.js';
 
 let root = null;
 let areas = [];
@@ -259,6 +260,7 @@ function wireAreaButtons() {
       const area = areas.find((item) => item.id === areaId);
       const areaName = area?.name || area?.areaName || areaId;
 
+      if (await blockDemoProductionAction('Delete area')) return;
       if (!confirm('Delete this area? Equipment will be unassigned.')) return;
 
       const assigned = presses.filter((press) => press.areaId === areaId);
@@ -280,6 +282,7 @@ function wireAreaButtons() {
 
 async function handleAddArea() {
   assertAdminSession();
+  if (await blockDemoProductionAction('Create area')) return;
   const plantId = requirePlantId();
   const name = window.prompt('Area name (example: Forming, Welding, Rolling)');
   if (!name || !name.trim()) return;

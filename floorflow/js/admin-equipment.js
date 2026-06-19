@@ -7,6 +7,7 @@ import { getSession } from './store.js';
 import { getStoredSessionUser } from './session-user.js';
 import { requirePlantId } from './plant-session.js';
 import { assertAdminSession, sanitizeText } from './security-guard.js';
+import { blockDemoProductionAction } from './demo-restrictions.js';
 
 let root = null;
 let presses = [];
@@ -265,6 +266,7 @@ function wireRowEvents() {
 
 async function handleCreateEquipment() {
   assertAdminSession();
+  if (await blockDemoProductionAction('Create work cell')) return;
   const plantId = requirePlantId();
   const input = root.querySelector('#newEquipmentName');
   const areaSelect = root.querySelector('#newEquipmentArea');
@@ -345,6 +347,7 @@ async function handleChangeEquipmentArea(id, areaId) {
 
 async function handleDeleteEquipment(id) {
   assertAdminSession();
+  if (await blockDemoProductionAction('Delete work cell')) return;
   const press = presses.find(p => p.id === id);
   if (!press) return alert('Equipment not found in active plant.');
   if (!confirm(`Delete ${equipmentLabel(press)}?`)) return;

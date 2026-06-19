@@ -14,6 +14,7 @@ import { getStoredSessionUser, setStoredSessionUser } from './session-user.js';
 import { addAdminLog } from './admin-helpers.js';
 import { requirePlantId } from './plant-session.js';
 import { assertAdminSession, sanitizeText, sanitizeRole, sanitizeUserStatus } from './security-guard.js';
+import { blockDemoProductionAction } from './demo-restrictions.js';
 
 let root = null;
 let users = [];
@@ -456,6 +457,7 @@ function attachBadgeAutoFill(employeeInput, badgeInput) {
 
 async function handleAddUser() {
   assertAdminSession();
+  if (await blockDemoProductionAction('Create user')) return;
   const plantId = requirePlantId();
 
   const firstNameInput = root.querySelector('#newUserFirstName');
@@ -532,6 +534,7 @@ async function handleAddUser() {
 
 async function handleImportUsers() {
   assertAdminSession();
+  if (await blockDemoProductionAction('Import users')) return;
   const plantId = requirePlantId();
 
   const fileInput = root.querySelector('#userImportFile');
@@ -715,6 +718,7 @@ async function handleSaveUser(userId) {
 
 async function handleDeleteUser(userId) {
   assertAdminSession();
+  if (await blockDemoProductionAction('Delete user')) return;
   const user = users.find((item) => item.id === userId);
   if (!user) return alert('User not found in active plant.');
   const name = displayNameFor(user) || userId;
