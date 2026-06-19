@@ -15,7 +15,7 @@ initializeApp({
 
 const db = getFirestore();
 
-const db = getFirestore();
+
 
 const COMPANY_ID = "demo-company";
 
