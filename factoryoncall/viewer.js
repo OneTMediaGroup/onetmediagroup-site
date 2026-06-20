@@ -117,8 +117,36 @@ const COMPANY_ID = getActiveCompanyId();
     if (connLabel) connLabel.textContent = ok ? "Online" : "Offline";
   }
 
+  function formatElapsedFromMs(ts) {
+    if (!ts) return "Just now";
+
+    const totalMinutes = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+
+    if (totalMinutes < 1) return "Just now";
+    if (totalMinutes < 60) return `${totalMinutes} min`;
+
+    const totalHours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (totalHours < 24) {
+      return minutes ? `${totalHours} hr ${minutes} min` : `${totalHours} hr`;
+    }
+
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+
+    if (days < 7) {
+      return hours ? `${days} day${days === 1 ? "" : "s"} ${hours} hr` : `${days} day${days === 1 ? "" : "s"}`;
+    }
+
+    const weeks = Math.floor(days / 7);
+    const remDays = days % 7;
+
+    return remDays ? `${weeks} wk${weeks === 1 ? "" : "s"} ${remDays} day${remDays === 1 ? "" : "s"}` : `${weeks} wk${weeks === 1 ? "" : "s"}`;
+  }
+
   function fmtMinutesAgo(ts) {
-    return Math.max(0, Math.floor((Date.now() - (ts || 0)) / 60000));
+    return formatElapsedFromMs(ts);
   }
 
   function isToday(ts) {
@@ -229,7 +257,7 @@ const COMPANY_ID = getActiveCompanyId();
     }
 
     calls.forEach(call => {
-      const minutesAgo = fmtMinutesAgo(call.timeStarted);
+      const waitLabel = fmtMinutesAgo(call.timeStarted);
       const personnelRequired = normalizeList(call.roles).join(", ") || "Support";
       const location = normalizeList(call.cells).join(", ") || "—";
       const status = statusLabel(call.status);
@@ -242,7 +270,7 @@ const COMPANY_ID = getActiveCompanyId();
         <span class="call-station" title="${call.station || ""}">${call.station || "Unknown Station"}</span>
         <span class="call-role" title="${personnelRequired}">${personnelRequired}</span>
         <span class="call-cell" title="${location}">${location}</span>
-        <span class="call-time">${minutesAgo} min</span>
+        <span class="call-time">${waitLabel}</span>
         <span class="call-status">
           <span class="status-pill ${statusClass(call.status)}">${ackText}</span>
         </span>

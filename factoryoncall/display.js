@@ -98,10 +98,30 @@ const COMPANY_ID = getActiveCompanyId();
   function fmtMinutesAgo(value) {
     const ts = timestampToMs(value);
     if (!ts) return "Just now";
-    const mins = Math.max(0, Math.floor((Date.now() - ts) / 60000));
-    if (mins < 1) return "Just now";
-    if (mins === 1) return "1 min ago";
-    return `${mins} min ago`;
+
+    const totalMinutes = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+
+    if (totalMinutes < 1) return "Just now";
+    if (totalMinutes < 60) return `${totalMinutes} min`;
+
+    const totalHours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (totalHours < 24) {
+      return minutes ? `${totalHours} hr ${minutes} min` : `${totalHours} hr`;
+    }
+
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+
+    if (days < 7) {
+      return hours ? `${days} day${days === 1 ? "" : "s"} ${hours} hr` : `${days} day${days === 1 ? "" : "s"}`;
+    }
+
+    const weeks = Math.floor(days / 7);
+    const remDays = days % 7;
+
+    return remDays ? `${weeks} wk${weeks === 1 ? "" : "s"} ${remDays} day${remDays === 1 ? "" : "s"}` : `${weeks} wk${weeks === 1 ? "" : "s"}`;
   }
 
   function isToday(value) {

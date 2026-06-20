@@ -641,8 +641,34 @@ let ADMIN_LOCKED = false;
     return call.assignedTo || call.ackBy || call.closedBy || "—";
   }
 
+  function formatDurationMinutes(totalMinutes) {
+    const minutes = Number(totalMinutes || 0);
+
+    if (!minutes || minutes <= 0) return "—";
+    if (minutes < 60) return `${minutes} min`;
+
+    const totalHours = Math.floor(minutes / 60);
+    const remMinutes = minutes % 60;
+
+    if (totalHours < 24) {
+      return remMinutes ? `${totalHours} hr ${remMinutes} min` : `${totalHours} hr`;
+    }
+
+    const days = Math.floor(totalHours / 24);
+    const remHours = totalHours % 24;
+
+    if (days < 7) {
+      return remHours ? `${days} day${days === 1 ? "" : "s"} ${remHours} hr` : `${days} day${days === 1 ? "" : "s"}`;
+    }
+
+    const weeks = Math.floor(days / 7);
+    const remDays = days % 7;
+
+    return remDays ? `${weeks} wk${weeks === 1 ? "" : "s"} ${remDays} day${remDays === 1 ? "" : "s"}` : `${weeks} wk${weeks === 1 ? "" : "s"}`;
+  }
+
   function callDurationLabel(call) {
-    if (call.duration) return `${call.duration} min`;
+    if (call.duration) return formatDurationMinutes(call.duration);
 
     const start = callStartMillis(call);
     const end = callClosedMillis(call);
@@ -650,11 +676,7 @@ let ADMIN_LOCKED = false;
     if (!start || !end || end <= start) return "—";
 
     const minutes = Math.max(1, Math.round((end - start) / 60000));
-    if (minutes < 60) return `${minutes} min`;
-
-    const hours = Math.floor(minutes / 60);
-    const rem = minutes % 60;
-    return rem ? `${hours} hr ${rem} min` : `${hours} hr`;
+    return formatDurationMinutes(minutes);
   }
 
   function callSearchText(call) {
