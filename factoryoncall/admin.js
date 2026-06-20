@@ -97,11 +97,11 @@ let ADMIN_LOCKED = false;
   function tabTitle(tabName) {
     const map = {
       dashboard: "Dashboard",
-      callbuttons: "Call Buttons",
+      callbuttons: "Access Links",
       logs: "Call Logs",
       users: "Users",
       stations: "Stations",
-      roles: "Roles & Permissions",
+      roles: "Personnel Required",
       branding: "Branding",
       settings: "System Settings",
       analytics: "Analytics"
@@ -112,11 +112,11 @@ let ADMIN_LOCKED = false;
   function tabSubtitle(tabName) {
     const map = {
       dashboard: "Live overview of your factory call system.",
-      callbuttons: "Generate call station URLs and static files.",
+      callbuttons: "Generate and open live access links for call stations, viewer screens, and display boards.",
       logs: "Review and export call history.",
       users: "Manage users and login credentials.",
       stations: "Manage factory call stations.",
-      roles: "Configure role-based permissions.",
+      roles: "Configure personnel types and permissions.",
       branding: "Customize branding and color system.",
       settings: "Adjust system-wide behavior.",
       analytics: "Analyze performance and usage trends."
@@ -158,6 +158,25 @@ let ADMIN_LOCKED = false;
       companyName: COMPANY_NAME
     });
     return `${base}?${params.toString()}`;
+  }
+
+  function buildScreenUrl(pageName) {
+    const base = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, pageName)}`;
+    const params = new URLSearchParams({
+      companyId: COMPANY_ID,
+      companyName: COMPANY_NAME
+    });
+    return `${base}?${params.toString()}`;
+  }
+
+  function initSidebarLinks() {
+    const viewerLink = document.getElementById("sidebarViewerLink");
+    const displayLink = document.getElementById("sidebarDisplayLink");
+    const callLink = document.getElementById("sidebarCallLink");
+
+    if (viewerLink) viewerLink.href = buildScreenUrl("viewer.html");
+    if (displayLink) displayLink.href = buildScreenUrl("display.html");
+    if (callLink) callLink.href = buildScreenUrl("call.html");
   }
 
   async function copyText(text) {
@@ -819,7 +838,7 @@ let ADMIN_LOCKED = false;
       dashQuickList.innerHTML = `
         <li>Stations loaded from company structure.</li>
         <li>Roles and users are now company-scoped.</li>
-        <li>Call buttons generate live URLs.</li>
+        <li>Access Links open viewer, display, and call station screens.</li>
       `;
     }
   }
@@ -889,6 +908,7 @@ let ADMIN_LOCKED = false;
     await loadCompanyBranding();
     renderDemoNoticeIfNeeded();
     initTabs();
+    initSidebarLinks();
     initPlaceholders();
     wireEvents();
     initListeners();

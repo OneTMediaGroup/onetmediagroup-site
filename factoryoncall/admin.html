@@ -18,18 +18,24 @@
 
         <nav class="nav">
             <button class="nav-item active" data-tab="dashboard">Dashboard</button>
-            <button class="nav-item" data-tab="callbuttons">Call Buttons</button>
-            <button class="nav-item" data-tab="logs">Call Logs</button>
-            <button class="nav-item" data-tab="users">Users</button>
+            <button class="nav-item" data-tab="callbuttons">Access Links</button>
             <button class="nav-item" data-tab="stations">Stations</button>
-            <button class="nav-item" data-tab="roles">Roles & Permissions</button>
+            <button class="nav-item" data-tab="roles">Personnel Required</button>
+            <button class="nav-item" data-tab="users">Users</button>
+            <button class="nav-item" data-tab="logs">Call Logs</button>
             <button class="nav-item" data-tab="branding">Branding</button>
             <button class="nav-item" data-tab="settings">System Settings</button>
             <button class="nav-item" data-tab="analytics">Analytics</button>
         </nav>
 
+        <div class="sidebar-live-links">
+            <div class="sidebar-section-label">Live Screens</div>
+            <a id="sidebarViewerLink" class="sidebar-link-btn" href="viewer.html" target="_blank" rel="noopener">Open Viewer</a>
+            <a id="sidebarDisplayLink" class="sidebar-link-btn" href="display.html" target="_blank" rel="noopener">Open Display</a>
+            <a id="sidebarCallLink" class="sidebar-link-btn" href="call.html" target="_blank" rel="noopener">Open Call Station</a>
+        </div>
+
         <div class="sidebar-footer">
-            <a href="onboarding.html" class="logout-btn" style="display:block;text-align:center;text-decoration:none;margin-bottom:10px;">Onboarding</a>
             <div class="admin-user-display">
                 Logged in as: <span id="adminUserName">Admin</span>
             </div>
@@ -108,9 +114,9 @@
         <!-- CALL BUTTONS TAB -->
         <section id="tab-callbuttons" class="tab">
             <div class="card">
-                <h2>Create Work Cell Call Buttons</h2>
+                <h2>Access Links</h2>
                 <p class="muted">
-                    Generate dynamic or static call buttons for stations and work cells.
+                    Generate live links for call stations, viewer screens, and display boards.
                 </p>
 
                 <form id="callButtonForm" class="form">
@@ -132,7 +138,7 @@
                     </label>
 
                     <label>
-                        Work Cells (select one or multiple)
+                        Location (select one or multiple)
                         <select id="cbCells" multiple size="6"></select>
                     </label>
 
@@ -355,7 +361,7 @@
         <section id="tab-roles" class="tab">
             <div class="grid-2">
                 <div class="card">
-                    <h2>Roles</h2>
+                    <h2>Personnel Required</h2>
                     <div class="table-wrapper">
                         <table class="table">
                             <thead>
