@@ -2308,3 +2308,24 @@ align-items:center;
   display: block !important;
   width: 100% !important;
 }
+
+
+/* Call Logs polish */
+.table-empty {
+  padding: 24px !important;
+  text-align: center;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+#tab-logs .filters {
+  align-items: center;
+}
+
+#tab-logs .table td {
+  vertical-align: middle;
+}
+
+#tab-logs .status-pill {
+  white-space: nowrap;
+}

@@ -243,11 +243,22 @@ let ADMIN_LOCKED = false;
   const dashboardPriorityCall = document.getElementById("dashboardPriorityCall");
   const recentActivity = document.getElementById("recentActivity");
 
+  const logsTableBody = document.getElementById("logsTableBody");
+  const logsSearch = document.getElementById("logsSearch");
+  const logsDateFrom = document.getElementById("logsDateFrom");
+  const logsDateTo = document.getElementById("logsDateTo");
+  const logsFilterBtn = document.getElementById("logsFilterBtn");
+  const logsClearBtn = document.getElementById("logsClearBtn");
+  const exportLogsBtn = document.getElementById("exportLogsBtn");
+  const purgeLogsBtn = document.getElementById("purgeLogsBtn");
+
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
 
   let cachedStations = [];
   let cachedRoles = [];
   let cachedUsers = [];
+  let cachedCalls = [];
+  let filteredLogCalls = [];
 
   function splitName(fullName = "") {
     const cleaned = String(fullName || "").trim();
@@ -607,8 +618,234 @@ let ADMIN_LOCKED = false;
     if (userActive) userActive.checked = true;
   }
 
+
+  // ---------- CALL LOGS ----------
+  function formatDateTime(ms) {
+    if (!ms) return "—";
+    const date = new Date(ms);
+    return date.toLocaleString([], {
+      year: "numeric",
+      month: "short",
+      day: "2-digit",
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
+
+  function requestedBy(call) {
+    const name = `${call.callerFirst || ""} ${call.callerLast || ""}`.trim();
+    return name || call.callerUid || call.requestedBy || "Operator";
+  }
+
+  function assignedTo(call) {
+    return call.assignedTo || call.ackBy || call.closedBy || "—";
+  }
+
+  function callDurationLabel(call) {
+    if (call.duration) return `${call.duration} min`;
+
+    const start = callStartMillis(call);
+    const end = callClosedMillis(call);
+
+    if (!start || !end || end <= start) return "—";
+
+    const minutes = Math.max(1, Math.round((end - start) / 60000));
+    if (minutes < 60) return `${minutes} min`;
+
+    const hours = Math.floor(minutes / 60);
+    const rem = minutes % 60;
+    return rem ? `${hours} hr ${rem} min` : `${hours} hr`;
+  }
+
+  function callSearchText(call) {
+    return [
+      callStation(call),
+      callPersonnel(call),
+      callLocation(call),
+      requestedBy(call),
+      assignedTo(call),
+      dashboardStatusLabel(call)
+    ].join(" ").toLowerCase();
+  }
+
+  function currentLogFilters() {
+    return {
+      search: (logsSearch?.value || "").trim().toLowerCase(),
+      from: logsDateFrom?.value || "",
+      to: logsDateTo?.value || ""
+    };
+  }
+
+  function applyLogFilters(calls) {
+    const filters = currentLogFilters();
+
+    return calls.filter(call => {
+      const start = callStartMillis(call);
+      if (filters.search && !callSearchText(call).includes(filters.search)) return false;
+
+      if (filters.from) {
+        const fromTime = new Date(`${filters.from}T00:00:00`).getTime();
+        if (!start || start < fromTime) return false;
+      }
+
+      if (filters.to) {
+        const toTime = new Date(`${filters.to}T23:59:59`).getTime();
+        if (!start || start > toTime) return false;
+      }
+
+      return true;
+    });
+  }
+
+  function renderCallLogs() {
+    if (!logsTableBody) return;
+
+    filteredLogCalls = applyLogFilters(cachedCalls)
+      .slice()
+      .sort((a, b) => (callStartMillis(b) || 0) - (callStartMillis(a) || 0));
+
+    logsTableBody.innerHTML = "";
+
+    if (!filteredLogCalls.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="8" class="table-empty">No call logs found.</td>`;
+      logsTableBody.appendChild(tr);
+      return;
+    }
+
+    filteredLogCalls.forEach(call => {
+      const statusLabel = dashboardStatusLabel(call);
+      const statusClass = dashboardStatusClass(statusLabel);
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td>${formatDateTime(callStartMillis(call))}</td>
+        <td><strong>${callStation(call)}</strong></td>
+        <td>${callPersonnel(call)}</td>
+        <td>${callLocation(call)}</td>
+        <td>${requestedBy(call)}</td>
+        <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
+        <td>${assignedTo(call)}</td>
+        <td>${callDurationLabel(call)}</td>
+      `;
+
+      logsTableBody.appendChild(tr);
+    });
+  }
+
+  function csvSafe(value) {
+    const text = String(value ?? "");
+    return `"${text.replace(/"/g, '""')}"`;
+  }
+
+  function exportCallLogsCsv() {
+    const rows = filteredLogCalls.length ? filteredLogCalls : applyLogFilters(cachedCalls);
+
+    if (!rows.length) {
+      alert("No call logs to export.");
+      return;
+    }
+
+    const header = [
+      "Time",
+      "Station",
+      "Personnel Required",
+      "Location",
+      "Requested By",
+      "Status",
+      "Assigned To",
+      "Duration"
+    ];
+
+    const lines = [
+      header.map(csvSafe).join(","),
+      ...rows.map(call => [
+        formatDateTime(callStartMillis(call)),
+        callStation(call),
+        callPersonnel(call),
+        callLocation(call),
+        requestedBy(call),
+        dashboardStatusLabel(call),
+        assignedTo(call),
+        callDurationLabel(call)
+      ].map(csvSafe).join(","))
+    ];
+
+    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    const dateStamp = new Date().toISOString().slice(0, 10);
+
+    a.href = url;
+    a.download = `factory-on-call-logs-${COMPANY_ID}-${dateStamp}.csv`;
+    document.body.appendChild(a);
+    a.click();
+
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+      a.remove();
+    }, 0);
+  }
+
+  async function purgeOldLogs() {
+    if (blockDemoAdminAction("Purge old logs")) return;
+
+    const cutoffDays = 30;
+    const cutoff = Date.now() - cutoffDays * 24 * 60 * 60 * 1000;
+
+    const oldClosed = cachedCalls.filter(call => {
+      const status = String(call.status || "").toLowerCase();
+      const isClosed = status === "closed" || status === "complete" || status === "completed";
+      const closedAt = callClosedMillis(call);
+      return isClosed && closedAt && closedAt < cutoff;
+    });
+
+    if (!oldClosed.length) {
+      alert(`No closed call logs older than ${cutoffDays} days were found.`);
+      return;
+    }
+
+    const ok = confirm(`Purge ${oldClosed.length} closed call log(s) older than ${cutoffDays} days?\n\nActive and waiting calls will not be deleted.`);
+    if (!ok) return;
+
+    try {
+      let batch = db.batch();
+      let count = 0;
+
+      for (const call of oldClosed) {
+        batch.delete(callsRef.doc(call.id));
+        count++;
+
+        if (count % 450 === 0) {
+          await batch.commit();
+          batch = db.batch();
+        }
+      }
+
+      await batch.commit();
+      alert(`Purged ${oldClosed.length} old closed call log(s).`);
+    } catch (err) {
+      console.error(err);
+      alert("Could not purge old call logs.");
+    }
+  }
+
+
   // ---------- EVENT WIRING ----------
   function wireEvents() {
+    logsFilterBtn?.addEventListener("click", renderCallLogs);
+    logsClearBtn?.addEventListener("click", () => {
+      if (logsSearch) logsSearch.value = "";
+      if (logsDateFrom) logsDateFrom.value = "";
+      if (logsDateTo) logsDateTo.value = "";
+      renderCallLogs();
+    });
+    logsSearch?.addEventListener("input", renderCallLogs);
+    logsDateFrom?.addEventListener("change", renderCallLogs);
+    logsDateTo?.addEventListener("change", renderCallLogs);
+    exportLogsBtn?.addEventListener("click", exportCallLogsCsv);
+    purgeLogsBtn?.addEventListener("click", purgeOldLogs);
+
     // Stations
     stationForm?.addEventListener("submit", async e => {
       e.preventDefault();
@@ -1226,7 +1463,9 @@ let ADMIN_LOCKED = false;
               data: doc.data()
             }));
 
+          cachedCalls = rows.map(row => ({ id: row.id, ...row.data }));
           renderDashboardCalls(rows);
+          renderCallLogs();
         },
         err => {
           console.error("Calls dashboard listener error:", err);
