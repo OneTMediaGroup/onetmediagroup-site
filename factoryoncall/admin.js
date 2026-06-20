@@ -78,6 +78,8 @@ let ADMIN_LOCKED = false;
   const stationsRef = companyRef.collection("stations");
   const rolesRef = companyRef.collection("roles");
   const usersRef = companyRef.collection("users");
+  const callsRef = companyRef.collection("calls");
+  const activityRef = companyRef.collection("activity");
 
   // ---------- CONNECTION STATUS ----------
   const connDot = document.getElementById("firebaseStatusDot");
@@ -235,6 +237,11 @@ let ADMIN_LOCKED = false;
   const statActiveCalls = document.getElementById("statActiveCalls");
   const statClosedCalls = document.getElementById("statClosedCalls");
   const dashQuickList = document.getElementById("dashQuickList");
+  const statStations = document.getElementById("statStations");
+  const statPersonnel = document.getElementById("statPersonnel");
+  const statUsers = document.getElementById("statUsers");
+  const dashboardPriorityCall = document.getElementById("dashboardPriorityCall");
+  const recentActivity = document.getElementById("recentActivity");
 
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
 
@@ -803,6 +810,7 @@ let ADMIN_LOCKED = false;
       const q = userSearch.value.trim().toLowerCase();
       if (!q) {
         renderUsers(cachedUsers);
+          if (statUsers) statUsers.textContent = String(cachedUsers.filter(x => x.data.active !== false).length);
         return;
       }
 
@@ -827,18 +835,129 @@ let ADMIN_LOCKED = false;
     });
   }
 
+
+  // ---------- DASHBOARD LIVE DATA ----------
+  function getMillis(value) {
+    if (!value) return 0;
+    if (typeof value === "number") return value;
+    if (typeof value.toMillis === "function") return value.toMillis();
+    if (typeof value.seconds === "number") return value.seconds * 1000;
+    return 0;
+  }
+
+  function isTodayMillis(ms) {
+    if (!ms) return false;
+    const d = new Date(ms);
+    const now = new Date();
+    return d.getFullYear() === now.getFullYear()
+      && d.getMonth() === now.getMonth()
+      && d.getDate() === now.getDate();
+  }
+
+  function minutesAgo(ms) {
+    if (!ms) return "—";
+    return `${Math.max(0, Math.floor((Date.now() - ms) / 60000))} min`;
+  }
+
+  function callStartMillis(call) {
+    return getMillis(call.timeStarted || call.createdAt || call.requestedAt || call.updatedAt);
+  }
+
+  function callClosedMillis(call) {
+    return getMillis(call.timeClosed || call.closedAt || call.updatedAt || call.timeStarted || call.createdAt);
+  }
+
+  function callStation(call) {
+    return call.station || call.stationName || "Unknown station";
+  }
+
+  function callPersonnel(call) {
+    if (Array.isArray(call.roles) && call.roles.length) return call.roles.join(", ");
+    return call.role || call.personnelRequired || "Personnel Required";
+  }
+
+  function callLocation(call) {
+    if (Array.isArray(call.cells) && call.cells.length) return call.cells.join(", ");
+    return call.cell || call.location || "General";
+  }
+
+  function renderDashboardCalls(rows) {
+    const calls = rows.map(row => ({ id: row.id, ...row.data }));
+    const active = calls
+      .filter(c => c.status === "waiting" || c.status === "ack" || c.status === "acknowledged")
+      .sort((a, b) => callStartMillis(a) - callStartMillis(b));
+
+    const todayCalls = calls.filter(c => isTodayMillis(callStartMillis(c)));
+    const closedToday = calls.filter(c => {
+      const status = String(c.status || "").toLowerCase();
+      return (status === "closed" || status === "complete" || status === "completed")
+        && isTodayMillis(callClosedMillis(c));
+    });
+
+    if (statTotalCalls) statTotalCalls.textContent = String(todayCalls.length);
+    if (statActiveCalls) statActiveCalls.textContent = String(active.length);
+    if (statClosedCalls) statClosedCalls.textContent = String(closedToday.length);
+
+    if (dashboardPriorityCall) {
+      if (!active.length) {
+        dashboardPriorityCall.innerHTML = `<div class="muted">No active calls right now.</div>`;
+      } else {
+        const oldest = active[0];
+        const status = oldest.status === "ack" || oldest.status === "acknowledged"
+          ? "Acknowledged"
+          : "Waiting";
+        dashboardPriorityCall.innerHTML = `
+          <div class="priority-row">
+            <div>
+              <div class="priority-title">${callStation(oldest)}</div>
+              <div class="priority-meta">
+                ${callPersonnel(oldest)} • ${callLocation(oldest)}
+              </div>
+            </div>
+            <div class="priority-status">
+              <span>${status}</span>
+              <strong>${minutesAgo(callStartMillis(oldest))}</strong>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    if (recentActivity) {
+      const recent = calls
+        .slice()
+        .sort((a, b) => (callStartMillis(b) || 0) - (callStartMillis(a) || 0))
+        .slice(0, 6);
+
+      if (!recent.length) {
+        recentActivity.innerHTML = `<div class="muted">No recent activity yet.</div>`;
+      } else {
+        recentActivity.innerHTML = recent.map(call => {
+          const status = String(call.status || "waiting");
+          return `
+            <div class="activity-item">
+              <div>
+                <div class="activity-title">${callStation(call)} — ${callPersonnel(call)}</div>
+                <div class="activity-meta">${callLocation(call)} • ${status}</div>
+              </div>
+              <div class="activity-meta">${minutesAgo(callStartMillis(call))}</div>
+            </div>
+          `;
+        }).join("");
+      }
+    }
+  }
+
   // ---------- DASHBOARD PLACEHOLDERS ----------
   function initPlaceholders() {
     if (statTotalCalls) statTotalCalls.textContent = "0";
     if (statActiveCalls) statActiveCalls.textContent = "0";
     if (statClosedCalls) statClosedCalls.textContent = "0";
-    if (dashQuickList) {
-      dashQuickList.innerHTML = `
-        <li>Stations loaded from company structure.</li>
-        <li>Personnel and users are now company-scoped.</li>
-        <li>Access Links open viewer, display, and call station screens.</li>
-      `;
-    }
+    if (statStations) statStations.textContent = "0";
+    if (statPersonnel) statPersonnel.textContent = "0";
+    if (statUsers) statUsers.textContent = "0";
+    if (dashboardPriorityCall) dashboardPriorityCall.innerHTML = `<div class="muted">No active calls right now.</div>`;
+    if (recentActivity) recentActivity.innerHTML = `<div class="muted">No recent activity yet.</div>`;
   }
 
   // ---------- FIRESTORE LISTENERS ----------
@@ -856,6 +975,7 @@ let ADMIN_LOCKED = false;
           renderStations(cachedStations);
           populateCallButtonStations(cachedStations);
           populateDeptOptions();
+          if (statStations) statStations.textContent = String(cachedStations.filter(x => x.data.active !== false).length);
         },
         err => {
           console.error("Stations listener error:", err);
@@ -871,6 +991,7 @@ let ADMIN_LOCKED = false;
           }));
 
           renderRoles(cachedRoles);
+          if (statPersonnel) statPersonnel.textContent = String(cachedRoles.filter(x => x.data.active !== false).length);
         },
         err => {
           console.error("Roles listener error:", err);
@@ -889,9 +1010,26 @@ let ADMIN_LOCKED = false;
           });
 
           renderUsers(cachedUsers);
+          if (statUsers) statUsers.textContent = String(cachedUsers.filter(x => x.data.active !== false).length);
         },
         err => {
           console.error("Users listener error:", err);
+        }
+      );
+
+      callsRef.onSnapshot(
+        snapshot => {
+          const rows = snapshot.docs
+            .filter(doc => doc.id !== "_seed_marker")
+            .map(doc => ({
+              id: doc.id,
+              data: doc.data()
+            }));
+
+          renderDashboardCalls(rows);
+        },
+        err => {
+          console.error("Calls dashboard listener error:", err);
         }
       );
     } catch (err) {

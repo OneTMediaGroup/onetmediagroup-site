@@ -98,7 +98,64 @@
             <div class="grid grid-2">
                 <div class="card">
                     <h2>Quick Statistics</h2>
-                    <ul class="simple-list" id="dashQuickList"></ul>
+                    <ul class="simple-list" id="<section id="tab-dashboard" class="tab active">
+            <div class="grid grid-3">
+                <div class="card stat-card">
+                    <h2>Today’s Calls</h2>
+                    <p class="stat-big" id="statTotalCalls">–</p>
+                    <p class="muted">Calls started since midnight.</p>
+                </div>
+
+                <div class="card stat-card">
+                    <h2>Active Calls</h2>
+                    <p class="stat-big" id="statActiveCalls">–</p>
+                    <p class="muted">Currently open or in progress.</p>
+                </div>
+
+                <div class="card stat-card">
+                    <h2>Closed Today</h2>
+                    <p class="stat-big" id="statClosedCalls">–</p>
+                    <p class="muted">Calls fully resolved today.</p>
+                </div>
+            </div>
+
+            <div class="grid grid-2">
+                <div class="card">
+                    <h2>System Snapshot</h2>
+                    <div class="dashboard-mini-grid">
+                        <div class="mini-stat">
+                            <div class="mini-label">Stations</div>
+                            <div class="mini-value" id="statStations">–</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-label">Personnel Required</div>
+                            <div class="mini-value" id="statPersonnel">–</div>
+                        </div>
+                        <div class="mini-stat">
+                            <div class="mini-label">Users</div>
+                            <div class="mini-value" id="statUsers">–</div>
+                        </div>
+                    </div>
+                    <p class="muted dashboard-note">
+                        Snapshot updates live from this company’s stations, personnel, users, and calls.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <h2>Current Priority</h2>
+                    <div id="dashboardPriorityCall" class="dashboard-priority muted">
+                        No active calls right now.
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Recent Activity</h2>
+                <div id="recentActivity" class="activity-list">
+                    <div class="muted">No recent activity yet.</div>
+                </div>
+            </div>
+        </section>"></ul>
                 </div>
 
                 <div class="card">
