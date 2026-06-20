@@ -2329,3 +2329,17 @@ align-items:center;
 #tab-logs .status-pill {
   white-space: nowrap;
 }
+
+
+/* Areas table polish */
+.delete-area-btn.danger,
+.btn.danger {
+  border-color: rgba(239, 68, 68, 0.7);
+  color: #fecaca;
+}
+
+.delete-area-btn.danger:hover,
+.btn.danger:hover {
+  background: rgba(239, 68, 68, 0.16);
+  border-color: rgba(239, 68, 68, 0.95);
+}

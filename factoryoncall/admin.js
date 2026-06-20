@@ -373,6 +373,23 @@ let ADMIN_LOCKED = false;
     return found ? (found.data.name || areaIdValue) : areaIdValue;
   }
 
+  function getStationCountForArea(areaName = "") {
+    const normalizedArea = String(areaName || "").trim().toLowerCase();
+
+    if (!normalizedArea) return 0;
+
+    return cachedStations.filter(row => {
+      const stationArea = String(row.data?.area || "").trim().toLowerCase();
+      return stationArea === normalizedArea;
+    }).length;
+  }
+
+  function sortAreasByName(rows = []) {
+    return rows.slice().sort((a, b) =>
+      String(a.data?.name || a.id || "").localeCompare(String(b.data?.name || b.id || ""))
+    );
+  }
+
   function populateAreaOptions() {
     const selects = [stationArea, userDept].filter(Boolean);
     selects.forEach(select => {
@@ -404,15 +421,18 @@ let ADMIN_LOCKED = false;
 
     areasTableBody.innerHTML = "";
 
-    rows.forEach(row => {
+    sortAreasByName(rows).forEach(row => {
       const a = row.data;
+      const stationCount = getStationCountForArea(a.name || row.id);
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><strong>${a.name || ""}</strong></td>
         <td>${a.description || ""}</td>
+        <td>${stationCount}</td>
         <td>${a.active !== false ? "Yes" : "No"}</td>
         <td>
           <button class="btn small secondary edit-area-btn" data-id="${row.id}">Edit</button>
+          <button class="btn small danger delete-area-btn" data-id="${row.id}" data-count="${stationCount}">Delete</button>
         </td>
       `;
       areasTableBody.appendChild(tr);
@@ -436,6 +456,34 @@ let ADMIN_LOCKED = false;
         if (areaActive) areaActive.checked = a.active !== false;
         if (areaFormTitle) areaFormTitle.textContent = "Edit Area";
         activateTab("areas");
+      };
+    });
+
+    document.querySelectorAll(".delete-area-btn").forEach(btn => {
+      btn.onclick = async () => {
+        if (blockDemoAdminAction("Area deletion")) return;
+
+        const id = btn.dataset.id;
+        const found = cachedAreas.find(x => x.id === id);
+        if (!found) return;
+
+        const areaNameValue = found.data?.name || id;
+        const stationCount = getStationCountForArea(areaNameValue);
+
+        if (stationCount > 0) {
+          alert(`Cannot delete "${areaNameValue}". ${stationCount} station${stationCount === 1 ? "" : "s"} assigned to this area. Move or edit those stations first.`);
+          return;
+        }
+
+        if (!confirm(`Delete area "${areaNameValue}"?`)) return;
+
+        try {
+          await areasRef.doc(id).delete();
+          resetAreaForm();
+        } catch (err) {
+          console.error(err);
+          alert("Could not delete area.");
+        }
       };
     });
   }
@@ -1578,6 +1626,7 @@ let ADMIN_LOCKED = false;
           }));
 
           renderStations(cachedStations);
+          renderAreas(cachedAreas);
           populateDeptOptions();
           if (statStations) statStations.textContent = String(cachedStations.filter(x => x.data.active !== false).length);
         },
