@@ -1644,41 +1644,68 @@ textarea {
 }
 
 
+/* FACTORY ON CALL — SIDEBAR POLISH */
+.nav {
+    gap: 14px;
+}
 
-/* Factory On Call admin sidebar quick links */
-.sidebar-live-links {
-  margin: auto 20px 18px;
-  padding-top: 18px;
-  border-top: 1px solid rgba(148, 163, 184, 0.18);
+.nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(148, 163, 184, 0.12);
+}
+
+.nav-section:last-child {
+    border-bottom: none;
 }
 
 .sidebar-section-label {
-  margin-bottom: 10px;
-  font-size: 0.72rem;
-  font-weight: 800;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: rgba(203, 213, 225, 0.62);
+    margin: 2px 0 4px;
+    padding-left: 4px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: rgba(203, 213, 225, 0.55);
 }
 
 .sidebar-link-btn {
-  display: block;
-  width: 100%;
-  margin: 8px 0;
-  padding: 11px 14px;
-  border: 1px solid rgba(56, 189, 248, 0.45);
-  border-radius: 999px;
-  color: #e5f7ff;
-  text-align: center;
-  text-decoration: none;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.15), rgba(34, 197, 94, 0.10));
-  box-shadow: 0 0 18px rgba(14, 165, 233, 0.08);
+    display: block;
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid rgba(55, 65, 81, 0.95);
+    border-radius: var(--radius-pill);
+    color: var(--text-muted);
+    text-align: left;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 700;
+    background: radial-gradient(circle at top, #020617 0, #020617 70%);
+    transition:
+        border-color 0.18s ease,
+        background 0.18s ease,
+        color 0.18s ease,
+        box-shadow 0.18s ease,
+        transform 0.12s ease;
 }
 
 .sidebar-link-btn:hover {
-  border-color: rgba(34, 211, 238, 0.85);
-  background: linear-gradient(135deg, rgba(14, 165, 233, 0.28), rgba(34, 197, 94, 0.18));
-  transform: translateY(-1px);
+    border-color: rgba(56, 189, 248, 0.85);
+    color: #e5f3ff;
+    background: radial-gradient(circle at top, rgba(14, 165, 233, 0.28) 0, #020617 72%);
+    box-shadow: 0 0 22px rgba(14, 165, 233, 0.18);
+    transform: translateY(-1px);
+}
+
+.admin-footer-brand {
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(148, 163, 184, 0.14);
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(203, 213, 225, 0.52);
+    text-align: center;
 }

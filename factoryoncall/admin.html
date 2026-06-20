@@ -17,29 +17,40 @@
         </div>
 
         <nav class="nav">
-            <button class="nav-item active" data-tab="dashboard">Dashboard</button>
-            <button class="nav-item" data-tab="callbuttons">Access Links</button>
-            <button class="nav-item" data-tab="stations">Stations</button>
-            <button class="nav-item" data-tab="roles">Personnel Required</button>
-            <button class="nav-item" data-tab="users">Users</button>
-            <button class="nav-item" data-tab="logs">Call Logs</button>
-            <button class="nav-item" data-tab="branding">Branding</button>
-            <button class="nav-item" data-tab="settings">System Settings</button>
-            <button class="nav-item" data-tab="analytics">Analytics</button>
-        </nav>
+            <div class="nav-section">
+                <div class="sidebar-section-label">Operations</div>
+                <button class="nav-item active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-item" data-tab="logs">Call Logs</button>
+                <button class="nav-item" data-tab="callbuttons">Access Links</button>
+            </div>
 
-        <div class="sidebar-live-links">
-            <div class="sidebar-section-label">Live Screens</div>
-            <a id="sidebarViewerLink" class="sidebar-link-btn" href="viewer.html" target="_blank" rel="noopener">Open Viewer</a>
-            <a id="sidebarDisplayLink" class="sidebar-link-btn" href="display.html" target="_blank" rel="noopener">Open Display</a>
-            <a id="sidebarCallLink" class="sidebar-link-btn" href="call.html" target="_blank" rel="noopener">Open Call Station</a>
-        </div>
+            <div class="nav-section">
+                <div class="sidebar-section-label">Setup</div>
+                <button class="nav-item" data-tab="stations">Stations</button>
+                <button class="nav-item" data-tab="roles">Personnel Required</button>
+                <button class="nav-item" data-tab="users">Users</button>
+            </div>
+
+            <div class="nav-section">
+                <div class="sidebar-section-label">Live Screens</div>
+                <a id="sidebarViewerLink" class="sidebar-link-btn" href="viewer.html" target="_blank" rel="noopener">Open Viewer</a>
+                <a id="sidebarDisplayLink" class="sidebar-link-btn" href="display.html" target="_blank" rel="noopener">Open Display</a>
+            </div>
+
+            <div class="nav-section">
+                <div class="sidebar-section-label">System</div>
+                <button class="nav-item" data-tab="branding">Branding</button>
+                <button class="nav-item" data-tab="settings">System Settings</button>
+                <button class="nav-item" data-tab="analytics">Analytics</button>
+            </div>
+        </nav>
 
         <div class="sidebar-footer">
             <div class="admin-user-display">
                 Logged in as: <span id="adminUserName">Admin</span>
             </div>
             <button id="logoutBtn" class="logout-btn">Log out</button>
+            <div class="admin-footer-brand">© One T Media Group</div>
         </div>
     </aside>
 

@@ -172,11 +172,9 @@ let ADMIN_LOCKED = false;
   function initSidebarLinks() {
     const viewerLink = document.getElementById("sidebarViewerLink");
     const displayLink = document.getElementById("sidebarDisplayLink");
-    const callLink = document.getElementById("sidebarCallLink");
 
     if (viewerLink) viewerLink.href = buildScreenUrl("viewer.html");
     if (displayLink) displayLink.href = buildScreenUrl("display.html");
-    if (callLink) callLink.href = buildScreenUrl("call.html");
   }
 
   async function copyText(text) {
@@ -837,7 +835,7 @@ let ADMIN_LOCKED = false;
     if (dashQuickList) {
       dashQuickList.innerHTML = `
         <li>Stations loaded from company structure.</li>
-        <li>Roles and users are now company-scoped.</li>
+        <li>Personnel and users are now company-scoped.</li>
         <li>Access Links open viewer, display, and call station screens.</li>
       `;
     }
