@@ -933,19 +933,15 @@ let ADMIN_LOCKED = false;
         dashboardPriorityCall.innerHTML = `
           <div class="dashboard-row priority-row-linear">
             <div>
-              <span class="row-label">Station</span>
               <strong>${callStation(oldest)}</strong>
             </div>
             <div>
-              <span class="row-label">Personnel Required</span>
               <strong>${callPersonnel(oldest)}</strong>
             </div>
             <div>
-              <span class="row-label">Location</span>
               <strong>${callLocation(oldest)}</strong>
             </div>
             <div>
-              <span class="row-label">Waiting</span>
               <strong>${smartElapsed(callStartMillis(oldest))}</strong>
             </div>
             <div>
@@ -977,19 +973,15 @@ let ADMIN_LOCKED = false;
           return `
             <div class="dashboard-row activity-row-linear">
               <div>
-                <span class="row-label">Station</span>
                 <strong>${callStation(call)}</strong>
               </div>
               <div>
-                <span class="row-label">Personnel Required</span>
                 <strong>${callPersonnel(call)}</strong>
               </div>
               <div>
-                <span class="row-label">Location</span>
                 <strong>${callLocation(call)}</strong>
               </div>
               <div>
-                <span class="row-label">Age</span>
                 <strong>${smartElapsed(callStartMillis(call))}</strong>
               </div>
               <div>

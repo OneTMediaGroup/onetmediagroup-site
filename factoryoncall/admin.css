@@ -1997,3 +1997,31 @@ textarea {
         grid-template-columns: 1fr;
     }
 }
+
+
+/* Dashboard linear polish */
+.dashboard-row{
+ display:grid;
+ grid-template-columns:2fr 2fr 1.5fr 1fr 1fr;
+ gap:16px;
+ align-items:center;
+ padding:12px 0;
+ border-top:1px solid rgba(255,255,255,.08);
+}
+.dashboard-row:first-child{border-top:none;}
+.row-label{display:none;}
+.snapshot-row{
+ display:flex;
+ gap:24px;
+ align-items:center;
+ flex-wrap:wrap;
+}
+.snapshot-item{
+ display:flex;
+ gap:8px;
+ align-items:center;
+}
+.activity-row-linear strong,
+.priority-row-linear strong{
+ font-size:1rem;
+}
