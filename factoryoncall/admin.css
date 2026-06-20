@@ -2343,3 +2343,25 @@ align-items:center;
   background: rgba(239, 68, 68, 0.16);
   border-color: rgba(239, 68, 68, 0.95);
 }
+
+
+/* Stations CSV tools */
+.station-card-header {
+  align-items: flex-start;
+  gap: 14px;
+}
+.station-tools {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+  width: 100%;
+}
+.station-tools input[type="text"] {
+  min-width: 210px;
+}
+@media (max-width: 900px) {
+  .station-tools { justify-content: flex-start; }
+  .station-tools input[type="text"] { width: 100%; }
+}

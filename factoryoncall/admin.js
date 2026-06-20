@@ -213,6 +213,10 @@ let ADMIN_LOCKED = false;
   const stationActive = document.getElementById("stationActive");
   const stationFormTitle = document.getElementById("stationFormTitle");
   const stationFormReset = document.getElementById("stationFormReset");
+  const stationCsvImport = document.getElementById("stationCsvImport");
+  const btnImportStationsCsv = document.getElementById("btnImportStationsCsv");
+  const btnExportStationsCsv = document.getElementById("btnExportStationsCsv");
+  const btnDownloadStationsTemplate = document.getElementById("btnDownloadStationsTemplate");
 
   const cbStation = document.getElementById("cbStation");
   const cbCells = document.getElementById("cbCells");
@@ -497,24 +501,39 @@ let ADMIN_LOCKED = false;
 
 
   // ---------- STATIONS ----------
+  function stationAreaName(station = {}) {
+    return station.area || station.areaName || "";
+  }
+
+  function sortedStations(rows = []) {
+    return [...rows].sort((a, b) => {
+      const areaA = stationAreaName(a.data).toLowerCase();
+      const areaB = stationAreaName(b.data).toLowerCase();
+      const nameA = String(a.data?.name || "").toLowerCase();
+      const nameB = String(b.data?.name || "").toLowerCase();
+      return areaA.localeCompare(areaB) || nameA.localeCompare(nameB);
+    });
+  }
+
   function renderStations(rows) {
     if (!stationsTableBody) return;
 
     stationsTableBody.innerHTML = "";
 
-    rows.forEach(row => {
-      const s = row.data;
+    sortedStations(rows).forEach(row => {
+      const s = row.data || {};
+      const areaValue = stationAreaName(s);
+      const activeValue = !!areaValue && s.active !== false;
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><strong>${s.name || ""}</strong></td>
-        <td>${s.area || "—"}</td>
+        <td>${areaValue || "Waiting to be assigned"}</td>
         <td>${s.description || ""}</td>
-        <td>${Array.isArray(s.cells) ? s.cells.join(", ") : ""}</td>
-        <td>${s.active ? "Yes" : "No"}</td>
+        <td>${activeValue ? "Yes" : "No"}</td>
         <td>
           <button class="btn small secondary edit-station-btn" data-id="${row.id}">Edit</button>
-          <button class="btn small copy-station-link-btn" data-url="${buildCallUrl(s.name || "", s.cells || [], s.area || "")}">Copy Link</button>
-          <button class="btn small secondary open-station-link-btn" data-url="${buildCallUrl(s.name || "", s.cells || [], s.area || "")}">Open</button>
+          <button class="btn small copy-station-link-btn" data-url="${buildCallUrl(s.name || "", [s.name || ""], areaValue)}">Copy Link</button>
+          <button class="btn small secondary open-station-link-btn" data-url="${buildCallUrl(s.name || "", [s.name || ""], areaValue)}">Open</button>
         </td>
       `;
       stationsTableBody.appendChild(tr);
@@ -530,13 +549,12 @@ let ADMIN_LOCKED = false;
         const found = cachedStations.find(x => x.id === id);
         if (!found) return;
 
-        const s = found.data;
+        const s = found.data || {};
         if (stationId) stationId.value = found.id;
         if (stationName) stationName.value = s.name || "";
-        if (stationArea) stationArea.value = s.area || "";
+        if (stationArea) stationArea.value = stationAreaName(s) || "";
         if (stationDescription) stationDescription.value = s.description || "";
-        if (stationCells) stationCells.value = Array.isArray(s.cells) ? s.cells.join(",") : "";
-        if (stationActive) stationActive.checked = !!s.active;
+        if (stationActive) stationActive.checked = !!stationAreaName(s) && s.active !== false;
         if (stationFormTitle) stationFormTitle.textContent = "Edit Station";
         activateTab("stations");
       };
@@ -564,7 +582,103 @@ let ADMIN_LOCKED = false;
     if (stationId) stationId.value = "";
     if (stationFormTitle) stationFormTitle.textContent = "Add Station";
     if (stationArea) stationArea.value = "";
-    if (stationActive) stationActive.checked = true;
+    if (stationActive) stationActive.checked = false;
+  }
+
+  function normalizeYesNo(value) {
+    const v = String(value || "").trim().toLowerCase();
+    return ["yes", "y", "true", "1", "active"].includes(v);
+  }
+
+  function parseCsvLine(line) {
+    const out = [];
+    let current = "";
+    let quote = false;
+    for (let i = 0; i < line.length; i++) {
+      const ch = line[i];
+      if (ch === '"' && line[i + 1] === '"') { current += '"'; i++; continue; }
+      if (ch === '"') { quote = !quote; continue; }
+      if (ch === "," && !quote) { out.push(current); current = ""; continue; }
+      current += ch;
+    }
+    out.push(current);
+    return out.map(x => x.trim());
+  }
+
+  function parseCsv(text) {
+    const lines = String(text || "").split(/\r?\n/).filter(l => l.trim());
+    if (!lines.length) return [];
+    const headers = parseCsvLine(lines.shift()).map(h => h.trim().toLowerCase().replace(/\s+/g, "_"));
+    return lines.map(line => {
+      const cells = parseCsvLine(line);
+      const obj = {};
+      headers.forEach((h, i) => obj[h] = cells[i] || "");
+      return obj;
+    });
+  }
+
+  function downloadText(filename, text, type = "text/plain") {
+    const blob = new Blob([text], { type });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function stationsCsvRows() {
+    const header = ["station_name", "area", "description", "active"];
+    const rows = sortedStations(cachedStations).map(row => {
+      const s = row.data || {};
+      const areaValue = stationAreaName(s);
+      return [
+        csvSafe(s.name || ""),
+        csvSafe(areaValue || ""),
+        csvSafe(s.description || ""),
+        csvSafe((areaValue && s.active !== false) ? "Yes" : "No")
+      ].join(",");
+    });
+    return [header.join(","), ...rows].join("\n");
+  }
+
+  function stationTemplateCsv() {
+    return [
+      "station_name,area,description,active",
+      "Press 1,Production,1200 Ton Press,Yes",
+      "Press 2,Production,800 Ton Press,Yes",
+      "Receiving 1,Receiving,Main Receiving Dock,Yes",
+      "Shipping 1,Shipping,Outbound Shipping Dock,Yes"
+    ].join("\n");
+  }
+
+  async function importStationsCsv(file) {
+    if (!file) return;
+    if (blockDemoAdminAction("Station CSV import")) return;
+    const text = await file.text();
+    const rows = parseCsv(text);
+    let imported = 0;
+    for (const row of rows) {
+      const name = row.station_name || row.station || row.work_cell || row.workcell || row.name || "";
+      const area = row.area || row.department || "";
+      const description = row.description || row.desc || "";
+      if (!String(name).trim()) continue;
+      const active = !!String(area).trim() && normalizeYesNo(row.active || "Yes");
+      await stationsRef.add({
+        companyId: COMPANY_ID,
+        name: String(name).trim(),
+        area: String(area).trim(),
+        description: String(description).trim(),
+        cells: [String(name).trim()],
+        active,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
+      });
+      imported++;
+    }
+    alert(`Imported ${imported} station${imported === 1 ? "" : "s"}.`);
   }
 
   // ---------- CALL BUTTONS ----------
@@ -1050,22 +1164,25 @@ let ADMIN_LOCKED = false;
       e.preventDefault();
       if (blockDemoAdminAction("Station management")) return;
 
+      const selectedArea = stationArea?.value || "";
+      const requestedActive = !!stationActive?.checked;
       const payload = {
         companyId: COMPANY_ID,
         name: stationName?.value.trim() || "",
-        area: stationArea?.value || "",
+        area: selectedArea,
         description: stationDescription?.value.trim() || "",
-        cells: (stationCells?.value || "")
-          .split(",")
-          .map(x => x.trim())
-          .filter(Boolean),
-        active: !!stationActive?.checked,
+        cells: [stationName?.value.trim() || ""].filter(Boolean),
+        active: !!selectedArea && requestedActive,
         updatedAt: Date.now()
       };
 
       if (!payload.name) {
         alert("Station name is required.");
         return;
+      }
+
+      if (requestedActive && !selectedArea) {
+        alert("Assign an Area before marking a station active. This station will be saved as inactive.");
       }
 
       try {
@@ -1075,7 +1192,6 @@ let ADMIN_LOCKED = false;
           payload.createdAt = Date.now();
           await stationsRef.add(payload);
         }
-
         resetStationForm();
       } catch (err) {
         console.error(err);
@@ -1083,7 +1199,39 @@ let ADMIN_LOCKED = false;
       }
     });
 
+    stationArea?.addEventListener("change", () => {
+      if (!stationArea.value && stationActive) stationActive.checked = false;
+    });
+
+    stationActive?.addEventListener("change", () => {
+      if (stationActive.checked && !stationArea?.value) {
+        stationActive.checked = false;
+        alert("Assign an Area before marking a station active.");
+      }
+    });
+
     stationFormReset?.addEventListener("click", resetStationForm);
+
+    btnDownloadStationsTemplate?.addEventListener("click", () => {
+      downloadText("factory-on-call-stations-template.csv", stationTemplateCsv(), "text/csv");
+    });
+
+    btnExportStationsCsv?.addEventListener("click", () => {
+      downloadText("factory-on-call-stations.csv", stationsCsvRows(), "text/csv");
+    });
+
+    btnImportStationsCsv?.addEventListener("click", () => stationCsvImport?.click());
+
+    stationCsvImport?.addEventListener("change", async () => {
+      try {
+        await importStationsCsv(stationCsvImport.files?.[0]);
+      } catch (err) {
+        console.error(err);
+        alert("Could not import stations CSV.");
+      } finally {
+        stationCsvImport.value = "";
+      }
+    });
 
     stationSearch?.addEventListener("input", () => {
       const q = stationSearch.value.trim().toLowerCase();
@@ -1097,8 +1245,7 @@ let ADMIN_LOCKED = false;
         return [
           s.name || "",
           s.area || "",
-          s.description || "",
-          Array.isArray(s.cells) ? s.cells.join(" ") : ""
+          s.description || ""
         ]
           .join(" ")
           .toLowerCase()

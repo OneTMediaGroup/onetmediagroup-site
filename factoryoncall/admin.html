@@ -315,9 +315,15 @@
             <div class="grid-2">
 
                 <div class="card">
-                    <div class="card-header">
+                    <div class="card-header station-card-header">
                         <h2>Stations</h2>
-                        <input id="stationSearch" type="text" placeholder="Search stations..." />
+                        <div class="station-tools">
+                            <input id="stationCsvImport" type="file" accept=".csv,text/csv" hidden />
+                            <button type="button" id="btnImportStationsCsv" class="btn small secondary">Import CSV</button>
+                            <button type="button" id="btnExportStationsCsv" class="btn small secondary">Export CSV</button>
+                            <button type="button" id="btnDownloadStationsTemplate" class="btn small secondary">Download Template</button>
+                            <input id="stationSearch" type="text" placeholder="Search stations..." />
+                        </div>
                     </div>
 
                     <div class="table-wrapper">
@@ -327,7 +333,6 @@
                                     <th>Name</th>
                                     <th>Area</th>
                                     <th>Description</th>
-                                    <th>Locations</th>
                                     <th>Active</th>
                                     <th></th>
                                 </tr>
@@ -355,11 +360,6 @@
                         <label>
                             Description
                             <textarea id="stationDescription" rows="3"></textarea>
-                        </label>
-
-                        <label>
-                            Locations (comma-separated)
-                            <input type="text" id="stationCells" placeholder="Line 1, Dock 2, Press 4" />
                         </label>
 
                         <label class="checkbox-row">
