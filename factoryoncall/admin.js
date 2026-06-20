@@ -89,7 +89,7 @@ let ADMIN_LOCKED = false;
   }
 
   // ---------- SIDEBAR / TABS ----------
-  const navItems = document.querySelectorAll(".nav-item");
+  const navItems = document.querySelectorAll(".nav-item[data-tab]");
   const tabs = document.querySelectorAll(".tab");
   const pageTitle = document.getElementById("pageTitle");
   const pageSubtitle = document.getElementById("pageSubtitle");
