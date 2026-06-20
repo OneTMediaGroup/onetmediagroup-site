@@ -75,6 +75,7 @@ let ADMIN_LOCKED = false;
   const db = app.firestore();
 
   const companyRef = db.collection("companies").doc(COMPANY_ID);
+  const areasRef = companyRef.collection("areas");
   const stationsRef = companyRef.collection("stations");
   const rolesRef = companyRef.collection("roles");
   const usersRef = companyRef.collection("users");
@@ -99,8 +100,8 @@ let ADMIN_LOCKED = false;
   function tabTitle(tabName) {
     const map = {
       dashboard: "Dashboard",
-      callbuttons: "Access Links",
       logs: "Call Logs",
+      areas: "Areas",
       users: "Users",
       stations: "Stations",
       roles: "Personnel Required",
@@ -114,8 +115,8 @@ let ADMIN_LOCKED = false;
   function tabSubtitle(tabName) {
     const map = {
       dashboard: "Live overview of your factory call system.",
-      callbuttons: "Generate and open live access links for call stations, viewer screens, and display boards.",
       logs: "Review and export call history.",
+      areas: "Create and manage plant areas used to organize stations and calls.",
       users: "Manage users and login credentials.",
       stations: "Manage factory call stations.",
       roles: "Configure personnel types and permissions.",
@@ -151,12 +152,13 @@ let ADMIN_LOCKED = false;
   }
 
   // ---------- HELPERS ----------
-  function buildCallUrl(stationName, cells) {
+  function buildCallUrl(stationName, cells, areaName = "") {
     const base = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "call.html")}`;
     const params = new URLSearchParams({
       companyId: COMPANY_ID,
       station: stationName || "",
       cells: Array.isArray(cells) ? cells.join(",") : "",
+      area: areaName || "",
       companyName: COMPANY_NAME
     });
     return `${base}?${params.toString()}`;
@@ -190,11 +192,22 @@ let ADMIN_LOCKED = false;
   }
 
   // ---------- DOM ----------
+  const areasTableBody = document.getElementById("areasTableBody");
+  const areaSearch = document.getElementById("areaSearch");
+  const areaForm = document.getElementById("areaForm");
+  const areaId = document.getElementById("areaId");
+  const areaName = document.getElementById("areaName");
+  const areaDescription = document.getElementById("areaDescription");
+  const areaActive = document.getElementById("areaActive");
+  const areaFormTitle = document.getElementById("areaFormTitle");
+  const areaFormReset = document.getElementById("areaFormReset");
+
   const stationsTableBody = document.getElementById("stationsTableBody");
   const stationSearch = document.getElementById("stationSearch");
   const stationForm = document.getElementById("stationForm");
   const stationId = document.getElementById("stationId");
   const stationName = document.getElementById("stationName");
+  const stationArea = document.getElementById("stationArea");
   const stationDescription = document.getElementById("stationDescription");
   const stationCells = document.getElementById("stationCells");
   const stationActive = document.getElementById("stationActive");
@@ -254,6 +267,7 @@ let ADMIN_LOCKED = false;
 
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
 
+  let cachedAreas = [];
   let cachedStations = [];
   let cachedRoles = [];
   let cachedUsers = [];
@@ -352,6 +366,88 @@ let ADMIN_LOCKED = false;
   }
 
 
+
+  // ---------- AREAS ----------
+  function areaNameFromId(areaIdValue = "") {
+    const found = cachedAreas.find(x => x.id === areaIdValue);
+    return found ? (found.data.name || areaIdValue) : areaIdValue;
+  }
+
+  function populateAreaOptions() {
+    const selects = [stationArea, userDept].filter(Boolean);
+    selects.forEach(select => {
+      const currentValue = select.value;
+      select.innerHTML = "";
+
+      const blank = document.createElement("option");
+      blank.value = "";
+      blank.textContent = "None";
+      select.appendChild(blank);
+
+      cachedAreas
+        .filter(row => row.data.active !== false)
+        .slice()
+        .sort((a, b) => (a.data.name || "").localeCompare(b.data.name || ""))
+        .forEach(row => {
+          const opt = document.createElement("option");
+          opt.value = row.data.name || row.id;
+          opt.textContent = row.data.name || row.id;
+          select.appendChild(opt);
+        });
+
+      if (currentValue) select.value = currentValue;
+    });
+  }
+
+  function renderAreas(rows) {
+    if (!areasTableBody) return;
+
+    areasTableBody.innerHTML = "";
+
+    rows.forEach(row => {
+      const a = row.data;
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td><strong>${a.name || ""}</strong></td>
+        <td>${a.description || ""}</td>
+        <td>${a.active !== false ? "Yes" : "No"}</td>
+        <td>
+          <button class="btn small secondary edit-area-btn" data-id="${row.id}">Edit</button>
+        </td>
+      `;
+      areasTableBody.appendChild(tr);
+    });
+
+    wireAreaTableButtons();
+    populateAreaOptions();
+  }
+
+  function wireAreaTableButtons() {
+    document.querySelectorAll(".edit-area-btn").forEach(btn => {
+      btn.onclick = () => {
+        const id = btn.dataset.id;
+        const found = cachedAreas.find(x => x.id === id);
+        if (!found) return;
+
+        const a = found.data;
+        if (areaId) areaId.value = found.id;
+        if (areaName) areaName.value = a.name || "";
+        if (areaDescription) areaDescription.value = a.description || "";
+        if (areaActive) areaActive.checked = a.active !== false;
+        if (areaFormTitle) areaFormTitle.textContent = "Edit Area";
+        activateTab("areas");
+      };
+    });
+  }
+
+  function resetAreaForm() {
+    if (areaForm) areaForm.reset();
+    if (areaId) areaId.value = "";
+    if (areaFormTitle) areaFormTitle.textContent = "Add Area";
+    if (areaActive) areaActive.checked = true;
+  }
+
+
   // ---------- STATIONS ----------
   function renderStations(rows) {
     if (!stationsTableBody) return;
@@ -362,14 +458,15 @@ let ADMIN_LOCKED = false;
       const s = row.data;
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${s.name || ""}</td>
+        <td><strong>${s.name || ""}</strong></td>
+        <td>${s.area || "—"}</td>
         <td>${s.description || ""}</td>
         <td>${Array.isArray(s.cells) ? s.cells.join(", ") : ""}</td>
         <td>${s.active ? "Yes" : "No"}</td>
         <td>
           <button class="btn small secondary edit-station-btn" data-id="${row.id}">Edit</button>
-          <button class="btn small copy-station-link-btn" data-url="${buildCallUrl(s.name || "", s.cells || [])}">Copy Link</button>
-          <button class="btn small secondary open-station-link-btn" data-url="${buildCallUrl(s.name || "", s.cells || [])}">Open</button>
+          <button class="btn small copy-station-link-btn" data-url="${buildCallUrl(s.name || "", s.cells || [], s.area || "")}">Copy Link</button>
+          <button class="btn small secondary open-station-link-btn" data-url="${buildCallUrl(s.name || "", s.cells || [], s.area || "")}">Open</button>
         </td>
       `;
       stationsTableBody.appendChild(tr);
@@ -388,6 +485,7 @@ let ADMIN_LOCKED = false;
         const s = found.data;
         if (stationId) stationId.value = found.id;
         if (stationName) stationName.value = s.name || "";
+        if (stationArea) stationArea.value = s.area || "";
         if (stationDescription) stationDescription.value = s.description || "";
         if (stationCells) stationCells.value = Array.isArray(s.cells) ? s.cells.join(",") : "";
         if (stationActive) stationActive.checked = !!s.active;
@@ -417,6 +515,7 @@ let ADMIN_LOCKED = false;
     if (stationForm) stationForm.reset();
     if (stationId) stationId.value = "";
     if (stationFormTitle) stationFormTitle.textContent = "Add Station";
+    if (stationArea) stationArea.value = "";
     if (stationActive) stationActive.checked = true;
   }
 
@@ -540,28 +639,7 @@ let ADMIN_LOCKED = false;
 
   // ---------- USERS ----------
   function populateDeptOptions() {
-    if (!userDept) return;
-
-    const currentValue = userDept.value;
-    const deptSet = new Set();
-
-    cachedStations.forEach(row => {
-      const desc = row.data.description || "";
-      if (desc) deptSet.add(desc);
-    });
-
-    userDept.innerHTML = "";
-
-    Array.from(deptSet)
-      .sort((a, b) => a.localeCompare(b))
-      .forEach(dept => {
-        const opt = document.createElement("option");
-        opt.value = dept;
-        opt.textContent = dept;
-        userDept.appendChild(opt);
-      });
-
-    if (currentValue) userDept.value = currentValue;
+    populateAreaOptions();
   }
 
   function renderUsers(rows) {
@@ -868,6 +946,57 @@ let ADMIN_LOCKED = false;
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);
     purgeLogsBtn?.addEventListener("click", purgeOldLogs);
 
+    // Areas
+    areaForm?.addEventListener("submit", async e => {
+      e.preventDefault();
+      if (blockDemoAdminAction("Area management")) return;
+
+      const payload = {
+        companyId: COMPANY_ID,
+        name: areaName?.value.trim() || "",
+        description: areaDescription?.value.trim() || "",
+        active: !!areaActive?.checked,
+        updatedAt: Date.now()
+      };
+
+      if (!payload.name) {
+        alert("Area name is required.");
+        return;
+      }
+
+      try {
+        const safeId = makeSafeId(payload.name);
+        if (areaId?.value) {
+          await areasRef.doc(areaId.value).update(payload);
+        } else {
+          payload.createdAt = Date.now();
+          await areasRef.doc(safeId).set(payload, { merge: true });
+        }
+
+        resetAreaForm();
+      } catch (err) {
+        console.error(err);
+        alert("Could not save area.");
+      }
+    });
+
+    areaFormReset?.addEventListener("click", resetAreaForm);
+
+    areaSearch?.addEventListener("input", () => {
+      const q = areaSearch.value.trim().toLowerCase();
+      if (!q) {
+        renderAreas(cachedAreas);
+        return;
+      }
+
+      const filtered = cachedAreas.filter(x => {
+        const a = x.data;
+        return [a.name || "", a.description || ""].join(" ").toLowerCase().includes(q);
+      });
+
+      renderAreas(filtered);
+    });
+
     // Stations
     stationForm?.addEventListener("submit", async e => {
       e.preventDefault();
@@ -876,6 +1005,7 @@ let ADMIN_LOCKED = false;
       const payload = {
         companyId: COMPANY_ID,
         name: stationName?.value.trim() || "",
+        area: stationArea?.value || "",
         description: stationDescription?.value.trim() || "",
         cells: (stationCells?.value || "")
           .split(",")
@@ -918,6 +1048,7 @@ let ADMIN_LOCKED = false;
         const s = x.data;
         return [
           s.name || "",
+          s.area || "",
           s.description || "",
           Array.isArray(s.cells) ? s.cells.join(" ") : ""
         ]
@@ -1422,6 +1553,21 @@ let ADMIN_LOCKED = false;
   // ---------- FIRESTORE LISTENERS ----------
   function initListeners() {
     try {
+      areasRef.orderBy("name").onSnapshot(
+        snapshot => {
+          cachedAreas = snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: doc.data()
+          }));
+
+          renderAreas(cachedAreas);
+          populateAreaOptions();
+        },
+        err => {
+          console.error("Areas listener error:", err);
+        }
+      );
+
       stationsRef.orderBy("name").onSnapshot(
         snapshot => {
           setConn(true);
@@ -1432,7 +1578,6 @@ let ADMIN_LOCKED = false;
           }));
 
           renderStations(cachedStations);
-          populateCallButtonStations(cachedStations);
           populateDeptOptions();
           if (statStations) statStations.textContent = String(cachedStations.filter(x => x.data.active !== false).length);
         },

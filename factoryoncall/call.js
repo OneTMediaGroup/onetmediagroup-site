@@ -110,6 +110,11 @@ const COMPANY_ID = getActiveCompanyId();
       .map(x => x.trim())
       .filter(Boolean);
 
+  const STATION_AREA =
+    params.get("area") ||
+    params.get("department") ||
+    "";
+
   localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
 
   const FALLBACK_ROLE_DEFINITIONS = [
@@ -340,6 +345,7 @@ const COMPANY_ID = getActiveCompanyId();
       companyId: COMPANY_ID,
       companyName: COMPANY_NAME,
       station: STATION_NAME,
+      area: STATION_AREA,
       cells: STATION_CELLS,
       roles: selectedRoles,
 

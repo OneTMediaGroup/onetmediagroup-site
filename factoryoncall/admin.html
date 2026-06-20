@@ -21,11 +21,11 @@
                 <div class="sidebar-section-label">Operations</div>
                 <button class="nav-item active" data-tab="dashboard">Dashboard</button>
                 <button class="nav-item" data-tab="logs">Call Logs</button>
-                <button class="nav-item" data-tab="callbuttons">Access Links</button>
             </div>
 
             <div class="nav-section">
                 <div class="sidebar-section-label">Setup</div>
+                <button class="nav-item" data-tab="areas">Areas</button>
                 <button class="nav-item" data-tab="stations">Stations</button>
                 <button class="nav-item" data-tab="roles">Personnel Required</button>
                 <button class="nav-item" data-tab="users">Users</button>
@@ -139,75 +139,60 @@
             </div>
         </section>
 
-        <!-- CALL BUTTONS TAB -->
-        <section id="tab-callbuttons" class="tab">
-            <div class="card">
-                <h2>Access Links</h2>
-                <p class="muted">
-                    Generate live links for call stations, viewer screens, and display boards.
-                </p>
-
-                <form id="callButtonForm" class="form">
-                    <label>
-                        Select Station
-                        <div style="display:flex; gap:8px; align-items:center;">
-                            <select id="cbStation" style="flex:1;"></select>
-                            <button type="button"
-                                    class="btn small secondary"
-                                    onclick="document.querySelector('.nav-item[data-tab=&quot;stations&quot;]').click();">
-                                Add Station
-                            </button>
-                        </div>
-                    </label>
-
-                    <label>
-                        Department (optional)
-                        <select id="cbDepartment"></select>
-                    </label>
-
-                    <label>
-                        Location (select one or multiple)
-                        <select id="cbCells" multiple size="6"></select>
-                    </label>
-
-                    <div class="button-row">
-                        <button type="button" id="btnGenerateDynamic" class="btn">
-                            Generate Dynamic URL
-                        </button>
-                        <button type="button" id="btnGenerateStatic" class="btn secondary">
-                            Generate Static HTML File
-                        </button>
+        <!--         <!-- AREAS TAB -->
+        <section id="tab-areas" class="tab">
+            <div class="grid-2">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Areas</h2>
+                        <input id="areaSearch" type="text" placeholder="Search areas..." />
                     </div>
-                </form>
+
+                    <div class="table-wrapper">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Name</th>
+                                    <th>Description</th>
+                                    <th>Active</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody id="areasTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
 
                 <div class="card">
-                    <h3>Generated Output</h3>
-                    <textarea id="cbOutput" class="output-box" rows="4" readonly></textarea>
-                    <button id="btnCopyOutput" class="btn small">Copy</button>
+                    <h2 id="areaFormTitle">Add Area</h2>
+                    <form id="areaForm" class="form">
+                        <input type="hidden" id="areaId" />
+
+                        <label>
+                            Area Name
+                            <input type="text" id="areaName" required placeholder="Production, Receiving, Shipping..." />
+                        </label>
+
+                        <label>
+                            Description
+                            <textarea id="areaDescription" rows="3" placeholder="Optional notes about this plant area."></textarea>
+                        </label>
+
+                        <label class="checkbox-row">
+                            <input type="checkbox" id="areaActive" checked />
+                            <span>Active</span>
+                        </label>
+
+                        <div class="button-row">
+                            <button type="submit" class="btn">Save</button>
+                            <button type="button" id="areaFormReset" class="btn secondary">Reset</button>
+                        </div>
+                    </form>
                 </div>
-            </div>
-
-            <div class="card">
-                <h2>Auto-Generate From Station Cells</h2>
-                <p class="muted">
-                    Generate all call buttons for a station’s work cells automatically.
-                </p>
-
-                <label>
-                    Select Station
-                    <select id="cbAutoStation"></select>
-                </label>
-
-                <div class="button-row">
-                    <button id="btnGenerateAllDynamic" class="btn">Generate All Dynamic URLs</button>
-                    <button id="btnGenerateAllStatic" class="btn secondary">Generate All Static Files</button>
-                </div>
-
-                <textarea id="cbAutoOutput" class="output-box" rows="6" readonly></textarea>
             </div>
         </section>
 
-        <!-- CALL LOGS TAB -->
+
         <section id="tab-logs" class="tab">
             <div class="card">
                 <div class="card-header">
@@ -339,8 +324,9 @@
                             <thead>
                                 <tr>
                                     <th>Name</th>
+                                    <th>Area</th>
                                     <th>Description</th>
-                                    <th>Work Cells</th>
+                                    <th>Locations</th>
                                     <th>Active</th>
                                     <th></th>
                                 </tr>
@@ -361,13 +347,18 @@
                         </label>
 
                         <label>
+                            Area
+                            <select id="stationArea"></select>
+                        </label>
+
+                        <label>
                             Description
                             <textarea id="stationDescription" rows="3"></textarea>
                         </label>
 
                         <label>
-                            Work Cells (comma-separated)
-                            <input type="text" id="stationCells" placeholder="A1,A2,A3" />
+                            Locations (comma-separated)
+                            <input type="text" id="stationCells" placeholder="Line 1, Dock 2, Press 4" />
                         </label>
 
                         <label class="checkbox-row">
