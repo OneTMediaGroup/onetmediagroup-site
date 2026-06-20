@@ -23,6 +23,8 @@ function getActiveCompanyId() {
 
 const COMPANY_ID = getActiveCompanyId();
 let COMPANY_NAME = "Factory On Call";
+let COMPANY_MODE = "production";
+let ADMIN_LOCKED = false;
 
 (async function () {
   // ---------- LOAD FIREBASE COMPAT IF NEEDED ----------
@@ -279,6 +281,9 @@ let COMPANY_NAME = "Factory On Call";
         console.warn("Branding document unavailable:", innerError);
       }
 
+      COMPANY_MODE = rootData.mode || "production";
+      ADMIN_LOCKED = rootData.adminLocked === true || rootData.isDemo === true || COMPANY_MODE === "demo";
+
       COMPANY_NAME =
         branding.companyName ||
         rootData.companyName ||
@@ -289,6 +294,26 @@ let COMPANY_NAME = "Factory On Call";
     } catch (error) {
       console.warn("Could not load company branding:", error);
     }
+  }
+
+
+
+  function blockDemoAdminAction(actionName = "This setup change") {
+    if (!ADMIN_LOCKED) return false;
+    alert(`${actionName} is locked in Demo Company mode.\n\nDemo companies are for testing call flow only. Create a Production Company to manage stations, users, roles, and branding.`);
+    return true;
+  }
+
+  function renderDemoNoticeIfNeeded() {
+    if (!ADMIN_LOCKED) return;
+    const main = document.querySelector(".main") || document.body;
+    if (!main || document.getElementById("demoRestrictionNotice")) return;
+
+    const notice = document.createElement("div");
+    notice.id = "demoRestrictionNotice";
+    notice.style.cssText = "margin:16px 24px;padding:14px 16px;border-radius:16px;background:#eff6ff;border:1px solid #bfdbfe;color:#1e3a8a;font-weight:800;";
+    notice.innerHTML = `Demo Company Mode: call testing is enabled, but Admin setup changes are locked. <a href="onboarding.html" style="color:#1d4ed8;">Create a Production Company</a> to build a real system.`;
+    main.insertBefore(notice, main.firstChild);
   }
 
 
@@ -563,6 +588,7 @@ let COMPANY_NAME = "Factory On Call";
     // Stations
     stationForm?.addEventListener("submit", async e => {
       e.preventDefault();
+      if (blockDemoAdminAction("Station management")) return;
 
       const payload = {
         companyId: COMPANY_ID,
@@ -658,6 +684,7 @@ let COMPANY_NAME = "Factory On Call";
     // Roles
     roleForm?.addEventListener("submit", async e => {
       e.preventDefault();
+      if (blockDemoAdminAction("Role management")) return;
 
       const permissions = {};
       permissionCheckboxes.forEach(cb => {
@@ -700,6 +727,7 @@ let COMPANY_NAME = "Factory On Call";
     // Users
     userForm?.addEventListener("submit", async e => {
       e.preventDefault();
+      if (blockDemoAdminAction("User management")) return;
 
       const firstName = userFirstName?.value.trim() || "";
       const lastName = userLastName?.value.trim() || "";
@@ -859,6 +887,7 @@ let COMPANY_NAME = "Factory On Call";
   async function boot() {
     setConn(false);
     await loadCompanyBranding();
+    renderDemoNoticeIfNeeded();
     initTabs();
     initPlaceholders();
     wireEvents();

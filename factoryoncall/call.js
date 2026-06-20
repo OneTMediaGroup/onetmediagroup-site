@@ -73,6 +73,30 @@ const COMPANY_ID = getActiveCompanyId();
   const usersRef = companyRef.collection("users");
   const callsRef = companyRef.collection("calls");
 
+  let COMPANY_NAME = new URLSearchParams(window.location.search).get("companyName") ||
+    localStorage.getItem("factory_on_call_company_name") ||
+    "Factory On Call";
+
+  async function loadCompanyBranding() {
+    try {
+      const rootSnap = await companyRef.get();
+      const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
+      let branding = {};
+      try {
+        const brandingSnap = await companyRef.collection("branding").doc("main").get();
+        branding = brandingSnap.exists ? brandingSnap.data() || {} : {};
+      } catch (error) {
+        console.warn("Branding unavailable:", error);
+      }
+      COMPANY_NAME = branding.companyName || rootData.companyName || COMPANY_NAME;
+      localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+    } catch (error) {
+      console.warn("Could not load company branding:", error);
+    }
+  }
+
+  await loadCompanyBranding();
+
   const params = new URLSearchParams(window.location.search);
 
   const STATION_NAME =
@@ -85,11 +109,6 @@ const COMPANY_ID = getActiveCompanyId();
       .split(",")
       .map(x => x.trim())
       .filter(Boolean);
-
-  const COMPANY_NAME =
-    params.get("companyName") ||
-    localStorage.getItem("factory_on_call_company_name") ||
-    "Factory On Call";
 
   localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
 

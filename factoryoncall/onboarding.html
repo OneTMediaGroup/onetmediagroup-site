@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Factory On Call – Onboarding</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="onboarding.css" />
+</head>
+<body>
+  <main class="onboarding-shell">
+    <section class="onboarding-card">
+      <div class="brand-row">
+        <img src="factory_logo.png" alt="Factory On Call" />
+        <div>
+          <div class="eyebrow">One T Industrial</div>
+          <h1>Factory On Call Setup</h1>
+        </div>
+      </div>
+
+      <div class="progress">
+        <div id="progressFill"></div>
+      </div>
+      <div id="stepLabel" class="step-label">Step 1 of 6</div>
+
+      <section id="stepContent" class="step-content"></section>
+
+      <div class="actions">
+        <button id="backBtn" class="btn secondary" type="button">Back</button>
+        <button id="nextBtn" class="btn primary" type="button">Next</button>
+      </div>
+
+      <div id="statusText" class="status-text"></div>
+    </section>
+  </main>
+
+  <script type="module" src="onboarding.js"></script>
+</body>
+</html>

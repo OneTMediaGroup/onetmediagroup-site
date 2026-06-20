@@ -2,7 +2,25 @@
    FACTORY ON CALL — DISPLAY
    Unified Firestore Version
 -------------------------------------------------- */
-const COMPANY_ID = "demo-company"; // later dynamic
+const COMPANY_STORAGE_KEY = "factory_on_call_active_company_id";
+
+function getCompanyIdFromUrl() {
+  const params = new URLSearchParams(window.location.search);
+  return params.get("companyId") || params.get("company") || "";
+}
+
+function getActiveCompanyId() {
+  const urlCompanyId = getCompanyIdFromUrl();
+
+  if (urlCompanyId) {
+    localStorage.setItem(COMPANY_STORAGE_KEY, urlCompanyId);
+    return urlCompanyId;
+  }
+
+  return localStorage.getItem(COMPANY_STORAGE_KEY) || "demo-company";
+}
+
+const COMPANY_ID = getActiveCompanyId();
 
 (async function () {
   async function loadScript(src) {
@@ -50,6 +68,29 @@ const COMPANY_ID = "demo-company"; // later dynamic
   // ---- FIRESTORE PATHS ----
   const companyRef = db.collection("companies").doc(COMPANY_ID);
   const callsRef = companyRef.collection("calls");
+
+  async function loadBranding() {
+    try {
+      const rootSnap = await companyRef.get();
+      const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
+      let branding = {};
+      try {
+        const brandingSnap = await companyRef.collection("branding").doc("main").get();
+        branding = brandingSnap.exists ? brandingSnap.data() || {} : {};
+      } catch (error) {
+        console.warn("Branding unavailable:", error);
+      }
+
+      const companyName = branding.companyName || rootData.companyName || "Factory On Call";
+      const nameEl = document.querySelector(".dh-company-name");
+      if (nameEl) nameEl.textContent = companyName;
+      localStorage.setItem("factory_on_call_company_name", companyName);
+    } catch (error) {
+      console.warn("Could not load display branding:", error);
+    }
+  }
+
+  await loadBranding();
 
   const activeCallsEl = document.getElementById("activeCalls");
   const statActive = document.getElementById("statActive");
