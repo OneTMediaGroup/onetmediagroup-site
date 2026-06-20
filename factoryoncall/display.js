@@ -1,6 +1,6 @@
 /* -------------------------------------------------
    FACTORY ON CALL — DISPLAY
-   Unified Firestore Version
+   Live TV / Wall Board
 -------------------------------------------------- */
 const COMPANY_STORAGE_KEY = "factory_on_call_active_company_id";
 
@@ -27,9 +27,12 @@ const COMPANY_ID = getActiveCompanyId();
     return new Promise((resolve, reject) => {
       const existing = document.querySelector(`script[src="${src}"]`);
       if (existing) {
+        if (existing.dataset.loaded === "true") {
+          resolve();
+          return;
+        }
         existing.addEventListener("load", resolve, { once: true });
         existing.addEventListener("error", reject, { once: true });
-        if (existing.dataset.loaded === "true") resolve();
         return;
       }
 
@@ -65,14 +68,86 @@ const COMPANY_ID = getActiveCompanyId();
 
   const db = app.firestore();
 
-  // ---- FIRESTORE PATHS ----
   const companyRef = db.collection("companies").doc(COMPANY_ID);
   const callsRef = companyRef.collection("calls");
+
+  const activeCallsEl = document.getElementById("activeCalls");
+  const statActive = document.getElementById("statActive");
+  const statWaiting = document.getElementById("statWaiting");
+  const statOnWay = document.getElementById("statOnWay");
+  const statClosed = document.getElementById("statClosed");
+  const connDot = document.getElementById("connDot");
+  const connLabel = document.getElementById("connLabel");
+
+  let latestCalls = [];
+
+  function setConn(ok) {
+    if (connDot) connDot.style.background = ok ? "#22c55e" : "#ef4444";
+    if (connLabel) connLabel.textContent = ok ? "Online" : "Offline";
+  }
+
+  function timestampToMs(value) {
+    if (!value) return 0;
+    if (typeof value === "number") return value;
+    if (typeof value.toMillis === "function") return value.toMillis();
+    if (typeof value.seconds === "number") return value.seconds * 1000;
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? 0 : parsed;
+  }
+
+  function fmtMinutesAgo(value) {
+    const ts = timestampToMs(value);
+    if (!ts) return "Just now";
+    const mins = Math.max(0, Math.floor((Date.now() - ts) / 60000));
+    if (mins < 1) return "Just now";
+    if (mins === 1) return "1 min ago";
+    return `${mins} min ago`;
+  }
+
+  function isToday(value) {
+    const ts = timestampToMs(value);
+    if (!ts) return false;
+
+    const d = new Date(ts);
+    const now = new Date();
+
+    return (
+      d.getFullYear() === now.getFullYear() &&
+      d.getMonth() === now.getMonth() &&
+      d.getDate() === now.getDate()
+    );
+  }
+
+  function normalizeList(value) {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === "string" && value.trim()) return [value.trim()];
+    return [];
+  }
+
+  function statusLabel(status) {
+    if (status === "ack") return "On the Way";
+    if (status === "closed") return "Closed";
+    return "Waiting";
+  }
+
+  function statusClass(status) {
+    if (status === "ack") return "status-onway";
+    if (status === "closed") return "status-closed";
+    return "status-waiting";
+  }
+
+  function callerName(call) {
+    const first = call.callerFirst || "";
+    const last = call.callerLast || "";
+    const full = `${first} ${last}`.trim();
+    return full || call.callerName || call.callerUid || "Operator";
+  }
 
   async function loadBranding() {
     try {
       const rootSnap = await companyRef.get();
       const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
+
       let branding = {};
       try {
         const brandingSnap = await companyRef.collection("branding").doc("main").get();
@@ -90,78 +165,107 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
-  await loadBranding();
+  function renderDisplay(calls) {
+    if (!activeCallsEl) return;
 
-  const activeCallsEl = document.getElementById("activeCalls");
-  const statActive = document.getElementById("statActive");
-  const statWaiting = document.getElementById("statWaiting");
-  const statOnWay = document.getElementById("statOnWay");
-  const statClosed = document.getElementById("statClosed");
-  const connDot = document.getElementById("connDot");
-  const connLabel = document.getElementById("connLabel");
-
-  function setConn(ok) {
-    connDot.style.background = ok ? "#22c55e" : "#ef4444";
-    connLabel.textContent = ok ? "Online" : "Offline";
-  }
-
-  setConn(false);
-
-  function fmtMinutesAgo(ts) {
-    return Math.max(0, Math.floor((Date.now() - (ts || 0)) / 60000));
-  }
-
-  function isToday(ts) {
-    if (!ts) return false;
-    const d = new Date(ts);
-    const now = new Date();
-    return (
-      d.getFullYear() === now.getFullYear() &&
-      d.getMonth() === now.getMonth() &&
-      d.getDate() === now.getDate()
-    );
-  }
-
-  callsRef.onSnapshot(snapshot => {
-    setConn(true);
-
-    const allCalls = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    const activeCalls = allCalls
-      .filter(c => c.status === "waiting" || c.status === "ack")
-      .sort((a, b) => (a.timeStarted || 0) - (b.timeStarted || 0));
-
-    activeCallsEl.innerHTML = "";
+    const activeCalls = calls
+      .filter(call => call.status === "waiting" || call.status === "ack")
+      .sort((a, b) => timestampToMs(a.timeStarted) - timestampToMs(b.timeStarted));
 
     let waiting = 0;
     let onWay = 0;
+
+    activeCallsEl.innerHTML = "";
+
+    if (!activeCalls.length) {
+      activeCallsEl.innerHTML = `
+        <div class="empty-state">
+          <div class="empty-title">No Active Calls</div>
+          <div class="empty-subtitle">All stations are clear.</div>
+        </div>
+      `;
+    }
 
     activeCalls.forEach(call => {
       if (call.status === "waiting") waiting++;
       if (call.status === "ack") onWay++;
 
+      const roles = normalizeList(call.roles);
+      const cells = normalizeList(call.cells);
+
+      const station = call.station || "Unknown Station";
+      const helpNeeded = roles.join(", ") || "Support";
+      const area = cells.join(", ") || "General";
+      const status = statusLabel(call.status);
+      const ackInfo = call.status === "ack" && call.ackBy ? `Acknowledged by ${call.ackBy}` : "Not yet acknowledged";
+
       const card = document.createElement("div");
-      card.className = "call-card";
+      card.className = `call-card ${statusClass(call.status)}`;
 
       card.innerHTML = `
-        <div class="call-row">
-          <div class="call-role">${(call.roles || []).join(", ")}</div>
-          <div class="call-cell">${(call.cells || []).join(", ") || "—"}</div>
-          <div class="call-time">${fmtMinutesAgo(call.timeStarted)} min ago</div>
-          <div class="call-ack">${call.ackBy ? "Ack: " + call.ackBy : "Waiting…"}</div>
+        <div class="call-main">
+          <div class="call-field station-field">
+            <div class="field-label">Station</div>
+            <div class="field-value">${station}</div>
+          </div>
+
+          <div class="call-field help-field">
+            <div class="field-label">Help Needed</div>
+            <div class="field-value">${helpNeeded}</div>
+          </div>
+
+          <div class="call-field area-field">
+            <div class="field-label">Area / Cell</div>
+            <div class="field-value">${area}</div>
+          </div>
+
+          <div class="call-field caller-field">
+            <div class="field-label">Requested By</div>
+            <div class="field-value">${callerName(call)}</div>
+          </div>
+
+          <div class="call-field time-field">
+            <div class="field-label">Waiting</div>
+            <div class="field-value">${fmtMinutesAgo(call.timeStarted)}</div>
+          </div>
+
+          <div class="call-field status-field">
+            <div class="field-label">Status</div>
+            <div class="status-pill ${statusClass(call.status)}">${status}</div>
+            <div class="status-note">${ackInfo}</div>
+          </div>
         </div>
       `;
 
       activeCallsEl.appendChild(card);
     });
 
-    statActive.textContent = activeCalls.length;
-    statWaiting.textContent = waiting;
-    statOnWay.textContent = onWay;
-    statClosed.textContent = allCalls.filter(
-      c => c.status === "closed" && isToday(c.timeClosed || c.timeStarted)
-    ).length;
-  }, err => {
-    console.error(err);
-    setConn(false);
-  });
+    if (statActive) statActive.textContent = String(activeCalls.length);
+    if (statWaiting) statWaiting.textContent = String(waiting);
+    if (statOnWay) statOnWay.textContent = String(onWay);
+    if (statClosed) {
+      statClosed.textContent = String(
+        calls.filter(call => call.status === "closed" && isToday(call.timeClosed || call.timeStarted)).length
+      );
+    }
+  }
+
+  setConn(false);
+  await loadBranding();
+
+  callsRef.onSnapshot(
+    snapshot => {
+      setConn(true);
+      latestCalls = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      renderDisplay(latestCalls);
+    },
+    error => {
+      console.error("Display listener error:", error);
+      setConn(false);
+    }
+  );
+
+  setInterval(() => {
+    if (latestCalls.length) renderDisplay(latestCalls);
+  }, 30000);
 })();
