@@ -63,6 +63,18 @@ body {
     flex-direction: column;
 }
 
+.sidebar-live-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+.sidebar-live-link:hover {
+  text-decoration: none;
+}
+
+
+
 .sidebar-header {
     padding-bottom: 16px;
     border-bottom: 1px solid #111827;
