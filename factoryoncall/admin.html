@@ -74,8 +74,8 @@
         <div id="toastContainer" class="toast-container"></div>
 
         <!-- DASHBOARD TAB -->
-        <section id="tab-dashboard" class="tab active">
-            <div class="grid grid-3">
+        <section id="tab-dashboard" class="tab active dashboard-tab">
+            <div class="grid grid-3 dashboard-top-stats">
                 <div class="card stat-card">
                     <h2>Today’s Calls</h2>
                     <p class="stat-big" id="statTotalCalls">–</p>
@@ -95,45 +95,32 @@
                 </div>
             </div>
 
-            <div class="grid grid-2">
-                <div class="card">
-                    <h2>Quick Statistics</h2>
-                    <ul class="simple-list" id="<section id="tab-dashboard" class="tab active">
-            <div class="grid grid-3">
-                <div class="card stat-card">
-                    <h2>Today’s Calls</h2>
-                    <p class="stat-big" id="statTotalCalls">–</p>
-                    <p class="muted">Calls started since midnight.</p>
+            <div class="dashboard-stack">
+                <div class="card dashboard-wide-card">
+                    <div class="card-header">
+                        <h2>Current Priority</h2>
+                    </div>
+                    <div id="dashboardPriorityCall" class="dashboard-priority muted">
+                        No active calls right now.
+                    </div>
                 </div>
 
-                <div class="card stat-card">
-                    <h2>Active Calls</h2>
-                    <p class="stat-big" id="statActiveCalls">–</p>
-                    <p class="muted">Currently open or in progress.</p>
-                </div>
-
-                <div class="card stat-card">
-                    <h2>Closed Today</h2>
-                    <p class="stat-big" id="statClosedCalls">–</p>
-                    <p class="muted">Calls fully resolved today.</p>
-                </div>
-            </div>
-
-            <div class="grid grid-2">
-                <div class="card">
-                    <h2>System Snapshot</h2>
-                    <div class="dashboard-mini-grid">
-                        <div class="mini-stat">
-                            <div class="mini-label">Stations</div>
-                            <div class="mini-value" id="statStations">–</div>
+                <div class="card dashboard-wide-card">
+                    <div class="card-header">
+                        <h2>System Snapshot</h2>
+                    </div>
+                    <div class="snapshot-row">
+                        <div class="snapshot-item">
+                            <span class="snapshot-label">Stations</span>
+                            <strong id="statStations">–</strong>
                         </div>
-                        <div class="mini-stat">
-                            <div class="mini-label">Personnel Required</div>
-                            <div class="mini-value" id="statPersonnel">–</div>
+                        <div class="snapshot-item">
+                            <span class="snapshot-label">Personnel Required</span>
+                            <strong id="statPersonnel">–</strong>
                         </div>
-                        <div class="mini-stat">
-                            <div class="mini-label">Users</div>
-                            <div class="mini-value" id="statUsers">–</div>
+                        <div class="snapshot-item">
+                            <span class="snapshot-label">Users</span>
+                            <strong id="statUsers">–</strong>
                         </div>
                     </div>
                     <p class="muted dashboard-note">
@@ -141,41 +128,14 @@
                     </p>
                 </div>
 
-                <div class="card">
-                    <h2>Current Priority</h2>
-                    <div id="dashboardPriorityCall" class="dashboard-priority muted">
-                        No active calls right now.
-                    </div>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2>Recent Activity</h2>
-                <div id="recentActivity" class="activity-list">
-                    <div class="muted">No recent activity yet.</div>
-                </div>
-            </div>
-        </section>"></ul>
-                </div>
-
-                <div class="card">
+                <div class="card dashboard-wide-card">
                     <div class="card-header">
-                        <h2>Quick Actions</h2>
+                        <h2>Recent Activity</h2>
                     </div>
-                    <div class="button-row">
-                        <button id="btnBroadcast" class="btn secondary">Broadcast Message</button>
-                        <button id="btnFreeze" class="btn danger">Toggle Maintenance Mode</button>
-                        <button id="btnForceLogout" class="btn">Force Logout All</button>
+                    <div id="recentActivity" class="activity-list">
+                        <div class="muted">No recent activity yet.</div>
                     </div>
-                    <p class="muted" style="margin-top:10px;">
-                        Use carefully – these actions affect all connected users and stations.
-                    </p>
                 </div>
-            </div>
-
-            <div class="card">
-                <h2>Recent Activity</h2>
-                <div id="recentActivity" class="activity-list"></div>
             </div>
         </section>
 

@@ -842,7 +842,9 @@ let ADMIN_LOCKED = false;
     if (typeof value === "number") return value;
     if (typeof value.toMillis === "function") return value.toMillis();
     if (typeof value.seconds === "number") return value.seconds * 1000;
-    return 0;
+
+    const parsed = Date.parse(value);
+    return Number.isNaN(parsed) ? 0 : parsed;
   }
 
   function isTodayMillis(ms) {
@@ -854,9 +856,30 @@ let ADMIN_LOCKED = false;
       && d.getDate() === now.getDate();
   }
 
-  function minutesAgo(ms) {
+  function smartElapsed(ms) {
     if (!ms) return "—";
-    return `${Math.max(0, Math.floor((Date.now() - ms) / 60000))} min`;
+
+    const totalMinutes = Math.max(0, Math.floor((Date.now() - ms) / 60000));
+
+    if (totalMinutes < 1) return "Just now";
+    if (totalMinutes < 60) return `${totalMinutes} min`;
+
+    const totalHours = Math.floor(totalMinutes / 60);
+    const minutes = totalMinutes % 60;
+
+    if (totalHours < 24) {
+      return minutes ? `${totalHours} hr ${minutes} min` : `${totalHours} hr`;
+    }
+
+    const days = Math.floor(totalHours / 24);
+    const hours = totalHours % 24;
+
+    if (days < 7) {
+      return hours ? `${days} day${days === 1 ? "" : "s"} ${hours} hr` : `${days} day${days === 1 ? "" : "s"}`;
+    }
+
+    const weeks = Math.floor(days / 7);
+    return `${weeks} wk${weeks === 1 ? "" : "s"}`;
   }
 
   function callStartMillis(call) {
@@ -906,17 +929,28 @@ let ADMIN_LOCKED = false;
         const status = oldest.status === "ack" || oldest.status === "acknowledged"
           ? "Acknowledged"
           : "Waiting";
+
         dashboardPriorityCall.innerHTML = `
-          <div class="priority-row">
+          <div class="dashboard-row priority-row-linear">
             <div>
-              <div class="priority-title">${callStation(oldest)}</div>
-              <div class="priority-meta">
-                ${callPersonnel(oldest)} • ${callLocation(oldest)}
-              </div>
+              <span class="row-label">Station</span>
+              <strong>${callStation(oldest)}</strong>
             </div>
-            <div class="priority-status">
-              <span>${status}</span>
-              <strong>${minutesAgo(callStartMillis(oldest))}</strong>
+            <div>
+              <span class="row-label">Personnel Required</span>
+              <strong>${callPersonnel(oldest)}</strong>
+            </div>
+            <div>
+              <span class="row-label">Location</span>
+              <strong>${callLocation(oldest)}</strong>
+            </div>
+            <div>
+              <span class="row-label">Waiting</span>
+              <strong>${smartElapsed(callStartMillis(oldest))}</strong>
+            </div>
+            <div>
+              <span class="row-label">Status</span>
+              <span class="status-pill ${status === "Acknowledged" ? "status-ack" : "status-waiting"}">${status}</span>
             </div>
           </div>
         `;
@@ -933,14 +967,35 @@ let ADMIN_LOCKED = false;
         recentActivity.innerHTML = `<div class="muted">No recent activity yet.</div>`;
       } else {
         recentActivity.innerHTML = recent.map(call => {
-          const status = String(call.status || "waiting");
+          const rawStatus = String(call.status || "waiting").toLowerCase();
+          const statusLabel = rawStatus === "ack" || rawStatus === "acknowledged"
+            ? "Acknowledged"
+            : rawStatus === "closed" || rawStatus === "complete" || rawStatus === "completed"
+              ? "Closed"
+              : "Waiting";
+
           return `
-            <div class="activity-item">
+            <div class="dashboard-row activity-row-linear">
               <div>
-                <div class="activity-title">${callStation(call)} — ${callPersonnel(call)}</div>
-                <div class="activity-meta">${callLocation(call)} • ${status}</div>
+                <span class="row-label">Station</span>
+                <strong>${callStation(call)}</strong>
               </div>
-              <div class="activity-meta">${minutesAgo(callStartMillis(call))}</div>
+              <div>
+                <span class="row-label">Personnel Required</span>
+                <strong>${callPersonnel(call)}</strong>
+              </div>
+              <div>
+                <span class="row-label">Location</span>
+                <strong>${callLocation(call)}</strong>
+              </div>
+              <div>
+                <span class="row-label">Age</span>
+                <strong>${smartElapsed(callStartMillis(call))}</strong>
+              </div>
+              <div>
+                <span class="row-label">Status</span>
+                <span class="status-pill ${statusLabel === "Closed" ? "status-closed" : statusLabel === "Acknowledged" ? "status-ack" : "status-waiting"}">${statusLabel}</span>
+              </div>
             </div>
           `;
         }).join("");
