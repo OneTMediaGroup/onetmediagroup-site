@@ -904,13 +904,62 @@ let ADMIN_LOCKED = false;
     return call.cell || call.location || "General";
   }
 
+  function dashboardStatusLabel(call) {
+    const rawStatus = String(call.status || "waiting").toLowerCase();
+
+    if (rawStatus === "ack" || rawStatus === "acknowledged") return "Acknowledged";
+    if (rawStatus === "closed" || rawStatus === "complete" || rawStatus === "completed") return "Closed";
+
+    return "Waiting";
+  }
+
+  function dashboardStatusClass(statusLabel) {
+    if (statusLabel === "Closed") return "status-closed";
+    if (statusLabel === "Acknowledged") return "status-ack";
+    return "status-waiting";
+  }
+
+  function dashboardRow(call, includeActionClass = "") {
+    const statusLabel = dashboardStatusLabel(call);
+    const statusClass = dashboardStatusClass(statusLabel);
+
+    return `
+      <div class="dashboard-table-row ${includeActionClass}">
+        <div class="dashboard-cell station-cell">${callStation(call)}</div>
+        <div class="dashboard-cell personnel-cell">${callPersonnel(call)}</div>
+        <div class="dashboard-cell location-cell">${callLocation(call)}</div>
+        <div class="dashboard-cell time-cell">${smartElapsed(callStartMillis(call))}</div>
+        <div class="dashboard-cell status-cell">
+          <span class="status-pill ${statusClass}">${statusLabel}</span>
+        </div>
+      </div>
+    `;
+  }
+
+  function dashboardHeader() {
+    return `
+      <div class="dashboard-table-head">
+        <div>Station</div>
+        <div>Personnel Required</div>
+        <div>Location</div>
+        <div>Age</div>
+        <div>Status</div>
+      </div>
+    `;
+  }
+
   function renderDashboardCalls(rows) {
     const calls = rows.map(row => ({ id: row.id, ...row.data }));
+
     const active = calls
-      .filter(c => c.status === "waiting" || c.status === "ack" || c.status === "acknowledged")
+      .filter(c => {
+        const status = String(c.status || "").toLowerCase();
+        return status === "waiting" || status === "ack" || status === "acknowledged";
+      })
       .sort((a, b) => callStartMillis(a) - callStartMillis(b));
 
     const todayCalls = calls.filter(c => isTodayMillis(callStartMillis(c)));
+
     const closedToday = calls.filter(c => {
       const status = String(c.status || "").toLowerCase();
       return (status === "closed" || status === "complete" || status === "completed")
@@ -923,31 +972,12 @@ let ADMIN_LOCKED = false;
 
     if (dashboardPriorityCall) {
       if (!active.length) {
-        dashboardPriorityCall.innerHTML = `<div class="muted">No active calls right now.</div>`;
+        dashboardPriorityCall.innerHTML = `<div class="dashboard-empty">No active calls right now.</div>`;
       } else {
-        const oldest = active[0];
-        const status = oldest.status === "ack" || oldest.status === "acknowledged"
-          ? "Acknowledged"
-          : "Waiting";
-
         dashboardPriorityCall.innerHTML = `
-          <div class="dashboard-row priority-row-linear">
-            <div>
-              <strong>${callStation(oldest)}</strong>
-            </div>
-            <div>
-              <strong>${callPersonnel(oldest)}</strong>
-            </div>
-            <div>
-              <strong>${callLocation(oldest)}</strong>
-            </div>
-            <div>
-              <strong>${smartElapsed(callStartMillis(oldest))}</strong>
-            </div>
-            <div>
-              <span class="row-label">Status</span>
-              <span class="status-pill ${status === "Acknowledged" ? "status-ack" : "status-waiting"}">${status}</span>
-            </div>
+          <div class="dashboard-table priority-table">
+            ${dashboardHeader()}
+            ${dashboardRow(active[0], "priority-row")}
           </div>
         `;
       }
@@ -957,40 +987,17 @@ let ADMIN_LOCKED = false;
       const recent = calls
         .slice()
         .sort((a, b) => (callStartMillis(b) || 0) - (callStartMillis(a) || 0))
-        .slice(0, 6);
+        .slice(0, 8);
 
       if (!recent.length) {
-        recentActivity.innerHTML = `<div class="muted">No recent activity yet.</div>`;
+        recentActivity.innerHTML = `<div class="dashboard-empty">No recent activity yet.</div>`;
       } else {
-        recentActivity.innerHTML = recent.map(call => {
-          const rawStatus = String(call.status || "waiting").toLowerCase();
-          const statusLabel = rawStatus === "ack" || rawStatus === "acknowledged"
-            ? "Acknowledged"
-            : rawStatus === "closed" || rawStatus === "complete" || rawStatus === "completed"
-              ? "Closed"
-              : "Waiting";
-
-          return `
-            <div class="dashboard-row activity-row-linear">
-              <div>
-                <strong>${callStation(call)}</strong>
-              </div>
-              <div>
-                <strong>${callPersonnel(call)}</strong>
-              </div>
-              <div>
-                <strong>${callLocation(call)}</strong>
-              </div>
-              <div>
-                <strong>${smartElapsed(callStartMillis(call))}</strong>
-              </div>
-              <div>
-                <span class="row-label">Status</span>
-                <span class="status-pill ${statusLabel === "Closed" ? "status-closed" : statusLabel === "Acknowledged" ? "status-ack" : "status-waiting"}">${statusLabel}</span>
-              </div>
-            </div>
-          `;
-        }).join("");
+        recentActivity.innerHTML = `
+          <div class="dashboard-table recent-table">
+            ${dashboardHeader()}
+            ${recent.map(call => dashboardRow(call)).join("")}
+          </div>
+        `;
       }
     }
   }
