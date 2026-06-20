@@ -2171,3 +2171,18 @@ textarea {
     justify-content: flex-start;
   }
 }
+
+
+/* FIXED DASHBOARD TABLES */
+.dashboard-table-head,.dashboard-table-row{
+display:grid !important;
+grid-template-columns:2fr 2fr 1.5fr 1fr 1fr !important;
+gap:16px;
+align-items:center;
+}
+.dashboard-table-head{padding:12px 16px;font-size:11px;text-transform:uppercase;color:#94a3b8;}
+.dashboard-table-row{padding:14px 16px;border-top:1px solid rgba(148,163,184,.12);}
+.dashboard-cell{display:block !important;}
+@media(max-width:1000px){
+.dashboard-table-head,.dashboard-table-row{grid-template-columns:1fr 1fr;}
+}
