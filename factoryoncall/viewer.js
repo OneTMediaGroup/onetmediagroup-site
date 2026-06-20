@@ -181,34 +181,78 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
+  function statusLabel(status) {
+    if (status === "ack") return "Acknowledged";
+    if (status === "closed") return "Completed";
+    return "Waiting";
+  }
+
+  function statusClass(status) {
+    if (status === "ack") return "status-onway";
+    if (status === "closed") return "status-closed";
+    return "status-waiting";
+  }
+
+  function normalizeList(value) {
+    if (Array.isArray(value)) return value.filter(Boolean);
+    if (typeof value === "string") {
+      return value
+        .split(",")
+        .map(item => item.trim())
+        .filter(Boolean);
+    }
+    return [];
+  }
+
   function renderCallList(calls) {
     if (!activeCalls) return;
 
-    activeCalls.innerHTML = "";
+    activeCalls.innerHTML = `
+      <div class="call-table-header" aria-hidden="true">
+        <span>Station</span>
+        <span>Personnel Required</span>
+        <span>Location</span>
+        <span>Waiting</span>
+        <span>Status</span>
+        <span>Actions</span>
+      </div>
+    `;
+
+    if (!calls.length) {
+      activeCalls.insertAdjacentHTML("beforeend", `
+        <div class="empty-state">
+          <div class="empty-title">No Active Calls</div>
+          <div class="empty-subtitle">All stations are clear.</div>
+        </div>
+      `);
+      return;
+    }
 
     calls.forEach(call => {
       const minutesAgo = fmtMinutesAgo(call.timeStarted);
-      const ackText = call.ackBy ? `Ack: ${call.ackBy}` : "Waiting…";
+      const personnelRequired = normalizeList(call.roles).join(", ") || "Support";
+      const location = normalizeList(call.cells).join(", ") || "—";
+      const status = statusLabel(call.status);
+      const ackText = call.status === "ack" && call.ackBy ? `By ${call.ackBy}` : status;
 
-      const card = document.createElement("div");
-      card.className = "call-card";
+      const row = document.createElement("div");
+      row.className = `call-row ${statusClass(call.status)}`;
 
-      card.innerHTML = `
-        <div class="call-row">
-          <span class="call-station">${call.station || ""}</span>
-          <span class="call-role">${(call.roles || []).join(", ")}</span>
-          <span class="call-cell">${(call.cells || []).join(", ") || "—"}</span>
-          <span class="call-time">${minutesAgo} min ago</span>
-          <span class="call-ack">${ackText}</span>
-
-          <div class="call-actions">
-            <button class="btn-green" data-id="${call.id}">Acknowledge</button>
-            ${viewerIsAdmin ? `<button class="btn-red" data-id="${call.id}">Close</button>` : ""}
-          </div>
+      row.innerHTML = `
+        <span class="call-station" title="${call.station || ""}">${call.station || "Unknown Station"}</span>
+        <span class="call-role" title="${personnelRequired}">${personnelRequired}</span>
+        <span class="call-cell" title="${location}">${location}</span>
+        <span class="call-time">${minutesAgo} min</span>
+        <span class="call-status">
+          <span class="status-pill ${statusClass(call.status)}">${ackText}</span>
+        </span>
+        <div class="call-actions">
+          <button class="btn-green" data-id="${call.id}">Acknowledge</button>
+          ${viewerIsAdmin ? `<button class="btn-red" data-id="${call.id}">Close</button>` : ""}
         </div>
       `;
 
-      activeCalls.appendChild(card);
+      activeCalls.appendChild(row);
     });
 
     wireButtons();

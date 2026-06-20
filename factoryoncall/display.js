@@ -210,12 +210,12 @@ const COMPANY_ID = getActiveCompanyId();
           </div>
 
           <div class="call-field help-field">
-            <div class="field-label">Help Needed</div>
+            <div class="field-label">Personnel Required</div>
             <div class="field-value">${helpNeeded}</div>
           </div>
 
           <div class="call-field area-field">
-            <div class="field-label">Area / Cell</div>
+            <div class="field-label">Location</div>
             <div class="field-value">${area}</div>
           </div>
 
