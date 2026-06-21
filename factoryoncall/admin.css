@@ -2740,3 +2740,42 @@ button.danger:hover {
   gap: 10px !important;
   margin: 10px 0 !important;
 }
+
+
+/* Roles search input — match Factory On Call dark field styling */
+#roleSearch.table-search,
+#roleSearch,
+.roles-table-toolbar input[type="search"],
+.table-toolbar input[type="search"],
+input[type="search"].table-search {
+    width: 260px !important;
+    max-width: 100% !important;
+    height: 42px !important;
+    border-radius: 10px !important;
+    border: 1px solid #1f2937 !important;
+    background: radial-gradient(circle at top, #020617 0, #020617 70%) !important;
+    color: var(--text-main) !important;
+    font-size: 13px !important;
+    padding: 7px 9px !important;
+    outline: none !important;
+    box-shadow: inset 0 0 0 1px rgba(15, 23, 42, 0.95) !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+}
+
+#roleSearch.table-search::placeholder,
+#roleSearch::placeholder,
+.roles-table-toolbar input[type="search"]::placeholder,
+.table-toolbar input[type="search"]::placeholder,
+input[type="search"].table-search::placeholder {
+    color: rgba(156, 163, 175, 0.75) !important;
+}
+
+#roleSearch.table-search:focus,
+#roleSearch:focus,
+.roles-table-toolbar input[type="search"]:focus,
+.table-toolbar input[type="search"]:focus,
+input[type="search"].table-search:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 1px rgba(0, 180, 255, 0.45), 0 0 24px rgba(0, 180, 255, 0.18) !important;
+}
