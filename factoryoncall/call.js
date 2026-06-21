@@ -152,7 +152,7 @@ const COMPANY_ID = getActiveCompanyId();
       lastName: user.lastName || split.lastName || "",
       uid: user.uid || user.employeeNumber || id || "",
       badgeCode: user.badgeCode || user.badge || user.uid || user.employeeNumber || id || "",
-      active: user.active !== false && user.archived !== true && String(user.status || "active").toLowerCase() !== "archived"
+      active: user.active !== false && user.archived !== true
     };
   }
 

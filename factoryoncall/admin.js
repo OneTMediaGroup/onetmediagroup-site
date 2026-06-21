@@ -248,9 +248,9 @@ let ADMIN_LOCKED = false;
   const userDept = document.getElementById("userDept");
   const userRole = document.getElementById("userRole");
   const userUID = document.getElementById("userUID");
+  const userBadgeCode = document.getElementById("userBadgeCode");
   const userPin = document.getElementById("userPin");
   const userActive = document.getElementById("userActive");
-  const userBadgeCode = document.getElementById("userBadgeCode");
   const userStatus = document.getElementById("userStatus");
   const userRoleFilter = document.getElementById("userRoleFilter");
   const userSelectAll = document.getElementById("userSelectAll");
@@ -305,25 +305,24 @@ let ADMIN_LOCKED = false;
   function normalizeUser(row) {
     const u = row.data || {};
     const split = splitName(u.name || "");
-    const rawStatus = String(u.status || (u.archived ? "archived" : (u.active === false ? "archived" : "active"))).toLowerCase();
-    const status = rawStatus === "archived" || rawStatus === "inactive" ? "archived" : "active";
     const uid = String(u.uid || u.employeeNumber || row.id || "").trim();
     const badgeCode = String(u.badgeCode || u.badge || uid || "").trim();
+    const archived = u.archived === true || String(u.status || "").toLowerCase() === "archived" || u.active === false;
 
     return {
       ...u,
       firstName: u.firstName || split.firstName || "",
       lastName: u.lastName || split.lastName || "",
       uid,
-      employeeNumber: u.employeeNumber || uid,
+      employeeNumber: uid,
       badgeCode,
-      email: u.email || "",
-      dept: u.dept || "",
+      email: "",
+      dept: "",
       role: u.role || "",
-      pin: u.pin || "",
-      status,
-      archived: status === "archived",
-      active: status !== "archived"
+      pin: u.pin || reverseId(uid),
+      status: archived ? "archived" : "active",
+      archived,
+      active: !archived
     };
   }
 
@@ -1138,64 +1137,57 @@ let ADMIN_LOCKED = false;
   // ---------- USERS ----------
   function populateDeptOptions() {
     populateAreaOptions();
-    populateUserRoleFilter();
   }
 
-  function fullUserName(user) {
-    return `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.name || "Unnamed User";
+  function fullUserName(user = {}) {
+    return `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.name || user.uid || "User";
   }
 
-  function userStatusLabel(user) {
-    return normalizeUser({ id: user.uid || "", data: user }).active ? "Active" : "Archived";
+  function reverseId(value = "") {
+    return String(value || "").trim().split("").reverse().join("");
+  }
+
+  function userStatusLabel(user = {}) {
+    return user.archived || user.active === false || String(user.status || "").toLowerCase() === "archived" ? "Archived" : "Active";
+  }
+
+  function userStatusPill(label) {
+    const cls = label === "Archived" ? "status-pill archived" : "status-pill active";
+    return `<span class="${cls}">${label}</span>`;
   }
 
   function rolePillHtml(role = "") {
-    const safe = escapeHtml(role || "No Role");
-    return `<span class="user-role-pill">${safe}</span>`;
+    return role ? `<span class="role-pill">${escapeHtml(role)}</span>` : "—";
   }
 
-  function statusPillHtml(status = "Active") {
-    const archived = String(status).toLowerCase() === "archived";
-    return `<span class="user-status-pill ${archived ? "archived" : "active"}">${archived ? "Archived" : "Active"}</span>`;
+  function userIdTaken(uid, currentId = "") {
+    const value = String(uid || "").trim().toLowerCase();
+    if (!value) return false;
+    return normalizeRows(cachedUsers).some(row => {
+      if (currentId && row.id === currentId) return false;
+      const u = row.data;
+      return String(u.uid || u.employeeNumber || "").trim().toLowerCase() === value;
+    });
   }
 
-  function populateUserRoleFilter() {
-    if (!userRoleFilter) return;
-
-    const current = userRoleFilter.value || "";
-    userRoleFilter.innerHTML = `<option value="">All roles (${cachedRoles.length})</option>`;
-
-    cachedRoles
-      .slice()
-      .filter(row => roleIsActive(row.data || {}))
-      .sort((a, b) => (a.data.name || "").localeCompare(b.data.name || ""))
-      .forEach(row => {
-        const opt = document.createElement("option");
-        opt.value = row.data.name || "";
-        opt.textContent = row.data.name || "";
-        userRoleFilter.appendChild(opt);
-      });
-
-    userRoleFilter.value = current;
+  function badgeCodeTaken(code, currentId = "") {
+    const value = String(code || "").trim().toLowerCase();
+    if (!value) return false;
+    return normalizeRows(cachedUsers).some(row => {
+      if (currentId && row.id === currentId) return false;
+      const u = row.data;
+      return String(u.badgeCode || "").trim().toLowerCase() === value;
+    });
   }
 
   function userSearchText(user) {
-    return [
-      user.firstName || "",
-      user.lastName || "",
-      user.name || "",
-      user.role || "",
-      user.uid || "",
-      user.employeeNumber || "",
-      user.badgeCode || "",
-      user.status || ""
-    ].join(" ").toLowerCase();
+    return [user.firstName, user.lastName, user.name, user.role, user.uid, user.employeeNumber, user.badgeCode, user.status]
+      .join(" ").toLowerCase();
   }
 
   function filteredUsers() {
     const search = (userSearch?.value || "").trim().toLowerCase();
     const role = userRoleFilter?.value || "";
-
     return normalizeRows(cachedUsers)
       .filter(row => {
         const u = row.data;
@@ -1213,7 +1205,6 @@ let ADMIN_LOCKED = false;
 
   function renderUsers(rows = cachedUsers) {
     if (!usersTableBody) return;
-
     const displayRows = rows === cachedUsers ? filteredUsers() : normalizeRows(rows);
     usersTableBody.innerHTML = "";
 
@@ -1228,13 +1219,11 @@ let ADMIN_LOCKED = false;
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><input type="checkbox" class="user-badge-check" data-id="${row.id}" /></td>
-        <td>
-          <strong>${escapeHtml(fullUserName(u))}</strong>
-        </td>
+        <td><strong>${escapeHtml(fullUserName(u))}</strong></td>
         <td>${rolePillHtml(u.role)}</td>
         <td>${escapeHtml(u.uid || "—")}</td>
         <td>${escapeHtml(u.badgeCode || u.uid || "—")}</td>
-        <td>${statusPillHtml(status)}</td>
+        <td>${userStatusPill(status)}</td>
         <td class="user-actions">
           <button class="btn small secondary print-user-badge-btn" data-id="${row.id}">Print Badge</button>
           <button class="btn small secondary edit-user-btn" data-id="${row.id}">Edit</button>
@@ -1243,52 +1232,43 @@ let ADMIN_LOCKED = false;
       `;
       usersTableBody.appendChild(tr);
     });
-
     wireUserTableButtons();
   }
 
   function selectedBadgeUsers() {
     const ids = Array.from(document.querySelectorAll(".user-badge-check:checked")).map(cb => cb.dataset.id);
-    return ids
-      .map(id => cachedUsers.find(row => row.id === id))
-      .filter(Boolean)
-      .map(row => ({ id: row.id, data: normalizeUser(row) }));
+    return ids.map(id => cachedUsers.find(row => row.id === id)).filter(Boolean).map(row => ({ id: row.id, data: normalizeUser(row) }));
   }
 
   function barcodeBars(value = "") {
     const text = String(value || "");
     let html = "";
-    for (let i = 0; i < text.length; i++) {
-      const code = text.charCodeAt(i);
+    for (const ch of text) {
+      const code = ch.charCodeAt(0);
       const width = (code % 3) + 1;
-      html += `<span style="display:inline-block;width:${width}px;height:34px;background:#111;margin-right:1px"></span>`;
-      html += `<span style="display:inline-block;width:1px;height:34px;background:transparent;margin-right:1px"></span>`;
+      html += `<span style="display:inline-block;width:${width}px;height:34px;background:#111;margin-right:2px"></span>`;
     }
-    return html || `<span style="display:inline-block;width:120px;height:34px;background:#111"></span>`;
+    return html || `<span style="display:inline-block;width:90px;height:34px;background:#111"></span>`;
   }
 
   function qrBlock(value = "") {
-    const text = String(value || "0");
+    const text = String(value || "");
     let cells = "";
     for (let i = 0; i < 49; i++) {
-      const code = text.charCodeAt(i % text.length) || i;
-      const on = (code + i * 7) % 3 !== 0;
-      cells += `<span style="width:5px;height:5px;background:${on ? "#111" : "#fff"};display:block"></span>`;
+      const on = ((text.charCodeAt(i % Math.max(text.length, 1)) || 7) + i * 3) % 2 === 0;
+      cells += `<span style="display:block;width:5px;height:5px;background:${on ? "#111" : "#fff"}"></span>`;
     }
-    return `<div style="display:grid;grid-template-columns:repeat(7,5px);gap:1px;padding:4px;background:#fff;border:1px solid #111">${cells}</div>`;
+    return `<div style="display:grid;grid-template-columns:repeat(7,5px);gap:1px;border:2px solid #111;padding:2px;background:#fff">${cells}</div>`;
   }
 
   function printBadges(userRows) {
-    const users = userRows
-      .map(row => ({ id: row.id, data: normalizeUser(row) }))
-      .filter(row => row.data.active);
-
+    const users = normalizeRows(userRows || []).filter(row => row.data.active !== false);
     if (!users.length) {
       alert("No active users selected for badge printing.");
       return;
     }
 
-    const companyName = COMPANY_NAME || COMPANY_ID || "Factory On Call";
+    const companyName = state.companyName || "Factory On Call";
     const badges = users.map(row => {
       const u = row.data;
       const badge = u.badgeCode || u.uid || row.id;
@@ -1298,13 +1278,9 @@ let ADMIN_LOCKED = false;
           <div class="badge-name">${escapeHtml(fullUserName(u))}</div>
           <div class="badge-role">${escapeHtml(u.role || "")}</div>
           <div class="badge-id">ID: ${escapeHtml(u.uid || "")}</div>
-          <div class="badge-code-row">
-            ${qrBlock(badge)}
-            <div class="badge-bars">${barcodeBars(badge)}</div>
-          </div>
+          <div class="badge-code-row">${qrBlock(badge)}<div class="badge-bars">${barcodeBars(badge)}</div></div>
           <div class="badge-foot">Powered by One T Media Group</div>
-        </div>
-      `;
+        </div>`;
     }).join("");
 
     const win = window.open("", "_blank");
@@ -1313,31 +1289,9 @@ let ADMIN_LOCKED = false;
       return;
     }
 
-    win.document.write(`
-      <!doctype html>
-      <html>
-      <head>
-        <title>Badge Sheet</title>
-        <style>
-          body{font-family:Arial,sans-serif;margin:20px;color:#111}
-          .badge-sheet{display:flex;flex-wrap:wrap;gap:14px}
-          .badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;background:#fff}
-          .badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}
-          .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}
-          .badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}
-          .badge-id{font-weight:800;margin:8px 0 6px}
-          .badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}
-          .badge-bars{height:34px;white-space:nowrap}
-          .badge-foot{font-size:8px;color:#6b7280;margin-top:5px}
-          @media print{body{margin:10px}.badge-card{break-inside:avoid}}
-        </style>
-      </head>
-      <body>
-        <div class="badge-sheet">${badges}</div>
-        <script>window.onload=()=>setTimeout(()=>window.print(),250)</script>
-      </body>
-      </html>
-    `);
+    win.document.write(`<!doctype html><html><head><title>Badge Sheet</title><style>
+      body{font-family:Arial,sans-serif;margin:14px;color:#111}.badge-sheet{display:flex;flex-wrap:wrap;gap:14px}.badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;background:#fff}.badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}.badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}.badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}.badge-id{font-weight:800;margin:8px 0 6px}.badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}.badge-bars{height:34px;white-space:nowrap}.badge-foot{font-size:8px;color:#6b7280;margin-top:5px}@media print{body{margin:10px}.badge-card{break-inside:avoid}}
+      </style></head><body><div class="badge-sheet">${badges}</div><script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script></body></html>`);
     win.document.close();
   }
 
@@ -1347,51 +1301,44 @@ let ADMIN_LOCKED = false;
         const id = btn.dataset.id;
         const found = cachedUsers.find(x => x.id === id);
         if (!found) return;
-
         const u = normalizeUser(found);
         if (userId) userId.value = found.id;
         if (userFirstName) userFirstName.value = u.firstName || "";
         if (userLastName) userLastName.value = u.lastName || "";
-        if (userDept) userDept.value = u.dept || "";
         if (userRole) userRole.value = u.role || "";
         if (userUID) userUID.value = u.uid || "";
         if (userBadgeCode) userBadgeCode.value = u.badgeCode || u.uid || "";
-        if (userPin) userPin.value = u.pin || "";
-        if (userStatus) userStatus.value = u.active ? "active" : "archived";
+        if (userPin) userPin.value = u.pin || reverseId(u.uid || "");
+        if (userStatus) userStatus.value = u.active === false ? "archived" : "active";
         if (userActive) userActive.checked = u.active !== false;
         if (userFormTitle) userFormTitle.textContent = "Edit User";
         activateTab("users");
       };
     });
 
-    document.querySelectorAll(".print-user-badge-btn").forEach(btn => {
-      btn.onclick = () => {
-        const found = cachedUsers.find(x => x.id === btn.dataset.id);
-        if (found) printBadges([found]);
+    document.querySelectorAll(".archive-user-btn").forEach(btn => {
+      btn.onclick = async () => {
+        if (blockDemoAdminAction("User archive")) return;
+        const id = btn.dataset.id;
+        const restore = btn.dataset.action === "restore";
+        try {
+          await usersRef.doc(id).set({
+            active: restore,
+            archived: !restore,
+            status: restore ? "active" : "archived",
+            updatedAt: Date.now()
+          }, { merge: true });
+        } catch (err) {
+          console.error(err);
+          alert("Could not update user status.");
+        }
       };
     });
 
-    document.querySelectorAll(".archive-user-btn").forEach(btn => {
-      btn.onclick = async () => {
-        if (blockDemoAdminAction("User management")) return;
-        const id = btn.dataset.id;
-        const action = btn.dataset.action;
-        const found = cachedUsers.find(x => x.id === id);
-        if (!found) return;
-
-        const label = fullUserName(normalizeUser(found));
-        const nextArchived = action === "archive";
-
-        if (nextArchived && !confirm(`Archive ${label}? This removes the user from active station and portal access but keeps history.`)) {
-          return;
-        }
-
-        await usersRef.doc(id).set({
-          active: !nextArchived,
-          archived: nextArchived,
-          status: nextArchived ? "archived" : "active",
-          updatedAt: Date.now()
-        }, { merge: true });
+    document.querySelectorAll(".print-user-badge-btn").forEach(btn => {
+      btn.onclick = () => {
+        const found = cachedUsers.find(row => row.id === btn.dataset.id);
+        if (found) printBadges([found]);
       };
     });
   }
@@ -1400,40 +1347,16 @@ let ADMIN_LOCKED = false;
     if (userForm) userForm.reset();
     if (userId) userId.value = "";
     if (userBadgeCode) userBadgeCode.value = "";
+    if (userPin) userPin.value = "";
     if (userStatus) userStatus.value = "active";
     if (userFormTitle) userFormTitle.textContent = "Add User";
     if (userActive) userActive.checked = true;
   }
 
-  function userIdTaken(uid, currentId = "") {
-    const value = String(uid || "").trim().toLowerCase();
-    if (!value) return false;
-
-    return cachedUsers.some(row => {
-      if (row.id === currentId) return false;
-      const u = normalizeUser(row);
-      return String(u.uid || "").trim().toLowerCase() === value
-        || String(u.employeeNumber || "").trim().toLowerCase() === value
-        || String(row.id || "").trim().toLowerCase() === value;
-    });
-  }
-
-  function badgeCodeTaken(code, currentId = "") {
-    const value = String(code || "").trim().toLowerCase();
-    if (!value) return false;
-
-    return cachedUsers.some(row => {
-      if (row.id === currentId) return false;
-      const u = normalizeUser(row);
-      return String(u.badgeCode || "").trim().toLowerCase() === value;
-    });
-  }
-
   function usersCsvTemplate() {
     return [
       "firstName,lastName,role,userId,badgeCode,pin,status",
-      "Bob,Smith,Operator,3002,3002,1234,active",
-      "Sarah,Quality,Quality,3003,3003,2222,active"
+      "Sally,Smith,Operator,331,331,133,active"
     ].join("\n");
   }
 
@@ -1441,92 +1364,66 @@ let ADMIN_LOCKED = false;
     const header = ["firstName","lastName","role","userId","badgeCode","pin","status"];
     const rows = normalizeRows(cachedUsers).map(row => {
       const u = row.data;
-      return [
-        csvSafe(u.firstName || ""),
-        csvSafe(u.lastName || ""),
-        csvSafe(u.role || ""),
-        csvSafe(u.uid || ""),
-        csvSafe(u.badgeCode || u.uid || ""),
-        csvSafe(u.pin || ""),
-        csvSafe(u.active ? "active" : "archived")
-      ].join(",");
+      return [u.firstName,u.lastName,u.role,u.uid,u.badgeCode || u.uid,u.pin || reverseId(u.uid),u.active === false ? "archived" : "active"].map(csvSafe).join(",");
     });
     return [header.join(","), ...rows].join("\n");
   }
 
   async function importUsersCsv(file) {
-    if (blockDemoAdminAction("User management")) return;
+    if (blockDemoAdminAction("User CSV import")) return;
     if (!file) return;
-
     const text = await file.text();
     const rows = parseCsv(text);
-    if (!rows.length) {
-      alert("No user rows found in CSV.");
+    if (rows.length < 2) {
+      alert("CSV file has no user rows.");
       return;
     }
-
-    const activeRoleNames = new Set(
-      cachedRoles
-        .filter(r => roleIsActive(r.data || {}))
-        .map(r => String(r.data.name || "").toLowerCase())
-    );
-
+    const headers = rows.shift().map(h => h.trim().toLowerCase());
+    const roleNames = new Set(activeRoles().map(r => String(r.data.name || r.id || "").trim().toLowerCase()));
+    const prepared = [];
     const missingRoles = new Set();
     const duplicateIds = new Set();
     const duplicateBadges = new Set();
     const seenIds = new Set();
     const seenBadges = new Set();
 
-    const parsedRows = rows
-      .map(row => {
-        const firstName = String(row.firstname || row.first_name || row.first || "").trim();
-        const lastName = String(row.lastname || row.last_name || row.last || "").trim();
-        const role = String(row.role || "").trim();
-        const uid = String(row.userid || row.user_id || row.employeeid || row.employee_id || row.uid || "").trim();
-        const badgeCode = String(row.badgecode || row.badge_code || row.badge || uid || "").trim();
-        const pin = String(row.pin || "").trim();
-        const rawStatus = String(row.status || "active").trim().toLowerCase();
-        const archived = rawStatus === "archived" || rawStatus === "inactive" || rawStatus === "no" || rawStatus === "false";
-        return { firstName, lastName, role, uid, badgeCode, pin, archived };
-      })
-      .filter(row => row.firstName || row.lastName || row.uid);
-
-    parsedRows.forEach(row => {
-      if (row.role && !activeRoleNames.has(row.role.toLowerCase())) missingRoles.add(row.role);
-
-      const idKey = row.uid.toLowerCase();
-      if (idKey) {
-        if (seenIds.has(idKey) || userIdTaken(row.uid)) duplicateIds.add(row.uid);
-        seenIds.add(idKey);
-      }
-
-      const badgeKey = row.badgeCode.toLowerCase();
+    rows.forEach(cols => {
+      const row = {};
+      headers.forEach((h, i) => row[h] = (cols[i] || "").trim());
+      const firstName = row.firstname || row.first_name || row.first || "";
+      const lastName = row.lastname || row.last_name || row.last || "";
+      const role = row.role || "";
+      const uid = row.userid || row.user_id || row.employeeid || row.employee_id || row.uid || "";
+      const badgeCode = row.badgecode || row.badge_code || row.badge || uid;
+      const pin = row.pin || reverseId(uid);
+      const status = String(row.status || "active").toLowerCase() === "archived" ? "archived" : "active";
+      if (!firstName || !lastName || !role || !uid) return;
+      if (!roleNames.has(role.toLowerCase())) missingRoles.add(role);
+      const idKey = uid.toLowerCase();
+      if (seenIds.has(idKey) || userIdTaken(uid)) duplicateIds.add(uid);
+      seenIds.add(idKey);
+      const badgeKey = badgeCode.toLowerCase();
       if (badgeKey) {
-        if (seenBadges.has(badgeKey) || badgeCodeTaken(row.badgeCode)) duplicateBadges.add(row.badgeCode);
+        if (seenBadges.has(badgeKey) || badgeCodeTaken(badgeCode)) duplicateBadges.add(badgeCode);
         seenBadges.add(badgeKey);
       }
+      prepared.push({ firstName, lastName, role, uid, badgeCode, pin, status });
     });
 
     if (missingRoles.size) {
-      alert(`CSV import stopped.\n\nThese Roles do not exist or are archived:\n${Array.from(missingRoles).sort().join("\n")}\n\nCreate or restore the Roles first, then import again.`);
+      alert(`CSV import stopped. Missing roles:\n${Array.from(missingRoles).sort().join("\n")}`);
       return;
     }
-
     if (duplicateIds.size) {
-      alert(`CSV import stopped.\n\nDuplicate User IDs found:\n${Array.from(duplicateIds).sort().join("\n")}\n\nUser IDs must be unique.`);
+      alert(`CSV import stopped. Duplicate User IDs:\n${Array.from(duplicateIds).sort().join("\n")}`);
       return;
     }
-
     if (duplicateBadges.size) {
-      alert(`CSV import stopped.\n\nDuplicate Badge Codes found:\n${Array.from(duplicateBadges).sort().join("\n")}\n\nBadge Codes must be unique.`);
+      alert(`CSV import stopped. Duplicate Badge Codes:\n${Array.from(duplicateBadges).sort().join("\n")}`);
       return;
     }
-
-    let imported = 0;
-
-    for (const row of parsedRows) {
-      if (!row.firstName || !row.lastName || !row.role || !row.uid || !row.pin) continue;
-
+    for (const row of prepared) {
+      const archived = row.status === "archived";
       await usersRef.doc(makeSafeId(row.uid)).set({
         companyId: COMPANY_ID,
         firstName: row.firstName,
@@ -1536,26 +1433,18 @@ let ADMIN_LOCKED = false;
         uid: row.uid,
         employeeNumber: row.uid,
         badgeCode: row.badgeCode || row.uid,
-        pin: row.pin,
-        status: row.archived ? "archived" : "active",
-        archived: row.archived,
-        active: !row.archived,
-        updatedAt: Date.now(),
-        createdAt: Date.now()
+        pin: row.pin || reverseId(row.uid),
+        email: "",
+        dept: "",
+        status: row.status,
+        archived,
+        active: !archived,
+        createdAt: Date.now(),
+        updatedAt: Date.now()
       }, { merge: true });
-
-      imported += 1;
     }
-
-    if (!imported) {
-      alert("No valid user rows found. First name, last name, role, userId, and pin are required.");
-      return;
-    }
-
-    alert(`Imported ${imported} user${imported === 1 ? "" : "s"}.`);
+    alert(`Imported ${prepared.length} user(s).`);
   }
-
-
 
   // ---------- CALL LOGS ----------
   function formatDateTime(ms) {
@@ -2076,10 +1965,9 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
     // Users
     userUID?.addEventListener("input", () => {
-      if (!userBadgeCode) return;
-      if (!userBadgeCode.value.trim()) {
-        userBadgeCode.value = userUID.value.trim();
-      }
+      const uid = userUID.value.trim();
+      if (userBadgeCode && !userBadgeCode.value.trim()) userBadgeCode.value = uid;
+      if (userPin && !userPin.value.trim()) userPin.value = reverseId(uid);
     });
 
     userForm?.addEventListener("submit", async e => {
@@ -2091,7 +1979,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       const lastName = userLastName?.value.trim() || "";
       const uid = userUID?.value.trim() || "";
       const badgeCode = userBadgeCode?.value.trim() || uid;
-      const pin = userPin?.value.trim() || "";
+      const pin = userPin?.value.trim() || reverseId(uid);
       const role = userRole?.value || "";
       const status = userStatus?.value || "active";
       const archived = status === "archived";
@@ -2114,46 +2002,17 @@ stationFormReset?.addEventListener("click", resetStationForm);
         updatedAt: Date.now()
       };
 
-      if (!payload.firstName || !payload.lastName) {
-        alert("First and last name are required.");
-        return;
-      }
-
-      if (!payload.role) {
-        alert("Role is required.");
-        return;
-      }
-
-      if (!payload.uid) {
-        alert("User ID is required.");
-        return;
-      }
-
-      if (!payload.pin) {
-        alert("PIN is required.");
-        return;
-      }
-
-      if (userIdTaken(payload.uid, currentId)) {
-        alert(`User ID "${payload.uid}" is already in use. Use a unique User ID.`);
-        return;
-      }
-
-      if (badgeCodeTaken(payload.badgeCode, currentId)) {
-        alert(`Badge Code "${payload.badgeCode}" is already in use. Use a unique Badge Code.`);
-        return;
-      }
+      if (!payload.firstName || !payload.lastName) return alert("First and last name are required.");
+      if (!payload.role) return alert("Role is required.");
+      if (!payload.uid) return alert("User ID is required.");
+      if (!payload.pin) return alert("PIN is required.");
+      if (userIdTaken(payload.uid, currentId)) return alert(`User ID "${payload.uid}" is already in use.`);
+      if (badgeCodeTaken(payload.badgeCode, currentId)) return alert(`Badge Code "${payload.badgeCode}" is already in use.`);
 
       try {
         const docId = currentId || makeSafeId(payload.uid);
-
-        if (currentId) {
-          await usersRef.doc(docId).set(payload, { merge: true });
-        } else {
-          payload.createdAt = Date.now();
-          await usersRef.doc(docId).set(payload, { merge: true });
-        }
-
+        if (!currentId) payload.createdAt = Date.now();
+        await usersRef.doc(docId).set(payload, { merge: true });
         resetUserForm();
       } catch (err) {
         console.error(err);
@@ -2162,44 +2021,23 @@ stationFormReset?.addEventListener("click", resetStationForm);
     });
 
     userFormReset?.addEventListener("click", resetUserForm);
-
     userSearch?.addEventListener("input", () => renderUsers(cachedUsers));
     userRoleFilter?.addEventListener("change", () => renderUsers(cachedUsers));
 
     userSelectAll?.addEventListener("change", () => {
-      document.querySelectorAll(".user-badge-check").forEach(cb => {
-        cb.checked = !!userSelectAll.checked;
-      });
+      document.querySelectorAll(".user-badge-check").forEach(cb => cb.checked = !!userSelectAll.checked);
     });
 
-    btnDownloadUsersTemplate?.addEventListener("click", () => {
-      downloadText("factory-on-call-users-template.csv", usersCsvTemplate(), "text/csv");
-    });
-
-    btnExportUsersCsv?.addEventListener("click", () => {
-      downloadText("factory-on-call-users.csv", usersCsvRows(), "text/csv");
-    });
-
+    btnDownloadUsersTemplate?.addEventListener("click", () => downloadText("factory-on-call-users-template.csv", usersCsvTemplate(), "text/csv"));
+    btnExportUsersCsv?.addEventListener("click", () => downloadText("factory-on-call-users.csv", usersCsvRows(), "text/csv"));
     btnImportUsersCsv?.addEventListener("click", () => userCsvImport?.click());
-
     userCsvImport?.addEventListener("change", async () => {
-      try {
-        await importUsersCsv(userCsvImport.files?.[0]);
-      } catch (err) {
-        console.error(err);
-        alert("Could not import users CSV.");
-      } finally {
-        userCsvImport.value = "";
-      }
+      try { await importUsersCsv(userCsvImport.files?.[0]); }
+      catch (err) { console.error(err); alert("Could not import users CSV."); }
+      finally { userCsvImport.value = ""; }
     });
-
-    btnPrintSelectedBadges?.addEventListener("click", () => {
-      printBadges(selectedBadgeUsers());
-    });
-
-    btnPrintAllBadges?.addEventListener("click", () => {
-      printBadges(cachedUsers);
-    });
+    btnPrintSelectedBadges?.addEventListener("click", () => printBadges(selectedBadgeUsers()));
+    btnPrintAllBadges?.addEventListener("click", () => printBadges(cachedUsers));
   }
 
 
@@ -2573,8 +2411,6 @@ stationFormReset?.addEventListener("click", resetStationForm);
           }));
 
           renderRoles(cachedRoles);
-          populateRoleOptions();
-          populateUserRoleFilter();
           if (statPersonnel) statPersonnel.textContent = String(cachedRoles.filter(x => x.data.active !== false).length);
         },
         err => {

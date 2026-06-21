@@ -2806,123 +2806,47 @@ input[type="search"].table-search:focus {
 }
 
 
-/* Users polish */
-.user-card-header,
-.user-tools,
-.user-filter-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
+/* Users badge / CSV polish */
+.users-layout{
+  display:grid;
+  grid-template-columns:minmax(680px,1.5fr) minmax(360px,.8fr);
+  gap:24px;
+  align-items:start;
 }
-
-.user-card-header {
-  justify-content: space-between;
-  margin-bottom: 14px;
+.users-header-row{
+  display:flex;
+  justify-content:space-between;
+  gap:20px;
+  align-items:flex-start;
 }
-
-.user-tools {
-  justify-content: flex-end;
+.user-tools{
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:flex-end;
+  gap:8px;
+  max-width:520px;
 }
-
-.user-filter-row {
-  margin: 10px 0 16px;
+.user-filter-row{
+  display:grid;
+  grid-template-columns:minmax(260px,1fr) 220px;
+  gap:10px;
+  margin:16px 0;
 }
-
-#userSearch,
-#userRoleFilter {
-  height: 42px;
-  background: rgba(8, 14, 32, 0.95);
-  border: 1px solid rgba(90, 110, 150, 0.45);
-  border-radius: 12px;
-  color: var(--text-strong);
-  padding: 0 14px;
-  font-size: 0.95rem;
-  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.03);
+#userSearch,#userRoleFilter,#userStatus,#userBadgeCode{
+  background:rgba(8,14,32,.95);
+  border:1px solid rgba(90,110,150,.45);
+  border-radius:12px;
+  color:#f4f7ff;
+  padding:10px 14px;
+  font-size:15px;
+  min-height:42px;
 }
-
-#userSearch {
-  min-width: 320px;
-  flex: 1;
-}
-
-#userRoleFilter {
-  min-width: 190px;
-}
-
-#userSearch::placeholder {
-  color: rgba(180, 190, 210, 0.55);
-}
-
-#userSearch:focus,
-#userRoleFilter:focus {
-  outline: none;
-  border-color: #22d3ee;
-  box-shadow: 0 0 0 2px rgba(34,211,238,0.18);
-}
-
-.users-table th:first-child,
-.users-table td:first-child {
-  width: 42px;
-  text-align: center;
-}
-
-.users-table th:last-child,
-.users-table td:last-child {
-  min-width: 260px;
-}
-
-.user-actions {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-  flex-wrap: wrap;
-}
-
-.user-role-pill,
-.user-status-pill {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 86px;
-  padding: 4px 10px;
-  border-radius: 999px;
-  font-size: 0.78rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-}
-
-.user-role-pill {
-  background: rgba(59, 130, 246, 0.18);
-  color: #bfdbfe;
-  border: 1px solid rgba(96, 165, 250, 0.22);
-}
-
-.user-status-pill.active {
-  background: rgba(34, 197, 94, 0.18);
-  color: #bbf7d0;
-  border: 1px solid rgba(34, 197, 94, 0.28);
-}
-
-.user-status-pill.archived {
-  background: rgba(148, 163, 184, 0.16);
-  color: #cbd5e1;
-  border: 1px solid rgba(148, 163, 184, 0.25);
-}
-
-.btn.danger {
-  background: linear-gradient(90deg, #ff4d4d, #ff7a1a);
-  color: #06111f;
-  border: none;
-}
-
-@media (max-width: 1200px) {
-  .user-tools {
-    justify-content: flex-start;
-  }
-
-  .users-table th:last-child,
-  .users-table td:last-child {
-    min-width: 220px;
-  }
-}
+#userSearch::placeholder,#userBadgeCode::placeholder{color:rgba(180,190,210,.55)}
+.users-table th,.users-table td{white-space:nowrap;vertical-align:middle}
+.user-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center}
+.status-pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 10px;font-weight:800;font-size:12px}
+.status-pill.active{background:rgba(34,197,94,.14);color:#86efac;border:1px solid rgba(34,197,94,.25)}
+.status-pill.archived{background:rgba(148,163,184,.12);color:#cbd5e1;border:1px solid rgba(148,163,184,.22)}
+.role-pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 10px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.22);font-size:12px;font-weight:800;color:#dff7ff}
+.table-empty{padding:28px!important;text-align:center;color:rgba(226,232,240,.6)}
+@media(max-width:1100px){.users-layout{grid-template-columns:1fr}.users-header-row{flex-direction:column}.user-tools{justify-content:flex-start}.user-filter-row{grid-template-columns:1fr}}

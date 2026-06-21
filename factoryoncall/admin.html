@@ -239,13 +239,12 @@
 
         <!-- USERS TAB -->
         <section id="tab-users" class="tab">
-            <div class="grid-2">
-
+            <div class="users-layout">
                 <div class="card users-card">
-                    <div class="card-header user-card-header">
+                    <div class="users-header-row">
                         <div>
                             <h2>Users</h2>
-                            <p class="muted">Add users, assign roles, manage IDs, badges, and access.</p>
+                            <p class="muted">Add users, assign roles, manage IDs, PINs, badges, and access.</p>
                         </div>
                         <div class="user-tools">
                             <input id="userCsvImport" type="file" accept=".csv,text/csv" hidden />
@@ -258,8 +257,10 @@
                     </div>
 
                     <div class="user-filter-row">
-                        <input id="userSearch" class="table-search" type="text" placeholder="Search users, roles, ID, or badge..." />
-                        <select id="userRoleFilter"></select>
+                        <input id="userSearch" type="text" placeholder="Search users, roles, ID, or badge..." />
+                        <select id="userRoleFilter">
+                            <option value="">All roles</option>
+                        </select>
                     </div>
 
                     <div class="table-wrapper">
@@ -280,20 +281,20 @@
                     </div>
                 </div>
 
-                <div class="card">
+                <div class="card user-form-card">
                     <h2 id="userFormTitle">Add User</h2>
-                    <p class="muted">Employee ID is required. Badge Code auto-fills from User ID and can be changed for scanner systems.</p>
+                    <p class="muted">User ID is required. Default PIN is the User ID in reverse. Badge Code auto-fills from User ID and can be changed for scanner systems.</p>
                     <form id="userForm" class="form">
                         <input type="hidden" id="userId" />
 
                         <label>
                             First Name
-                            <input type="text" id="userFirstName" required placeholder="Example: Bob" />
+                            <input type="text" id="userFirstName" placeholder="Example: Bob" required />
                         </label>
 
                         <label>
                             Last Name
-                            <input type="text" id="userLastName" required placeholder="Example: Smith" />
+                            <input type="text" id="userLastName" placeholder="Example: Smith" required />
                         </label>
 
                         <label>
@@ -303,17 +304,17 @@
 
                         <label>
                             User ID
-                            <input type="text" id="userUID" maxlength="12" required placeholder="Required, e.g. 3002" />
+                            <input type="text" id="userUID" placeholder="Required, e.g. 331" />
                         </label>
 
                         <label>
                             Badge Code
-                            <input type="text" id="userBadgeCode" maxlength="32" placeholder="Auto-fills from User ID" />
+                            <input type="text" id="userBadgeCode" placeholder="Auto-fills from User ID" />
                         </label>
 
                         <label>
                             PIN
-                            <input type="password" id="userPin" maxlength="8" required placeholder="Required, e.g. 1234" />
+                            <input type="text" id="userPin" placeholder="Defaults to reversed User ID" />
                         </label>
 
                         <label>
@@ -324,17 +325,12 @@
                             </select>
                         </label>
 
-                        <p class="form-help">
-                            Users need a Role and User ID before they can make calls. Badge Code is used for scanner/badge workflows. PIN is typed by the user when needed.
-                        </p>
-
                         <div class="button-row">
                             <button type="submit" class="btn">Save</button>
                             <button type="button" id="userFormReset" class="btn secondary">Reset</button>
                         </div>
                     </form>
                 </div>
-
             </div>
         </section>
 
