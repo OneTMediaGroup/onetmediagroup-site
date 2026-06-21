@@ -515,6 +515,56 @@ let ADMIN_LOCKED = false;
     });
   }
 
+  function stationStatus(station = {}) {
+    const hasArea = !!stationAreaName(station);
+    if (station.archived === true || station.active === false) return "Archived";
+    if (!hasArea) return "Waiting";
+    return "Active";
+  }
+
+  function stationStatusClass(station = {}) {
+    const status = stationStatus(station).toLowerCase();
+    if (status === "active") return "status-pill success";
+    if (status === "archived") return "status-pill neutral";
+    return "status-pill warning";
+  }
+
+  function isActiveCallStatus(status) {
+    const value = String(status || "").toLowerCase();
+    return value === "waiting" || value === "ack" || value === "acknowledged" || value === "on_way" || value === "on way";
+  }
+
+  function stationHasActiveCalls(station = {}) {
+    const stationName = String(station.name || "").trim().toLowerCase();
+    if (!stationName) return false;
+
+    return cachedCalls.some(call => {
+      if (!isActiveCallStatus(call.status)) return false;
+      const callStationName = String(call.station || call.stationName || "").trim().toLowerCase();
+      return callStationName === stationName;
+    });
+  }
+
+  function stationDuplicateExists(name, excludeId = "") {
+    const key = String(name || "").trim().toLowerCase();
+    if (!key) return false;
+
+    return cachedStations.some(row => {
+      if (excludeId && row.id === excludeId) return false;
+      const rowName = String(row.data?.name || "").trim().toLowerCase();
+      return rowName === key;
+    });
+  }
+
+  function activeAreaNamesSet() {
+    return new Set(
+      cachedAreas
+        .filter(row => row.data?.active !== false)
+        .map(row => String(row.data?.name || "").trim().toLowerCase())
+        .filter(Boolean)
+    );
+  }
+
   function renderStations(rows) {
     if (!stationsTableBody) return;
 
@@ -523,17 +573,21 @@ let ADMIN_LOCKED = false;
     sortedStations(rows).forEach(row => {
       const s = row.data || {};
       const areaValue = stationAreaName(s);
-      const activeValue = !!areaValue && s.active !== false;
+      const status = stationStatus(s);
+      const canOpen = status === "Active";
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td><strong>${s.name || ""}</strong></td>
         <td>${areaValue || "Waiting to be assigned"}</td>
         <td>${s.description || ""}</td>
-        <td>${activeValue ? "Yes" : "No"}</td>
+        <td><span class="${stationStatusClass(s)}">${status}</span></td>
         <td>
           <button class="btn small secondary edit-station-btn" data-id="${row.id}">Edit</button>
-          <button class="btn small copy-station-link-btn" data-url="${buildCallUrl(s.name || "", [s.name || ""], areaValue)}">Copy Link</button>
-          <button class="btn small secondary open-station-link-btn" data-url="${buildCallUrl(s.name || "", [s.name || ""], areaValue)}">Open</button>
+          ${canOpen ? `<button class="btn small copy-station-link-btn" data-url="${buildCallUrl(s.name || "", [s.name || ""], areaValue)}">Copy Link</button>` : ""}
+          ${canOpen ? `<button class="btn small secondary open-station-link-btn" data-url="${buildCallUrl(s.name || "", [s.name || ""], areaValue)}">Open</button>` : ""}
+          ${status === "Archived"
+            ? `<button class="btn small secondary restore-station-btn" data-id="${row.id}">Restore</button>`
+            : `<button class="btn small danger archive-station-btn" data-id="${row.id}">Archive</button>`}
         </td>
       `;
       stationsTableBody.appendChild(tr);
@@ -554,7 +608,6 @@ let ADMIN_LOCKED = false;
         if (stationName) stationName.value = s.name || "";
         if (stationArea) stationArea.value = stationAreaName(s) || "";
         if (stationDescription) stationDescription.value = s.description || "";
-        if (stationActive) stationActive.checked = !!stationAreaName(s) && s.active !== false;
         if (stationFormTitle) stationFormTitle.textContent = "Edit Station";
         activateTab("stations");
       };
@@ -575,6 +628,61 @@ let ADMIN_LOCKED = false;
         window.open(url, "_blank");
       };
     });
+
+    document.querySelectorAll(".archive-station-btn").forEach(btn => {
+      btn.onclick = async () => {
+        if (blockDemoAdminAction("Station archive")) return;
+
+        const id = btn.dataset.id;
+        const found = cachedStations.find(x => x.id === id);
+        if (!found) return;
+
+        if (stationHasActiveCalls(found.data)) {
+          alert("This station has active calls. Close or complete those calls before archiving the station.");
+          return;
+        }
+
+        const ok = confirm(`Archive station "${found.data?.name || id}"?\n\nArchived stations are hidden from active use but remain available for history.`);
+        if (!ok) return;
+
+        try {
+          await stationsRef.doc(id).update({
+            active: false,
+            archived: true,
+            updatedAt: Date.now()
+          });
+        } catch (err) {
+          console.error(err);
+          alert("Could not archive station.");
+        }
+      };
+    });
+
+    document.querySelectorAll(".restore-station-btn").forEach(btn => {
+      btn.onclick = async () => {
+        if (blockDemoAdminAction("Station restore")) return;
+
+        const id = btn.dataset.id;
+        const found = cachedStations.find(x => x.id === id);
+        if (!found) return;
+
+        if (!stationAreaName(found.data)) {
+          alert("Assign an Area before restoring this station.");
+          return;
+        }
+
+        try {
+          await stationsRef.doc(id).update({
+            active: true,
+            archived: false,
+            updatedAt: Date.now()
+          });
+        } catch (err) {
+          console.error(err);
+          alert("Could not restore station.");
+        }
+      };
+    });
   }
 
   function resetStationForm() {
@@ -582,7 +690,6 @@ let ADMIN_LOCKED = false;
     if (stationId) stationId.value = "";
     if (stationFormTitle) stationFormTitle.textContent = "Add Station";
     if (stationArea) stationArea.value = "";
-    if (stationActive) stationActive.checked = false;
   }
 
   function normalizeYesNo(value) {
@@ -630,15 +737,14 @@ let ADMIN_LOCKED = false;
   }
 
   function stationsCsvRows() {
-    const header = ["station_name", "area", "description", "active"];
+    const header = ["station_name", "area", "description", "status"];
     const rows = sortedStations(cachedStations).map(row => {
       const s = row.data || {};
-      const areaValue = stationAreaName(s);
       return [
         csvSafe(s.name || ""),
-        csvSafe(areaValue || ""),
+        csvSafe(stationAreaName(s) || ""),
         csvSafe(s.description || ""),
-        csvSafe((areaValue && s.active !== false) ? "Yes" : "No")
+        csvSafe(stationStatus(s))
       ].join(",");
     });
     return [header.join(","), ...rows].join("\n");
@@ -646,38 +752,76 @@ let ADMIN_LOCKED = false;
 
   function stationTemplateCsv() {
     return [
-      "station_name,area,description,active",
-      "Press 1,Production,1200 Ton Press,Yes",
-      "Press 2,Production,800 Ton Press,Yes",
-      "Receiving 1,Receiving,Main Receiving Dock,Yes",
-      "Shipping 1,Shipping,Outbound Shipping Dock,Yes"
+      "station_name,area,description,status",
+      "Press 1,Production,1200 Ton Press,Active",
+      "Press 2,Production,800 Ton Press,Active",
+      "Receiving 1,Receiving,Main Receiving Dock,Active",
+      "Shipping 1,Shipping,Outbound Shipping Dock,Active"
     ].join("\n");
   }
 
   async function importStationsCsv(file) {
     if (!file) return;
     if (blockDemoAdminAction("Station CSV import")) return;
+
     const text = await file.text();
     const rows = parseCsv(text);
+    if (!rows.length) {
+      alert("No station rows found in CSV.");
+      return;
+    }
+
+    const areaNames = activeAreaNamesSet();
+    const missingAreas = new Set();
+    const duplicateNames = new Set();
+    const seenNames = new Set();
+
+    const parsedRows = rows
+      .map(row => {
+        const name = String(row.station_name || row.station || row.work_cell || row.workcell || row.name || "").trim();
+        const area = String(row.area || row.department || "").trim();
+        const description = String(row.description || row.desc || "").trim();
+        const rawStatus = String(row.status || row.active || "Active").trim().toLowerCase();
+        const archived = rawStatus === "archived" || rawStatus === "inactive" || rawStatus === "no" || rawStatus === "false";
+        return { name, area, description, archived };
+      })
+      .filter(row => row.name);
+
+    parsedRows.forEach(row => {
+      const nameKey = row.name.toLowerCase();
+      if (seenNames.has(nameKey) || stationDuplicateExists(row.name)) duplicateNames.add(row.name);
+      seenNames.add(nameKey);
+
+      if (row.area && !areaNames.has(row.area.toLowerCase())) missingAreas.add(row.area);
+    });
+
+    if (missingAreas.size) {
+      alert(`CSV import stopped.\n\nThese Areas do not exist yet:\n${Array.from(missingAreas).sort().join("\n")}\n\nCreate the Areas first, then import again.`);
+      return;
+    }
+
+    if (duplicateNames.size) {
+      alert(`CSV import stopped.\n\nDuplicate station names found:\n${Array.from(duplicateNames).sort().join("\n")}\n\nStation names must be unique.`);
+      return;
+    }
+
     let imported = 0;
-    for (const row of rows) {
-      const name = row.station_name || row.station || row.work_cell || row.workcell || row.name || "";
-      const area = row.area || row.department || "";
-      const description = row.description || row.desc || "";
-      if (!String(name).trim()) continue;
-      const active = !!String(area).trim() && normalizeYesNo(row.active || "Yes");
+    for (const row of parsedRows) {
+      const hasArea = !!row.area;
       await stationsRef.add({
         companyId: COMPANY_ID,
-        name: String(name).trim(),
-        area: String(area).trim(),
-        description: String(description).trim(),
-        cells: [String(name).trim()],
-        active,
+        name: row.name,
+        area: row.area,
+        description: row.description,
+        cells: [row.name],
+        active: hasArea && !row.archived,
+        archived: row.archived || !hasArea,
         createdAt: Date.now(),
         updatedAt: Date.now()
       });
       imported++;
     }
+
     alert(`Imported ${imported} station${imported === 1 ? "" : "s"}.`);
   }
 
@@ -1165,14 +1309,15 @@ let ADMIN_LOCKED = false;
       if (blockDemoAdminAction("Station management")) return;
 
       const selectedArea = stationArea?.value || "";
-      const requestedActive = !!stationActive?.checked;
+      const stationNameValue = stationName?.value.trim() || "";
       const payload = {
         companyId: COMPANY_ID,
-        name: stationName?.value.trim() || "",
+        name: stationNameValue,
         area: selectedArea,
         description: stationDescription?.value.trim() || "",
-        cells: [stationName?.value.trim() || ""].filter(Boolean),
-        active: !!selectedArea && requestedActive,
+        cells: [stationNameValue].filter(Boolean),
+        active: !!selectedArea,
+        archived: !selectedArea,
         updatedAt: Date.now()
       };
 
@@ -1181,8 +1326,13 @@ let ADMIN_LOCKED = false;
         return;
       }
 
-      if (requestedActive && !selectedArea) {
-        alert("Assign an Area before marking a station active. This station will be saved as inactive.");
+      if (stationDuplicateExists(payload.name, stationId?.value || "")) {
+        alert("A station with this name already exists. Station names must be unique.");
+        return;
+      }
+
+      if (!selectedArea) {
+        alert("Assign an Area before saving a station. This station will be saved as archived until an Area is assigned.");
       }
 
       try {
@@ -1198,19 +1348,7 @@ let ADMIN_LOCKED = false;
         alert("Could not save station.");
       }
     });
-
-    stationArea?.addEventListener("change", () => {
-      if (!stationArea.value && stationActive) stationActive.checked = false;
-    });
-
-    stationActive?.addEventListener("change", () => {
-      if (stationActive.checked && !stationArea?.value) {
-        stationActive.checked = false;
-        alert("Assign an Area before marking a station active.");
-      }
-    });
-
-    stationFormReset?.addEventListener("click", resetStationForm);
+stationFormReset?.addEventListener("click", resetStationForm);
 
     btnDownloadStationsTemplate?.addEventListener("click", () => {
       downloadText("factory-on-call-stations-template.csv", stationTemplateCsv(), "text/csv");
@@ -1775,7 +1913,7 @@ let ADMIN_LOCKED = false;
           renderStations(cachedStations);
           renderAreas(cachedAreas);
           populateDeptOptions();
-          if (statStations) statStations.textContent = String(cachedStations.filter(x => x.data.active !== false).length);
+          if (statStations) statStations.textContent = String(cachedStations.filter(x => stationStatus(x.data) === "Active").length);
         },
         err => {
           console.error("Stations listener error:", err);

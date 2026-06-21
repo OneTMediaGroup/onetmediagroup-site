@@ -2365,3 +2365,36 @@ align-items:center;
   .station-tools { justify-content: flex-start; }
   .station-tools input[type="text"] { width: 100%; }
 }
+
+
+/* Station status/archive polish */
+.form-help {
+  color: var(--muted, #94a3b8);
+  font-size: 0.85rem;
+  line-height: 1.4;
+  margin: 0.25rem 0 0.75rem;
+}
+
+.btn.danger,
+button.danger {
+  border-color: rgba(239, 68, 68, 0.45);
+  color: #fecaca;
+  background: rgba(239, 68, 68, 0.08);
+}
+
+.btn.danger:hover,
+button.danger:hover {
+  background: rgba(239, 68, 68, 0.16);
+}
+
+.status-pill.warning {
+  background: rgba(245, 158, 11, 0.14);
+  color: #fcd34d;
+  border: 1px solid rgba(245, 158, 11, 0.35);
+}
+
+.status-pill.neutral {
+  background: rgba(148, 163, 184, 0.12);
+  color: #cbd5e1;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+}
