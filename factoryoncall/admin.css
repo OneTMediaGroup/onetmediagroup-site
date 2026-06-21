@@ -2910,62 +2910,63 @@ input[type="search"].table-search:focus {
 #tab-users .user-filter-row{
   grid-template-columns:minmax(240px,1fr) 160px !important;
 }
-@media(max-width:900px){
+@media(max-width:1200px){
   #tab-users .users-layout{grid-template-columns:1fr !important;}
 }
 
 
-/* Users screen final consistency fix: match Stations/Roles two-column admin layout */
-#tab-users .users-layout {
+/* USERS FINAL CONSISTENT TWO-COLUMN LAYOUT
+   Keep Users matching Areas / Stations / Roles: list left, add/edit panel right. */
+#tab-users .users-admin-grid {
   display: grid !important;
-  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 1fr) !important;
-  gap: 24px !important;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr) !important;
+  gap: 16px !important;
   align-items: start !important;
 }
-#tab-users .users-card,
-#tab-users .user-form-card {
+#tab-users .users-admin-grid > .card {
   min-width: 0 !important;
-  width: auto !important;
 }
-#tab-users .users-card {
-  grid-column: auto !important;
-}
-#tab-users .user-form-card {
-  grid-column: auto !important;
-}
-#tab-users .users-table {
-  width: 100% !important;
-  table-layout: fixed !important;
-}
-#tab-users .users-table th:nth-child(1),
-#tab-users .users-table td:nth-child(1) { width: 42px !important; }
-#tab-users .users-table th:nth-child(2),
-#tab-users .users-table td:nth-child(2) { width: 24% !important; }
-#tab-users .users-table th:nth-child(3),
-#tab-users .users-table td:nth-child(3) { width: 20% !important; }
-#tab-users .users-table th:nth-child(4),
-#tab-users .users-table td:nth-child(4) { width: 18% !important; }
-#tab-users .users-table th:nth-child(5),
-#tab-users .users-table td:nth-child(5) { width: 16% !important; }
-#tab-users .users-table th:nth-child(6),
-#tab-users .users-table td:nth-child(6) { width: 210px !important; }
-#tab-users .users-table td {
-  overflow: hidden !important;
-  text-overflow: ellipsis !important;
+#tab-users .users-card .card-header,
+#tab-users .users-header-row {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 10px !important;
+  margin-bottom: 8px !important;
 }
 #tab-users .user-tools {
   display: flex !important;
   flex-wrap: wrap !important;
+  justify-content: flex-end !important;
   gap: 8px !important;
-  justify-content: flex-start !important;
+  max-width: 560px !important;
 }
 #tab-users .user-filter-row {
   display: grid !important;
   grid-template-columns: minmax(220px, 1fr) 160px !important;
   gap: 8px !important;
+  margin: 10px 0 !important;
+}
+#tab-users .users-table {
+  width: 100% !important;
+  table-layout: auto !important;
+}
+#tab-users .users-table th,
+#tab-users .users-table td {
+  white-space: nowrap !important;
 }
 @media (max-width: 900px) {
-  #tab-users .users-layout {
+  #tab-users .users-admin-grid {
+    grid-template-columns: 1fr !important;
+  }
+  #tab-users .users-header-row {
+    flex-direction: column !important;
+  }
+  #tab-users .user-tools {
+    justify-content: flex-start !important;
+    max-width: none !important;
+  }
+  #tab-users .user-filter-row {
     grid-template-columns: 1fr !important;
   }
 }

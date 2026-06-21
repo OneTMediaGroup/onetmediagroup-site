@@ -1152,7 +1152,7 @@ function escapeHtml(value = "") {
   }
 
   function populateRoleOptions() {
-    const activeRoleRows = cachedRoles
+    const activeRoles = cachedRoles
       .slice()
       .filter(row => roleIsActive(row.data || {}))
       .sort((a, b) => (a.data.name || "").localeCompare(b.data.name || ""));
@@ -1161,7 +1161,7 @@ function escapeHtml(value = "") {
       const currentValue = userRole.value;
       userRole.innerHTML = "";
 
-      activeRoleRows.forEach(row => {
+      activeRoles.forEach(row => {
         const opt = document.createElement("option");
         opt.value = row.data.name || "";
         opt.textContent = row.data.name || "";
@@ -1172,18 +1172,20 @@ function escapeHtml(value = "") {
     }
 
     if (userRoleFilter) {
-      const currentFilter = userRoleFilter.value;
-      userRoleFilter.innerHTML = `<option value="">All roles (${activeRoleRows.length})</option>`;
+      const currentFilter = userRoleFilter.value || "";
+      userRoleFilter.innerHTML = `<option value="">All roles</option>`;
 
-      activeRoleRows.forEach(row => {
-        const name = row.data.name || "";
+      activeRoles.forEach(row => {
+        const roleName = row.data.name || "";
+        if (!roleName) return;
         const opt = document.createElement("option");
-        opt.value = name;
-        opt.textContent = name;
+        opt.value = roleName;
+        opt.textContent = roleName;
         userRoleFilter.appendChild(opt);
       });
 
-      userRoleFilter.value = currentFilter && activeRoleRows.some(row => (row.data.name || "") === currentFilter) ? currentFilter : "";
+      userRoleFilter.value = currentFilter;
+      if (userRoleFilter.value !== currentFilter) userRoleFilter.value = "";
     }
   }
 
