@@ -241,21 +241,36 @@
         <section id="tab-users" class="tab">
             <div class="grid-2">
 
-                <div class="card">
-                    <div class="card-header">
-                        <h2>Users</h2>
-                        <input id="userSearch" type="text" placeholder="Search users..." />
+                <div class="card users-card">
+                    <div class="card-header user-card-header">
+                        <div>
+                            <h2>Users</h2>
+                            <p class="muted">Add users, assign roles, manage IDs, badges, and access.</p>
+                        </div>
+                        <div class="user-tools">
+                            <input id="userCsvImport" type="file" accept=".csv,text/csv" hidden />
+                            <button type="button" id="btnImportUsersCsv" class="btn small secondary">Import CSV</button>
+                            <button type="button" id="btnExportUsersCsv" class="btn small secondary">Export CSV</button>
+                            <button type="button" id="btnDownloadUsersTemplate" class="btn small secondary">Download Template</button>
+                            <button type="button" id="btnPrintSelectedBadges" class="btn small secondary">Print Selected</button>
+                            <button type="button" id="btnPrintAllBadges" class="btn small secondary">Print All</button>
+                        </div>
+                    </div>
+
+                    <div class="user-filter-row">
+                        <input id="userSearch" class="table-search" type="text" placeholder="Search users, roles, ID, or badge..." />
+                        <select id="userRoleFilter"></select>
                     </div>
 
                     <div class="table-wrapper">
-                        <table class="table">
+                        <table class="table users-table">
                             <thead>
                                 <tr>
-                                    <th>First</th>
-                                    <th>Last</th>
-                                    <th>Email</th>
-                                    <th>Dept</th>
+                                    <th><input type="checkbox" id="userSelectAll" /></th>
+                                    <th>Name</th>
                                     <th>Role</th>
+                                    <th>User ID</th>
+                                    <th>Badge Code</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -267,22 +282,18 @@
 
                 <div class="card">
                     <h2 id="userFormTitle">Add User</h2>
+                    <p class="muted">Employee ID is required. Badge Code auto-fills from User ID and can be changed for scanner systems.</p>
                     <form id="userForm" class="form">
                         <input type="hidden" id="userId" />
 
                         <label>
                             First Name
-                            <input type="text" id="userFirstName" required />
+                            <input type="text" id="userFirstName" required placeholder="Example: Bob" />
                         </label>
 
                         <label>
                             Last Name
-                            <input type="text" id="userLastName" required />
-                        </label>
-
-                        <label>
-                            Department
-                            <select id="userDept"></select>
+                            <input type="text" id="userLastName" required placeholder="Example: Smith" />
                         </label>
 
                         <label>
@@ -291,19 +302,31 @@
                         </label>
 
                         <label>
-                            User ID (4 digits, used for login & unlocking stations)
-                            <input type="text" id="userUID" maxlength="4" />
+                            User ID
+                            <input type="text" id="userUID" maxlength="12" required placeholder="Required, e.g. 3002" />
                         </label>
 
                         <label>
-                            PIN (4 digits, used for unlocking call stations)
-                            <input type="password" id="userPin" maxlength="4" />
+                            Badge Code
+                            <input type="text" id="userBadgeCode" maxlength="32" placeholder="Auto-fills from User ID" />
                         </label>
 
-                        <label class="checkbox-row">
-                            <input type="checkbox" id="userActive" checked />
-                            <span>Active</span>
+                        <label>
+                            PIN
+                            <input type="password" id="userPin" maxlength="8" required placeholder="Required, e.g. 1234" />
                         </label>
+
+                        <label>
+                            Status
+                            <select id="userStatus">
+                                <option value="active">Active</option>
+                                <option value="archived">Archived</option>
+                            </select>
+                        </label>
+
+                        <p class="form-help">
+                            Users need a Role and User ID before they can make calls. Badge Code is used for scanner/badge workflows. PIN is typed by the user when needed.
+                        </p>
 
                         <div class="button-row">
                             <button type="submit" class="btn">Save</button>

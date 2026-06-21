@@ -151,7 +151,8 @@ const COMPANY_ID = getActiveCompanyId();
       firstName: user.firstName || split.firstName || "",
       lastName: user.lastName || split.lastName || "",
       uid: user.uid || user.employeeNumber || id || "",
-      active: user.active !== false
+      badgeCode: user.badgeCode || user.badge || user.uid || user.employeeNumber || id || "",
+      active: user.active !== false && user.archived !== true && String(user.status || "active").toLowerCase() !== "archived"
     };
   }
 
@@ -435,7 +436,7 @@ const COMPANY_ID = getActiveCompanyId();
       const match = snap.docs
         .map(d => normalizeUser(d.data(), d.id))
         .find(u =>
-          String(u.uid || u.employeeNumber || "") === uid &&
+          (String(u.uid || u.employeeNumber || "") === uid || String(u.badgeCode || "") === uid) &&
           String(u.pin || "") === pin &&
           u.active !== false
         );
