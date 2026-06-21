@@ -1273,13 +1273,13 @@ function escapeHtml(value = "") {
       const status = userStatusLabel(u);
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input type="checkbox" class="user-badge-check" data-id="${escapeHtml(row.id || "")}" data-user-id="${escapeHtml(u.uid || "")}" value="${escapeHtml(row.id || "")}" /></td>
+        <td><input type="checkbox" class="user-badge-check" data-id="${row.id}" data-user-id="${escapeHtml(u.uid || "")}" value="${row.id}" /></td>
         <td><strong>${escapeHtml(fullUserName(u))}</strong></td>
         <td>${rolePillHtml(u.role)}</td>
         <td>${escapeHtml(u.uid || "—")}</td>
         <td>${userStatusPill(status)}</td>
         <td class="user-actions">
-          <button type="button" class="btn small secondary print-user-badge-btn" data-id="${escapeHtml(row.id || "")}" data-user-id="${escapeHtml(u.uid || "")}">Print Badge</button>
+          <button type="button" class="btn small secondary print-user-badge-btn" data-id="${row.id}">Print Badge</button>
           <button type="button" class="btn small secondary edit-user-btn" data-id="${row.id}">Edit</button>
           <button type="button" class="btn small danger archive-user-btn" data-id="${row.id}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
         </td>
@@ -1289,30 +1289,21 @@ function escapeHtml(value = "") {
     wireUserTableButtons();
   }
 
-  function userKey(value = "") {
-    return String(value || "").trim().toLowerCase();
-  }
-
-  function findCachedUserByIdOrUid(value = "") {
-    const key = userKey(value);
-    if (!key) return null;
-    return cachedUsers.find(row => {
-      const u = normalizeUser(row);
-      return (
-        userKey(row.id) === key ||
-        userKey(u.uid) === key ||
-        userKey(u.userId) === key ||
-        userKey(u.employeeNumber) === key ||
-        userKey(u.employeeId) === key
-      );
-    }) || null;
-  }
-
   function selectedBadgeUsers() {
     const checked = Array.from(document.querySelectorAll(".user-badge-check:checked"));
-    return checked
-      .map(cb => findCachedUserByIdOrUid(cb.dataset.id || cb.dataset.userId || cb.value))
+    const ids = checked
+      .map(cb => String(cb.dataset.id || cb.value || "").trim())
       .filter(Boolean);
+
+    return ids
+      .map(id => cachedUsers.find(row =>
+        String(row.id) === id ||
+        String(row.data?.uid || "") === id ||
+        String(row.data?.userId || "") === id ||
+        String(row.data?.employeeNumber || "") === id
+      ))
+      .filter(Boolean)
+      .map(row => ({ id: row.id, data: normalizeUser(row) }));
   }
 
   function barcodeBars(value = "") {
@@ -1336,30 +1327,17 @@ function escapeHtml(value = "") {
     return `<div style="display:grid;grid-template-columns:repeat(7,5px);gap:1px;border:2px solid #111;padding:2px;background:#fff">${cells}</div>`;
   }
 
-  function printableUserRows(userRows = []) {
-    const source = Array.isArray(userRows) ? userRows : [];
-    return source
-      .map(row => {
-        if (!row) return null;
-        const normalized = normalizeUser(row.data ? row : { id: row.id || row.uid || row.userId || row.employeeNumber, data: row });
-        const id = row.id || normalized.uid || normalized.userId || normalized.employeeNumber;
-        return { id, data: normalized };
-      })
-      .filter(row => {
-        const u = row.data || {};
-        return u.active !== false && u.archived !== true && String(u.status || "active").toLowerCase() !== "archived";
-      });
-  }
-
   function printBadges(userRows) {
-    const users = printableUserRows(userRows || []);
+    const users = normalizeRows(userRows || [])
+      .map(row => ({ id: row.id, data: normalizeUser(row) }))
+      .filter(row => row.data.active !== false && row.data.archived !== true);
 
     if (!users.length) {
       alert("No active users selected for badge printing.");
       return;
     }
 
-    const companyName = state.companyName || COMPANY_NAME || "Factory On Call";
+    const companyName = COMPANY_NAME || "Factory On Call";
     const badges = users.map(row => {
       const u = row.data;
       const badge = u.uid || u.userId || u.employeeNumber || row.id;
@@ -1388,25 +1366,47 @@ function escapeHtml(value = "") {
       @media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
       </style></head><body><div class="badge-sheet">${badges}</div></body></html>`;
 
-    const win = window.open("", "_blank", "width=900,height=700");
-    if (!win || !win.document) {
-      alert("Unable to open badge print window. Please allow pop-ups for this site.");
+    const frame = document.createElement("iframe");
+    frame.setAttribute("title", "Factory On Call Badge Print");
+    frame.style.position = "fixed";
+    frame.style.right = "0";
+    frame.style.bottom = "0";
+    frame.style.width = "1px";
+    frame.style.height = "1px";
+    frame.style.opacity = "0";
+    frame.style.border = "0";
+    document.body.appendChild(frame);
+
+    const doc = frame.contentDocument || frame.contentWindow?.document;
+    if (!doc) {
+      frame.remove();
+      const win = window.open("", "_blank");
+      if (!win || !win.document) {
+        alert("Unable to open badge print window. Please allow pop-ups for this site.");
+        return;
+      }
+      win.document.open();
+      win.document.write(printHtml);
+      win.document.close();
+      setTimeout(() => { win.focus(); win.print(); }, 300);
       return;
     }
 
-    win.document.open();
-    win.document.write(printHtml);
-    win.document.close();
+    doc.open();
+    doc.write(printHtml);
+    doc.close();
 
     setTimeout(() => {
       try {
-        win.focus();
-        win.print();
+        frame.contentWindow?.focus();
+        frame.contentWindow?.print();
       } catch (err) {
         console.error("Badge print failed", err);
         alert("Could not open badge print dialog.");
+      } finally {
+        setTimeout(() => frame.remove(), 2000);
       }
-    }, 250);
+    }, 300);
   }
 
   function wireUserTableButtons() {
@@ -1451,9 +1451,8 @@ function escapeHtml(value = "") {
 
     document.querySelectorAll(".print-user-badge-btn").forEach(btn => {
       btn.onclick = () => {
-        const found = findCachedUserByIdOrUid(btn.dataset.id || btn.dataset.userId);
+        const found = cachedUsers.find(row => row.id === btn.dataset.id);
         if (found) printBadges([found]);
-        else alert("Could not find this user for badge printing.");
       };
     });
   }
@@ -1806,19 +1805,13 @@ function escapeHtml(value = "") {
       if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
 
       if (singleBadgeBtn) {
-        const found = findCachedUserByIdOrUid(singleBadgeBtn.dataset.id || singleBadgeBtn.dataset.userId);
-        if (found) printBadges([found]);
-        else alert("Could not find this user for badge printing.");
+        const found = cachedUsers.find(row => row.id === singleBadgeBtn.dataset.id);
+        if (found) printBadges([{ id: found.id, data: normalizeUser(found) }]);
         return;
       }
 
       if (selectedBadgeBtn) {
-        const selected = selectedBadgeUsers();
-        if (!selected.length) {
-          alert("Select at least one active user for badge printing.");
-          return;
-        }
-        printBadges(selected);
+        printBadges(selectedBadgeUsers());
         return;
       }
 
@@ -2194,7 +2187,8 @@ stationFormReset?.addEventListener("click", resetStationForm);
       catch (err) { console.error(err); alert("Could not import users CSV."); }
       finally { userCsvImport.value = ""; }
     });
-    // Badge print buttons are handled by delegated click listener above.
+    btnPrintSelectedBadges?.addEventListener("click", () => printBadges(selectedBadgeUsers()));
+    btnPrintAllBadges?.addEventListener("click", () => printBadges(cachedUsers));
   }
 
 
