@@ -1319,33 +1319,34 @@ function escapeHtml(value = "") {
   function barcodeBars(value = "") {
     const text = String(value || "");
     const seed = badgeHash(text);
-    const width = 150;
-    const height = 42;
-    let x = 6;
+    const width = 190;
+    const height = 52;
+    let x = 8;
     let bars = "";
 
     // Start guard
-    bars += `<rect x="${x}" y="4" width="2" height="34" fill="#111"/>`;
+    bars += `<rect x="${x}" y="5" width="2" height="42" fill="#111"/>`;
     x += 4;
-    bars += `<rect x="${x}" y="4" width="1" height="34" fill="#111"/>`;
-    x += 4;
+    bars += `<rect x="${x}" y="5" width="1" height="42" fill="#111"/>`;
+    x += 5;
 
-    const source = text || String(seed);
-    for (let i = 0; i < source.length && x < width - 12; i += 1) {
-      const code = source.charCodeAt(i) + ((seed >> (i % 12)) & 15);
-      const pattern = [1, 2, 1, 3, 2, 1, 2, 2];
-      for (let j = 0; j < pattern.length && x < width - 10; j += 1) {
-        const w = pattern[(code + j) % pattern.length];
-        if ((code + j) % 2 === 0) {
-          bars += `<rect x="${x}" y="4" width="${w}" height="34" fill="#111"/>`;
-        }
-        x += w + 1;
+    // Fill the full barcode width using the User ID as the seed.
+    // This is visual barcode-style output for printed badges.
+    let i = 0;
+    while (x < width - 16) {
+      const code = (seed >> (i % 24)) + text.charCodeAt(i % Math.max(text.length, 1) || 0) + i * 17;
+      const barWidth = [1, 2, 3, 1, 2, 1][Math.abs(code) % 6];
+      const gapWidth = [1, 1, 2, 1, 2][Math.abs(code >> 3) % 5];
+      if (i % 3 !== 1) {
+        bars += `<rect x="${x}" y="5" width="${barWidth}" height="42" fill="#111"/>`;
       }
+      x += barWidth + gapWidth;
+      i += 1;
     }
 
     // End guard
-    bars += `<rect x="${width - 10}" y="4" width="1" height="34" fill="#111"/>`;
-    bars += `<rect x="${width - 6}" y="4" width="2" height="34" fill="#111"/>`;
+    bars += `<rect x="${width - 10}" y="5" width="1" height="42" fill="#111"/>`;
+    bars += `<rect x="${width - 6}" y="5" width="2" height="42" fill="#111"/>`;
 
     return `<svg class="badge-barcode-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" aria-label="Barcode ${escapeHtml(text)}"><rect width="${width}" height="${height}" fill="#fff"/>${bars}</svg>`;
   }
@@ -1402,7 +1403,7 @@ function escapeHtml(value = "") {
           <div class="badge-company">${escapeHtml(companyName)}</div>
           <div class="badge-name">${escapeHtml(fullUserName(u))}</div>
           <div class="badge-role">${escapeHtml(u.role || "")}</div>
-          <div class="badge-id">ID: ${escapeHtml(badge || "")}</div>
+          <div class="badge-id">USER ID: ${escapeHtml(badge || "")}</div>
           <div class="badge-code-row">${qrBlock(badge)}<div class="badge-bars">${barcodeBars(badge)}</div></div>
           <div class="badge-foot">Powered by One T Media Group</div>
         </div>`;
@@ -1411,14 +1412,14 @@ function escapeHtml(value = "") {
     const printHtml = `<!doctype html><html><head><title>Factory On Call Badge Sheet</title><style>
       body{font-family:Arial,sans-serif;margin:14px;color:#111;background:#fff}
       .badge-sheet{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
-      .badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05)}
-      .badge-company{font-weight:800;color:#1767d8;font-size:18px;padding:12px 8px 8px}
-      .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:7px 6px 0}
-      .badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}
-      .badge-id{font-weight:800;margin:8px 0 6px}
-      .badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:2px}
-      .badge-bars{height:42px;line-height:0}.badge-qr-svg,.badge-barcode-svg{display:block}
-      .badge-foot{font-size:8px;color:#6b7280;margin-top:4px}
+      .badge-card{width:360px;height:200px;border:1px solid #d0d7e2;border-radius:12px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff;box-shadow:none}
+      .badge-company{font-weight:800;color:#1767d8;font-size:16px;padding:12px 8px 8px}
+      .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:24px;line-height:1.05;padding:8px 6px 0}
+      .badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:12px;padding:1px 6px 8px}
+      .badge-id{font-weight:800;font-size:18px;margin:8px 0 5px}
+      .badge-code-row{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:2px}
+      .badge-bars{height:52px;line-height:0}.badge-qr-svg,.badge-barcode-svg{display:block}
+      .badge-foot{font-size:8px;color:#6b7280;margin-top:3px}
       @media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
       </style></head><body><div class="badge-sheet">${badges}</div></body></html>`;
 
