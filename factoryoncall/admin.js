@@ -1236,25 +1236,24 @@ let ADMIN_LOCKED = false;
     usersTableBody.innerHTML = "";
 
     if (!displayRows.length) {
-      usersTableBody.innerHTML = `<tr><td colspan="7" class="table-empty">No users found.</td></tr>`;
+      usersTableBody.innerHTML = `<tr><td colspan="6" class="table-empty">No users found.</td></tr>`;
       return;
     }
 
     displayRows.forEach(row => {
-      const u = row.data;
+      const u = normalizeUser(row);
       const status = userStatusLabel(u);
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input type="checkbox" class="user-badge-check" data-id="${row.id}" /></td>
+        <td><input type="checkbox" class="user-badge-check" data-id="${escapeHtml(row.id)}" /></td>
         <td><strong>${escapeHtml(fullUserName(u))}</strong></td>
         <td>${rolePillHtml(u.role)}</td>
         <td>${escapeHtml(u.uid || "—")}</td>
-        <td>${escapeHtml(u.badgeCode || u.uid || "—")}</td>
         <td>${userStatusPill(status)}</td>
         <td class="user-actions">
-          <button class="btn small secondary print-user-badge-btn" data-id="${row.id}">Print Badge</button>
-          <button class="btn small secondary edit-user-btn" data-id="${row.id}">Edit</button>
-          <button class="btn small danger archive-user-btn" data-id="${row.id}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
+          <button class="btn small secondary print-user-badge-btn" data-id="${escapeHtml(row.id)}">Print Badge</button>
+          <button class="btn small secondary edit-user-btn" data-id="${escapeHtml(row.id)}">Edit</button>
+          <button class="btn small danger archive-user-btn" data-id="${escapeHtml(row.id)}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
         </td>
       `;
       usersTableBody.appendChild(tr);
@@ -1382,16 +1381,16 @@ let ADMIN_LOCKED = false;
 
   function usersCsvTemplate() {
     return [
-      "firstName,lastName,role,userId,badgeCode,pin,status",
-      "Sally,Smith,Operator,331,331,133,active"
+      "firstName,lastName,role,userId,pin,status",
+      "Sally,Smith,Operator,331,133,active"
     ].join("\n");
   }
 
   function usersCsvRows() {
-    const header = ["firstName","lastName","role","userId","badgeCode","pin","status"];
+    const header = ["firstName","lastName","role","userId","pin","status"];
     const rows = normalizeRows(cachedUsers).map(row => {
       const u = row.data;
-      return [u.firstName,u.lastName,u.role,u.uid,u.badgeCode || u.uid,u.pin || reverseId(u.uid),u.active === false ? "archived" : "active"].map(csvSafe).join(",");
+      return [u.firstName,u.lastName,u.role,u.uid,u.pin || reverseId(u.uid),u.active === false ? "archived" : "active"].map(csvSafe).join(",");
     });
     return [header.join(","), ...rows].join("\n");
   }
@@ -2461,7 +2460,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
         },
         err => {
           console.error("Users listener error:", err);
-          if (usersTableBody) usersTableBody.innerHTML = `<tr><td colspan="7" class="table-empty">Could not load users.</td></tr>`;
+          if (usersTableBody) usersTableBody.innerHTML = `<tr><td colspan="6" class="table-empty">Could not load users.</td></tr>`;
         }
       );
 

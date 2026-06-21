@@ -257,7 +257,7 @@
                     </div>
 
                     <div class="user-filter-row">
-                        <input id="userSearch" type="text" placeholder="Search users, roles, ID, or badge..." />
+                        <input id="userSearch" type="text" placeholder="Search users, roles, or ID..." />
                         <select id="userRoleFilter">
                             <option value="">All roles</option>
                         </select>
@@ -271,7 +271,6 @@
                                     <th>Name</th>
                                     <th>Role</th>
                                     <th>User ID</th>
-                                    <th>Badge Code</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
@@ -283,7 +282,7 @@
 
                 <div class="card user-form-card">
                     <h2 id="userFormTitle">Add User</h2>
-                    <p class="muted">User ID is required. Default PIN is the User ID in reverse. Badge Code auto-fills from User ID and can be changed for scanner systems.</p>
+                    <p class="muted">User ID is required. Default PIN is the User ID in reverse. Badges scan the User ID, then the user enters their PIN.</p>
                     <form id="userForm" class="form">
                         <input type="hidden" id="userId" />
 
@@ -307,10 +306,7 @@
                             <input type="text" id="userUID" placeholder="Required, e.g. 331" />
                         </label>
 
-                        <label>
-                            Badge Code
-                            <input type="text" id="userBadgeCode" placeholder="Auto-fills from User ID" />
-                        </label>
+                        <input type="hidden" id="userBadgeCode" />
 
                         <label>
                             PIN
