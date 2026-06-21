@@ -1241,19 +1241,19 @@ let ADMIN_LOCKED = false;
     }
 
     displayRows.forEach(row => {
-      const u = normalizeUser(row);
+      const u = row.data;
       const status = userStatusLabel(u);
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input type="checkbox" class="user-badge-check" data-id="${escapeHtml(row.id)}" /></td>
+        <td><input type="checkbox" class="user-badge-check" data-id="${row.id}" /></td>
         <td><strong>${escapeHtml(fullUserName(u))}</strong></td>
         <td>${rolePillHtml(u.role)}</td>
         <td>${escapeHtml(u.uid || "—")}</td>
         <td>${userStatusPill(status)}</td>
         <td class="user-actions">
-          <button class="btn small secondary print-user-badge-btn" data-id="${escapeHtml(row.id)}">Print Badge</button>
-          <button class="btn small secondary edit-user-btn" data-id="${escapeHtml(row.id)}">Edit</button>
-          <button class="btn small danger archive-user-btn" data-id="${escapeHtml(row.id)}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
+          <button class="btn small secondary print-user-badge-btn" data-id="${row.id}">Print Badge</button>
+          <button class="btn small secondary edit-user-btn" data-id="${row.id}">Edit</button>
+          <button class="btn small danger archive-user-btn" data-id="${row.id}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
         </td>
       `;
       usersTableBody.appendChild(tr);
@@ -1334,7 +1334,7 @@ let ADMIN_LOCKED = false;
         if (userRole) userRole.value = u.role || "";
         if (userUID) userUID.value = u.uid || "";
         if (userBadgeCode) userBadgeCode.value = u.badgeCode || u.uid || "";
-        if (userPin) userPin.value = u.pin || reverseId(u.uid || "");
+        if (userPin) { userPin.value = u.pin || reverseId(u.uid || ""); userPin.dataset.manual = "true"; }
         if (userStatus) userStatus.value = u.active === false ? "archived" : "active";
         if (userActive) userActive.checked = u.active !== false;
         if (userFormTitle) userFormTitle.textContent = "Edit User";
@@ -1373,7 +1373,7 @@ let ADMIN_LOCKED = false;
     if (userForm) userForm.reset();
     if (userId) userId.value = "";
     if (userBadgeCode) { userBadgeCode.value = ""; userBadgeCode.dataset.autoValue = ""; }
-    if (userPin) userPin.value = "";
+    if (userPin) { userPin.value = ""; userPin.dataset.manual = ""; userPin.dataset.autoValue = ""; }
     if (userStatus) userStatus.value = "active";
     if (userFormTitle) userFormTitle.textContent = "Add User";
     if (userActive) userActive.checked = true;
@@ -1409,9 +1409,7 @@ let ADMIN_LOCKED = false;
     const prepared = [];
     const missingRoles = new Set();
     const duplicateIds = new Set();
-    const duplicateBadges = new Set();
     const seenIds = new Set();
-    const seenBadges = new Set();
 
     rows.forEach(cols => {
       const row = {};
@@ -1420,7 +1418,7 @@ let ADMIN_LOCKED = false;
       const lastName = row.lastname || row.last_name || row.last || "";
       const role = row.role || "";
       const uid = row.userid || row.user_id || row.employeeid || row.employee_id || row.uid || "";
-      const badgeCode = row.badgecode || row.badge_code || row.badge || uid;
+      const badgeCode = uid;
       const pin = row.pin || reverseId(uid);
       const status = String(row.status || "active").toLowerCase() === "archived" ? "archived" : "active";
       if (!firstName || !lastName || !role || !uid) return;
@@ -1428,11 +1426,6 @@ let ADMIN_LOCKED = false;
       const idKey = uid.toLowerCase();
       if (seenIds.has(idKey) || userIdTaken(uid)) duplicateIds.add(uid);
       seenIds.add(idKey);
-      const badgeKey = badgeCode.toLowerCase();
-      if (badgeKey) {
-        if (seenBadges.has(badgeKey) || badgeCodeTaken(badgeCode)) duplicateBadges.add(badgeCode);
-        seenBadges.add(badgeKey);
-      }
       prepared.push({ firstName, lastName, role, uid, badgeCode, pin, status });
     });
 
@@ -1990,16 +1983,25 @@ stationFormReset?.addEventListener("click", resetStationForm);
     roleFormReset?.addEventListener("click", resetRoleForm);
 
     // Users
+    userPin?.addEventListener("input", () => {
+      userPin.dataset.manual = "true";
+    });
+
     userUID?.addEventListener("input", () => {
       const uid = userUID.value.trim();
+      const autoPin = reverseId(uid);
+
+      // Badge uses User ID directly. Keep old hidden/legacy field in sync if it exists.
       if (userBadgeCode) {
-        const previousAuto = userBadgeCode.dataset.autoValue || "";
-        if (!userBadgeCode.value.trim() || userBadgeCode.value.trim() === previousAuto) {
-          userBadgeCode.value = uid;
-          userBadgeCode.dataset.autoValue = uid;
-        }
+        userBadgeCode.value = uid;
+        userBadgeCode.dataset.autoValue = uid;
       }
-      if (userPin && !userPin.value.trim()) userPin.value = reverseId(uid);
+
+      // Keep default PIN synced while the admin has not manually changed it.
+      if (userPin && userPin.dataset.manual !== "true") {
+        userPin.value = autoPin;
+        userPin.dataset.autoValue = autoPin;
+      }
     });
 
     userForm?.addEventListener("submit", async e => {
@@ -2010,7 +2012,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       const firstName = userFirstName?.value.trim() || "";
       const lastName = userLastName?.value.trim() || "";
       const uid = userUID?.value.trim() || "";
-      const badgeCode = userBadgeCode?.value.trim() || uid;
+      const badgeCode = uid;
       const pin = userPin?.value.trim() || reverseId(uid);
       const role = userRole?.value || "";
       const status = userStatus?.value || "active";
@@ -2045,6 +2047,15 @@ stationFormReset?.addEventListener("click", resetStationForm);
         const docId = currentId || makeSafeId(payload.uid);
         if (!currentId) payload.createdAt = Date.now();
         await usersRef.doc(docId).set(payload, { merge: true });
+        // Keep legacy station/login data in sync for plants created on older builds.
+        await authorizedPinsRef.doc(docId).set(payload, { merge: true });
+
+        const existingIndex = userRowsFromUsers.findIndex(row => row.id === docId);
+        const savedRow = { id: docId, data: payload };
+        if (existingIndex >= 0) userRowsFromUsers[existingIndex] = savedRow;
+        else userRowsFromUsers.push(savedRow);
+        mergeUserSources();
+
         resetUserForm();
       } catch (err) {
         console.error(err);
