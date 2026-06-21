@@ -1279,9 +1279,9 @@ function escapeHtml(value = "") {
         <td>${escapeHtml(u.uid || "—")}</td>
         <td>${userStatusPill(status)}</td>
         <td class="user-actions">
-          <button class="btn small secondary print-user-badge-btn" data-id="${row.id}">Print Badge</button>
-          <button class="btn small secondary edit-user-btn" data-id="${row.id}">Edit</button>
-          <button class="btn small danger archive-user-btn" data-id="${row.id}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
+          <button type="button" class="btn small secondary print-user-badge-btn" data-id="${row.id}">Print Badge</button>
+          <button type="button" class="btn small secondary edit-user-btn" data-id="${row.id}">Edit</button>
+          <button type="button" class="btn small danger archive-user-btn" data-id="${row.id}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
         </td>
       `;
       usersTableBody.appendChild(tr);
@@ -1322,31 +1322,52 @@ function escapeHtml(value = "") {
       return;
     }
 
-    const companyName = state.companyName || "Factory On Call";
+    const companyName = state.companyName || COMPANY_NAME || "Factory On Call";
     const badges = users.map(row => {
       const u = row.data;
-      const badge = u.badgeCode || u.uid || row.id;
+      const badge = u.uid || row.id;
       return `
         <div class="badge-card">
           <div class="badge-company">${escapeHtml(companyName)}</div>
           <div class="badge-name">${escapeHtml(fullUserName(u))}</div>
           <div class="badge-role">${escapeHtml(u.role || "")}</div>
-          <div class="badge-id">ID: ${escapeHtml(u.uid || "")}</div>
+          <div class="badge-id">ID: ${escapeHtml(badge || "")}</div>
           <div class="badge-code-row">${qrBlock(badge)}<div class="badge-bars">${barcodeBars(badge)}</div></div>
           <div class="badge-foot">Powered by One T Media Group</div>
         </div>`;
     }).join("");
 
+    const printHtml = `<!doctype html><html><head><title>Badge Sheet</title><style>
+      body{font-family:Arial,sans-serif;margin:14px;color:#111;background:#fff}.badge-sheet{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}.badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff}.badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}.badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}.badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}.badge-id{font-weight:800;margin:8px 0 6px}.badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}.badge-bars{height:34px;white-space:nowrap}.badge-foot{font-size:8px;color:#6b7280;margin-top:5px}@media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
+      </style></head><body><div class="badge-sheet">${badges}</div><script>window.onload=()=>setTimeout(()=>{window.focus();window.print();},250);<\/script></body></html>`;
+
     const win = window.open("", "_blank");
-    if (!win) {
-      alert("Popup blocked. Allow popups to print badges.");
+    if (win && win.document) {
+      win.document.open();
+      win.document.write(printHtml);
+      win.document.close();
       return;
     }
 
-    win.document.write(`<!doctype html><html><head><title>Badge Sheet</title><style>
-      body{font-family:Arial,sans-serif;margin:14px;color:#111}.badge-sheet{display:flex;flex-wrap:wrap;gap:14px}.badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;background:#fff}.badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}.badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}.badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}.badge-id{font-weight:800;margin:8px 0 6px}.badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}.badge-bars{height:34px;white-space:nowrap}.badge-foot{font-size:8px;color:#6b7280;margin-top:5px}@media print{body{margin:10px}.badge-card{break-inside:avoid}}
-      </style></head><body><div class="badge-sheet">${badges}</div><script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script></body></html>`);
-    win.document.close();
+    const frame = document.createElement("iframe");
+    frame.style.position = "fixed";
+    frame.style.right = "0";
+    frame.style.bottom = "0";
+    frame.style.width = "0";
+    frame.style.height = "0";
+    frame.style.border = "0";
+    frame.srcdoc = printHtml;
+    document.body.appendChild(frame);
+    frame.onload = () => {
+      setTimeout(() => {
+        try {
+          frame.contentWindow?.focus();
+          frame.contentWindow?.print();
+        } finally {
+          setTimeout(() => frame.remove(), 2000);
+        }
+      }, 250);
+    };
   }
 
   function wireUserTableButtons() {
@@ -1733,6 +1754,33 @@ function escapeHtml(value = "") {
 
   // ---------- EVENT WIRING ----------
   function wireEvents() {
+    document.addEventListener("click", event => {
+      const singleBadgeBtn = event.target.closest?.(".print-user-badge-btn");
+      const selectedBadgeBtn = event.target.closest?.("#btnPrintSelectedBadges");
+      const allBadgeBtn = event.target.closest?.("#btnPrintAllBadges");
+
+      if (!singleBadgeBtn && !selectedBadgeBtn && !allBadgeBtn) return;
+
+      event.preventDefault();
+      event.stopPropagation();
+      if (typeof event.stopImmediatePropagation === "function") event.stopImmediatePropagation();
+
+      if (singleBadgeBtn) {
+        const found = cachedUsers.find(row => row.id === singleBadgeBtn.dataset.id);
+        if (found) printBadges([found]);
+        return;
+      }
+
+      if (selectedBadgeBtn) {
+        printBadges(selectedBadgeUsers());
+        return;
+      }
+
+      if (allBadgeBtn) {
+        printBadges(cachedUsers);
+      }
+    }, true);
+
     logsFilterBtn?.addEventListener("click", renderCallLogs);
     logsClearBtn?.addEventListener("click", () => {
       if (logsSearch) logsSearch.value = "";
