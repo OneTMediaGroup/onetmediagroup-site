@@ -1306,25 +1306,81 @@ function escapeHtml(value = "") {
       .map(row => ({ id: row.id, data: normalizeUser(row) }));
   }
 
+  function badgeHash(value = "") {
+    const text = String(value || "BADGE");
+    let hash = 2166136261;
+    for (let i = 0; i < text.length; i += 1) {
+      hash ^= text.charCodeAt(i);
+      hash = Math.imul(hash, 16777619);
+    }
+    return hash >>> 0;
+  }
+
   function barcodeBars(value = "") {
     const text = String(value || "");
-    let html = "";
-    for (const ch of text) {
-      const code = ch.charCodeAt(0);
-      const width = (code % 3) + 1;
-      html += `<span style="display:inline-block;width:${width}px;height:34px;background:#111;margin-right:2px"></span>`;
+    const seed = badgeHash(text);
+    const width = 150;
+    const height = 42;
+    let x = 6;
+    let bars = "";
+
+    // Start guard
+    bars += `<rect x="${x}" y="4" width="2" height="34" fill="#111"/>`;
+    x += 4;
+    bars += `<rect x="${x}" y="4" width="1" height="34" fill="#111"/>`;
+    x += 4;
+
+    const source = text || String(seed);
+    for (let i = 0; i < source.length && x < width - 12; i += 1) {
+      const code = source.charCodeAt(i) + ((seed >> (i % 12)) & 15);
+      const pattern = [1, 2, 1, 3, 2, 1, 2, 2];
+      for (let j = 0; j < pattern.length && x < width - 10; j += 1) {
+        const w = pattern[(code + j) % pattern.length];
+        if ((code + j) % 2 === 0) {
+          bars += `<rect x="${x}" y="4" width="${w}" height="34" fill="#111"/>`;
+        }
+        x += w + 1;
+      }
     }
-    return html || `<span style="display:inline-block;width:90px;height:34px;background:#111"></span>`;
+
+    // End guard
+    bars += `<rect x="${width - 10}" y="4" width="1" height="34" fill="#111"/>`;
+    bars += `<rect x="${width - 6}" y="4" width="2" height="34" fill="#111"/>`;
+
+    return `<svg class="badge-barcode-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" aria-label="Barcode ${escapeHtml(text)}"><rect width="${width}" height="${height}" fill="#fff"/>${bars}</svg>`;
   }
 
   function qrBlock(value = "") {
     const text = String(value || "");
-    let cells = "";
-    for (let i = 0; i < 49; i++) {
-      const on = ((text.charCodeAt(i % Math.max(text.length, 1)) || 7) + i * 3) % 2 === 0;
-      cells += `<span style="display:block;width:5px;height:5px;background:${on ? "#111" : "#fff"}"></span>`;
+    const size = 15;
+    const cell = 4;
+    const pad = 4;
+    const total = size * cell + pad * 2;
+    const seed = badgeHash(text);
+    let cells = `<rect width="${total}" height="${total}" fill="#fff"/>`;
+
+    function addFinder(x0, y0) {
+      cells += `<rect x="${pad + x0 * cell}" y="${pad + y0 * cell}" width="${cell * 5}" height="${cell * 5}" fill="#111"/>`;
+      cells += `<rect x="${pad + (x0 + 1) * cell}" y="${pad + (y0 + 1) * cell}" width="${cell * 3}" height="${cell * 3}" fill="#fff"/>`;
+      cells += `<rect x="${pad + (x0 + 2) * cell}" y="${pad + (y0 + 2) * cell}" width="${cell}" height="${cell}" fill="#111"/>`;
     }
-    return `<div style="display:grid;grid-template-columns:repeat(7,5px);gap:1px;border:2px solid #111;padding:2px;background:#fff">${cells}</div>`;
+
+    addFinder(0, 0);
+    addFinder(size - 5, 0);
+    addFinder(0, size - 5);
+
+    for (let y = 0; y < size; y += 1) {
+      for (let x = 0; x < size; x += 1) {
+        const inFinder = (x < 5 && y < 5) || (x >= size - 5 && y < 5) || (x < 5 && y >= size - 5);
+        if (inFinder) continue;
+        const bit = ((seed >> ((x + y * 3) % 24)) + x * 7 + y * 11 + text.length) % 5;
+        if (bit === 0 || bit === 2) {
+          cells += `<rect x="${pad + x * cell}" y="${pad + y * cell}" width="${cell}" height="${cell}" fill="#111"/>`;
+        }
+      }
+    }
+
+    return `<svg class="badge-qr-svg" width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg" aria-label="QR ${escapeHtml(text)}">${cells}</svg>`;
   }
 
   function printBadges(userRows) {
@@ -1355,14 +1411,14 @@ function escapeHtml(value = "") {
     const printHtml = `<!doctype html><html><head><title>Factory On Call Badge Sheet</title><style>
       body{font-family:Arial,sans-serif;margin:14px;color:#111;background:#fff}
       .badge-sheet{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
-      .badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff}
-      .badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}
-      .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}
+      .badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+      .badge-company{font-weight:800;color:#1767d8;font-size:18px;padding:12px 8px 8px}
+      .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:7px 6px 0}
       .badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}
       .badge-id{font-weight:800;margin:8px 0 6px}
-      .badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}
-      .badge-bars{height:34px;white-space:nowrap}
-      .badge-foot{font-size:8px;color:#6b7280;margin-top:5px}
+      .badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px;margin-top:2px}
+      .badge-bars{height:42px;line-height:0}.badge-qr-svg,.badge-barcode-svg{display:block}
+      .badge-foot{font-size:8px;color:#6b7280;margin-top:4px}
       @media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
       </style></head><body><div class="badge-sheet">${badges}</div></body></html>`;
 
