@@ -2913,3 +2913,63 @@ input[type="search"].table-search:focus {
 @media(max-width:1200px){
   #tab-users .users-layout{grid-template-columns:1fr !important;}
 }
+
+
+/* Users final side-by-side layout repair */
+@media (min-width: 980px) {
+  #tab-users .users-layout {
+    display: grid !important;
+    grid-template-columns: minmax(620px, 1fr) minmax(360px, 420px) !important;
+    gap: 24px !important;
+    align-items: start !important;
+  }
+
+  #tab-users .users-card,
+  #tab-users .user-form-card {
+    min-width: 0 !important;
+    width: auto !important;
+  }
+
+  #tab-users .users-table {
+    width: 100% !important;
+    table-layout: fixed !important;
+  }
+
+  #tab-users .users-table th:nth-child(1),
+  #tab-users .users-table td:nth-child(1) { width: 42px !important; }
+
+  #tab-users .users-table th:nth-child(2),
+  #tab-users .users-table td:nth-child(2) { width: 20% !important; }
+
+  #tab-users .users-table th:nth-child(3),
+  #tab-users .users-table td:nth-child(3) { width: 18% !important; }
+
+  #tab-users .users-table th:nth-child(4),
+  #tab-users .users-table td:nth-child(4) { width: 14% !important; }
+
+  #tab-users .users-table th:nth-child(5),
+  #tab-users .users-table td:nth-child(5) { width: 14% !important; }
+
+  #tab-users .users-table th:nth-child(6),
+  #tab-users .users-table td:nth-child(6) { width: 34% !important; }
+
+  #tab-users .user-actions {
+    display: flex !important;
+    gap: 6px !important;
+    justify-content: flex-end !important;
+    flex-wrap: nowrap !important;
+  }
+
+  #tab-users .user-actions .btn {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    white-space: nowrap !important;
+  }
+}
+
+/* Keep users stacked only on smaller screens */
+@media (max-width: 979px) {
+  #tab-users .users-layout {
+    grid-template-columns: 1fr !important;
+  }
+}

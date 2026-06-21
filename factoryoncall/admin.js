@@ -1298,22 +1298,30 @@ function escapeHtml(value = "") {
   }
 
   function printBadges(userRows) {
-    const users = normalizeRows(userRows || []).filter(row => row.data.active !== false);
+    const sourceRows = Array.isArray(userRows) ? userRows : [];
+    const users = sourceRows
+      .map(row => {
+        if (!row) return null;
+        const data = row.data ? normalizeUser(row) : normalizeUser({ id: row.id || row.uid || row.userId || "", data: row });
+        return { id: row.id || data.uid, data };
+      })
+      .filter(row => row && row.data && row.data.active !== false);
+
     if (!users.length) {
       alert("No active users selected for badge printing.");
       return;
     }
 
-    const companyName = state.companyName || "Factory On Call";
+    const companyName = COMPANY_NAME || state.companyName || "Factory On Call";
     const badges = users.map(row => {
       const u = row.data;
-      const badge = u.badgeCode || u.uid || row.id;
+      const badge = u.uid || row.id || "";
       return `
         <div class="badge-card">
           <div class="badge-company">${escapeHtml(companyName)}</div>
           <div class="badge-name">${escapeHtml(fullUserName(u))}</div>
           <div class="badge-role">${escapeHtml(u.role || "")}</div>
-          <div class="badge-id">ID: ${escapeHtml(u.uid || "")}</div>
+          <div class="badge-id">ID: ${escapeHtml(badge)}</div>
           <div class="badge-code-row">${qrBlock(badge)}<div class="badge-bars">${barcodeBars(badge)}</div></div>
           <div class="badge-foot">Powered by One T Media Group</div>
         </div>`;
@@ -1325,10 +1333,25 @@ function escapeHtml(value = "") {
       return;
     }
 
+    win.document.open();
     win.document.write(`<!doctype html><html><head><title>Badge Sheet</title><style>
-      body{font-family:Arial,sans-serif;margin:14px;color:#111}.badge-sheet{display:flex;flex-wrap:wrap;gap:14px}.badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;background:#fff}.badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}.badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}.badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}.badge-id{font-weight:800;margin:8px 0 6px}.badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}.badge-bars{height:34px;white-space:nowrap}.badge-foot{font-size:8px;color:#6b7280;margin-top:5px}@media print{body{margin:10px}.badge-card{break-inside:avoid}}
-      </style></head><body><div class="badge-sheet">${badges}</div><script>window.onload=()=>setTimeout(()=>window.print(),250);<\/script></body></html>`);
+      body{font-family:Arial,sans-serif;margin:14px;color:#111;background:#fff}
+      .badge-sheet{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+      .badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;background:#fff}
+      .badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}
+      .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}
+      .badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}
+      .badge-id{font-weight:800;margin:8px 0 6px}
+      .badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}
+      .badge-bars{height:34px;white-space:nowrap}
+      .badge-foot{font-size:8px;color:#6b7280;margin-top:5px}
+      @media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
+    </style></head><body><div class="badge-sheet">${badges}</div></body></html>`);
     win.document.close();
+    win.focus();
+    setTimeout(() => {
+      try { win.print(); } catch (error) { console.warn("Badge print failed:", error); }
+    }, 300);
   }
 
   function wireUserTableButtons() {
