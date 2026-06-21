@@ -1273,7 +1273,7 @@ function escapeHtml(value = "") {
       const status = userStatusLabel(u);
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input type="checkbox" class="user-badge-check" data-id="${row.id}" /></td>
+        <td><input type="checkbox" class="user-badge-check" data-id="${row.id}" data-user-id="${escapeHtml(u.uid || "")}" value="${row.id}" /></td>
         <td><strong>${escapeHtml(fullUserName(u))}</strong></td>
         <td>${rolePillHtml(u.role)}</td>
         <td>${escapeHtml(u.uid || "—")}</td>
@@ -1290,8 +1290,20 @@ function escapeHtml(value = "") {
   }
 
   function selectedBadgeUsers() {
-    const ids = Array.from(document.querySelectorAll(".user-badge-check:checked")).map(cb => cb.dataset.id);
-    return ids.map(id => cachedUsers.find(row => row.id === id)).filter(Boolean).map(row => ({ id: row.id, data: normalizeUser(row) }));
+    const checked = Array.from(document.querySelectorAll(".user-badge-check:checked"));
+    const ids = checked
+      .map(cb => String(cb.dataset.id || cb.value || "").trim())
+      .filter(Boolean);
+
+    return ids
+      .map(id => cachedUsers.find(row =>
+        String(row.id) === id ||
+        String(row.data?.uid || "") === id ||
+        String(row.data?.userId || "") === id ||
+        String(row.data?.employeeNumber || "") === id
+      ))
+      .filter(Boolean)
+      .map(row => ({ id: row.id, data: normalizeUser(row) }));
   }
 
   function barcodeBars(value = "") {
@@ -1316,7 +1328,10 @@ function escapeHtml(value = "") {
   }
 
   function printBadges(userRows) {
-    const users = normalizeRows(userRows || []).filter(row => row.data.active !== false);
+    const users = normalizeRows(userRows || [])
+      .map(row => ({ id: row.id, data: normalizeUser(row) }))
+      .filter(row => row.data.active !== false && row.data.archived !== true);
+
     if (!users.length) {
       alert("No active users selected for badge printing.");
       return;
@@ -1325,7 +1340,7 @@ function escapeHtml(value = "") {
     const companyName = state.companyName || COMPANY_NAME || "Factory On Call";
     const badges = users.map(row => {
       const u = row.data;
-      const badge = u.uid || row.id;
+      const badge = u.uid || u.userId || u.employeeNumber || row.id;
       return `
         <div class="badge-card">
           <div class="badge-company">${escapeHtml(companyName)}</div>
@@ -1337,37 +1352,61 @@ function escapeHtml(value = "") {
         </div>`;
     }).join("");
 
-    const printHtml = `<!doctype html><html><head><title>Badge Sheet</title><style>
-      body{font-family:Arial,sans-serif;margin:14px;color:#111;background:#fff}.badge-sheet{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}.badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff}.badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}.badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}.badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}.badge-id{font-weight:800;margin:8px 0 6px}.badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}.badge-bars{height:34px;white-space:nowrap}.badge-foot{font-size:8px;color:#6b7280;margin-top:5px}@media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
-      </style></head><body><div class="badge-sheet">${badges}</div><script>window.onload=()=>setTimeout(()=>{window.focus();window.print();},250);<\/script></body></html>`;
-
-    const win = window.open("", "_blank");
-    if (win && win.document) {
-      win.document.open();
-      win.document.write(printHtml);
-      win.document.close();
-      return;
-    }
+    const printHtml = `<!doctype html><html><head><title>Factory On Call Badge Sheet</title><style>
+      body{font-family:Arial,sans-serif;margin:14px;color:#111;background:#fff}
+      .badge-sheet{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
+      .badge-card{width:320px;height:180px;border:1px solid #d0d7e2;border-radius:10px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff}
+      .badge-company{font-weight:700;color:#1767d8;font-size:18px;padding:12px 8px 8px}
+      .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:20px;padding:8px 6px 0}
+      .badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:11px;padding-bottom:7px}
+      .badge-id{font-weight:800;margin:8px 0 6px}
+      .badge-code-row{display:flex;align-items:center;justify-content:center;gap:12px}
+      .badge-bars{height:34px;white-space:nowrap}
+      .badge-foot{font-size:8px;color:#6b7280;margin-top:5px}
+      @media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
+      </style></head><body><div class="badge-sheet">${badges}</div></body></html>`;
 
     const frame = document.createElement("iframe");
+    frame.setAttribute("title", "Factory On Call Badge Print");
     frame.style.position = "fixed";
     frame.style.right = "0";
     frame.style.bottom = "0";
-    frame.style.width = "0";
-    frame.style.height = "0";
+    frame.style.width = "1px";
+    frame.style.height = "1px";
+    frame.style.opacity = "0";
     frame.style.border = "0";
-    frame.srcdoc = printHtml;
     document.body.appendChild(frame);
-    frame.onload = () => {
-      setTimeout(() => {
-        try {
-          frame.contentWindow?.focus();
-          frame.contentWindow?.print();
-        } finally {
-          setTimeout(() => frame.remove(), 2000);
-        }
-      }, 250);
-    };
+
+    const doc = frame.contentDocument || frame.contentWindow?.document;
+    if (!doc) {
+      frame.remove();
+      const win = window.open("", "_blank");
+      if (!win || !win.document) {
+        alert("Unable to open badge print window. Please allow pop-ups for this site.");
+        return;
+      }
+      win.document.open();
+      win.document.write(printHtml);
+      win.document.close();
+      setTimeout(() => { win.focus(); win.print(); }, 300);
+      return;
+    }
+
+    doc.open();
+    doc.write(printHtml);
+    doc.close();
+
+    setTimeout(() => {
+      try {
+        frame.contentWindow?.focus();
+        frame.contentWindow?.print();
+      } catch (err) {
+        console.error("Badge print failed", err);
+        alert("Could not open badge print dialog.");
+      } finally {
+        setTimeout(() => frame.remove(), 2000);
+      }
+    }, 300);
   }
 
   function wireUserTableButtons() {
@@ -1767,7 +1806,7 @@ function escapeHtml(value = "") {
 
       if (singleBadgeBtn) {
         const found = cachedUsers.find(row => row.id === singleBadgeBtn.dataset.id);
-        if (found) printBadges([found]);
+        if (found) printBadges([{ id: found.id, data: normalizeUser(found) }]);
         return;
       }
 
