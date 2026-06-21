@@ -1395,75 +1395,231 @@ function escapeHtml(value = "") {
     }
 
     const companyName = COMPANY_NAME || "Factory On Call";
-    const badges = users.map(row => {
+    const badgeRows = users.map(row => {
       const u = row.data;
-      const badge = u.uid || u.userId || u.employeeNumber || row.id;
-      return `
-        <div class="badge-card">
-          <div class="badge-company">${escapeHtml(companyName)}</div>
-          <div class="badge-name">${escapeHtml(fullUserName(u))}</div>
-          <div class="badge-role">${escapeHtml(u.role || "")}</div>
-          <div class="badge-id">USER ID: ${escapeHtml(badge || "")}</div>
-          <div class="badge-code-row">${qrBlock(badge)}<div class="badge-bars">${barcodeBars(badge)}</div></div>
-          <div class="badge-foot">Powered by One T Media Group</div>
-        </div>`;
-    }).join("");
+      const userId = String(u.uid || u.userId || u.employeeNumber || row.id || "").trim();
+      return {
+        name: fullUserName(u) || "Unnamed User",
+        role: u.role || "",
+        userId,
+        companyName
+      };
+    }).filter(item => item.userId);
 
-    const printHtml = `<!doctype html><html><head><title>Factory On Call Badge Sheet</title><style>
-      body{font-family:Arial,sans-serif;margin:14px;color:#111;background:#fff}
-      .badge-sheet{display:flex;flex-wrap:wrap;gap:14px;align-items:flex-start}
-      .badge-card{width:360px;height:200px;border:1px solid #d0d7e2;border-radius:12px;overflow:hidden;text-align:center;page-break-inside:avoid;break-inside:avoid;background:#fff;box-shadow:none}
-      .badge-company{font-weight:800;color:#1767d8;font-size:16px;padding:12px 8px 8px}
-      .badge-name{background:#1767d8;color:#fff;font-weight:800;font-size:24px;line-height:1.05;padding:8px 6px 0}
-      .badge-role{background:#1767d8;color:#eaf2ff;text-transform:uppercase;font-weight:700;font-size:12px;padding:1px 6px 8px}
-      .badge-id{font-weight:800;font-size:18px;margin:8px 0 5px}
-      .badge-code-row{display:flex;align-items:center;justify-content:center;gap:18px;margin-top:2px}
-      .badge-bars{height:52px;line-height:0}.badge-qr-svg,.badge-barcode-svg{display:block}
-      .badge-foot{font-size:8px;color:#6b7280;margin-top:3px}
-      @media print{body{margin:10px}.badge-card{break-inside:avoid;page-break-inside:avoid}}
-      </style></head><body><div class="badge-sheet">${badges}</div></body></html>`;
-
-    const frame = document.createElement("iframe");
-    frame.setAttribute("title", "Factory On Call Badge Print");
-    frame.style.position = "fixed";
-    frame.style.right = "0";
-    frame.style.bottom = "0";
-    frame.style.width = "1px";
-    frame.style.height = "1px";
-    frame.style.opacity = "0";
-    frame.style.border = "0";
-    document.body.appendChild(frame);
-
-    const doc = frame.contentDocument || frame.contentWindow?.document;
-    if (!doc) {
-      frame.remove();
-      const win = window.open("", "_blank");
-      if (!win || !win.document) {
-        alert("Unable to open badge print window. Please allow pop-ups for this site.");
-        return;
-      }
-      win.document.open();
-      win.document.write(printHtml);
-      win.document.close();
-      setTimeout(() => { win.focus(); win.print(); }, 300);
+    if (!badgeRows.length) {
+      alert("No users with User IDs available for badge printing.");
       return;
     }
 
-    doc.open();
-    doc.write(printHtml);
-    doc.close();
+    const badgeCards = badgeRows.map((item, index) => `
+      <div class="badge">
+        <div class="badge-top">
+          <div class="top-brand">${escapeHtml(item.companyName)}</div>
+        </div>
 
-    setTimeout(() => {
-      try {
-        frame.contentWindow?.focus();
-        frame.contentWindow?.print();
-      } catch (err) {
-        console.error("Badge print failed", err);
-        alert("Could not open badge print dialog.");
-      } finally {
-        setTimeout(() => frame.remove(), 2000);
+        <div class="name-band">
+          <div class="name">${escapeHtml(item.name)}</div>
+          <div class="role">${escapeHtml(item.role)}</div>
+        </div>
+
+        <div class="id">USER ID: ${escapeHtml(item.userId)}</div>
+
+        <div class="codes">
+          <canvas id="qrcode-${index}"></canvas>
+          <svg id="barcode-${index}"></svg>
+        </div>
+
+        <div class="footer">Powered by One T Media Group</div>
+      </div>
+    `).join("");
+
+    const codeValues = badgeRows.map(item => item.userId);
+
+    const printHtml = `<!doctype html>
+<html>
+<head>
+<title>Factory On Call Badge Sheet</title>
+<style>
+  @page { size: letter; margin: 0.5in; }
+
+  html, body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background: #fff;
+    color: #111;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .sheet {
+    display: grid;
+    grid-template-columns: repeat(2, 3.375in);
+    grid-auto-rows: 2.125in;
+    gap: 0.25in;
+    justify-content: center;
+    align-content: start;
+  }
+
+  .badge {
+    width: 3.375in;
+    height: 2.125in;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: white;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    box-sizing: border-box;
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .badge-top {
+    height: 0.45in;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    background: white;
+    box-sizing: border-box;
+  }
+
+  .top-brand {
+    font-weight: 900;
+    font-size: 16px;
+    color: #0b63ce;
+    text-align: center;
+    line-height: 1.05;
+  }
+
+  .name-band {
+    background: #0b63ce;
+    color: white;
+    text-align: center;
+    padding: 7px 6px;
+  }
+
+  .name {
+    font-size: 20px;
+    font-weight: 900;
+    line-height: 1;
+  }
+
+  .role {
+    font-size: 11px;
+    margin-top: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    font-weight: 800;
+  }
+
+  .id {
+    font-size: 14px;
+    font-weight: 900;
+    text-align: center;
+    padding: 6px 0 2px;
+    color: #111827;
+  }
+
+  .codes {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 13px;
+    flex: 1;
+    padding: 0 12px 3px;
+  }
+
+  canvas {
+    width: 50px !important;
+    height: 50px !important;
+  }
+
+  svg {
+    width: 150px !important;
+    height: 43px !important;
+  }
+
+  .footer {
+    font-size: 7px;
+    text-align: center;
+    color: #6b7280;
+    padding-bottom: 3px;
+  }
+
+  @media print {
+    body { margin: 0; }
+    .badge { break-inside: avoid; page-break-inside: avoid; }
+  }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"><\/script>
+</head>
+
+<body>
+  <div class="sheet">
+    ${badgeCards}
+  </div>
+
+  <script>
+    const values = ${JSON.stringify(codeValues)};
+
+    function waitForLibraries(done, attempts = 0) {
+      if (window.JsBarcode && window.QRCode) {
+        done();
+        return;
       }
-    }, 300);
+
+      if (attempts > 80) {
+        document.body.insertAdjacentHTML("beforeend", "<p style='font-family:Arial;margin:20px;color:#b91c1c'>Badge code libraries did not load. Check internet connection and try again.</p>");
+        return;
+      }
+
+      setTimeout(() => waitForLibraries(done, attempts + 1), 100);
+    }
+
+    window.onload = function() {
+      waitForLibraries(() => {
+        values.forEach((value, index) => {
+          try {
+            JsBarcode("#barcode-" + index, String(value), {
+              format: "CODE128",
+              displayValue: false,
+              height: 43,
+              width: 2,
+              margin: 0
+            });
+
+            QRCode.toCanvas(document.getElementById("qrcode-" + index), String(value), {
+              width: 50,
+              margin: 0,
+              errorCorrectionLevel: "M"
+            });
+          } catch (error) {
+            console.error("Badge code failed", error);
+          }
+        });
+
+        setTimeout(() => {
+          window.focus();
+          window.print();
+        }, 500);
+      });
+    };
+  <\/script>
+</body>
+</html>`;
+
+    const win = window.open("", "_blank");
+    if (!win || !win.document) {
+      alert("Unable to open badge print window. Please allow pop-ups for this site.");
+      return;
+    }
+
+    win.document.open();
+    win.document.write(printHtml);
+    win.document.close();
   }
 
   function wireUserTableButtons() {
