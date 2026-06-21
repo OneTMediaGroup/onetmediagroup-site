@@ -61,6 +61,7 @@ const COMPANY_ID = getActiveCompanyId();
   const usersRef = companyRef.collection("users");
   const rolesRef = companyRef.collection("roles");
   const areasRef = companyRef.collection("areas");
+  const stationsRef = companyRef.collection("stations");
 
   const params = new URLSearchParams(window.location.search);
   const viewerUid = params.get("uid") || params.get("userId") || "";
@@ -123,8 +124,8 @@ const COMPANY_ID = getActiveCompanyId();
     return normalizeList(call.roles)[0] || call.role || call.personnel || "Support";
   }
 
-  function callLocation(call = {}) {
-    return call.area || normalizeList(call.cells)[0] || call.location || "General";
+  function callArea(call = {}) {
+    return call.area || call.areaName || call.stationArea || call.location || normalizeList(call.cells)[0] || "Unassigned";
   }
 
   function statusLabel(status) {
@@ -216,16 +217,42 @@ const COMPANY_ID = getActiveCompanyId();
 
   async function loadFilters() {
     try {
-      const areaSnap = await areasRef.get();
-      allAreasCache = areaSnap.docs.map(d => d.data()).filter(a => a.active !== false);
-      allAreasCache.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+      const [areaSnap, stationSnap] = await Promise.all([
+        areasRef.get(),
+        stationsRef.get().catch(() => ({ docs: [] }))
+      ]);
+
+      const areaNames = new Set();
+
+      areaSnap.docs
+        .map(d => d.data() || {})
+        .filter(a => a.active !== false)
+        .forEach(a => {
+          if (a.name) areaNames.add(String(a.name));
+        });
+
+      stationSnap.docs
+        .map(d => d.data() || {})
+        .forEach(station => {
+          const areaName = station.area || station.areaName || station.stationArea;
+          if (areaName) areaNames.add(String(areaName));
+        });
+
+      allCallsCache.forEach(call => {
+        const areaName = callArea(call);
+        if (areaName && areaName !== "Unassigned") areaNames.add(String(areaName));
+      });
+
+      allAreasCache = Array.from(areaNames).sort((a, b) => a.localeCompare(b));
+
       if (areaFilter) {
-        areaFilter.innerHTML = `<option value="">All Areas</option>` + allAreasCache.map(a => `<option value="${a.name || ""}">${a.name || ""}</option>`).join("");
+        areaFilter.innerHTML = `<option value="">All Areas</option>` + allAreasCache.map(name => `<option value="${name}">${name}</option>`).join("");
       }
+
       if (personnelFilter) {
         const callable = allRolesCache.filter(r => {
           const p = r.permissions || {};
-          return r.isCallable === true || p.callable === true || p.makeCall === true;
+          return r.isCallable === true || p.callable === true || p.makeCall === true || r.callable === true;
         }).sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
         personnelFilter.innerHTML = `<option value="">All Personnel</option>` + callable.map(r => `<option value="${r.name || ""}">${r.name || ""}</option>`).join("");
       }
@@ -246,13 +273,13 @@ const COMPANY_ID = getActiveCompanyId();
     if (statusMode === "waiting") filtered = filtered.filter(c => c.status === "waiting" || !c.status);
     if (statusMode === "ack") filtered = filtered.filter(c => c.status === "ack");
 
-    if (area) filtered = filtered.filter(c => callLocation(c) === area || c.area === area);
+    if (area) filtered = filtered.filter(c => callArea(c) === area);
     if (personnel) filtered = filtered.filter(c => roleNameFromCall(c) === personnel);
     if (search) {
       filtered = filtered.filter(c => [
         c.station || "",
         roleNameFromCall(c),
-        callLocation(c),
+        callArea(c),
         c.requestedBy || c.createdBy || "Operator",
         c.status || ""
       ].join(" ").toLowerCase().includes(search));
@@ -269,7 +296,7 @@ const COMPANY_ID = getActiveCompanyId();
     if (!activeCalls) return;
     activeCalls.innerHTML = `
       <div class="call-table-header">
-        <span>Station</span><span>Personnel Required</span><span>Location</span><span>Waiting</span><span>Status</span><span>Actions</span>
+        <span>Station</span><span>Personnel Required</span><span>Area</span><span>Waiting</span><span>Status</span><span>Actions</span>
       </div>
     `;
 
@@ -286,7 +313,7 @@ const COMPANY_ID = getActiveCompanyId();
       row.innerHTML = `
         <span class="strong">${call.station || "Unknown Station"}</span>
         <span>${roleNameFromCall(call)}</span>
-        <span>${callLocation(call)}</span>
+        <span>${callArea(call)}</span>
         <span class="muted">${formatElapsedFromMs(call.timeStarted)}</span>
         <span><span class="status-pill ${statusClass(call.status)}">${statusLabel(call.status)}</span></span>
         <span class="actions">
@@ -303,7 +330,7 @@ const COMPANY_ID = getActiveCompanyId();
     if (!recentCalls) return;
     recentCalls.innerHTML = `
       <div class="call-table-header">
-        <span>Station</span><span>Personnel Required</span><span>Location</span><span>Age</span><span>Status</span>
+        <span>Station</span><span>Personnel Required</span><span>Area</span><span>Age</span><span>Status</span>
       </div>
     `;
     if (!calls.length) {
@@ -316,7 +343,7 @@ const COMPANY_ID = getActiveCompanyId();
       row.innerHTML = `
         <span class="strong">${call.station || "Unknown Station"}</span>
         <span>${roleNameFromCall(call)}</span>
-        <span>${callLocation(call)}</span>
+        <span>${callArea(call)}</span>
         <span class="muted">${formatElapsedFromMs(call.timeStarted)}</span>
         <span><span class="status-pill ${statusClass(call.status)}">${statusLabel(call.status)}</span></span>
       `;
