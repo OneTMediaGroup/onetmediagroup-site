@@ -1,6 +1,6 @@
 /* -------------------------------------------------
    FACTORY ON CALL — SUPERVISOR PORTAL
-   Unified Firestore Version
+   Operations portal for live call management
 -------------------------------------------------- */
 const COMPANY_STORAGE_KEY = "factory_on_call_active_company_id";
 
@@ -11,12 +11,10 @@ function getCompanyIdFromUrl() {
 
 function getActiveCompanyId() {
   const urlCompanyId = getCompanyIdFromUrl();
-
   if (urlCompanyId) {
     localStorage.setItem(COMPANY_STORAGE_KEY, urlCompanyId);
     return urlCompanyId;
   }
-
   return localStorage.getItem(COMPANY_STORAGE_KEY) || "demo-company";
 }
 
@@ -27,22 +25,15 @@ const COMPANY_ID = getActiveCompanyId();
     return new Promise((resolve, reject) => {
       const existing = document.querySelector(`script[src="${src}"]`);
       if (existing) {
-        if (existing.dataset.loaded === "true") {
-          resolve();
-          return;
-        }
         existing.addEventListener("load", resolve, { once: true });
         existing.addEventListener("error", reject, { once: true });
+        if (existing.dataset.loaded === "true") resolve();
         return;
       }
-
       const s = document.createElement("script");
       s.src = src;
       s.async = true;
-      s.onload = () => {
-        s.dataset.loaded = "true";
-        resolve();
-      };
+      s.onload = () => { s.dataset.loaded = "true"; resolve(); };
       s.onerror = reject;
       document.head.appendChild(s);
     });
@@ -62,55 +53,37 @@ const COMPANY_ID = getActiveCompanyId();
     appId: "1:586355508568:web:40c4803ef1fd749811512d"
   };
 
-  const app = firebase.apps.length
-    ? firebase.app()
-    : firebase.initializeApp(firebaseConfig);
-
+  const app = firebase.apps.length ? firebase.app() : firebase.initializeApp(firebaseConfig);
   const db = app.firestore();
 
-  // ---- FIRESTORE PATHS ----
   const companyRef = db.collection("companies").doc(COMPANY_ID);
   const callsRef = companyRef.collection("calls");
   const usersRef = companyRef.collection("users");
-
-  async function loadCompanyBranding() {
-    try {
-      const rootSnap = await companyRef.get();
-      const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
-      let branding = {};
-      try {
-        const brandingSnap = await companyRef.collection("branding").doc("main").get();
-        branding = brandingSnap.exists ? brandingSnap.data() || {} : {};
-      } catch (error) {
-        console.warn("Branding unavailable:", error);
-      }
-
-      const companyName = branding.companyName || rootData.companyName || "Factory On Call";
-      const nameEl = document.querySelector(".vh-company-name");
-      if (nameEl) nameEl.textContent = companyName;
-      localStorage.setItem("factory_on_call_company_name", companyName);
-    } catch (error) {
-      console.warn("Could not load viewer branding:", error);
-    }
-  }
-
-  await loadCompanyBranding();
+  const rolesRef = companyRef.collection("roles");
+  const areasRef = companyRef.collection("areas");
 
   const params = new URLSearchParams(window.location.search);
-  const viewerUid = params.get("uid") || "";
-  const companyName = params.get("companyName") || localStorage.getItem("factory_on_call_company_name") || "Factory On Call";
-  localStorage.setItem("factory_on_call_company_name", companyName);
-
-  let viewerIsAdmin = true;
-  let viewerUserName = "ViewerUser";
+  const viewerUid = params.get("uid") || params.get("userId") || "";
 
   const activeCalls = document.getElementById("activeCalls");
+  const recentCalls = document.getElementById("recentCalls");
   const connDot = document.getElementById("connDot");
   const connLabel = document.getElementById("connLabel");
   const sbActive = document.getElementById("sbActive");
   const sbWaiting = document.getElementById("sbWaiting");
   const sbOnWay = document.getElementById("sbOnWay");
   const sbClosed = document.getElementById("sbClosed");
+  const callSearch = document.getElementById("callSearch");
+  const areaFilter = document.getElementById("areaFilter");
+  const personnelFilter = document.getElementById("personnelFilter");
+  const statusFilter = document.getElementById("statusFilter");
+  const portalUserLabel = document.getElementById("portalUserLabel");
+
+  let currentUser = null;
+  let currentRole = null;
+  let allCallsCache = [];
+  let allRolesCache = [];
+  let allAreasCache = [];
 
   function setConn(ok) {
     if (connDot) connDot.style.background = ok ? "#22c55e" : "#ef4444";
@@ -119,246 +92,304 @@ const COMPANY_ID = getActiveCompanyId();
 
   function formatElapsedFromMs(ts) {
     if (!ts) return "Just now";
-
     const totalMinutes = Math.max(0, Math.floor((Date.now() - ts) / 60000));
-
     if (totalMinutes < 1) return "Just now";
     if (totalMinutes < 60) return `${totalMinutes} min`;
-
     const totalHours = Math.floor(totalMinutes / 60);
     const minutes = totalMinutes % 60;
-
-    if (totalHours < 24) {
-      return minutes ? `${totalHours} hr ${minutes} min` : `${totalHours} hr`;
-    }
-
+    if (totalHours < 24) return minutes ? `${totalHours} hr ${minutes} min` : `${totalHours} hr`;
     const days = Math.floor(totalHours / 24);
     const hours = totalHours % 24;
-
-    if (days < 7) {
-      return hours ? `${days} day${days === 1 ? "" : "s"} ${hours} hr` : `${days} day${days === 1 ? "" : "s"}`;
-    }
-
+    if (days < 7) return hours ? `${days} day${days === 1 ? "" : "s"} ${hours} hr` : `${days} day${days === 1 ? "" : "s"}`;
     const weeks = Math.floor(days / 7);
     const remDays = days % 7;
-
     return remDays ? `${weeks} wk${weeks === 1 ? "" : "s"} ${remDays} day${remDays === 1 ? "" : "s"}` : `${weeks} wk${weeks === 1 ? "" : "s"}`;
-  }
-
-  function fmtMinutesAgo(ts) {
-    return formatElapsedFromMs(ts);
   }
 
   function isToday(ts) {
     if (!ts) return false;
     const d = new Date(ts);
     const now = new Date();
-    return (
-      d.getFullYear() === now.getFullYear() &&
-      d.getMonth() === now.getMonth() &&
-      d.getDate() === now.getDate()
-    );
-  }
-
-  function splitName(fullName = "") {
-    const cleaned = String(fullName || "").trim();
-    if (!cleaned) return { firstName: "", lastName: "" };
-
-    const parts = cleaned.split(/\s+/);
-    return {
-      firstName: parts.shift() || "",
-      lastName: parts.join(" ")
-    };
-  }
-
-  function normalizeUser(user = {}, id = "") {
-    const split = splitName(user.name || "");
-    return {
-      ...user,
-      firstName: user.firstName || split.firstName || "",
-      lastName: user.lastName || split.lastName || "",
-      uid: user.uid || user.employeeNumber || id || "",
-      active: user.active !== false
-    };
-  }
-
-
-  async function loadViewerUser() {
-    try {
-      const snap = await usersRef.get();
-      const users = snap.docs.map(d => normalizeUser(d.data(), d.id));
-
-      let match = null;
-
-      if (viewerUid) {
-        match = users.find(u => String(u.uid || u.employeeNumber || "") === viewerUid && u.active !== false);
-      }
-
-      if (!match) {
-        match = users.find(u => u.active !== false);
-      }
-
-      if (match) {
-        const first = match.firstName || "";
-        const last = match.lastName || "";
-        const full = `${first} ${last}`.trim();
-        viewerUserName = full || match.name || match.uid || "ViewerUser";
-      }
-    } catch (err) {
-      console.error("Could not load viewer user:", err);
-    }
-  }
-
-  function statusLabel(status) {
-    if (status === "ack") return "Acknowledged";
-    if (status === "closed") return "Completed";
-    return "Waiting";
-  }
-
-  function statusClass(status) {
-    if (status === "ack") return "status-onway";
-    if (status === "closed") return "status-closed";
-    return "status-waiting";
+    return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth() && d.getDate() === now.getDate();
   }
 
   function normalizeList(value) {
     if (Array.isArray(value)) return value.filter(Boolean);
-    if (typeof value === "string") {
-      return value
-        .split(",")
-        .map(item => item.trim())
-        .filter(Boolean);
-    }
+    if (typeof value === "string") return value.split(",").map(v => v.trim()).filter(Boolean);
     return [];
   }
 
-  function renderCallList(calls) {
-    if (!activeCalls) return;
+  function roleNameFromCall(call = {}) {
+    return normalizeList(call.roles)[0] || call.role || call.personnel || "Support";
+  }
 
+  function callLocation(call = {}) {
+    return call.area || normalizeList(call.cells)[0] || call.location || "General";
+  }
+
+  function statusLabel(status) {
+    if (status === "ack") return "Acknowledged";
+    if (status === "closed") return "Closed";
+    return "Waiting";
+  }
+
+  function statusClass(status) {
+    if (status === "ack") return "status-ack";
+    if (status === "closed") return "status-closed";
+    return "status-waiting";
+  }
+
+  function rolePermissions(role = {}) {
+    return role.permissions || {};
+  }
+
+  function boolPerm(role, keys) {
+    const p = rolePermissions(role);
+    return keys.some(k => role[k] === true || p[k] === true);
+  }
+
+  function userRoleName() {
+    return (currentUser && (currentUser.role || currentUser.personnelRole || currentUser.type)) || "";
+  }
+
+  function canAcknowledgeCall(call) {
+    if (!currentRole) return true; // admin/open test fallback
+    if (boolPerm(currentRole, ["supervisorPortal", "viewAllCalls", "acknowledgeAllCalls"])) return true;
+    const callRole = roleNameFromCall(call).toLowerCase();
+    return boolPerm(currentRole, ["acknowledgeCalls", "acceptCall"]) && callRole === userRoleName().toLowerCase();
+  }
+
+  function canCloseCall(call) {
+    if (!currentRole) return true; // admin/open test fallback
+    if (boolPerm(currentRole, ["supervisorPortal", "viewAllCalls", "closeAllCalls"])) return true;
+    const callRole = roleNameFromCall(call).toLowerCase();
+    return boolPerm(currentRole, ["closeCalls", "closeCall"]) && callRole === userRoleName().toLowerCase();
+  }
+
+  async function loadCompanyBranding() {
+    try {
+      const rootSnap = await companyRef.get();
+      const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
+      let branding = {};
+      const brandingSnap = await companyRef.collection("branding").doc("main").get().catch(() => null);
+      if (brandingSnap && brandingSnap.exists) branding = brandingSnap.data() || {};
+      const companyName = branding.companyName || rootData.companyName || "Factory On Call";
+      const nameEl = document.querySelector(".ph-company-name");
+      if (nameEl) nameEl.textContent = companyName;
+    } catch (error) {
+      console.warn("Could not load branding:", error);
+    }
+  }
+
+  function splitName(fullName = "") {
+    const parts = String(fullName || "").trim().split(/\s+/).filter(Boolean);
+    return { firstName: parts.shift() || "", lastName: parts.join(" ") };
+  }
+
+  async function loadUserAndRole() {
+    try {
+      const usersSnap = await usersRef.get();
+      const users = usersSnap.docs.map(d => {
+        const u = d.data() || {};
+        const split = splitName(u.name || "");
+        return { id: d.id, ...u, uid: u.uid || u.employeeNumber || d.id, firstName: u.firstName || split.firstName, lastName: u.lastName || split.lastName };
+      });
+      currentUser = viewerUid
+        ? users.find(u => String(u.uid || u.employeeNumber || u.id) === String(viewerUid) && u.active !== false)
+        : users.find(u => u.active !== false);
+
+      const rolesSnap = await rolesRef.get();
+      allRolesCache = rolesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+
+      if (currentUser) {
+        const roleName = (currentUser.role || "").toLowerCase();
+        currentRole = allRolesCache.find(r => String(r.name || "").toLowerCase() === roleName) || null;
+        const displayName = `${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() || currentUser.name || currentUser.uid || "Supervisor";
+        if (portalUserLabel) portalUserLabel.textContent = currentRole ? `${displayName} · ${currentRole.name}` : displayName;
+      } else if (portalUserLabel) {
+        portalUserLabel.textContent = "Supervisor";
+      }
+    } catch (error) {
+      console.warn("Could not load supervisor user/role:", error);
+    }
+  }
+
+  async function loadFilters() {
+    try {
+      const areaSnap = await areasRef.get();
+      allAreasCache = areaSnap.docs.map(d => d.data()).filter(a => a.active !== false);
+      allAreasCache.sort((a, b) => String(a.name || "").localeCompare(String(b.name || "")));
+      if (areaFilter) {
+        areaFilter.innerHTML = `<option value="">All Areas</option>` + allAreasCache.map(a => `<option value="${a.name || ""}">${a.name || ""}</option>`).join("");
+      }
+      if (personnelFilter) {
+        const callable = allRolesCache.filter(r => {
+          const p = r.permissions || {};
+          return r.isCallable === true || p.callable === true || p.makeCall === true;
+        }).sort((a,b) => String(a.name || "").localeCompare(String(b.name || "")));
+        personnelFilter.innerHTML = `<option value="">All Personnel</option>` + callable.map(r => `<option value="${r.name || ""}">${r.name || ""}</option>`).join("");
+      }
+    } catch (error) {
+      console.warn("Could not load filters:", error);
+    }
+  }
+
+  function renderTables() {
+    const search = (callSearch?.value || "").trim().toLowerCase();
+    const area = areaFilter?.value || "";
+    const personnel = personnelFilter?.value || "";
+    const statusMode = statusFilter?.value || "active";
+
+    let filtered = allCallsCache.slice();
+
+    if (statusMode === "active") filtered = filtered.filter(c => c.status === "waiting" || c.status === "ack");
+    if (statusMode === "waiting") filtered = filtered.filter(c => c.status === "waiting" || !c.status);
+    if (statusMode === "ack") filtered = filtered.filter(c => c.status === "ack");
+
+    if (area) filtered = filtered.filter(c => callLocation(c) === area || c.area === area);
+    if (personnel) filtered = filtered.filter(c => roleNameFromCall(c) === personnel);
+    if (search) {
+      filtered = filtered.filter(c => [
+        c.station || "",
+        roleNameFromCall(c),
+        callLocation(c),
+        c.requestedBy || c.createdBy || "Operator",
+        c.status || ""
+      ].join(" ").toLowerCase().includes(search));
+    }
+
+    filtered.sort((a,b) => (a.timeStarted || 0) - (b.timeStarted || 0));
+    renderActive(filtered);
+
+    const recent = allCallsCache.slice().sort((a,b) => (b.timeStarted || 0) - (a.timeStarted || 0)).slice(0, 10);
+    renderRecent(recent);
+  }
+
+  function renderActive(calls) {
+    if (!activeCalls) return;
     activeCalls.innerHTML = `
-      <div class="call-table-header" aria-hidden="true">
-        <span>Station</span>
-        <span>Personnel Required</span>
-        <span>Location</span>
-        <span>Waiting</span>
-        <span>Status</span>
-        <span>Actions</span>
+      <div class="call-table-header">
+        <span>Station</span><span>Personnel Required</span><span>Location</span><span>Waiting</span><span>Status</span><span>Actions</span>
       </div>
     `;
 
     if (!calls.length) {
-      activeCalls.insertAdjacentHTML("beforeend", `
-        <div class="empty-state">
-          <div class="empty-title">No Active Calls</div>
-          <div class="empty-subtitle">All stations are clear.</div>
-        </div>
-      `);
+      activeCalls.insertAdjacentHTML("beforeend", `<div class="empty">No calls match the current filters.</div>`);
       return;
     }
 
     calls.forEach(call => {
-      const waitLabel = fmtMinutesAgo(call.timeStarted);
-      const personnelRequired = normalizeList(call.roles).join(", ") || "Support";
-      const location = normalizeList(call.cells).join(", ") || "—";
-      const status = statusLabel(call.status);
-      const ackText = call.status === "ack" && call.ackBy ? `By ${call.ackBy}` : status;
-
+      const canAck = canAcknowledgeCall(call) && call.status !== "ack" && call.status !== "closed";
+      const canClose = canCloseCall(call) && call.status !== "closed";
       const row = document.createElement("div");
-      row.className = `call-row ${statusClass(call.status)}`;
-
+      row.className = "call-row";
       row.innerHTML = `
-        <span class="call-station" title="${call.station || ""}">${call.station || "Unknown Station"}</span>
-        <span class="call-role" title="${personnelRequired}">${personnelRequired}</span>
-        <span class="call-cell" title="${location}">${location}</span>
-        <span class="call-time">${waitLabel}</span>
-        <span class="call-status">
-          <span class="status-pill ${statusClass(call.status)}">${ackText}</span>
+        <span class="strong">${call.station || "Unknown Station"}</span>
+        <span>${roleNameFromCall(call)}</span>
+        <span>${callLocation(call)}</span>
+        <span class="muted">${formatElapsedFromMs(call.timeStarted)}</span>
+        <span><span class="status-pill ${statusClass(call.status)}">${statusLabel(call.status)}</span></span>
+        <span class="actions">
+          <button class="btn btn-ack" data-action="ack" data-id="${call.id}" ${canAck ? "" : "disabled"}>Acknowledge</button>
+          <button class="btn btn-close" data-action="close" data-id="${call.id}" ${canClose ? "" : "disabled"}>Close</button>
         </span>
-        <div class="call-actions">
-          <button class="btn-green" data-id="${call.id}">Acknowledge</button>
-          ${viewerIsAdmin ? `<button class="btn-red" data-id="${call.id}">Close</button>` : ""}
-        </div>
       `;
-
       activeCalls.appendChild(row);
     });
-
     wireButtons();
   }
 
-  function wireButtons() {
-    document.querySelectorAll(".btn-green").forEach(btn => {
-      btn.onclick = async () => {
-        const id = btn.dataset.id;
-        if (!id) return;
-
-        await callsRef.doc(id).update({
-          status: "ack",
-          ackBy: viewerUserName,
-          assignedTo: viewerUserName,
-          ackByUid: viewerUid || "",
-          timeAck: Date.now()
-        });
-      };
+  function renderRecent(calls) {
+    if (!recentCalls) return;
+    recentCalls.innerHTML = `
+      <div class="call-table-header">
+        <span>Station</span><span>Personnel Required</span><span>Location</span><span>Age</span><span>Status</span>
+      </div>
+    `;
+    if (!calls.length) {
+      recentCalls.insertAdjacentHTML("beforeend", `<div class="empty">No recent activity.</div>`);
+      return;
+    }
+    calls.forEach(call => {
+      const row = document.createElement("div");
+      row.className = "recent-row";
+      row.innerHTML = `
+        <span class="strong">${call.station || "Unknown Station"}</span>
+        <span>${roleNameFromCall(call)}</span>
+        <span>${callLocation(call)}</span>
+        <span class="muted">${formatElapsedFromMs(call.timeStarted)}</span>
+        <span><span class="status-pill ${statusClass(call.status)}">${statusLabel(call.status)}</span></span>
+      `;
+      recentCalls.appendChild(row);
     });
+  }
 
-    document.querySelectorAll(".btn-red").forEach(btn => {
+  function wireButtons() {
+    document.querySelectorAll("button[data-action]").forEach(btn => {
       btn.onclick = async () => {
-        if (!viewerIsAdmin) return;
-
         const id = btn.dataset.id;
+        const action = btn.dataset.action;
         if (!id) return;
-
         const ref = callsRef.doc(id);
         const snap = await ref.get();
         if (!snap.exists) return;
-
         const data = snap.data() || {};
-        const timeClosed = Date.now();
-        const duration = data.timeStarted
-          ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000))
-          : null;
-
-        await ref.update({
-          status: "closed",
-          closedBy: viewerUserName,
-          closedByUid: viewerUid || "",
-          timeClosed,
-          duration
-        });
+        const userName = currentUser ? (`${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() || currentUser.name || currentUser.uid) : "Supervisor";
+        if (action === "ack") {
+          await ref.update({
+            status: "ack",
+            ackBy: userName,
+            assignedTo: userName,
+            ackByUid: viewerUid || "",
+            timeAck: Date.now()
+          });
+        }
+        if (action === "close") {
+          const timeClosed = Date.now();
+          const duration = data.timeStarted ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000)) : null;
+          await ref.update({
+            status: "closed",
+            closedBy: userName,
+            closedByUid: viewerUid || "",
+            timeClosed,
+            duration
+          });
+        }
       };
+    });
+  }
+
+  function updateStats(allCalls) {
+    const open = allCalls.filter(c => c.status === "waiting" || c.status === "ack");
+    if (sbActive) sbActive.textContent = String(open.length);
+    if (sbWaiting) sbWaiting.textContent = String(open.filter(c => c.status === "waiting" || !c.status).length);
+    if (sbOnWay) sbOnWay.textContent = String(open.filter(c => c.status === "ack").length);
+    if (sbClosed) sbClosed.textContent = String(allCalls.filter(c => c.status === "closed" && isToday(c.timeClosed || c.timeStarted)).length);
+  }
+
+  function attachFilterEvents() {
+    [callSearch, areaFilter, personnelFilter, statusFilter].forEach(el => {
+      if (el) el.addEventListener("input", renderTables);
+      if (el) el.addEventListener("change", renderTables);
     });
   }
 
   async function init() {
     setConn(false);
-    await loadViewerUser();
+    await loadCompanyBranding();
+    await loadUserAndRole();
+    await loadFilters();
+    attachFilterEvents();
 
-    callsRef.onSnapshot(
-      snapshot => {
-        setConn(true);
-
-        const allCalls = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const openCalls = allCalls
-          .filter(c => c.status === "waiting" || c.status === "ack")
-          .sort((a, b) => (a.timeStarted || 0) - (b.timeStarted || 0));
-
-        renderCallList(openCalls);
-
-        if (sbActive) sbActive.textContent = String(openCalls.length);
-        if (sbWaiting) sbWaiting.textContent = String(openCalls.filter(c => c.status === "waiting").length);
-        if (sbOnWay) sbOnWay.textContent = String(openCalls.filter(c => c.status === "ack").length);
-        if (sbClosed) {
-          sbClosed.textContent = String(
-            allCalls.filter(c => c.status === "closed" && isToday(c.timeClosed || c.timeStarted)).length
-          );
-        }
-      },
-      err => {
-        console.error(err);
-        setConn(false);
-      }
-    );
+    callsRef.onSnapshot(snapshot => {
+      setConn(true);
+      allCallsCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      updateStats(allCallsCache);
+      renderTables();
+    }, error => {
+      console.error(error);
+      setConn(false);
+    });
   }
 
   if (document.readyState === "loading") {

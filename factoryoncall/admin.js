@@ -876,6 +876,8 @@ let ADMIN_LOCKED = false;
       acceptCall: "Acknowledge",
       closeCall: "Close",
       closeCalls: "Close",
+      acknowledgeAllCalls: "Acknowledge Any",
+      closeAllCalls: "Close Any",
       supervisorPortal: "Supervisor Portal",
       viewAllCalls: "View All Calls",
       makeCall: "Make Call",
@@ -896,11 +898,19 @@ let ADMIN_LOCKED = false;
   }
 
   function roleCanAcknowledge(role = {}) {
-    return legacyPermissionTrue(role, ["acknowledgeCalls", "acceptCall", "supervisorPortal", "viewAllCalls"]);
+    return legacyPermissionTrue(role, ["acknowledgeCalls", "acceptCall", "supervisorPortal", "viewAllCalls", "acknowledgeAllCalls"]);
   }
 
   function roleCanClose(role = {}) {
-    return legacyPermissionTrue(role, ["closeCalls", "closeCall", "supervisorPortal", "viewAllCalls"]);
+    return legacyPermissionTrue(role, ["closeCalls", "closeCall", "supervisorPortal", "viewAllCalls", "closeAllCalls"]);
+  }
+
+  function roleCanAcknowledgeAll(role = {}) {
+    return legacyPermissionTrue(role, ["acknowledgeAllCalls", "supervisorPortal", "viewAllCalls"]);
+  }
+
+  function roleCanCloseAll(role = {}) {
+    return legacyPermissionTrue(role, ["closeAllCalls", "supervisorPortal", "viewAllCalls"]);
   }
 
   function roleHasSupervisorPortal(role = {}) {
@@ -924,6 +934,8 @@ let ADMIN_LOCKED = false;
           roleIsCallable(r) ? "callable" : "",
           roleCanAcknowledge(r) ? "acknowledge" : "",
           roleCanClose(r) ? "close" : "",
+          roleCanAcknowledgeAll(r) ? "acknowledge any" : "",
+          roleCanCloseAll(r) ? "close any" : "",
           roleHasSupervisorPortal(r) ? "supervisor portal" : ""
         ].join(" ").toLowerCase().includes(searchValue);
       });
@@ -933,8 +945,10 @@ let ADMIN_LOCKED = false;
     filteredRows.forEach(row => {
       const r = row.data || {};
       const badges = [];
-      if (roleCanAcknowledge(r)) badges.push("Can Acknowledge");
-      if (roleCanClose(r)) badges.push("Can Close");
+      if (roleCanAcknowledge(r) && !roleCanAcknowledgeAll(r)) badges.push("Acknowledge Matching");
+      if (roleCanClose(r) && !roleCanCloseAll(r)) badges.push("Close Matching");
+      if (roleCanAcknowledgeAll(r)) badges.push("Acknowledge Any");
+      if (roleCanCloseAll(r)) badges.push("Close Any");
       if (roleHasSupervisorPortal(r)) badges.push("Supervisor Portal");
 
       const badgeHtml = badges.length
@@ -976,9 +990,13 @@ let ADMIN_LOCKED = false;
           if (perm === "callable") {
             cb.checked = roleIsCallable(r);
           } else if (perm === "acknowledgeCalls") {
-            cb.checked = roleCanAcknowledge(r);
+            cb.checked = legacyPermissionTrue(r, ["acknowledgeCalls", "acceptCall"]);
           } else if (perm === "closeCalls") {
-            cb.checked = roleCanClose(r);
+            cb.checked = legacyPermissionTrue(r, ["closeCalls", "closeCall"]);
+          } else if (perm === "acknowledgeAllCalls") {
+            cb.checked = roleCanAcknowledgeAll(r);
+          } else if (perm === "closeAllCalls") {
+            cb.checked = roleCanCloseAll(r);
           } else if (perm === "supervisorPortal") {
             cb.checked = roleHasSupervisorPortal(r);
           } else {
@@ -1520,20 +1538,26 @@ stationFormReset?.addEventListener("click", resetStationForm);
         values[perm] = cb.checked;
       });
 
-      const canAck = !!values.acknowledgeCalls || !!values.supervisorPortal;
-      const canClose = !!values.closeCalls || !!values.supervisorPortal;
+      const canAckMatching = !!values.acknowledgeCalls;
+      const canCloseMatching = !!values.closeCalls;
+      const canAckAll = !!values.acknowledgeAllCalls || !!values.supervisorPortal;
+      const canCloseAll = !!values.closeAllCalls || !!values.supervisorPortal;
+      const canAck = canAckMatching || canAckAll;
+      const canClose = canCloseMatching || canCloseAll;
       const isCallable = values.callable !== false;
 
       const permissions = {
         callable: isCallable,
         makeCall: true,
         viewCalls: true,
-        acknowledgeCalls: canAck,
-        acceptCall: canAck,
-        closeCalls: canClose,
-        closeCall: canClose,
+        acknowledgeCalls: canAckMatching,
+        acceptCall: canAckMatching,
+        closeCalls: canCloseMatching,
+        closeCall: canCloseMatching,
+        acknowledgeAllCalls: canAckAll,
+        closeAllCalls: canCloseAll,
         supervisorPortal: !!values.supervisorPortal,
-        viewAllCalls: !!values.supervisorPortal
+        viewAllCalls: !!values.supervisorPortal || canAckAll || canCloseAll
       };
 
       const payload = {
@@ -1543,6 +1567,8 @@ stationFormReset?.addEventListener("click", resetStationForm);
         isCallable,
         canAcknowledge: canAck,
         canClose: canClose,
+        canAcknowledgeAll: canAckAll,
+        canCloseAll: canCloseAll,
         supervisorPortal: !!values.supervisorPortal,
         active: true,
         updatedAt: Date.now()

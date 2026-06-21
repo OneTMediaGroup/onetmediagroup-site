@@ -32,9 +32,13 @@
             </div>
 
             <div class="nav-section">
+                <div class="sidebar-section-label">Operations Portal</div>
+                <a id="sidebarSupervisorLink" class="nav-item sidebar-live-link" href="#" target="_blank" rel="noopener">Open Supervisor Portal</a>
+            </div>
+
+            <div class="nav-section">
                 <div class="sidebar-section-label">Live Screens</div>
                 <a id="sidebarViewerLink" class="nav-item sidebar-live-link" href="#" target="_blank" rel="noopener">Open Viewer</a>
-                <a id="sidebarSupervisorLink" class="nav-item sidebar-live-link" href="#" target="_blank" rel="noopener">Open Supervisor Portal</a>
                 <a id="sidebarDisplayLink" class="nav-item sidebar-live-link" href="#" target="_blank" rel="noopener">Open Display</a>
             </div>
 
@@ -382,7 +386,7 @@
                     <div class="card-head-row">
                         <div>
                             <h2>Roles</h2>
-                            <p class="muted">Manage personnel roles used for call routing and supervisor response.</p>
+                            <p class="muted">Manage personnel roles, call routing, and response access.</p>
                         </div>
                         <input type="search" id="roleSearch" class="table-search" placeholder="Search roles..." />
                     </div>
@@ -434,13 +438,21 @@
                                 <span>Can close matching calls</span>
                             </label>
                             <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="acknowledgeAllCalls" />
+                                <span>Can acknowledge any call</span>
+                            </label>
+                            <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="closeAllCalls" />
+                                <span>Can close any call</span>
+                            </label>
+                            <label class="checkbox-row role-check-row">
                                 <input type="checkbox" data-permission="supervisorPortal" />
-                                <span>Supervisor portal access — can view and manage all calls</span>
+                                <span>Supervisor Portal access</span>
                             </label>
                         </div>
 
                         <p class="form-help">
-                            Admin access is handled by the Admin Panel. This screen only controls call routing and response access.
+                            Admin access is handled by the Admin Panel. Roles control call routing, matching-call response, any-call response, and Supervisor Portal access.
                         </p>
 
                         <div class="button-row">

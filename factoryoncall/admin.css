@@ -2586,3 +2586,44 @@ button.danger:hover {
   margin: 8px 0;
   color: #d1d5db;
 }
+
+
+/* Roles response-access polish */
+.roles-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.roles-table th:nth-child(1),
+.roles-table td:nth-child(1) {
+  width: 180px;
+}
+
+.roles-table th:nth-child(2),
+.roles-table td:nth-child(2) {
+  width: 100px;
+}
+
+.roles-table th:nth-child(4),
+.roles-table td:nth-child(4) {
+  width: 90px;
+}
+
+.roles-table td {
+  vertical-align: top;
+}
+
+.permission-pill-wrap {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 7px !important;
+  max-width: 100% !important;
+  overflow: hidden;
+}
+
+.permission-pill {
+  display: inline-flex !important;
+  align-items: center;
+  white-space: nowrap;
+  margin: 0 !important;
+}

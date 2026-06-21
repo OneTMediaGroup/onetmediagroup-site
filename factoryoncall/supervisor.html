@@ -6,65 +6,80 @@
     <title>Factory On Call – Supervisor Portal</title>
     <link rel="stylesheet" href="supervisor.css" />
 </head>
-
 <body>
-<div id="viewer-root">
-
-    <!-- HEADER -->
-    <header class="viewer-header">
-        <div class="vh-left">
-            <img src="factory_logo.png" class="vh-logo" alt="Factory On Call" />
-            <div class="vh-title">FACTORY ON CALL • SUPERVISOR PORTAL</div>
+<div id="supervisor-root">
+    <header class="portal-header">
+        <div class="ph-left">
+            <img src="factory_logo.png" class="ph-logo" alt="Factory On Call" />
+            <div>
+                <div class="ph-title">FACTORY ON CALL</div>
+                <div class="ph-subtitle">Supervisor Portal</div>
+            </div>
         </div>
-
-        <div class="vh-center">
-            <div class="vh-company-name">Your Company</div>
+        <div class="ph-center">
+            <div class="ph-company-name">Your Company</div>
         </div>
-
-        <div class="vh-right">
-            <span class="vh-status-dot" id="connDot"></span>
+        <div class="ph-right">
+            <span class="ph-status-dot" id="connDot"></span>
             <span id="connLabel">Connecting…</span>
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
-    <main class="viewer-main">
-        <!-- ACTIVE CALLS -->
-        <section class="viewer-section">
-            <h2 class="section-title">Active Calls</h2>
-
-            <!-- Vertical scroll area JUST for active calls -->
-            <div id="activeCalls" class="call-list scroll-vertical">
-                <!-- Cards injected by supervisor.js -->
+    <main class="portal-main">
+        <section class="portal-top">
+            <div class="metric-card">
+                <div class="metric-label">Active Calls</div>
+                <div class="metric-value" id="sbActive">0</div>
             </div>
+            <div class="metric-card">
+                <div class="metric-label">Waiting</div>
+                <div class="metric-value" id="sbWaiting">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Acknowledged</div>
+                <div class="metric-value" id="sbOnWay">0</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Closed Today</div>
+                <div class="metric-value" id="sbClosed">0</div>
+            </div>
+        </section>
+
+        <section class="portal-card">
+            <div class="card-head">
+                <div>
+                    <h1>Live Call Management</h1>
+                    <p>Review, acknowledge, and close active calls.</p>
+                </div>
+                <div class="portal-user" id="portalUserLabel">Supervisor</div>
+            </div>
+
+            <div class="filter-bar">
+                <input id="callSearch" type="search" placeholder="Search station, area, personnel..." />
+                <select id="areaFilter"><option value="">All Areas</option></select>
+                <select id="personnelFilter"><option value="">All Personnel</option></select>
+                <select id="statusFilter">
+                    <option value="active">Active Calls</option>
+                    <option value="waiting">Waiting Only</option>
+                    <option value="ack">Acknowledged Only</option>
+                    <option value="all">All Recent</option>
+                </select>
+            </div>
+
+            <div id="activeCalls" class="call-table"></div>
+        </section>
+
+        <section class="portal-card recent-card">
+            <div class="card-head compact">
+                <h2>Recent Activity</h2>
+                <p>Latest call activity for supervisor review.</p>
+            </div>
+            <div id="recentCalls" class="recent-table"></div>
         </section>
     </main>
 
-    <!-- BOTTOM SUMMARY BOXES (fixed at bottom, no scroll) -->
-    <footer class="viewer-footer">
-        <div class="summary-box">
-            <div class="sb-label">ACTIVE CALLS</div>
-            <div class="sb-value" id="sbActive">0</div>
-        </div>
-
-        <div class="summary-box">
-            <div class="sb-label">WAITING</div>
-            <div class="sb-value" id="sbWaiting">0</div>
-        </div>
-
-        <div class="summary-box">
-            <div class="sb-label">ON THE WAY</div>
-            <div class="sb-value" id="sbOnWay">0</div>
-        </div>
-
-        <div class="summary-box">
-            <div class="sb-label">CLOSED TODAY</div>
-            <div class="sb-value" id="sbClosed">0</div>
-        </div>
-    </footer>
-
+    <footer class="portal-footer">© One T Media Group</footer>
 </div>
-
 <script src="supervisor.js"></script>
 </body>
 </html>
