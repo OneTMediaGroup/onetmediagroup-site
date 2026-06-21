@@ -2513,3 +2513,76 @@ button.danger:hover {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Roles simplification */
+.roles-table {
+  table-layout: fixed;
+  width: 100%;
+}
+
+.roles-table th:nth-child(1),
+.roles-table td:nth-child(1) {
+  width: 190px;
+}
+
+.roles-table th:nth-child(2),
+.roles-table td:nth-child(2) {
+  width: 110px;
+}
+
+.roles-table th:nth-child(3),
+.roles-table td:nth-child(3) {
+  width: auto;
+  min-width: 0;
+}
+
+.roles-table th:nth-child(4),
+.roles-table td:nth-child(4) {
+  width: 90px;
+  text-align: right;
+}
+
+.permission-pill-wrap {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  max-width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+}
+
+.permission-pill {
+  display: inline-flex !important;
+  align-items: center;
+  white-space: nowrap;
+  padding: 4px 9px;
+  border-radius: 999px;
+  border: 1px solid rgba(56, 189, 248, 0.28);
+  background: rgba(14, 165, 233, 0.12);
+  color: #dbeafe;
+  font-size: 0.78rem;
+  line-height: 1.1;
+}
+
+.role-simple-form .permission-section {
+  padding: 12px;
+  border: 1px solid rgba(148, 163, 184, 0.18);
+  border-radius: 14px;
+  background: rgba(15, 23, 42, 0.35);
+}
+
+.role-simple-form .permission-section h3 {
+  margin: 0 0 10px;
+  font-size: 0.9rem;
+  color: #e5e7eb;
+}
+
+.role-check-row {
+  display: grid;
+  grid-template-columns: 20px 1fr;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 0;
+  color: #d1d5db;
+}

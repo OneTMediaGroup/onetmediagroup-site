@@ -175,9 +175,11 @@ let ADMIN_LOCKED = false;
 
   function initSidebarLinks() {
     const viewerLink = document.getElementById("sidebarViewerLink");
+    const supervisorLink = document.getElementById("sidebarSupervisorLink");
     const displayLink = document.getElementById("sidebarDisplayLink");
 
     if (viewerLink) viewerLink.href = buildScreenUrl("viewer.html");
+    if (supervisorLink) supervisorLink.href = buildScreenUrl("supervisor.html");
     if (displayLink) displayLink.href = buildScreenUrl("display.html");
   }
 
@@ -869,26 +871,40 @@ let ADMIN_LOCKED = false;
 
   function permissionLabel(key = "") {
     const map = {
-      makeCall: "Make Call",
-      viewCalls: "View Calls",
-      acceptCall: "Accept Call",
+      callable: "Callable",
       acknowledgeCalls: "Acknowledge",
-      closeCall: "Close Call",
-      closeCalls: "Close Calls",
-      manageUsers: "Manage Users",
-      manageStations: "Manage Stations",
-      manageRoles: "Manage Roles",
-      viewLogs: "View Logs",
-      exportLogs: "Export Logs",
-      branding: "Branding",
-      systemSettings: "System Settings"
+      acceptCall: "Acknowledge",
+      closeCall: "Close",
+      closeCalls: "Close",
+      supervisorPortal: "Supervisor Portal",
+      viewAllCalls: "View All Calls",
+      makeCall: "Make Call",
+      viewCalls: "View Calls"
     };
     return map[key] || String(key).replace(/([A-Z])/g, " $1").replace(/^./, c => c.toUpperCase());
   }
 
+  function legacyPermissionTrue(role = {}, keys = []) {
+    const permissions = role.permissions || {};
+    return keys.some(key => role[key] === true || permissions[key] === true);
+  }
+
   function roleIsCallable(role = {}) {
     const permissions = role.permissions || {};
-    return role.isCallable === true || permissions.makeCall === true || permissions.viewCalls === true || permissions.acknowledgeCalls === true || permissions.acceptCall === true || permissions.closeCall === true || permissions.closeCalls === true;
+    if (typeof role.isCallable === "boolean") return role.isCallable;
+    return permissions.callable === true || permissions.makeCall === true || permissions.viewCalls === true || permissions.acknowledgeCalls === true || permissions.acceptCall === true || permissions.closeCall === true || permissions.closeCalls === true;
+  }
+
+  function roleCanAcknowledge(role = {}) {
+    return legacyPermissionTrue(role, ["acknowledgeCalls", "acceptCall", "supervisorPortal", "viewAllCalls"]);
+  }
+
+  function roleCanClose(role = {}) {
+    return legacyPermissionTrue(role, ["closeCalls", "closeCall", "supervisorPortal", "viewAllCalls"]);
+  }
+
+  function roleHasSupervisorPortal(role = {}) {
+    return legacyPermissionTrue(role, ["supervisorPortal", "viewAllCalls"]);
   }
 
   // ---------- ROLES ----------
@@ -903,21 +919,27 @@ let ADMIN_LOCKED = false;
       .filter(row => {
         if (!searchValue) return true;
         const r = row.data || {};
-        const permissionsText = Object.keys(r.permissions || {}).map(permissionLabel).join(" ");
-        return `${r.name || ""} ${permissionsText}`.toLowerCase().includes(searchValue);
+        return [
+          r.name || "",
+          roleIsCallable(r) ? "callable" : "",
+          roleCanAcknowledge(r) ? "acknowledge" : "",
+          roleCanClose(r) ? "close" : "",
+          roleHasSupervisorPortal(r) ? "supervisor portal" : ""
+        ].join(" ").toLowerCase().includes(searchValue);
       });
 
     rolesTableBody.innerHTML = "";
 
     filteredRows.forEach(row => {
       const r = row.data || {};
-      const permissionKeys = Object.entries(r.permissions || {})
-        .filter(([, value]) => !!value)
-        .map(([key]) => key);
+      const badges = [];
+      if (roleCanAcknowledge(r)) badges.push("Can Acknowledge");
+      if (roleCanClose(r)) badges.push("Can Close");
+      if (roleHasSupervisorPortal(r)) badges.push("Supervisor Portal");
 
-      const permissionBadges = permissionKeys.length
-        ? permissionKeys.map(key => `<span class="permission-pill">${permissionLabel(key)}</span>`).join("")
-        : `<span class="muted">—</span>`;
+      const badgeHtml = badges.length
+        ? badges.map(label => `<span class="permission-pill">${label}</span>`).join("")
+        : `<span class="muted">No response access</span>`;
 
       const callable = roleIsCallable(r);
 
@@ -925,7 +947,7 @@ let ADMIN_LOCKED = false;
       tr.innerHTML = `
         <td><strong>${r.name || ""}</strong></td>
         <td><span class="status-pill ${callable ? "active" : "waiting"}">${callable ? "Yes" : "No"}</span></td>
-        <td><div class="permission-pill-wrap">${permissionBadges}</div></td>
+        <td><div class="permission-pill-wrap">${badgeHtml}</div></td>
         <td>
           <button class="btn small secondary edit-role-btn" data-id="${row.id}">Edit</button>
         </td>
@@ -951,7 +973,17 @@ let ADMIN_LOCKED = false;
 
         permissionCheckboxes.forEach(cb => {
           const perm = cb.getAttribute("data-permission");
-          cb.checked = !!(r.permissions && r.permissions[perm]);
+          if (perm === "callable") {
+            cb.checked = roleIsCallable(r);
+          } else if (perm === "acknowledgeCalls") {
+            cb.checked = roleCanAcknowledge(r);
+          } else if (perm === "closeCalls") {
+            cb.checked = roleCanClose(r);
+          } else if (perm === "supervisorPortal") {
+            cb.checked = roleHasSupervisorPortal(r);
+          } else {
+            cb.checked = !!(r.permissions && r.permissions[perm]);
+          }
         });
 
         activateTab("roles");
@@ -964,7 +996,7 @@ let ADMIN_LOCKED = false;
     if (roleId) roleId.value = "";
     if (roleFormTitle) roleFormTitle.textContent = "Add Role";
     permissionCheckboxes.forEach(cb => {
-      cb.checked = false;
+      cb.checked = cb.getAttribute("data-permission") === "callable";
     });
   }
 
@@ -1481,18 +1513,37 @@ stationFormReset?.addEventListener("click", resetStationForm);
       e.preventDefault();
       if (blockDemoAdminAction("Role management")) return;
 
-      const permissions = {};
+      const values = {};
       permissionCheckboxes.forEach(cb => {
         const perm = cb.getAttribute("data-permission");
         if (!perm) return;
-        permissions[perm] = cb.checked;
+        values[perm] = cb.checked;
       });
+
+      const canAck = !!values.acknowledgeCalls || !!values.supervisorPortal;
+      const canClose = !!values.closeCalls || !!values.supervisorPortal;
+      const isCallable = values.callable !== false;
+
+      const permissions = {
+        callable: isCallable,
+        makeCall: true,
+        viewCalls: true,
+        acknowledgeCalls: canAck,
+        acceptCall: canAck,
+        closeCalls: canClose,
+        closeCall: canClose,
+        supervisorPortal: !!values.supervisorPortal,
+        viewAllCalls: !!values.supervisorPortal
+      };
 
       const payload = {
         companyId: COMPANY_ID,
         name: roleName?.value.trim() || "",
         permissions,
-        isCallable: !!permissions.makeCall,
+        isCallable,
+        canAcknowledge: canAck,
+        canClose: canClose,
+        supervisorPortal: !!values.supervisorPortal,
         active: true,
         updatedAt: Date.now()
       };

@@ -34,6 +34,7 @@
             <div class="nav-section">
                 <div class="sidebar-section-label">Live Screens</div>
                 <a id="sidebarViewerLink" class="nav-item sidebar-live-link" href="#" target="_blank" rel="noopener">Open Viewer</a>
+                <a id="sidebarSupervisorLink" class="nav-item sidebar-live-link" href="#" target="_blank" rel="noopener">Open Supervisor Portal</a>
                 <a id="sidebarDisplayLink" class="nav-item sidebar-live-link" href="#" target="_blank" rel="noopener">Open Display</a>
             </div>
 
@@ -381,7 +382,7 @@
                     <div class="card-head-row">
                         <div>
                             <h2>Roles</h2>
-                            <p class="muted">Manage personnel roles, call visibility, and admin permissions.</p>
+                            <p class="muted">Manage personnel roles used for call routing and supervisor response.</p>
                         </div>
                         <input type="search" id="roleSearch" class="table-search" placeholder="Search roles..." />
                     </div>
@@ -392,99 +393,55 @@
                                 <tr>
                                     <th>Role</th>
                                     <th>Callable</th>
-                                    <th>Permissions</th>
+                                    <th>Response Access</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody id="rolesTableBody"></tbody>
                         </table>
                     </div>
+                    <p class="form-help">
+                        Operators can make calls from any station using their ID or scan code.
+                        Roles control which personnel types can be requested and who can acknowledge or close calls.
+                    </p>
                 </div>
 
                 <div class="card">
                     <h2 id="roleFormTitle">Add Role</h2>
-                    <form id="roleForm" class="form">
+                    <form id="roleForm" class="form role-simple-form">
                         <input type="hidden" id="roleId" />
                         <label>
                             Role Name
-                            <input type="text" id="roleName" required />
+                            <input type="text" id="roleName" required placeholder="Maintenance, Quality, Supervisor..." />
                         </label>
 
                         <div class="permission-section">
-                            <h3>Call Permissions</h3>
-                            <div class="permissions-grid grouped">
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="makeCall" />
-                                    <span>Make Call</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="viewCalls" />
-                                    <span>View Calls</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="acceptCall" />
-                                    <span>Accept Call</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="acknowledgeCalls" />
-                                    <span>Acknowledge Calls</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="closeCall" />
-                                    <span>Close Call</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="closeCalls" />
-                                    <span>Close Calls</span>
-                                </label>
-                            </div>
+                            <h3>Call Routing</h3>
+                            <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="callable" checked />
+                                <span>Can be requested as Personnel Required</span>
+                            </label>
                         </div>
 
                         <div class="permission-section">
-                            <h3>Administration</h3>
-                            <div class="permissions-grid grouped">
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="manageUsers" />
-                                    <span>Manage Users</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="manageStations" />
-                                    <span>Manage Stations</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="manageRoles" />
-                                    <span>Manage Roles</span>
-                                </label>
-                            </div>
+                            <h3>Response Access</h3>
+                            <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="acknowledgeCalls" />
+                                <span>Can acknowledge matching calls</span>
+                            </label>
+                            <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="closeCalls" />
+                                <span>Can close matching calls</span>
+                            </label>
+                            <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="supervisorPortal" />
+                                <span>Supervisor portal access — can view and manage all calls</span>
+                            </label>
                         </div>
 
-                        <div class="permission-section">
-                            <h3>Reporting</h3>
-                            <div class="permissions-grid grouped">
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="viewLogs" />
-                                    <span>View Logs</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="exportLogs" />
-                                    <span>Export Logs</span>
-                                </label>
-                            </div>
-                        </div>
-
-                        <div class="permission-section">
-                            <h3>System</h3>
-                            <div class="permissions-grid grouped">
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="branding" />
-                                    <span>Branding Changes</span>
-                                </label>
-                                <label class="checkbox-row">
-                                    <input type="checkbox" data-permission="systemSettings" />
-                                    <span>System Settings</span>
-                                </label>
-                            </div>
-                        </div>
+                        <p class="form-help">
+                            Admin access is handled by the Admin Panel. This screen only controls call routing and response access.
+                        </p>
 
                         <div class="button-row">
                             <button type="submit" class="btn">Save</button>
