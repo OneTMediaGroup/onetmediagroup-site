@@ -79,6 +79,7 @@ let ADMIN_LOCKED = false;
   const stationsRef = companyRef.collection("stations");
   const rolesRef = companyRef.collection("roles");
   const usersRef = companyRef.collection("users");
+  const authorizedPinsRef = companyRef.collection("authorized_pins");
   const callsRef = companyRef.collection("calls");
   const activityRef = companyRef.collection("activity");
 
@@ -288,6 +289,8 @@ let ADMIN_LOCKED = false;
   let cachedStations = [];
   let cachedRoles = [];
   let cachedUsers = [];
+  let userRowsFromUsers = [];
+  let userRowsFromPins = [];
   let cachedCalls = [];
   let filteredLogCalls = [];
 
@@ -304,8 +307,8 @@ let ADMIN_LOCKED = false;
 
   function normalizeUser(row) {
     const u = row.data || {};
-    const split = splitName(u.name || "");
-    const uid = String(u.uid || u.employeeNumber || row.id || "").trim();
+    const split = splitName(u.name || u.fullName || "");
+    const uid = String(u.uid || u.userId || u.employeeNumber || u.employeeId || row.id || "").trim();
     const badgeCode = String(u.badgeCode || u.badge || uid || "").trim();
     const archived = u.archived === true || String(u.status || "").toLowerCase() === "archived" || u.active === false;
 
@@ -324,6 +327,30 @@ let ADMIN_LOCKED = false;
       archived,
       active: !archived
     };
+  }
+
+  function mergeUserSources() {
+    const byUid = new Map();
+
+    [...userRowsFromPins, ...userRowsFromUsers].forEach(row => {
+      const normalized = normalizeUser(row);
+      const key = String(normalized.uid || row.id || "").trim().toLowerCase();
+      if (!key) return;
+      byUid.set(key, {
+        id: row.id,
+        data: normalized
+      });
+    });
+
+    cachedUsers = Array.from(byUid.values()).sort((a, b) => {
+      const aStatus = a.data.active ? 0 : 1;
+      const bStatus = b.data.active ? 0 : 1;
+      if (aStatus !== bStatus) return aStatus - bStatus;
+      return fullUserName(a.data).localeCompare(fullUserName(b.data));
+    });
+
+    renderUsers(cachedUsers);
+    if (statUsers) statUsers.textContent = String(cachedUsers.filter(x => x.data.active !== false).length);
   }
 
   function normalizeRows(rows) {
@@ -1346,7 +1373,7 @@ let ADMIN_LOCKED = false;
   function resetUserForm() {
     if (userForm) userForm.reset();
     if (userId) userId.value = "";
-    if (userBadgeCode) userBadgeCode.value = "";
+    if (userBadgeCode) { userBadgeCode.value = ""; userBadgeCode.dataset.autoValue = ""; }
     if (userPin) userPin.value = "";
     if (userStatus) userStatus.value = "active";
     if (userFormTitle) userFormTitle.textContent = "Add User";
@@ -1966,7 +1993,13 @@ stationFormReset?.addEventListener("click", resetStationForm);
     // Users
     userUID?.addEventListener("input", () => {
       const uid = userUID.value.trim();
-      if (userBadgeCode && !userBadgeCode.value.trim()) userBadgeCode.value = uid;
+      if (userBadgeCode) {
+        const previousAuto = userBadgeCode.dataset.autoValue || "";
+        if (!userBadgeCode.value.trim() || userBadgeCode.value.trim() === previousAuto) {
+          userBadgeCode.value = uid;
+          userBadgeCode.dataset.autoValue = uid;
+        }
+      }
       if (userPin && !userPin.value.trim()) userPin.value = reverseId(uid);
     });
 
@@ -2420,20 +2453,35 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
       usersRef.onSnapshot(
         snapshot => {
-          cachedUsers = normalizeRows(snapshot.docs.map(doc => ({
+          userRowsFromUsers = snapshot.docs.map(doc => ({
             id: doc.id,
             data: doc.data()
-          }))).sort((a, b) => {
-            const an = `${a.data.firstName || ""} ${a.data.lastName || ""}`.trim();
-            const bn = `${b.data.firstName || ""} ${b.data.lastName || ""}`.trim();
-            return an.localeCompare(bn);
-          });
-
-          renderUsers(cachedUsers);
-          if (statUsers) statUsers.textContent = String(cachedUsers.filter(x => x.data.active !== false).length);
+          }));
+          mergeUserSources();
         },
         err => {
           console.error("Users listener error:", err);
+          if (usersTableBody) usersTableBody.innerHTML = `<tr><td colspan="7" class="table-empty">Could not load users.</td></tr>`;
+        }
+      );
+
+      // Legacy support: older Factory On Call builds seeded authorized_pins.
+      // Merge them in so old/demo plants still show users while new plants use users.
+      authorizedPinsRef.onSnapshot(
+        snapshot => {
+          userRowsFromPins = snapshot.docs.map(doc => ({
+            id: doc.id,
+            data: {
+              ...doc.data(),
+              uid: doc.data().uid || doc.data().employeeNumber || doc.id,
+              employeeNumber: doc.data().employeeNumber || doc.data().uid || doc.id,
+              badgeCode: doc.data().badgeCode || doc.data().badge || doc.id
+            }
+          }));
+          mergeUserSources();
+        },
+        err => {
+          console.warn("Legacy authorized_pins listener unavailable:", err);
         }
       );
 

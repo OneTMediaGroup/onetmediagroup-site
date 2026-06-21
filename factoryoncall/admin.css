@@ -2809,7 +2809,7 @@ input[type="search"].table-search:focus {
 /* Users badge / CSV polish */
 .users-layout{
   display:grid;
-  grid-template-columns:minmax(680px,1.5fr) minmax(360px,.8fr);
+  grid-template-columns:minmax(620px,1.45fr) minmax(360px,.8fr);
   gap:24px;
   align-items:start;
 }
@@ -2849,4 +2849,24 @@ input[type="search"].table-search:focus {
 .status-pill.archived{background:rgba(148,163,184,.12);color:#cbd5e1;border:1px solid rgba(148,163,184,.22)}
 .role-pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 10px;background:rgba(56,189,248,.12);border:1px solid rgba(56,189,248,.22);font-size:12px;font-weight:800;color:#dff7ff}
 .table-empty{padding:28px!important;text-align:center;color:rgba(226,232,240,.6)}
-@media(max-width:1100px){.users-layout{grid-template-columns:1fr}.users-header-row{flex-direction:column}.user-tools{justify-content:flex-start}.user-filter-row{grid-template-columns:1fr}}
+@media(max-width:900px){.users-layout{grid-template-columns:1fr}.users-header-row{flex-direction:column}.user-tools{justify-content:flex-start}.user-filter-row{grid-template-columns:1fr}}
+
+/* Users final layout/input fix */
+#tab-users .user-form-card input,
+#tab-users .user-form-card select,
+#tab-users #userSearch,
+#tab-users #userRoleFilter {
+  background: rgba(8,14,32,.95) !important;
+  border: 1px solid rgba(90,110,150,.45) !important;
+  border-radius: 12px !important;
+  color: #f4f7ff !important;
+  min-height: 42px !important;
+  padding: 10px 14px !important;
+}
+#tab-users .user-form-card input::placeholder,
+#tab-users #userSearch::placeholder {
+  color: rgba(180,190,210,.55) !important;
+}
+#tab-users .users-layout {
+  align-items: start !important;
+}
