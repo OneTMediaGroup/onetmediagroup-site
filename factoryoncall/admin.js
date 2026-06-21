@@ -104,7 +104,7 @@ let ADMIN_LOCKED = false;
       areas: "Areas",
       users: "Users",
       stations: "Stations",
-      roles: "Personnel Required",
+      roles: "Roles",
       branding: "Branding",
       settings: "System Settings",
       analytics: "Analytics"
@@ -119,7 +119,7 @@ let ADMIN_LOCKED = false;
       areas: "Create and manage plant areas used to organize stations and calls.",
       users: "Manage users and login credentials.",
       stations: "Manage factory call stations.",
-      roles: "Configure personnel types and permissions.",
+      roles: "Manage roles and permissions.",
       branding: "Customize branding and color system.",
       settings: "Adjust system-wide behavior.",
       analytics: "Analyze performance and usage trends."
@@ -230,6 +230,7 @@ let ADMIN_LOCKED = false;
   const btnGenerateAllDynamic = document.getElementById("btnGenerateAllDynamic");
 
   const rolesTableBody = document.getElementById("rolesTableBody");
+  const roleSearch = document.getElementById("roleSearch");
   const roleForm = document.getElementById("roleForm");
   const roleId = document.getElementById("roleId");
   const roleName = document.getElementById("roleName");
@@ -865,23 +866,66 @@ let ADMIN_LOCKED = false;
     });
   }
 
+
+  function permissionLabel(key = "") {
+    const map = {
+      makeCall: "Make Call",
+      viewCalls: "View Calls",
+      acceptCall: "Accept Call",
+      acknowledgeCalls: "Acknowledge",
+      closeCall: "Close Call",
+      closeCalls: "Close Calls",
+      manageUsers: "Manage Users",
+      manageStations: "Manage Stations",
+      manageRoles: "Manage Roles",
+      viewLogs: "View Logs",
+      exportLogs: "Export Logs",
+      branding: "Branding",
+      systemSettings: "System Settings"
+    };
+    return map[key] || String(key).replace(/([A-Z])/g, " $1").replace(/^./, c => c.toUpperCase());
+  }
+
+  function roleIsCallable(role = {}) {
+    const permissions = role.permissions || {};
+    return role.isCallable === true || permissions.makeCall === true || permissions.viewCalls === true || permissions.acknowledgeCalls === true || permissions.acceptCall === true || permissions.closeCall === true || permissions.closeCalls === true;
+  }
+
   // ---------- ROLES ----------
   function renderRoles(rows) {
     if (!rolesTableBody) return;
 
+    const searchValue = (roleSearch?.value || "").trim().toLowerCase();
+
+    const filteredRows = rows
+      .slice()
+      .sort((a, b) => (a.data.name || "").localeCompare(b.data.name || ""))
+      .filter(row => {
+        if (!searchValue) return true;
+        const r = row.data || {};
+        const permissionsText = Object.keys(r.permissions || {}).map(permissionLabel).join(" ");
+        return `${r.name || ""} ${permissionsText}`.toLowerCase().includes(searchValue);
+      });
+
     rolesTableBody.innerHTML = "";
 
-    rows.forEach(row => {
-      const r = row.data;
-      const permissions = Object.entries(r.permissions || {})
+    filteredRows.forEach(row => {
+      const r = row.data || {};
+      const permissionKeys = Object.entries(r.permissions || {})
         .filter(([, value]) => !!value)
-        .map(([key]) => key)
-        .join(", ");
+        .map(([key]) => key);
+
+      const permissionBadges = permissionKeys.length
+        ? permissionKeys.map(key => `<span class="permission-pill">${permissionLabel(key)}</span>`).join("")
+        : `<span class="muted">—</span>`;
+
+      const callable = roleIsCallable(r);
 
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td>${r.name || ""}${r.isCallable ? " (Callable)" : ""}</td>
-        <td>${permissions || "—"}</td>
+        <td><strong>${r.name || ""}</strong></td>
+        <td><span class="status-pill ${callable ? "active" : "waiting"}">${callable ? "Yes" : "No"}</span></td>
+        <td><div class="permission-pill-wrap">${permissionBadges}</div></td>
         <td>
           <button class="btn small secondary edit-role-btn" data-id="${row.id}">Edit</button>
         </td>
@@ -1429,6 +1473,10 @@ stationFormReset?.addEventListener("click", resetStationForm);
     });
 
     // Roles
+    roleSearch?.addEventListener("input", () => {
+      renderRoles(cachedRoles);
+    });
+
     roleForm?.addEventListener("submit", async e => {
       e.preventDefault();
       if (blockDemoAdminAction("Role management")) return;
