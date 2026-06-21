@@ -155,16 +155,16 @@ const COMPANY_ID = getActiveCompanyId();
 
   function canAcknowledgeCall(call) {
     if (!currentRole) return true; // admin/open test fallback
-    if (boolPerm(currentRole, ["supervisorPortal", "viewAllCalls", "acknowledgeAllCalls"])) return true;
+    if (boolPerm(currentRole, ["respondAny", "supervisorPortal", "viewAllCalls", "acknowledgeAllCalls", "closeAllCalls"])) return true;
     const callRole = roleNameFromCall(call).toLowerCase();
-    return boolPerm(currentRole, ["acknowledgeCalls", "acceptCall"]) && callRole === userRoleName().toLowerCase();
+    return boolPerm(currentRole, ["respondMatching", "acknowledgeCalls", "acceptCall", "closeCalls", "closeCall"]) && callRole === userRoleName().toLowerCase();
   }
 
   function canCloseCall(call) {
     if (!currentRole) return true; // admin/open test fallback
-    if (boolPerm(currentRole, ["supervisorPortal", "viewAllCalls", "closeAllCalls"])) return true;
+    if (boolPerm(currentRole, ["respondAny", "supervisorPortal", "viewAllCalls", "closeAllCalls", "acknowledgeAllCalls"])) return true;
     const callRole = roleNameFromCall(call).toLowerCase();
-    return boolPerm(currentRole, ["closeCalls", "closeCall"]) && callRole === userRoleName().toLowerCase();
+    return boolPerm(currentRole, ["respondMatching", "closeCalls", "closeCall", "acknowledgeCalls", "acceptCall"]) && callRole === userRoleName().toLowerCase();
   }
 
   async function loadCompanyBranding() {

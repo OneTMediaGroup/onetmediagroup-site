@@ -194,13 +194,22 @@ const COMPANY_ID = getActiveCompanyId();
 
   async function loadCallableRoles() {
     try {
-      const snap = await rolesRef.where("isCallable", "==", true).get();
+      const snap = await rolesRef.get();
 
       if (!snap.empty) {
-        roleDefinitions = snap.docs
-          .map(doc => doc.data()?.name)
+        const roles = snap.docs
+          .map(doc => doc.data() || {})
+          .filter(role => {
+            const permissions = role.permissions || {};
+            const active = role.active !== false && role.archived !== true;
+            const callable = role.isCallable === true || permissions.callable === true || permissions.isCallable === true;
+            return active && callable;
+          })
+          .map(role => role.name)
           .filter(Boolean)
           .sort((a, b) => a.localeCompare(b));
+
+        if (roles.length) roleDefinitions = roles;
       }
     } catch (err) {
       console.warn("Could not load callable roles, using fallback list.", err);

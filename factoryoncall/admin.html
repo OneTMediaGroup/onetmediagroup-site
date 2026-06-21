@@ -386,7 +386,7 @@
                     <div class="card-head-row">
                         <div>
                             <h2>Roles</h2>
-                            <p class="muted">Manage personnel roles, call routing, and response access.</p>
+                            <p class="muted">Manage user roles, call routing, and response access.</p>
                         </div>
                         <input type="search" id="roleSearch" class="table-search" placeholder="Search roles..." />
                     </div>
@@ -396,8 +396,10 @@
                             <thead>
                                 <tr>
                                     <th>Role</th>
-                                    <th>Callable</th>
+                                    <th>Can Make Calls</th>
+                                    <th>Can Be Requested</th>
                                     <th>Response Access</th>
+                                    <th>Status</th>
                                     <th></th>
                                 </tr>
                             </thead>
@@ -405,8 +407,7 @@
                         </table>
                     </div>
                     <p class="form-help">
-                        Operators can make calls from any station using their ID or scan code.
-                        Roles control which personnel types can be requested and who can acknowledge or close calls.
+                        Users must have a role. Roles decide whether users can make calls, whether the role can be requested as Personnel Required, and whether users can respond to matching calls or any call.
                     </p>
                 </div>
 
@@ -416,13 +417,17 @@
                         <input type="hidden" id="roleId" />
                         <label>
                             Role Name
-                            <input type="text" id="roleName" required placeholder="Maintenance, Quality, Supervisor..." />
+                            <input type="text" id="roleName" required placeholder="Operator, Maintenance, Supervisor..." />
                         </label>
 
                         <div class="permission-section">
-                            <h3>Call Routing</h3>
+                            <h3>Call Access</h3>
                             <label class="checkbox-row role-check-row">
-                                <input type="checkbox" data-permission="callable" checked />
+                                <input type="checkbox" data-permission="canMakeCalls" checked />
+                                <span>Can make calls from station screens</span>
+                            </label>
+                            <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="callable" />
                                 <span>Can be requested as Personnel Required</span>
                             </label>
                         </div>
@@ -430,20 +435,12 @@
                         <div class="permission-section">
                             <h3>Response Access</h3>
                             <label class="checkbox-row role-check-row">
-                                <input type="checkbox" data-permission="acknowledgeCalls" />
-                                <span>Can acknowledge matching calls</span>
+                                <input type="checkbox" data-permission="respondMatching" />
+                                <span>Can respond to matching calls</span>
                             </label>
                             <label class="checkbox-row role-check-row">
-                                <input type="checkbox" data-permission="closeCalls" />
-                                <span>Can close matching calls</span>
-                            </label>
-                            <label class="checkbox-row role-check-row">
-                                <input type="checkbox" data-permission="acknowledgeAllCalls" />
-                                <span>Can acknowledge any call</span>
-                            </label>
-                            <label class="checkbox-row role-check-row">
-                                <input type="checkbox" data-permission="closeAllCalls" />
-                                <span>Can close any call</span>
+                                <input type="checkbox" data-permission="respondAny" />
+                                <span>Can respond to any call</span>
                             </label>
                             <label class="checkbox-row role-check-row">
                                 <input type="checkbox" data-permission="supervisorPortal" />
@@ -452,7 +449,7 @@
                         </div>
 
                         <p class="form-help">
-                            Admin access is handled by the Admin Panel. Roles control call routing, matching-call response, any-call response, and Supervisor Portal access.
+                            Admin access is handled by the Admin Panel. Roles only control station call access, call routing, response access, and Supervisor Portal access.
                         </p>
 
                         <div class="button-row">

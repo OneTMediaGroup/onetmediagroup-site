@@ -871,50 +871,82 @@ let ADMIN_LOCKED = false;
 
   function permissionLabel(key = "") {
     const map = {
-      callable: "Callable",
-      acknowledgeCalls: "Acknowledge",
-      acceptCall: "Acknowledge",
-      closeCall: "Close",
-      closeCalls: "Close",
-      acknowledgeAllCalls: "Acknowledge Any",
-      closeAllCalls: "Close Any",
-      supervisorPortal: "Supervisor Portal",
-      viewAllCalls: "View All Calls",
-      makeCall: "Make Call",
-      viewCalls: "View Calls"
+      canMakeCalls: "Can Make Calls",
+      makeCall: "Can Make Calls",
+      callable: "Can Be Requested",
+      isCallable: "Can Be Requested",
+      respondMatching: "Respond Matching",
+      respondAny: "Respond Any",
+      supervisorPortal: "Supervisor Portal"
     };
     return map[key] || String(key).replace(/([A-Z])/g, " $1").replace(/^./, c => c.toUpperCase());
   }
 
+  function rolePermissions(role = {}) {
+    return role.permissions || {};
+  }
+
   function legacyPermissionTrue(role = {}, keys = []) {
-    const permissions = role.permissions || {};
+    const permissions = rolePermissions(role);
     return keys.some(key => role[key] === true || permissions[key] === true);
   }
 
+  function roleIsActive(role = {}) {
+    return role.active !== false && role.archived !== true;
+  }
+
+  function roleCanMakeCalls(role = {}) {
+    const permissions = rolePermissions(role);
+    if (typeof role.canMakeCalls === "boolean") return role.canMakeCalls;
+    return permissions.canMakeCalls === true || permissions.makeCall === true || permissions.callable === true;
+  }
+
   function roleIsCallable(role = {}) {
-    const permissions = role.permissions || {};
+    const permissions = rolePermissions(role);
     if (typeof role.isCallable === "boolean") return role.isCallable;
-    return permissions.callable === true || permissions.makeCall === true || permissions.viewCalls === true || permissions.acknowledgeCalls === true || permissions.acceptCall === true || permissions.closeCall === true || permissions.closeCalls === true;
+    return permissions.callable === true || permissions.isCallable === true;
   }
 
-  function roleCanAcknowledge(role = {}) {
-    return legacyPermissionTrue(role, ["acknowledgeCalls", "acceptCall", "supervisorPortal", "viewAllCalls", "acknowledgeAllCalls"]);
+  function roleCanRespondMatching(role = {}) {
+    const permissions = rolePermissions(role);
+    if (typeof role.respondMatching === "boolean") return role.respondMatching;
+    return permissions.respondMatching === true ||
+      legacyPermissionTrue(role, ["acknowledgeCalls", "acceptCall", "closeCalls", "closeCall"]);
   }
 
-  function roleCanClose(role = {}) {
-    return legacyPermissionTrue(role, ["closeCalls", "closeCall", "supervisorPortal", "viewAllCalls", "closeAllCalls"]);
-  }
-
-  function roleCanAcknowledgeAll(role = {}) {
-    return legacyPermissionTrue(role, ["acknowledgeAllCalls", "supervisorPortal", "viewAllCalls"]);
-  }
-
-  function roleCanCloseAll(role = {}) {
-    return legacyPermissionTrue(role, ["closeAllCalls", "supervisorPortal", "viewAllCalls"]);
+  function roleCanRespondAny(role = {}) {
+    const permissions = rolePermissions(role);
+    if (typeof role.respondAny === "boolean") return role.respondAny;
+    return permissions.respondAny === true ||
+      legacyPermissionTrue(role, ["acknowledgeAllCalls", "closeAllCalls", "viewAllCalls"]);
   }
 
   function roleHasSupervisorPortal(role = {}) {
-    return legacyPermissionTrue(role, ["supervisorPortal", "viewAllCalls"]);
+    return legacyPermissionTrue(role, ["supervisorPortal"]);
+  }
+
+  function roleBadgeHtml(label, kind = "") {
+    return `<span class="permission-pill ${kind}">${label}</span>`;
+  }
+
+  function roleNameTaken(name, currentId = "") {
+    const normalized = String(name || "").trim().toLowerCase();
+    if (!normalized) return false;
+    return cachedRoles.some(row => {
+      if (row.id === currentId) return false;
+      const roleNameValue = String(row.data?.name || "").trim().toLowerCase();
+      return roleNameValue === normalized;
+    });
+  }
+
+  function activeUsersForRole(roleNameValue = "") {
+    const normalized = String(roleNameValue || "").trim().toLowerCase();
+    if (!normalized) return [];
+    return cachedUsers.filter(row => {
+      const u = row.data || {};
+      const userRoleNameValue = String(u.role || u.personnelRole || u.type || "").trim().toLowerCase();
+      return userRoleNameValue === normalized && u.active !== false;
+    });
   }
 
   // ---------- ROLES ----------
@@ -925,18 +957,23 @@ let ADMIN_LOCKED = false;
 
     const filteredRows = rows
       .slice()
-      .sort((a, b) => (a.data.name || "").localeCompare(b.data.name || ""))
+      .sort((a, b) => {
+        const aActive = roleIsActive(a.data || {}) ? 0 : 1;
+        const bActive = roleIsActive(b.data || {}) ? 0 : 1;
+        if (aActive !== bActive) return aActive - bActive;
+        return (a.data.name || "").localeCompare(b.data.name || "");
+      })
       .filter(row => {
         if (!searchValue) return true;
         const r = row.data || {};
         return [
           r.name || "",
-          roleIsCallable(r) ? "callable" : "",
-          roleCanAcknowledge(r) ? "acknowledge" : "",
-          roleCanClose(r) ? "close" : "",
-          roleCanAcknowledgeAll(r) ? "acknowledge any" : "",
-          roleCanCloseAll(r) ? "close any" : "",
-          roleHasSupervisorPortal(r) ? "supervisor portal" : ""
+          roleCanMakeCalls(r) ? "make calls" : "",
+          roleIsCallable(r) ? "requested callable personnel required" : "",
+          roleCanRespondMatching(r) ? "respond matching" : "",
+          roleCanRespondAny(r) ? "respond any" : "",
+          roleHasSupervisorPortal(r) ? "supervisor portal" : "",
+          roleIsActive(r) ? "active" : "archived"
         ].join(" ").toLowerCase().includes(searchValue);
       });
 
@@ -944,26 +981,34 @@ let ADMIN_LOCKED = false;
 
     filteredRows.forEach(row => {
       const r = row.data || {};
-      const badges = [];
-      if (roleCanAcknowledge(r) && !roleCanAcknowledgeAll(r)) badges.push("Acknowledge Matching");
-      if (roleCanClose(r) && !roleCanCloseAll(r)) badges.push("Close Matching");
-      if (roleCanAcknowledgeAll(r)) badges.push("Acknowledge Any");
-      if (roleCanCloseAll(r)) badges.push("Close Any");
-      if (roleHasSupervisorPortal(r)) badges.push("Supervisor Portal");
+      const isActive = roleIsActive(r);
+      const responseBadges = [];
 
-      const badgeHtml = badges.length
-        ? badges.map(label => `<span class="permission-pill">${label}</span>`).join("")
+      if (roleCanRespondAny(r)) {
+        responseBadges.push(roleBadgeHtml("Respond Any", "strong"));
+      } else if (roleCanRespondMatching(r)) {
+        responseBadges.push(roleBadgeHtml("Respond Matching"));
+      }
+
+      if (roleHasSupervisorPortal(r)) {
+        responseBadges.push(roleBadgeHtml("Supervisor Portal", "system"));
+      }
+
+      const responseHtml = responseBadges.length
+        ? responseBadges.join("")
         : `<span class="muted">No response access</span>`;
 
-      const callable = roleIsCallable(r);
-
       const tr = document.createElement("tr");
+      tr.className = isActive ? "" : "archived-row";
       tr.innerHTML = `
         <td><strong>${r.name || ""}</strong></td>
-        <td><span class="status-pill ${callable ? "active" : "waiting"}">${callable ? "Yes" : "No"}</span></td>
-        <td><div class="permission-pill-wrap">${badgeHtml}</div></td>
-        <td>
+        <td><span class="status-pill ${roleCanMakeCalls(r) ? "active" : "waiting"}">${roleCanMakeCalls(r) ? "Yes" : "No"}</span></td>
+        <td><span class="status-pill ${roleIsCallable(r) ? "active" : "waiting"}">${roleIsCallable(r) ? "Yes" : "No"}</span></td>
+        <td><div class="permission-pill-wrap">${responseHtml}</div></td>
+        <td><span class="status-pill ${isActive ? "active" : "archived"}">${isActive ? "Active" : "Archived"}</span></td>
+        <td class="role-actions">
           <button class="btn small secondary edit-role-btn" data-id="${row.id}">Edit</button>
+          <button class="btn small ${isActive ? "danger" : "secondary"} archive-role-btn" data-id="${row.id}" data-action="${isActive ? "archive" : "restore"}">${isActive ? "Archive" : "Restore"}</button>
         </td>
       `;
       rolesTableBody.appendChild(tr);
@@ -980,23 +1025,21 @@ let ADMIN_LOCKED = false;
         const found = cachedRoles.find(x => x.id === id);
         if (!found) return;
 
-        const r = found.data;
+        const r = found.data || {};
         if (roleId) roleId.value = found.id;
         if (roleName) roleName.value = r.name || "";
         if (roleFormTitle) roleFormTitle.textContent = "Edit Role";
 
         permissionCheckboxes.forEach(cb => {
           const perm = cb.getAttribute("data-permission");
-          if (perm === "callable") {
+          if (perm === "canMakeCalls") {
+            cb.checked = roleCanMakeCalls(r);
+          } else if (perm === "callable") {
             cb.checked = roleIsCallable(r);
-          } else if (perm === "acknowledgeCalls") {
-            cb.checked = legacyPermissionTrue(r, ["acknowledgeCalls", "acceptCall"]);
-          } else if (perm === "closeCalls") {
-            cb.checked = legacyPermissionTrue(r, ["closeCalls", "closeCall"]);
-          } else if (perm === "acknowledgeAllCalls") {
-            cb.checked = roleCanAcknowledgeAll(r);
-          } else if (perm === "closeAllCalls") {
-            cb.checked = roleCanCloseAll(r);
+          } else if (perm === "respondMatching") {
+            cb.checked = roleCanRespondMatching(r);
+          } else if (perm === "respondAny") {
+            cb.checked = roleCanRespondAny(r);
           } else if (perm === "supervisorPortal") {
             cb.checked = roleHasSupervisorPortal(r);
           } else {
@@ -1007,6 +1050,41 @@ let ADMIN_LOCKED = false;
         activateTab("roles");
       };
     });
+
+    document.querySelectorAll(".archive-role-btn").forEach(btn => {
+      btn.onclick = async () => {
+        if (blockDemoAdminAction("Role management")) return;
+
+        const id = btn.dataset.id;
+        const action = btn.dataset.action || "archive";
+        const found = cachedRoles.find(x => x.id === id);
+        if (!found) return;
+
+        const roleNameValue = found.data?.name || "";
+        const goingArchive = action === "archive";
+
+        if (goingArchive) {
+          const assignedUsers = activeUsersForRole(roleNameValue);
+          if (assignedUsers.length > 0) {
+            alert(`Cannot archive "${roleNameValue}". ${assignedUsers.length} active user(s) are assigned to this role. Move or deactivate those users first.`);
+            return;
+          }
+
+          if (!confirm(`Archive role "${roleNameValue}"?`)) return;
+        }
+
+        try {
+          await rolesRef.doc(id).set({
+            active: !goingArchive,
+            archived: goingArchive,
+            updatedAt: Date.now()
+          }, { merge: true });
+        } catch (err) {
+          console.error(err);
+          alert("Could not update role status.");
+        }
+      };
+    });
   }
 
   function resetRoleForm() {
@@ -1014,7 +1092,8 @@ let ADMIN_LOCKED = false;
     if (roleId) roleId.value = "";
     if (roleFormTitle) roleFormTitle.textContent = "Add Role";
     permissionCheckboxes.forEach(cb => {
-      cb.checked = cb.getAttribute("data-permission") === "callable";
+      const perm = cb.getAttribute("data-permission");
+      cb.checked = perm === "canMakeCalls";
     });
   }
 
@@ -1026,6 +1105,7 @@ let ADMIN_LOCKED = false;
 
     cachedRoles
       .slice()
+      .filter(row => roleIsActive(row.data || {}))
       .sort((a, b) => (a.data.name || "").localeCompare(b.data.name || ""))
       .forEach(row => {
         const opt = document.createElement("option");
@@ -1538,50 +1618,68 @@ stationFormReset?.addEventListener("click", resetStationForm);
         values[perm] = cb.checked;
       });
 
-      const canAckMatching = !!values.acknowledgeCalls;
-      const canCloseMatching = !!values.closeCalls;
-      const canAckAll = !!values.acknowledgeAllCalls || !!values.supervisorPortal;
-      const canCloseAll = !!values.closeAllCalls || !!values.supervisorPortal;
-      const canAck = canAckMatching || canAckAll;
-      const canClose = canCloseMatching || canCloseAll;
-      const isCallable = values.callable !== false;
+      const name = roleName?.value.trim() || "";
+      const currentId = roleId?.value || "";
 
-      const permissions = {
-        callable: isCallable,
-        makeCall: true,
-        viewCalls: true,
-        acknowledgeCalls: canAckMatching,
-        acceptCall: canAckMatching,
-        closeCalls: canCloseMatching,
-        closeCall: canCloseMatching,
-        acknowledgeAllCalls: canAckAll,
-        closeAllCalls: canCloseAll,
-        supervisorPortal: !!values.supervisorPortal,
-        viewAllCalls: !!values.supervisorPortal || canAckAll || canCloseAll
-      };
-
-      const payload = {
-        companyId: COMPANY_ID,
-        name: roleName?.value.trim() || "",
-        permissions,
-        isCallable,
-        canAcknowledge: canAck,
-        canClose: canClose,
-        canAcknowledgeAll: canAckAll,
-        canCloseAll: canCloseAll,
-        supervisorPortal: !!values.supervisorPortal,
-        active: true,
-        updatedAt: Date.now()
-      };
-
-      if (!payload.name) {
+      if (!name) {
         alert("Role name is required.");
         return;
       }
 
+      if (roleNameTaken(name, currentId)) {
+        alert(`A role named "${name}" already exists. Use a unique role name, such as Operator 1 or Operator 2.`);
+        return;
+      }
+
+      const canMakeCalls = !!values.canMakeCalls;
+      const isCallable = !!values.callable;
+      const respondAny = !!values.respondAny;
+      const respondMatching = respondAny ? false : !!values.respondMatching;
+      const supervisorPortal = !!values.supervisorPortal;
+
+      const permissions = {
+        canMakeCalls,
+        makeCall: canMakeCalls,
+        viewCalls: true,
+
+        callable: isCallable,
+        isCallable,
+
+        respondMatching,
+        respondAny,
+
+        // Legacy compatibility for Viewer/Supervisor/older call records.
+        acknowledgeCalls: respondMatching,
+        acceptCall: respondMatching,
+        closeCalls: respondMatching,
+        closeCall: respondMatching,
+        acknowledgeAllCalls: respondAny,
+        closeAllCalls: respondAny,
+        viewAllCalls: respondAny || supervisorPortal,
+        supervisorPortal
+      };
+
+      const payload = {
+        companyId: COMPANY_ID,
+        name,
+        permissions,
+        canMakeCalls,
+        isCallable,
+        respondMatching,
+        respondAny,
+        canAcknowledge: respondMatching || respondAny,
+        canClose: respondMatching || respondAny,
+        canAcknowledgeAll: respondAny,
+        canCloseAll: respondAny,
+        supervisorPortal,
+        active: true,
+        archived: false,
+        updatedAt: Date.now()
+      };
+
       try {
-        if (roleId?.value) {
-          await rolesRef.doc(roleId.value).update(payload);
+        if (currentId) {
+          await rolesRef.doc(currentId).set(payload, { merge: true });
         } else {
           payload.createdAt = Date.now();
           await rolesRef.add(payload);
