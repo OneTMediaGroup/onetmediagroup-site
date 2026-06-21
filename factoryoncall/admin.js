@@ -26,6 +26,16 @@ let COMPANY_NAME = "Factory On Call";
 let COMPANY_MODE = "production";
 let ADMIN_LOCKED = false;
 
+function escapeHtml(value = "") {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
 (async function () {
   // ---------- LOAD FIREBASE COMPAT IF NEEDED ----------
   async function loadScript(src) {
@@ -1198,11 +1208,17 @@ let ADMIN_LOCKED = false;
   }
 
   function badgeCodeTaken(code, currentId = "") {
-    return false;
+    const value = String(code || "").trim().toLowerCase();
+    if (!value) return false;
+    return normalizeRows(cachedUsers).some(row => {
+      if (currentId && row.id === currentId) return false;
+      const u = row.data;
+      return String(u.badgeCode || "").trim().toLowerCase() === value;
+    });
   }
 
   function userSearchText(user) {
-    return [user.firstName, user.lastName, user.name, user.role, user.uid, user.employeeNumber, user.status]
+    return [user.firstName, user.lastName, user.name, user.role, user.uid, user.employeeNumber, user.badgeCode, user.status]
       .join(" ").toLowerCase();
   }
 
@@ -1239,15 +1255,15 @@ let ADMIN_LOCKED = false;
       const status = userStatusLabel(u);
       const tr = document.createElement("tr");
       tr.innerHTML = `
-        <td><input type="checkbox" class="user-badge-check" data-id="${escapeHtml(row.id)}" /></td>
+        <td><input type="checkbox" class="user-badge-check" data-id="${row.id}" /></td>
         <td><strong>${escapeHtml(fullUserName(u))}</strong></td>
         <td>${rolePillHtml(u.role)}</td>
-        <td>${escapeHtml(u.uid || u.employeeNumber || "—")}</td>
+        <td>${escapeHtml(u.uid || "—")}</td>
         <td>${userStatusPill(status)}</td>
         <td class="user-actions">
-          <button type="button" class="btn small secondary print-user-badge-btn" data-id="${escapeHtml(row.id)}">Print Badge</button>
-          <button type="button" class="btn small secondary edit-user-btn" data-id="${escapeHtml(row.id)}">Edit</button>
-          <button type="button" class="btn small danger archive-user-btn" data-id="${escapeHtml(row.id)}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
+          <button class="btn small secondary print-user-badge-btn" data-id="${row.id}">Print Badge</button>
+          <button class="btn small secondary edit-user-btn" data-id="${row.id}">Edit</button>
+          <button class="btn small danger archive-user-btn" data-id="${row.id}" data-action="${status === "Archived" ? "restore" : "archive"}">${status === "Archived" ? "Restore" : "Archive"}</button>
         </td>
       `;
       usersTableBody.appendChild(tr);
@@ -1291,13 +1307,13 @@ let ADMIN_LOCKED = false;
     const companyName = state.companyName || "Factory On Call";
     const badges = users.map(row => {
       const u = row.data;
-      const badge = u.uid || u.employeeNumber || row.id;
+      const badge = u.badgeCode || u.uid || row.id;
       return `
         <div class="badge-card">
           <div class="badge-company">${escapeHtml(companyName)}</div>
           <div class="badge-name">${escapeHtml(fullUserName(u))}</div>
           <div class="badge-role">${escapeHtml(u.role || "")}</div>
-          <div class="badge-id">ID: ${escapeHtml(u.uid || u.employeeNumber || "")}</div>
+          <div class="badge-id">ID: ${escapeHtml(u.uid || "")}</div>
           <div class="badge-code-row">${qrBlock(badge)}<div class="badge-bars">${barcodeBars(badge)}</div></div>
           <div class="badge-foot">Powered by One T Media Group</div>
         </div>`;
@@ -1327,7 +1343,8 @@ let ADMIN_LOCKED = false;
         if (userLastName) userLastName.value = u.lastName || "";
         if (userRole) userRole.value = u.role || "";
         if (userUID) userUID.value = u.uid || "";
-        if (userPin) userPin.value = u.pin || reverseId(u.uid || "");
+        if (userBadgeCode) userBadgeCode.value = u.badgeCode || u.uid || "";
+        if (userPin) { userPin.value = u.pin || reverseId(u.uid || ""); userPin.dataset.autoValue = reverseId(u.uid || ""); }
         if (userStatus) userStatus.value = u.active === false ? "archived" : "active";
         if (userActive) userActive.checked = u.active !== false;
         if (userFormTitle) userFormTitle.textContent = "Edit User";
@@ -1365,7 +1382,8 @@ let ADMIN_LOCKED = false;
   function resetUserForm() {
     if (userForm) userForm.reset();
     if (userId) userId.value = "";
-    if (userPin) userPin.value = "";
+    if (userBadgeCode) { userBadgeCode.value = ""; userBadgeCode.dataset.autoValue = ""; }
+    if (userPin) { userPin.value = ""; userPin.dataset.autoValue = ""; }
     if (userStatus) userStatus.value = "active";
     if (userFormTitle) userFormTitle.textContent = "Add User";
     if (userActive) userActive.checked = true;
@@ -1401,7 +1419,9 @@ let ADMIN_LOCKED = false;
     const prepared = [];
     const missingRoles = new Set();
     const duplicateIds = new Set();
+    const duplicateBadges = new Set();
     const seenIds = new Set();
+    const seenBadges = new Set();
 
     rows.forEach(cols => {
       const row = {};
@@ -1410,6 +1430,7 @@ let ADMIN_LOCKED = false;
       const lastName = row.lastname || row.last_name || row.last || "";
       const role = row.role || "";
       const uid = row.userid || row.user_id || row.employeeid || row.employee_id || row.uid || "";
+      const badgeCode = uid;
       const pin = row.pin || reverseId(uid);
       const status = String(row.status || "active").toLowerCase() === "archived" ? "archived" : "active";
       if (!firstName || !lastName || !role || !uid) return;
@@ -1417,7 +1438,9 @@ let ADMIN_LOCKED = false;
       const idKey = uid.toLowerCase();
       if (seenIds.has(idKey) || userIdTaken(uid)) duplicateIds.add(uid);
       seenIds.add(idKey);
-      prepared.push({ firstName, lastName, role, uid, pin, status });
+      const badgeKey = badgeCode.toLowerCase();
+      if (badgeKey) seenBadges.add(badgeKey);
+      prepared.push({ firstName, lastName, role, uid, badgeCode, pin, status });
     });
 
     if (missingRoles.size) {
@@ -1426,6 +1449,10 @@ let ADMIN_LOCKED = false;
     }
     if (duplicateIds.size) {
       alert(`CSV import stopped. Duplicate User IDs:\n${Array.from(duplicateIds).sort().join("\n")}`);
+      return;
+    }
+    if (duplicateBadges.size) {
+      alert(`CSV import stopped. Duplicate Badge Codes:\n${Array.from(duplicateBadges).sort().join("\n")}`);
       return;
     }
     for (const row of prepared) {
@@ -1438,7 +1465,7 @@ let ADMIN_LOCKED = false;
         role: row.role,
         uid: row.uid,
         employeeNumber: row.uid,
-        badgeCode: row.uid,
+        badgeCode: row.badgeCode || row.uid,
         pin: row.pin || reverseId(row.uid),
         email: "",
         dept: "",
@@ -1972,11 +1999,20 @@ stationFormReset?.addEventListener("click", resetStationForm);
     // Users
     userUID?.addEventListener("input", () => {
       const uid = userUID.value.trim();
-      const reversed = reverseId(uid);
-      const previousAuto = userPin?.dataset.autoValue || "";
-      if (userPin && (!userPin.value.trim() || userPin.value.trim() === previousAuto)) {
-        userPin.value = reversed;
-        userPin.dataset.autoValue = reversed;
+      if (userBadgeCode) {
+        const previousAuto = userBadgeCode.dataset.autoValue || "";
+        if (!userBadgeCode.value.trim() || userBadgeCode.value.trim() === previousAuto) {
+          userBadgeCode.value = uid;
+          userBadgeCode.dataset.autoValue = uid;
+        }
+      }
+      if (userPin) {
+        const previousAutoPin = userPin.dataset.autoValue || "";
+        const nextAutoPin = reverseId(uid);
+        if (!userPin.value.trim() || userPin.value.trim() === previousAutoPin) {
+          userPin.value = nextAutoPin;
+          userPin.dataset.autoValue = nextAutoPin;
+        }
       }
     });
 
@@ -1988,6 +2024,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       const firstName = userFirstName?.value.trim() || "";
       const lastName = userLastName?.value.trim() || "";
       const uid = userUID?.value.trim() || "";
+      const badgeCode = uid;
       const pin = userPin?.value.trim() || reverseId(uid);
       const role = userRole?.value || "";
       const status = userStatus?.value || "active";
@@ -2003,7 +2040,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
         role,
         uid,
         employeeNumber: uid,
-        badgeCode: uid,
+        badgeCode,
         pin,
         status,
         archived,
@@ -2016,6 +2053,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       if (!payload.uid) return alert("User ID is required.");
       if (!payload.pin) return alert("PIN is required.");
       if (userIdTaken(payload.uid, currentId)) return alert(`User ID "${payload.uid}" is already in use.`);
+      if (badgeCodeTaken(payload.badgeCode, currentId)) return alert(`Badge Code "${payload.badgeCode}" is already in use.`);
 
       try {
         const docId = currentId || makeSafeId(payload.uid);
@@ -2436,7 +2474,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
         },
         err => {
           console.error("Users listener error:", err);
-          if (usersTableBody) usersTableBody.innerHTML = `<tr><td colspan="7" class="table-empty">Could not load users.</td></tr>`;
+          if (usersTableBody) usersTableBody.innerHTML = `<tr><td colspan="6" class="table-empty">Could not load users.</td></tr>`;
         }
       );
 
