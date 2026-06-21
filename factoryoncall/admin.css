@@ -2910,65 +2910,61 @@ input[type="search"].table-search:focus {
 #tab-users .user-filter-row{
   grid-template-columns:minmax(240px,1fr) 160px !important;
 }
-@media(max-width:1200px){
+@media(max-width:900px){
   #tab-users .users-layout{grid-template-columns:1fr !important;}
 }
 
 
-/* Users final side-by-side layout repair */
-@media (min-width: 980px) {
-  #tab-users .users-layout {
-    display: grid !important;
-    grid-template-columns: minmax(620px, 1fr) minmax(360px, 420px) !important;
-    gap: 24px !important;
-    align-items: start !important;
-  }
-
-  #tab-users .users-card,
-  #tab-users .user-form-card {
-    min-width: 0 !important;
-    width: auto !important;
-  }
-
-  #tab-users .users-table {
-    width: 100% !important;
-    table-layout: fixed !important;
-  }
-
-  #tab-users .users-table th:nth-child(1),
-  #tab-users .users-table td:nth-child(1) { width: 42px !important; }
-
-  #tab-users .users-table th:nth-child(2),
-  #tab-users .users-table td:nth-child(2) { width: 20% !important; }
-
-  #tab-users .users-table th:nth-child(3),
-  #tab-users .users-table td:nth-child(3) { width: 18% !important; }
-
-  #tab-users .users-table th:nth-child(4),
-  #tab-users .users-table td:nth-child(4) { width: 14% !important; }
-
-  #tab-users .users-table th:nth-child(5),
-  #tab-users .users-table td:nth-child(5) { width: 14% !important; }
-
-  #tab-users .users-table th:nth-child(6),
-  #tab-users .users-table td:nth-child(6) { width: 34% !important; }
-
-  #tab-users .user-actions {
-    display: flex !important;
-    gap: 6px !important;
-    justify-content: flex-end !important;
-    flex-wrap: nowrap !important;
-  }
-
-  #tab-users .user-actions .btn {
-    padding-left: 12px !important;
-    padding-right: 12px !important;
-    white-space: nowrap !important;
-  }
+/* Users screen final consistency fix: match Stations/Roles two-column admin layout */
+#tab-users .users-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 1fr) !important;
+  gap: 24px !important;
+  align-items: start !important;
 }
-
-/* Keep users stacked only on smaller screens */
-@media (max-width: 979px) {
+#tab-users .users-card,
+#tab-users .user-form-card {
+  min-width: 0 !important;
+  width: auto !important;
+}
+#tab-users .users-card {
+  grid-column: auto !important;
+}
+#tab-users .user-form-card {
+  grid-column: auto !important;
+}
+#tab-users .users-table {
+  width: 100% !important;
+  table-layout: fixed !important;
+}
+#tab-users .users-table th:nth-child(1),
+#tab-users .users-table td:nth-child(1) { width: 42px !important; }
+#tab-users .users-table th:nth-child(2),
+#tab-users .users-table td:nth-child(2) { width: 24% !important; }
+#tab-users .users-table th:nth-child(3),
+#tab-users .users-table td:nth-child(3) { width: 20% !important; }
+#tab-users .users-table th:nth-child(4),
+#tab-users .users-table td:nth-child(4) { width: 18% !important; }
+#tab-users .users-table th:nth-child(5),
+#tab-users .users-table td:nth-child(5) { width: 16% !important; }
+#tab-users .users-table th:nth-child(6),
+#tab-users .users-table td:nth-child(6) { width: 210px !important; }
+#tab-users .users-table td {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+#tab-users .user-tools {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px !important;
+  justify-content: flex-start !important;
+}
+#tab-users .user-filter-row {
+  display: grid !important;
+  grid-template-columns: minmax(220px, 1fr) 160px !important;
+  gap: 8px !important;
+}
+@media (max-width: 900px) {
   #tab-users .users-layout {
     grid-template-columns: 1fr !important;
   }
