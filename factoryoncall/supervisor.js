@@ -128,6 +128,24 @@ const COMPANY_ID = getActiveCompanyId();
     return call.area || call.areaName || call.stationArea || call.location || normalizeList(call.cells)[0] || "Unassigned";
   }
 
+  function callStationName(call = {}) {
+    return String(call.station || call.stationName || "").trim();
+  }
+
+  function isDisplayableCall(call = {}) {
+    const station = callStationName(call);
+    // Older test records can exist in Firestore with no station metadata.
+    // They are not actionable calls, so keep them out of Supervisor counts and history.
+    if (!station || station.toLowerCase() === "unknown station" || station.toLowerCase() === "unknownstation") {
+      return false;
+    }
+    return true;
+  }
+
+  function visibleCalls() {
+    return allCallsCache.filter(isDisplayableCall);
+  }
+
   function statusLabel(status) {
     if (status === "ack") return "Acknowledged";
     if (status === "closed") return "Closed";
@@ -267,7 +285,7 @@ const COMPANY_ID = getActiveCompanyId();
     const personnel = personnelFilter?.value || "";
     const statusMode = statusFilter?.value || "active";
 
-    let filtered = allCallsCache.slice();
+    let filtered = visibleCalls();
 
     if (statusMode === "active") filtered = filtered.filter(c => c.status === "waiting" || c.status === "ack");
     if (statusMode === "waiting") filtered = filtered.filter(c => c.status === "waiting" || !c.status);
@@ -288,7 +306,7 @@ const COMPANY_ID = getActiveCompanyId();
     filtered.sort((a,b) => (a.timeStarted || 0) - (b.timeStarted || 0));
     renderActive(filtered);
 
-    const recent = allCallsCache.slice().sort((a,b) => (b.timeStarted || 0) - (a.timeStarted || 0)).slice(0, 10);
+    const recent = visibleCalls().sort((a,b) => (b.timeStarted || 0) - (a.timeStarted || 0)).slice(0, 10);
     renderRecent(recent);
   }
 
@@ -311,7 +329,7 @@ const COMPANY_ID = getActiveCompanyId();
       const row = document.createElement("div");
       row.className = "call-row";
       row.innerHTML = `
-        <span class="strong">${call.station || "Unknown Station"}</span>
+        <span class="strong">${callStationName(call)}</span>
         <span>${roleNameFromCall(call)}</span>
         <span>${callArea(call)}</span>
         <span class="muted">${formatElapsedFromMs(call.timeStarted)}</span>
@@ -341,7 +359,7 @@ const COMPANY_ID = getActiveCompanyId();
       const row = document.createElement("div");
       row.className = "recent-row";
       row.innerHTML = `
-        <span class="strong">${call.station || "Unknown Station"}</span>
+        <span class="strong">${callStationName(call)}</span>
         <span>${roleNameFromCall(call)}</span>
         <span>${callArea(call)}</span>
         <span class="muted">${formatElapsedFromMs(call.timeStarted)}</span>
@@ -411,7 +429,7 @@ const COMPANY_ID = getActiveCompanyId();
     callsRef.onSnapshot(snapshot => {
       setConn(true);
       allCallsCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      updateStats(allCallsCache);
+      updateStats(visibleCalls());
       renderTables();
     }, error => {
       console.error(error);
