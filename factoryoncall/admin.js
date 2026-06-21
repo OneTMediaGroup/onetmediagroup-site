@@ -26,6 +26,16 @@ let COMPANY_NAME = "Factory On Call";
 let COMPANY_MODE = "production";
 let ADMIN_LOCKED = false;
 
+function escapeHtml(value = "") {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+
 (async function () {
   // ---------- LOAD FIREBASE COMPAT IF NEEDED ----------
   async function loadScript(src) {
@@ -1334,7 +1344,7 @@ let ADMIN_LOCKED = false;
         if (userRole) userRole.value = u.role || "";
         if (userUID) userUID.value = u.uid || "";
         if (userBadgeCode) userBadgeCode.value = u.badgeCode || u.uid || "";
-        if (userPin) { userPin.value = u.pin || reverseId(u.uid || ""); userPin.dataset.manual = "true"; }
+        if (userPin) { userPin.value = u.pin || reverseId(u.uid || ""); userPin.dataset.autoValue = reverseId(u.uid || ""); }
         if (userStatus) userStatus.value = u.active === false ? "archived" : "active";
         if (userActive) userActive.checked = u.active !== false;
         if (userFormTitle) userFormTitle.textContent = "Edit User";
@@ -1373,7 +1383,7 @@ let ADMIN_LOCKED = false;
     if (userForm) userForm.reset();
     if (userId) userId.value = "";
     if (userBadgeCode) { userBadgeCode.value = ""; userBadgeCode.dataset.autoValue = ""; }
-    if (userPin) { userPin.value = ""; userPin.dataset.manual = ""; userPin.dataset.autoValue = ""; }
+    if (userPin) { userPin.value = ""; userPin.dataset.autoValue = ""; }
     if (userStatus) userStatus.value = "active";
     if (userFormTitle) userFormTitle.textContent = "Add User";
     if (userActive) userActive.checked = true;
@@ -1409,7 +1419,9 @@ let ADMIN_LOCKED = false;
     const prepared = [];
     const missingRoles = new Set();
     const duplicateIds = new Set();
+    const duplicateBadges = new Set();
     const seenIds = new Set();
+    const seenBadges = new Set();
 
     rows.forEach(cols => {
       const row = {};
@@ -1426,6 +1438,8 @@ let ADMIN_LOCKED = false;
       const idKey = uid.toLowerCase();
       if (seenIds.has(idKey) || userIdTaken(uid)) duplicateIds.add(uid);
       seenIds.add(idKey);
+      const badgeKey = badgeCode.toLowerCase();
+      if (badgeKey) seenBadges.add(badgeKey);
       prepared.push({ firstName, lastName, role, uid, badgeCode, pin, status });
     });
 
@@ -1983,24 +1997,22 @@ stationFormReset?.addEventListener("click", resetStationForm);
     roleFormReset?.addEventListener("click", resetRoleForm);
 
     // Users
-    userPin?.addEventListener("input", () => {
-      userPin.dataset.manual = "true";
-    });
-
     userUID?.addEventListener("input", () => {
       const uid = userUID.value.trim();
-      const autoPin = reverseId(uid);
-
-      // Badge uses User ID directly. Keep old hidden/legacy field in sync if it exists.
       if (userBadgeCode) {
-        userBadgeCode.value = uid;
-        userBadgeCode.dataset.autoValue = uid;
+        const previousAuto = userBadgeCode.dataset.autoValue || "";
+        if (!userBadgeCode.value.trim() || userBadgeCode.value.trim() === previousAuto) {
+          userBadgeCode.value = uid;
+          userBadgeCode.dataset.autoValue = uid;
+        }
       }
-
-      // Keep default PIN synced while the admin has not manually changed it.
-      if (userPin && userPin.dataset.manual !== "true") {
-        userPin.value = autoPin;
-        userPin.dataset.autoValue = autoPin;
+      if (userPin) {
+        const previousAutoPin = userPin.dataset.autoValue || "";
+        const nextAutoPin = reverseId(uid);
+        if (!userPin.value.trim() || userPin.value.trim() === previousAutoPin) {
+          userPin.value = nextAutoPin;
+          userPin.dataset.autoValue = nextAutoPin;
+        }
       }
     });
 
@@ -2047,15 +2059,6 @@ stationFormReset?.addEventListener("click", resetStationForm);
         const docId = currentId || makeSafeId(payload.uid);
         if (!currentId) payload.createdAt = Date.now();
         await usersRef.doc(docId).set(payload, { merge: true });
-        // Keep legacy station/login data in sync for plants created on older builds.
-        await authorizedPinsRef.doc(docId).set(payload, { merge: true });
-
-        const existingIndex = userRowsFromUsers.findIndex(row => row.id === docId);
-        const savedRow = { id: docId, data: payload };
-        if (existingIndex >= 0) userRowsFromUsers[existingIndex] = savedRow;
-        else userRowsFromUsers.push(savedRow);
-        mergeUserSources();
-
         resetUserForm();
       } catch (err) {
         console.error(err);

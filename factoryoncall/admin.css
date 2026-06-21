@@ -2832,7 +2832,7 @@ input[type="search"].table-search:focus {
   gap:10px;
   margin:16px 0;
 }
-#userSearch,#userRoleFilter,#userStatus{
+#userSearch,#userRoleFilter,#userStatus,#userBadgeCode{
   background:rgba(8,14,32,.95);
   border:1px solid rgba(90,110,150,.45);
   border-radius:12px;
@@ -2841,7 +2841,7 @@ input[type="search"].table-search:focus {
   font-size:15px;
   min-height:42px;
 }
-#userSearch::placeholder{color:rgba(180,190,210,.55)}
+#userSearch::placeholder,#userBadgeCode::placeholder{color:rgba(180,190,210,.55)}
 .users-table th,.users-table td{white-space:nowrap;vertical-align:middle}
 .user-actions{display:flex;gap:8px;justify-content:flex-end;align-items:center}
 .status-pill{display:inline-flex;align-items:center;border-radius:999px;padding:4px 10px;font-weight:800;font-size:12px}
@@ -2872,17 +2872,44 @@ input[type="search"].table-search:focus {
 }
 
 
-/* Users final cleanup */
+/* Users final render/layout fix */
 #tab-users .users-layout{
   display:grid !important;
-  grid-template-columns:minmax(680px,1.45fr) minmax(420px,.85fr) !important;
+  grid-template-columns:minmax(0,1fr) 420px !important;
   gap:24px !important;
   align-items:start !important;
 }
-#tab-users .users-table th:nth-child(5),
-#tab-users .users-table td:nth-child(5){
-  min-width:120px;
+#tab-users .users-card,
+#tab-users .user-form-card{
+  min-width:0 !important;
 }
-@media(max-width:1100px){
+#tab-users .users-table{
+  width:100% !important;
+  table-layout:fixed !important;
+}
+#tab-users .users-table th:nth-child(1),
+#tab-users .users-table td:nth-child(1){width:42px !important;}
+#tab-users .users-table th:nth-child(2),
+#tab-users .users-table td:nth-child(2){width:28% !important;}
+#tab-users .users-table th:nth-child(3),
+#tab-users .users-table td:nth-child(3){width:22% !important;}
+#tab-users .users-table th:nth-child(4),
+#tab-users .users-table td:nth-child(4){width:18% !important;}
+#tab-users .users-table th:nth-child(5),
+#tab-users .users-table td:nth-child(5){width:16% !important;}
+#tab-users .users-table th:nth-child(6),
+#tab-users .users-table td:nth-child(6){width:180px !important;}
+#tab-users .users-table td{
+  overflow:hidden !important;
+  text-overflow:ellipsis !important;
+}
+#tab-users .user-tools{
+  justify-content:flex-start !important;
+  max-width:none !important;
+}
+#tab-users .user-filter-row{
+  grid-template-columns:minmax(240px,1fr) 160px !important;
+}
+@media(max-width:1200px){
   #tab-users .users-layout{grid-template-columns:1fr !important;}
 }
