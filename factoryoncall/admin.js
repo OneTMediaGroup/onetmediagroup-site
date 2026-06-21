@@ -1316,72 +1316,187 @@ function escapeHtml(value = "") {
     return hash >>> 0;
   }
 
-  function barcodeBars(value = "") {
+  function code128Barcode(value = "") {
     const text = String(value || "");
-    const seed = badgeHash(text);
-    const width = 190;
-    const height = 52;
-    let x = 8;
-    let bars = "";
-
-    // Start guard
-    bars += `<rect x="${x}" y="5" width="2" height="42" fill="#111"/>`;
-    x += 4;
-    bars += `<rect x="${x}" y="5" width="1" height="42" fill="#111"/>`;
-    x += 5;
-
-    // Fill the full barcode width using the User ID as the seed.
-    // This is visual barcode-style output for printed badges.
-    let i = 0;
-    while (x < width - 16) {
-      const code = (seed >> (i % 24)) + text.charCodeAt(i % Math.max(text.length, 1) || 0) + i * 17;
-      const barWidth = [1, 2, 3, 1, 2, 1][Math.abs(code) % 6];
-      const gapWidth = [1, 1, 2, 1, 2][Math.abs(code >> 3) % 5];
-      if (i % 3 !== 1) {
-        bars += `<rect x="${x}" y="5" width="${barWidth}" height="42" fill="#111"/>`;
+    const patterns = [
+      "212222","222122","222221","121223","121322","131222","122213","122312","132212","221213",
+      "221312","231212","112232","122132","122231","113222","123122","123221","223211","221132",
+      "221231","213212","223112","312131","311222","321122","321221","312212","322112","322211",
+      "212123","212321","232121","111323","131123","131321","112313","132113","132311","211313",
+      "231113","231311","112133","112331","132131","113123","113321","133121","313121","211331",
+      "231131","213113","213311","213131","311123","311321","331121","312113","312311","332111",
+      "314111","221411","431111","111224","111422","121124","121421","141122","141221","112214",
+      "112412","122114","122411","142112","142211","241211","221114","413111","241112","134111",
+      "111242","121142","121241","114212","124112","124211","411212","421112","421211","212141",
+      "214121","412121","111143","111341","131141","114113","114311","411113","411311","113141",
+      "114131","311141","411131","211412","211214","211232","2331112"
+    ];
+    const pairs = /^\d+$/.test(text) && text.length % 2 === 0;
+    const codes = [];
+    let checksum;
+    if (pairs) {
+      codes.push(105);
+      checksum = 105;
+      for (let i = 0; i < text.length; i += 2) codes.push(Number(text.slice(i, i + 2)));
+    } else {
+      codes.push(104);
+      checksum = 104;
+      for (const ch of text) {
+        const c = ch.charCodeAt(0);
+        codes.push(c >= 32 && c <= 126 ? c - 32 : 0);
       }
-      x += barWidth + gapWidth;
-      i += 1;
     }
+    for (let i = 1; i < codes.length; i += 1) checksum += codes[i] * i;
+    codes.push(checksum % 103, 106);
 
-    // End guard
-    bars += `<rect x="${width - 10}" y="5" width="1" height="42" fill="#111"/>`;
-    bars += `<rect x="${width - 6}" y="5" width="2" height="42" fill="#111"/>`;
-
-    return `<svg class="badge-barcode-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" aria-label="Barcode ${escapeHtml(text)}"><rect width="${width}" height="${height}" fill="#fff"/>${bars}</svg>`;
+    const moduleWidth = 2;
+    const height = 48;
+    const quiet = 10;
+    let x = quiet;
+    let bars = `<rect width="100%" height="100%" fill="#fff"/>`;
+    for (const code of codes) {
+      const pattern = patterns[code] || patterns[0];
+      for (let i = 0; i < pattern.length; i += 1) {
+        const w = Number(pattern[i]) * moduleWidth;
+        if (i % 2 === 0) bars += `<rect x="${x}" y="2" width="${w}" height="${height - 4}" fill="#000"/>`;
+        x += w;
+      }
+    }
+    const width = x + quiet;
+    return `<svg class="badge-barcode-svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg" aria-label="Code128 ${escapeHtml(text)}">${bars}</svg>`;
   }
 
   function qrBlock(value = "") {
     const text = String(value || "");
-    const size = 15;
-    const cell = 4;
-    const pad = 4;
-    const total = size * cell + pad * 2;
-    const seed = badgeHash(text);
-    let cells = `<rect width="${total}" height="${total}" fill="#fff"/>`;
+    const size = 21;
+    const modules = Array.from({ length: size }, () => Array(size).fill(null));
+    const reserved = Array.from({ length: size }, () => Array(size).fill(false));
 
-    function addFinder(x0, y0) {
-      cells += `<rect x="${pad + x0 * cell}" y="${pad + y0 * cell}" width="${cell * 5}" height="${cell * 5}" fill="#111"/>`;
-      cells += `<rect x="${pad + (x0 + 1) * cell}" y="${pad + (y0 + 1) * cell}" width="${cell * 3}" height="${cell * 3}" fill="#fff"/>`;
-      cells += `<rect x="${pad + (x0 + 2) * cell}" y="${pad + (y0 + 2) * cell}" width="${cell}" height="${cell}" fill="#111"/>`;
+    function set(x, y, dark, lock = true) {
+      if (x < 0 || y < 0 || x >= size || y >= size) return;
+      modules[y][x] = !!dark;
+      if (lock) reserved[y][x] = true;
     }
 
-    addFinder(0, 0);
-    addFinder(size - 5, 0);
-    addFinder(0, size - 5);
-
-    for (let y = 0; y < size; y += 1) {
-      for (let x = 0; x < size; x += 1) {
-        const inFinder = (x < 5 && y < 5) || (x >= size - 5 && y < 5) || (x < 5 && y >= size - 5);
-        if (inFinder) continue;
-        const bit = ((seed >> ((x + y * 3) % 24)) + x * 7 + y * 11 + text.length) % 5;
-        if (bit === 0 || bit === 2) {
-          cells += `<rect x="${pad + x * cell}" y="${pad + y * cell}" width="${cell}" height="${cell}" fill="#111"/>`;
+    function finder(x, y) {
+      for (let dy = -1; dy <= 7; dy += 1) {
+        for (let dx = -1; dx <= 7; dx += 1) {
+          const xx = x + dx, yy = y + dy;
+          const inOuter = dx >= 0 && dx <= 6 && dy >= 0 && dy <= 6;
+          const inInner = dx >= 2 && dx <= 4 && dy >= 2 && dy <= 4;
+          const ring = inOuter && (dx === 0 || dx === 6 || dy === 0 || dy === 6);
+          set(xx, yy, ring || inInner, true);
         }
       }
     }
 
-    return `<svg class="badge-qr-svg" width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg" aria-label="QR ${escapeHtml(text)}">${cells}</svg>`;
+    finder(0, 0);
+    finder(size - 7, 0);
+    finder(0, size - 7);
+
+    for (let i = 8; i < size - 8; i += 1) {
+      set(i, 6, i % 2 === 0, true);
+      set(6, i, i % 2 === 0, true);
+    }
+    set(8, size - 8, true, true);
+
+    function bitBuffer() {
+      const bits = [];
+      const push = (val, len) => { for (let i = len - 1; i >= 0; i -= 1) bits.push((val >> i) & 1); };
+      const numeric = /^\d+$/.test(text);
+      if (numeric) {
+        push(1, 4);
+        push(text.length, 10);
+        for (let i = 0; i < text.length; i += 3) {
+          const part = text.slice(i, i + 3);
+          push(Number(part), part.length === 3 ? 10 : part.length === 2 ? 7 : 4);
+        }
+      } else {
+        push(4, 4);
+        push(text.length, 8);
+        for (const ch of text) push(ch.charCodeAt(0), 8);
+      }
+      const cap = 19 * 8;
+      const term = Math.min(4, cap - bits.length);
+      for (let i = 0; i < term; i += 1) bits.push(0);
+      while (bits.length % 8) bits.push(0);
+      const bytes = [];
+      for (let i = 0; i < bits.length; i += 8) bytes.push(parseInt(bits.slice(i, i + 8).join(""), 2));
+      let pad = true;
+      while (bytes.length < 19) { bytes.push(pad ? 0xec : 0x11); pad = !pad; }
+      return bytes;
+    }
+
+    const gf = (() => {
+      const exp = Array(512).fill(0), log = Array(256).fill(0);
+      let x = 1;
+      for (let i = 0; i < 255; i += 1) {
+        exp[i] = x; log[x] = i; x <<= 1; if (x & 0x100) x ^= 0x11d;
+      }
+      for (let i = 255; i < 512; i += 1) exp[i] = exp[i - 255];
+      return { mul(a, b) { return !a || !b ? 0 : exp[log[a] + log[b]]; }, exp };
+    })();
+
+    function rs(data, degree) {
+      let gen = [1];
+      for (let i = 0; i < degree; i += 1) {
+        const next = Array(gen.length + 1).fill(0);
+        for (let j = 0; j < gen.length; j += 1) {
+          next[j] ^= gf.mul(gen[j], gf.exp[i]);
+          next[j + 1] ^= gen[j];
+        }
+        gen = next;
+      }
+      const msg = data.concat(Array(degree).fill(0));
+      for (let i = 0; i < data.length; i += 1) {
+        const coef = msg[i];
+        if (!coef) continue;
+        for (let j = 0; j < gen.length; j += 1) msg[i + j] ^= gf.mul(gen[j], coef);
+      }
+      return msg.slice(data.length);
+    }
+
+    const dataBytes = bitBuffer();
+    const allBytes = dataBytes.concat(rs(dataBytes, 7));
+    const bits = [];
+    allBytes.forEach(b => { for (let i = 7; i >= 0; i -= 1) bits.push((b >> i) & 1); });
+
+    let bit = 0;
+    let upward = true;
+    for (let x = size - 1; x > 0; x -= 2) {
+      if (x === 6) x -= 1;
+      for (let i = 0; i < size; i += 1) {
+        const y = upward ? size - 1 - i : i;
+        for (let dx = 0; dx < 2; dx += 1) {
+          const xx = x - dx;
+          if (reserved[y][xx]) continue;
+          const raw = bit < bits.length ? bits[bit++] : 0;
+          const mask = (xx + y) % 2 === 0;
+          set(xx, y, !!(raw ^ mask), false);
+        }
+      }
+      upward = !upward;
+    }
+
+    const fmt = "111011111000100"; // ECC L, mask 0
+    const f1 = [[8,0],[8,1],[8,2],[8,3],[8,4],[8,5],[8,7],[8,8],[7,8],[5,8],[4,8],[3,8],[2,8],[1,8],[0,8]];
+    const f2 = [[20,8],[19,8],[18,8],[17,8],[16,8],[15,8],[14,8],[8,20],[8,19],[8,18],[8,17],[8,16],[8,15],[8,14],[8,13]];
+    for (let i = 0; i < 15; i += 1) { set(f1[i][0], f1[i][1], fmt[i] === "1", true); set(f2[i][0], f2[i][1], fmt[i] === "1", true); }
+
+    const cell = 3;
+    const pad = 4;
+    const total = (size + pad * 2) * cell;
+    let svg = `<rect width="${total}" height="${total}" fill="#fff"/>`;
+    for (let y = 0; y < size; y += 1) {
+      for (let x = 0; x < size; x += 1) {
+        if (modules[y][x]) svg += `<rect x="${(x + pad) * cell}" y="${(y + pad) * cell}" width="${cell}" height="${cell}" fill="#000"/>`;
+      }
+    }
+    return `<svg class="badge-qr-svg" width="${total}" height="${total}" viewBox="0 0 ${total} ${total}" xmlns="http://www.w3.org/2000/svg" aria-label="QR ${escapeHtml(text)}">${svg}</svg>`;
+  }
+
+  function barcodeBars(value = "") {
+    return code128Barcode(value);
   }
 
   function printBadges(userRows) {
@@ -1425,8 +1540,8 @@ function escapeHtml(value = "") {
         <div class="id">USER ID: ${escapeHtml(item.userId)}</div>
 
         <div class="codes">
-          <canvas id="qrcode-${index}"></canvas>
-          <svg id="barcode-${index}"></svg>
+          ${qrBlock(item.userId)}
+          ${barcodeBars(item.userId)}
         </div>
 
         <div class="footer">Powered by One T Media Group</div>
@@ -1531,14 +1646,16 @@ function escapeHtml(value = "") {
     padding: 0 12px 3px;
   }
 
-  canvas {
+  .badge-qr-svg {
     width: 50px !important;
     height: 50px !important;
+    flex: 0 0 auto;
   }
 
-  svg {
+  .badge-barcode-svg {
     width: 150px !important;
     height: 43px !important;
+    flex: 0 0 auto;
   }
 
   .footer {
@@ -1553,8 +1670,6 @@ function escapeHtml(value = "") {
     .badge { break-inside: avoid; page-break-inside: avoid; }
   }
 </style>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"><\/script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"><\/script>
 </head>
 
 <body>
@@ -1563,49 +1678,11 @@ function escapeHtml(value = "") {
   </div>
 
   <script>
-    const values = ${JSON.stringify(codeValues)};
-
-    function waitForLibraries(done, attempts = 0) {
-      if (window.JsBarcode && window.QRCode) {
-        done();
-        return;
-      }
-
-      if (attempts > 80) {
-        document.body.insertAdjacentHTML("beforeend", "<p style='font-family:Arial;margin:20px;color:#b91c1c'>Badge code libraries did not load. Check internet connection and try again.</p>");
-        return;
-      }
-
-      setTimeout(() => waitForLibraries(done, attempts + 1), 100);
-    }
-
     window.onload = function() {
-      waitForLibraries(() => {
-        values.forEach((value, index) => {
-          try {
-            JsBarcode("#barcode-" + index, String(value), {
-              format: "CODE128",
-              displayValue: false,
-              height: 43,
-              width: 2,
-              margin: 0
-            });
-
-            QRCode.toCanvas(document.getElementById("qrcode-" + index), String(value), {
-              width: 50,
-              margin: 0,
-              errorCorrectionLevel: "M"
-            });
-          } catch (error) {
-            console.error("Badge code failed", error);
-          }
-        });
-
-        setTimeout(() => {
-          window.focus();
-          window.print();
-        }, 500);
-      });
+      setTimeout(() => {
+        window.focus();
+        window.print();
+      }, 350);
     };
   <\/script>
 </body>
