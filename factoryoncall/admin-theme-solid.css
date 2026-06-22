@@ -329,3 +329,135 @@ body.theme-dark textarea {
   background-image:none !important;
   color:#e5e7eb !important;
 }
+
+/* === DARK MODE POLISH PASS — softer glows, clearer panels, larger branding icon === */
+html.theme-dark,
+html[data-theme="dark"],
+body.theme-dark {
+  --border-soft:#334155 !important;
+  --shadow-soft:0 16px 34px rgba(0,0,0,.38) !important;
+  --shadow-glow:0 0 14px rgba(56,189,248,.42) !important;
+}
+
+html.theme-dark .company-logo,
+html[data-theme="dark"] .company-logo,
+body.theme-dark .company-logo {
+  height:32px !important;
+  max-width:56px !important;
+  object-fit:contain !important;
+  filter:drop-shadow(0 0 8px rgba(0,0,0,.45)) !important;
+}
+
+html.theme-dark .card,
+html[data-theme="dark"] .card,
+body.theme-dark .card,
+html.theme-dark .stat-card,
+html[data-theme="dark"] .stat-card,
+body.theme-dark .stat-card,
+html.theme-dark .table-wrapper,
+html[data-theme="dark"] .table-wrapper,
+body.theme-dark .table-wrapper,
+html.theme-dark .dashboard-table,
+html[data-theme="dark"] .dashboard-table,
+body.theme-dark .dashboard-table,
+html.theme-dark .users-card,
+html[data-theme="dark"] .users-card,
+body.theme-dark .users-card,
+html.theme-dark .user-form-card,
+html[data-theme="dark"] .user-form-card,
+body.theme-dark .user-form-card,
+html.theme-dark .branding-card-single,
+html[data-theme="dark"] .branding-card-single,
+body.theme-dark .branding-card-single,
+html.theme-dark .analytics-card,
+html[data-theme="dark"] .analytics-card,
+body.theme-dark .analytics-card {
+  background:#071121 !important;
+  border-color:rgba(148,163,184,.18) !important;
+  box-shadow:0 16px 34px rgba(0,0,0,.34) !important;
+}
+
+html.theme-dark thead,
+html[data-theme="dark"] thead,
+body.theme-dark thead,
+html.theme-dark .dashboard-table-head,
+html[data-theme="dark"] .dashboard-table-head,
+body.theme-dark .dashboard-table-head {
+  background:rgba(255,255,255,.045) !important;
+  color:#aeb9ca !important;
+  border-color:rgba(148,163,184,.18) !important;
+}
+
+html.theme-dark tbody tr:hover,
+html[data-theme="dark"] tbody tr:hover,
+body.theme-dark tbody tr:hover,
+html.theme-dark .dashboard-table-row:hover,
+html[data-theme="dark"] .dashboard-table-row:hover,
+body.theme-dark .dashboard-table-row:hover {
+  background:rgba(255,255,255,.055) !important;
+}
+
+html.theme-dark input,
+html[data-theme="dark"] input,
+body.theme-dark input,
+html.theme-dark select,
+html[data-theme="dark"] select,
+body.theme-dark select,
+html.theme-dark textarea,
+html[data-theme="dark"] textarea,
+body.theme-dark textarea {
+  border-color:rgba(148,163,184,.22) !important;
+  box-shadow:none !important;
+}
+
+html.theme-dark input:focus,
+html[data-theme="dark"] input:focus,
+body.theme-dark input:focus,
+html.theme-dark select:focus,
+html[data-theme="dark"] select:focus,
+body.theme-dark select:focus,
+html.theme-dark textarea:focus,
+html[data-theme="dark"] textarea:focus,
+body.theme-dark textarea:focus {
+  border-color:rgba(56,189,248,.65) !important;
+  box-shadow:0 0 0 3px rgba(56,189,248,.15) !important;
+}
+
+html.theme-dark .nav-item.active,
+html[data-theme="dark"] .nav-item.active,
+body.theme-dark .nav-item.active {
+  box-shadow:0 0 14px rgba(56,189,248,.48) !important;
+}
+
+html.theme-dark .btn,
+html[data-theme="dark"] .btn,
+body.theme-dark .btn,
+html.theme-dark button,
+html[data-theme="dark"] button,
+body.theme-dark button {
+  box-shadow:none !important;
+}
+
+html.theme-dark .btn:not(.secondary):not(.danger),
+html[data-theme="dark"] .btn:not(.secondary):not(.danger),
+body.theme-dark .btn:not(.secondary):not(.danger),
+html.theme-dark .copy-btn,
+html[data-theme="dark"] .copy-btn,
+body.theme-dark .copy-btn,
+html.theme-dark .save-btn,
+html[data-theme="dark"] .save-btn,
+body.theme-dark .save-btn {
+  box-shadow:0 6px 18px rgba(34,197,94,.18) !important;
+}
+
+html.theme-dark .btn.danger,
+html[data-theme="dark"] .btn.danger,
+body.theme-dark .btn.danger,
+html.theme-dark .delete-btn,
+html[data-theme="dark"] .delete-btn,
+body.theme-dark .delete-btn,
+html.theme-dark .archive-btn,
+html[data-theme="dark"] .archive-btn,
+body.theme-dark .archive-btn {
+  box-shadow:0 6px 18px rgba(249,115,22,.18) !important;
+}

@@ -811,3 +811,20 @@ html[data-theme="light"] .summary-card .metric-subtext {
   color:#64748b !important;
   opacity:1 !important;
 }
+
+/* === DARK MODE POLISH PASS === */
+html[data-theme="dark"] .dh-logo { height:42px !important; max-width:78px !important; object-fit:contain !important; }
+html[data-theme="dark"] .display-header { border-color:rgba(148,163,184,.16) !important; }
+html[data-theme="dark"] .call-card,
+html[data-theme="dark"] .stat-box {
+  background:rgba(15,23,42,.66) !important;
+  border-color:rgba(148,163,184,.18) !important;
+  box-shadow:0 14px 32px rgba(0,0,0,.28) !important;
+}
+html[data-theme="dark"] .display-control-btn,
+html[data-theme="dark"] .display-area-select,
+html[data-theme="dark"] .display-sort-select {
+  border-color:rgba(148,163,184,.28) !important;
+  box-shadow:none !important;
+}
+html[data-theme="dark"] .display-control-btn.is-on { box-shadow:0 6px 16px rgba(34,197,94,.12) !important; }

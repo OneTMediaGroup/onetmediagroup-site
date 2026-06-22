@@ -369,3 +369,37 @@ html[data-theme="light"] .btn {
 html[data-theme="light"] * {
   text-shadow:none !important;
 }
+
+/* === DARK MODE POLISH PASS === */
+html[data-theme="dark"] .ph-logo { height:38px !important; max-width:70px !important; object-fit:contain !important; }
+html[data-theme="dark"] .metric-card,
+html[data-theme="dark"] .portal-card,
+html[data-theme="dark"] .call-table,
+html[data-theme="dark"] .recent-table {
+  background:rgba(15,23,42,.62) !important;
+  border-color:rgba(148,163,184,.18) !important;
+  box-shadow:0 14px 32px rgba(0,0,0,.28) !important;
+}
+html[data-theme="dark"] .portal-header { border-color:rgba(148,163,184,.16) !important; }
+html[data-theme="dark"] .call-table-header {
+  background:rgba(255,255,255,.045) !important;
+  border-color:rgba(148,163,184,.18) !important;
+  color:#aeb9ca !important;
+}
+html[data-theme="dark"] .call-row,
+html[data-theme="dark"] .recent-row {
+  border-color:rgba(148,163,184,.10) !important;
+}
+html[data-theme="dark"] .call-row:hover,
+html[data-theme="dark"] .recent-row:hover {
+  background:rgba(255,255,255,.055) !important;
+}
+html[data-theme="dark"] .btn {
+  box-shadow:none !important;
+}
+html[data-theme="dark"] .btn-ack { box-shadow:0 6px 16px rgba(34,197,94,.14) !important; }
+html[data-theme="dark"] .btn-close { box-shadow:0 6px 16px rgba(239,68,68,.14) !important; }
+html[data-theme="dark"] input,
+html[data-theme="dark"] select {
+  border-color:rgba(148,163,184,.24) !important;
+}
