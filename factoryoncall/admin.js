@@ -576,7 +576,7 @@ function escapeHtml(value = "") {
     if (brandPreviewCompany) brandPreviewCompany.textContent = cachedBranding.companyName || COMPANY_NAME || "Your Company";
     if (brandPreviewLogo) brandPreviewLogo.src = logoSrc();
     const topLogo = document.getElementById("companyLogoImg");
-    if (topLogo) topLogo.src = logoSrc();
+    if (topLogo) { const s=logoSrc(); topLogo.src=s; topLogo.style.display=(cachedBranding.logoDataUrl||cachedBranding.logoUrl)?"block":"none"; }
     if (accessPlantName) accessPlantName.value = COMPANY_NAME || "Factory On Call";
     if (accessPlantCode) accessPlantCode.value = COMPANY_ID;
     const title = document.querySelector(".brand-title");
@@ -609,7 +609,20 @@ function escapeHtml(value = "") {
     });
   }
 
-  async function loadCompanyBranding() {
+  
+  const removeLogoBtn = document.getElementById("removeLogoBtn");
+  if (removeLogoBtn) {
+    removeLogoBtn.addEventListener("click", async () => {
+      if (!confirm("Remove company logo and return to text branding?")) return;
+      cachedBranding.logoDataUrl = "";
+      cachedBranding.logoUrl = "";
+      updateBrandingUI();
+      await saveCompanyBranding();
+      showToast("Logo removed.");
+    });
+  }
+
+async function loadCompanyBranding() {
     try {
       const rootSnap = await companyRef.get();
       const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
