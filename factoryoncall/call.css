@@ -47,7 +47,7 @@ html, body {
     display: flex; align-items: center; gap: 10px;
 }
 
-.factory-logo { max-height:70px; max-width:220px; width:auto; height:auto; object-fit:contain; }
+.factory-logo { max-height:48px; max-width:160px; width:auto; height:auto; object-fit:contain; }
 
 .status-pill {
     padding: 6px 14px;
@@ -548,7 +548,7 @@ html[data-theme="light"] .circle-inner {
 }
 
 /* === DARK MODE POLISH PASS === */
-html[data-theme="dark"] .factory-logo { max-width:220px !important; max-height:70px !important; width:auto !important; height:auto !important; object-fit:contain !important; }
+html[data-theme="dark"] .factory-logo { height:38px !important; max-width:72px !important; object-fit:contain !important; }
 html[data-theme="dark"] .app-header { border-color:rgba(148,163,184,.16) !important; }
 html[data-theme="dark"] .call-panel,
 html[data-theme="dark"] .lock-card {
@@ -566,9 +566,6 @@ html[data-theme="dark"] .sign-in-btn { border-color:rgba(148,163,184,.30) !impor
 .topbar-right .company-logo,
 img.company-logo,
 .factory-logo,
-.ph-logo,
-.dh-logo,
-.vh-logo,
 .brand-logo {
   display: block;
   width: auto !important;
@@ -594,17 +591,50 @@ body.theme-dark .topbar-right .company-logo {
 }
 
 
-/* Final company logo slot: match admin header sizing across all live screens. */
-.company-logo,
-.factory-logo,
+/* === FINAL BRAND LOGO NORMALIZATION — LIVE SCREENS ===
+   Company logos are not avatars. Keep original aspect ratio and allow wide plant logos. */
 .ph-logo,
 .dh-logo,
 .vh-logo,
-.brand-logo {
-  width: auto !important;
-  height: auto !important;
-  max-width: 220px !important;
-  max-height: 70px !important;
-  object-fit: contain !important;
-  object-position: left center !important;
+.factory-logo,
+.brand-logo,
+.company-logo,
+img.company-logo {
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  max-width:280px !important;
+  max-height:70px !important;
+  object-fit:contain !important;
+  object-position:center !important;
+}
+.ph-left,
+.dh-left,
+.vh-left,
+.header-left {
+  min-width:300px !important;
+}
+.portal-header,
+.display-header,
+.viewer-header,
+.app-header {
+  min-height:82px !important;
+}
+html[data-theme="light"] .ph-logo,
+html[data-theme="light"] .dh-logo,
+html[data-theme="light"] .vh-logo,
+html[data-theme="light"] .factory-logo,
+body.theme-light .ph-logo,
+body.theme-light .dh-logo,
+body.theme-light .vh-logo,
+body.theme-light .factory-logo,
+html[data-theme="dark"] .ph-logo,
+html[data-theme="dark"] .dh-logo,
+html[data-theme="dark"] .vh-logo,
+html[data-theme="dark"] .factory-logo,
+body.theme-dark .ph-logo,
+body.theme-dark .dh-logo,
+body.theme-dark .vh-logo,
+body.theme-dark .factory-logo {
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.32)) !important;
 }

@@ -816,7 +816,7 @@ html[data-theme="light"] .summary-card .metric-subtext {
 }
 
 /* === DARK MODE POLISH PASS === */
-html[data-theme="dark"] .dh-logo { max-width:220px !important; max-height:70px !important; width:auto !important; height:auto !important; object-fit:contain !important; }
+html[data-theme="dark"] .dh-logo { height:42px !important; max-width:78px !important; object-fit:contain !important; }
 html[data-theme="dark"] .display-header { border-color:rgba(148,163,184,.16) !important; }
 html[data-theme="dark"] .call-card,
 html[data-theme="dark"] .stat-box {
@@ -837,9 +837,6 @@ html[data-theme="dark"] .display-control-btn.is-on { box-shadow:0 6px 16px rgba(
 .topbar-right .company-logo,
 img.company-logo,
 .factory-logo,
-.ph-logo,
-.dh-logo,
-.vh-logo,
 .brand-logo {
   display: block;
   width: auto !important;
@@ -865,17 +862,50 @@ body.theme-dark .topbar-right .company-logo {
 }
 
 
-/* Final company logo slot: match admin header sizing across all live screens. */
-.company-logo,
-.factory-logo,
+/* === FINAL BRAND LOGO NORMALIZATION — LIVE SCREENS ===
+   Company logos are not avatars. Keep original aspect ratio and allow wide plant logos. */
 .ph-logo,
 .dh-logo,
 .vh-logo,
-.brand-logo {
-  width: auto !important;
-  height: auto !important;
-  max-width: 220px !important;
-  max-height: 70px !important;
-  object-fit: contain !important;
-  object-position: left center !important;
+.factory-logo,
+.brand-logo,
+.company-logo,
+img.company-logo {
+  display:block !important;
+  width:auto !important;
+  height:auto !important;
+  max-width:280px !important;
+  max-height:70px !important;
+  object-fit:contain !important;
+  object-position:center !important;
+}
+.ph-left,
+.dh-left,
+.vh-left,
+.header-left {
+  min-width:300px !important;
+}
+.portal-header,
+.display-header,
+.viewer-header,
+.app-header {
+  min-height:82px !important;
+}
+html[data-theme="light"] .ph-logo,
+html[data-theme="light"] .dh-logo,
+html[data-theme="light"] .vh-logo,
+html[data-theme="light"] .factory-logo,
+body.theme-light .ph-logo,
+body.theme-light .dh-logo,
+body.theme-light .vh-logo,
+body.theme-light .factory-logo,
+html[data-theme="dark"] .ph-logo,
+html[data-theme="dark"] .dh-logo,
+html[data-theme="dark"] .vh-logo,
+html[data-theme="dark"] .factory-logo,
+body.theme-dark .ph-logo,
+body.theme-dark .dh-logo,
+body.theme-dark .vh-logo,
+body.theme-dark .factory-logo {
+  filter: drop-shadow(0 8px 18px rgba(0,0,0,.32)) !important;
 }
