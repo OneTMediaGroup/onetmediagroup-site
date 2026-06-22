@@ -933,3 +933,100 @@ body.theme-dark .vh-logo,
 body.theme-dark .factory-logo {
   filter: drop-shadow(0 8px 18px rgba(0,0,0,.32)) !important;
 }
+
+
+/* === FINAL HEADER BRANDING PATCH ===
+   Keep the customer name perfectly centered while allowing wide logos on the left. */
+.app-header,
+.portal-header,
+.viewer-header,
+.display-header {
+  position: relative !important;
+  min-height: 82px !important;
+}
+.header-left,
+.ph-left,
+.vh-left,
+.dh-left {
+  min-width: 0 !important;
+  max-width: 340px !important;
+  z-index: 2 !important;
+}
+.header-center,
+.ph-center,
+.vh-center,
+.dh-center {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  text-align: center !important;
+  width: max-content !important;
+  max-width: 42vw !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+.header-right,
+.ph-right,
+.vh-right,
+.dh-right {
+  z-index: 2 !important;
+}
+.factory-logo,
+.ph-logo,
+.vh-logo,
+.dh-logo {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  max-width: 280px !important;
+  max-height: 70px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
+}
+html[data-theme="dark"] .factory-logo,
+html[data-theme="dark"] .ph-logo,
+html[data-theme="dark"] .vh-logo,
+html[data-theme="dark"] .dh-logo,
+body.theme-dark .factory-logo,
+body.theme-dark .ph-logo,
+body.theme-dark .vh-logo,
+body.theme-dark .dh-logo,
+html[data-theme="light"] .factory-logo,
+html[data-theme="light"] .ph-logo,
+html[data-theme="light"] .vh-logo,
+html[data-theme="light"] .dh-logo,
+body.theme-light .factory-logo,
+body.theme-light .ph-logo,
+body.theme-light .vh-logo,
+body.theme-light .dh-logo {
+  width: auto !important;
+  height: auto !important;
+  max-width: 280px !important;
+  max-height: 70px !important;
+  object-fit: contain !important;
+}
+@media (max-width: 800px) {
+  .header-center,
+  .ph-center,
+  .vh-center,
+  .dh-center {
+    position: static !important;
+    transform: none !important;
+    max-width: none !important;
+  }
+  .app-header,
+  .portal-header,
+  .viewer-header,
+  .display-header {
+    display: flex !important;
+    gap: 12px !important;
+  }
+  .factory-logo,
+  .ph-logo,
+  .vh-logo,
+  .dh-logo {
+    max-width: 180px !important;
+    max-height: 56px !important;
+  }
+}

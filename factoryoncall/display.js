@@ -328,7 +328,7 @@ const COMPANY_ID = getActiveCompanyId();
   function applyCompanyBranding(branding = {}, rootData = {}) {
     const companyName = branding.companyName || rootData.companyName || localStorage.getItem("factory_on_call_company_name") || "Factory On Call";
     const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
-    const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
+    const logo = hasCustomLogo ? (branding.logoDataUrl || branding.logoUrl) : "factory_logo.png";
     const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "dark");
 
     document.documentElement.dataset.theme = theme;
@@ -342,12 +342,16 @@ const COMPANY_ID = getActiveCompanyId();
 
     const nameEl = document.querySelector(".dh-company-name");
     if (nameEl) nameEl.textContent = companyName;
-    document.querySelectorAll(".dh-logo").forEach(img => { img.src = logo; });
+    document.querySelectorAll(".dh-logo").forEach(img => { img.src = logo; img.style.display = hasCustomLogo ? "block" : "none"; });
     document.querySelectorAll(".dh-title").forEach(el => { el.style.display = hasCustomLogo ? "none" : ""; });
 
     localStorage.setItem("factory_on_call_company_name", companyName);
     localStorage.setItem("factory_on_call_theme", theme);
-    if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
+    if (hasCustomLogo) {
+      localStorage.setItem("factory_on_call_logo", logo);
+    } else {
+      localStorage.removeItem("factory_on_call_logo");
+    }
   }
 
   async function loadBranding() {

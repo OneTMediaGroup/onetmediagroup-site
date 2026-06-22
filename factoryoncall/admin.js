@@ -614,11 +614,32 @@ function escapeHtml(value = "") {
   if (removeLogoBtn) {
     removeLogoBtn.addEventListener("click", async () => {
       if (!confirm("Remove company logo and return to text branding?")) return;
-      cachedBranding.logoDataUrl = "";
-      cachedBranding.logoUrl = "";
-      updateBrandingUI();
-      await saveCompanyBranding();
-      showToast("Logo removed.");
+      try {
+        cachedBranding.logoDataUrl = "";
+        cachedBranding.logoUrl = "";
+        localStorage.removeItem("factory_on_call_logo");
+        if (brandLogo) brandLogo.value = "";
+
+        const payload = {
+          companyName: brandCompanyName?.value.trim() || COMPANY_NAME || "Factory On Call",
+          theme: normalizeTheme(brandTheme?.value || cachedBranding.theme || "dark"),
+          logoDataUrl: "",
+          logoUrl: "",
+          logoRemovedAt: Date.now(),
+          updatedAt: Date.now()
+        };
+
+        await companyRef.collection("branding").doc("main").set(payload, { merge: true });
+        cachedBranding = { ...cachedBranding, ...payload };
+        updateBrandingUI();
+        applyTheme(payload.theme);
+        forceAdminThemePaint(payload.theme);
+        alert("Logo removed. The page will reload to update all branding.");
+        window.location.reload();
+      } catch (err) {
+        console.error(err);
+        alert("Could not remove logo.");
+      }
     });
   }
 
@@ -654,6 +675,8 @@ async function loadCompanyBranding() {
       localStorage.setItem("factory_on_call_theme", normalizeTheme(cachedBranding.theme || "dark"));
       if (cachedBranding.logoDataUrl || cachedBranding.logoUrl) {
         localStorage.setItem("factory_on_call_logo", logoSrc());
+      } else {
+        localStorage.removeItem("factory_on_call_logo");
       }
       applyTheme(cachedBranding.theme || "dark");
       updateBrandingUI();
@@ -3535,7 +3558,7 @@ module.exports = QRCode;
         cachedBranding.logoDataUrl = dataUrl;
         if (brandPreviewLogo) brandPreviewLogo.src = dataUrl;
         const topLogo = document.getElementById("companyLogoImg");
-        if (topLogo) topLogo.src = dataUrl;
+        if (topLogo) { topLogo.src = dataUrl; topLogo.style.display = "block"; }
       } catch (err) {
         console.error(err);
         alert("Could not preview logo.");
@@ -3597,7 +3620,11 @@ module.exports = QRCode;
         COMPANY_NAME = payload.companyName;
         localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
         localStorage.setItem("factory_on_call_theme", payload.theme);
-        if (payload.logoDataUrl) localStorage.setItem("factory_on_call_logo", payload.logoDataUrl);
+        if (payload.logoDataUrl) {
+          localStorage.setItem("factory_on_call_logo", payload.logoDataUrl);
+        } else {
+          localStorage.removeItem("factory_on_call_logo");
+        }
         applyTheme(payload.theme);
         updateBrandingUI();
         initSidebarLinks();
