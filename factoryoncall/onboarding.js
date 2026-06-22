@@ -140,7 +140,7 @@ function renderTypeStep() {
 function renderCompanyStep() {
   stepContent.innerHTML = `
     <h2>Company information</h2>
-    <p>This creates the company workspace used by Admin, Call Station, Viewer, and Display Board pages.</p>
+    <p>This creates the company workspace used by Admin, Call Station, Interactive Viewer, and Production Display pages.</p>
 
     <div class="form-grid">
       <div class="form-field full">
