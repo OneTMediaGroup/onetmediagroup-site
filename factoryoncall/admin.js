@@ -412,13 +412,13 @@ function escapeHtml(value = "") {
         accent: "#00b4ff"
       },
       light: {
-        bg: "#f3f4f6",
+        bg: "#eef2f7",
         panel: "#ffffff",
         card: "#ffffff",
-        border: "#d1d5db",
+        border: "#d7dee8",
         text: "#111827",
-        muted: "#4b5563",
-        accent: "#2563eb"
+        muted: "#6b7280",
+        accent: "#0ea5e9"
       }
     };
     return map[normalizedTheme] || map.dark;

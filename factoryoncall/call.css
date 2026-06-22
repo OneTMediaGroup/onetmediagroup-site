@@ -261,3 +261,119 @@ html[data-theme="light"] .call-panel,html[data-theme="light"] .lock-card{backgro
 html[data-theme="light"] .role-pill{background:#fff!important;color:#111827!important;border-color:#cbd5e1!important}
 html[data-theme="light"] .role-pill.selected{background:#2563eb!important;color:#fff!important;border-color:#2563eb!important}
 html[data-theme="light"] .circle-inner{background:linear-gradient(145deg,#0ea5e9,#2563eb)!important;color:#fff!important}
+
+
+/* CLEAN LIGHT MODE — shared live screens */
+html[data-theme="light"] {
+  --bg-main:#eef2f7 !important;
+  --fg-text:#111827 !important;
+  --fg-muted:#6b7280 !important;
+  --panel-bg:#ffffff !important;
+  --panel-line:#d7dee8 !important;
+  --bg:#eef2f7 !important;
+  --panel:#ffffff !important;
+  --border:#d7dee8 !important;
+  --text:#111827 !important;
+  --muted:#6b7280 !important;
+}
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] #viewer-root,
+html[data-theme="light"] #display-root,
+html[data-theme="light"] #supervisor-root,
+html[data-theme="light"] .app-shell {
+  background:#eef2f7 !important;
+  color:#111827 !important;
+}
+html[data-theme="light"] header,
+html[data-theme="light"] .viewer-header,
+html[data-theme="light"] .display-header,
+html[data-theme="light"] .portal-header,
+html[data-theme="light"] .station-header,
+html[data-theme="light"] .top-bar {
+  background:#ffffff !important;
+  color:#111827 !important;
+  border-color:#d7dee8 !important;
+  box-shadow:0 8px 22px rgba(15,23,42,.08) !important;
+}
+html[data-theme="light"] .card,
+html[data-theme="light"] .call-card,
+html[data-theme="light"] .summary-card,
+html[data-theme="light"] .stat-card,
+html[data-theme="light"] .panel,
+html[data-theme="light"] .section,
+html[data-theme="light"] .calls-panel,
+html[data-theme="light"] .live-card,
+html[data-theme="light"] .table-wrap,
+html[data-theme="light"] .auth-dialog,
+html[data-theme="light"] .modal {
+  background:#ffffff !important;
+  color:#111827 !important;
+  border-color:#d7dee8 !important;
+  box-shadow:0 12px 30px rgba(15,23,42,.08) !important;
+}
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea {
+  background:#f8fafc !important;
+  color:#111827 !important;
+  border-color:#cbd5e1 !important;
+}
+html[data-theme="light"] input:focus,
+html[data-theme="light"] select:focus,
+html[data-theme="light"] textarea:focus {
+  background:#ffffff !important;
+  border-color:#0ea5e9 !important;
+  box-shadow:0 0 0 4px rgba(14,165,233,.18) !important;
+  outline:none !important;
+}
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder { color:#9ca3af !important; }
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] strong,
+html[data-theme="light"] th,
+html[data-theme="light"] td,
+html[data-theme="light"] label {
+  color:#111827 !important;
+}
+html[data-theme="light"] .muted,
+html[data-theme="light"] .subtle,
+html[data-theme="light"] .subtitle,
+html[data-theme="light"] .helper,
+html[data-theme="light"] .meta,
+html[data-theme="light"] .waiting-note,
+html[data-theme="light"] .small,
+html[data-theme="light"] .status-subtext,
+html[data-theme="light"] .ph-subtitle,
+html[data-theme="light"] .vh-subtitle,
+html[data-theme="light"] .dh-subtitle {
+  color:#6b7280 !important;
+}
+html[data-theme="light"] table,
+html[data-theme="light"] thead,
+html[data-theme="light"] tbody,
+html[data-theme="light"] tr {
+  background:#ffffff !important;
+  color:#111827 !important;
+  border-color:#e5e7eb !important;
+}
+html[data-theme="light"] tbody tr:nth-child(even) { background:#f8fafc !important; }
+html[data-theme="light"] .btn,
+html[data-theme="light"] button.primary {
+  color:#ffffff !important;
+  background:linear-gradient(135deg,#06b6d4,#22c55e) !important;
+  border-color:transparent !important;
+}
+html[data-theme="light"] .btn.secondary,
+html[data-theme="light"] button.secondary,
+html[data-theme="light"] .ghost-btn,
+html[data-theme="light"] .control-btn {
+  color:#111827 !important;
+  background:#ffffff !important;
+  border-color:#cbd5e1 !important;
+}
+html[data-theme="light"] .status-pill.waiting,
+html[data-theme="light"] .badge-waiting { color:#111827 !important; }
