@@ -215,7 +215,9 @@ body {
 }
 
 .company-logo {
-    height: 22px;
+    max-width: 220px;
+    max-height: 70px;
+    height: auto;
     width: auto;
     object-fit: contain;
     filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.7));
@@ -1037,7 +1039,9 @@ body {
 }
 
 .company-logo {
-    height: 22px;
+    max-width: 220px;
+    max-height: 70px;
+    height: auto;
     width: auto;
     object-fit: contain;
     filter: drop-shadow(0 0 6px rgba(0, 0, 0, 0.7));

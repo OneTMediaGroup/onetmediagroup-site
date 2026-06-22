@@ -342,8 +342,8 @@ body.theme-dark {
 html.theme-dark .company-logo,
 html[data-theme="dark"] .company-logo,
 body.theme-dark .company-logo {
-  height:32px !important;
-  max-width:56px !important;
+  max-height:70px !important;
+  max-width:220px !important;
   object-fit:contain !important;
   filter:drop-shadow(0 0 8px rgba(0,0,0,.45)) !important;
 }
