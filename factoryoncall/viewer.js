@@ -280,41 +280,53 @@ const COMPANY_ID = getActiveCompanyId();
     return { user, role, userName: userDisplayName(user) };
   }
 
+  function normalizeBrandingTheme(value) {
+    const v = String(value || "dark").toLowerCase();
+    return (v === "light" || v === "bright" || v === "neutral") ? "light" : "dark";
+  }
+
+  function applyCompanyBranding(branding = {}, rootData = {}) {
+    const companyName = branding.companyName || rootData.companyName || localStorage.getItem("factory_on_call_company_name") || "Factory On Call";
+    const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
+    const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
+    const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "dark");
+
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("theme-light", theme === "light");
+    document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    if (document.body) {
+      document.body.dataset.theme = theme;
+      document.body.classList.toggle("theme-light", theme === "light");
+      document.body.classList.toggle("theme-dark", theme === "dark");
+    }
+
+    const nameEl = document.querySelector(".vh-company-name");
+    if (nameEl) nameEl.textContent = companyName;
+    document.querySelectorAll(".vh-logo").forEach(img => { img.src = logo; });
+    document.querySelectorAll(".vh-title").forEach(el => { el.style.display = hasCustomLogo ? "none" : ""; });
+
+    localStorage.setItem("factory_on_call_company_name", companyName);
+    localStorage.setItem("factory_on_call_theme", theme);
+    if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
+  }
+
   async function loadCompanyBranding() {
     try {
       const rootSnap = await companyRef.get();
       const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
-      let branding = {};
-      try {
-        const brandingSnap = await companyRef.collection("branding").doc("main").get();
-        branding = brandingSnap.exists ? brandingSnap.data() || {} : {};
-      } catch (error) {
-        console.warn("Branding unavailable:", error);
-      }
-
-      const companyName = branding.companyName || rootData.companyName || "Factory On Call";
-      const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
-      const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
-      const rawTheme = branding.theme || localStorage.getItem("factory_on_call_theme") || "dark";
-      const theme = (rawTheme === "light" || rawTheme === "bright" || rawTheme === "neutral") ? "light" : "dark";
-      const nameEl = document.querySelector(".vh-company-name");
-      if (nameEl) nameEl.textContent = companyName;
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.classList.toggle("theme-light", theme === "light");
-      document.documentElement.classList.toggle("theme-dark", theme === "dark");
-      if (document.body) {
-        document.body.dataset.theme = theme;
-        document.body.classList.toggle("theme-light", theme === "light");
-        document.body.classList.toggle("theme-dark", theme === "dark");
-      }
-      document.querySelectorAll(".vh-logo").forEach(img => { img.src = logo; });
-      document.querySelectorAll(".vh-title").forEach(el => { el.style.display = hasCustomLogo ? "none" : ""; });
-      localStorage.setItem("factory_on_call_company_name", companyName);
-      localStorage.setItem("factory_on_call_theme", theme);
-      if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
+      const brandingSnap = await companyRef.collection("branding").doc("main").get().catch(() => null);
+      const branding = brandingSnap && brandingSnap.exists ? brandingSnap.data() || {} : {};
+      applyCompanyBranding(branding, rootData);
     } catch (error) {
       console.warn("Could not load viewer branding:", error);
     }
+  }
+
+  function listenForBrandingUpdates() {
+    companyRef.collection("branding").doc("main").onSnapshot(snapshot => {
+      if (!snapshot.exists) return;
+      applyCompanyBranding(snapshot.data() || {});
+    }, error => console.warn("Branding listener unavailable:", error));
   }
 
   async function loadRolesAndFilters() {
@@ -585,6 +597,7 @@ const COMPANY_ID = getActiveCompanyId();
   async function init() {
     setConn(false);
     await loadCompanyBranding();
+  listenForBrandingUpdates();
     await loadRolesAndFilters();
     attachEvents();
 

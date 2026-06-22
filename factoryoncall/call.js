@@ -77,42 +77,60 @@ const COMPANY_ID = getActiveCompanyId();
     localStorage.getItem("factory_on_call_company_name") ||
     "Factory On Call";
 
+  function normalizeBrandingTheme(value) {
+    const v = String(value || "dark").toLowerCase();
+    return (v === "light" || v === "bright" || v === "neutral") ? "light" : "dark";
+  }
+
+  function applyCompanyBranding(branding = {}, rootData = {}) {
+    COMPANY_NAME = branding.companyName || rootData.companyName || COMPANY_NAME || "Factory On Call";
+    const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
+    const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
+    const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "dark");
+
+    localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+    localStorage.setItem("factory_on_call_theme", theme);
+    if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
+
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("theme-light", theme === "light");
+    document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    if (document.body) {
+      document.body.dataset.theme = theme;
+      document.body.classList.toggle("theme-light", theme === "light");
+      document.body.classList.toggle("theme-dark", theme === "dark");
+    }
+
+    document.querySelectorAll(".factory-logo, .company-logo").forEach(img => { img.src = logo; });
+    const title = document.querySelector(".app-title");
+    if (title) { title.textContent = "Factory On Call"; title.style.display = hasCustomLogo ? "none" : ""; }
+    const customer = document.getElementById("customerName");
+    if (customer) customer.textContent = COMPANY_NAME;
+    const lockCompany = document.querySelector(".lock-company");
+    if (lockCompany) lockCompany.textContent = COMPANY_NAME;
+  }
+
   async function loadCompanyBranding() {
     try {
       const rootSnap = await companyRef.get();
       const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
-      let branding = {};
-      try {
-        const brandingSnap = await companyRef.collection("branding").doc("main").get();
-        branding = brandingSnap.exists ? brandingSnap.data() || {} : {};
-      } catch (error) {
-        console.warn("Branding unavailable:", error);
-      }
-      COMPANY_NAME = branding.companyName || rootData.companyName || COMPANY_NAME;
-      const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
-      const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
-      const rawTheme = branding.theme || localStorage.getItem("factory_on_call_theme") || "dark";
-      const theme = (rawTheme === "light" || rawTheme === "bright" || rawTheme === "neutral") ? "light" : "dark";
-      localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
-      localStorage.setItem("factory_on_call_theme", theme);
-      if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.classList.toggle("theme-light", theme === "light");
-      document.documentElement.classList.toggle("theme-dark", theme === "dark");
-      if (document.body) {
-        document.body.dataset.theme = theme;
-        document.body.classList.toggle("theme-light", theme === "light");
-        document.body.classList.toggle("theme-dark", theme === "dark");
-      }
-      document.querySelectorAll(".factory-logo, .company-logo").forEach(img => { img.src = logo; });
-      const title = document.querySelector(".app-title");
-      if (title) { title.textContent = "Factory On Call"; title.style.display = hasCustomLogo ? "none" : ""; }
+      const brandingSnap = await companyRef.collection("branding").doc("main").get().catch(() => null);
+      const branding = brandingSnap && brandingSnap.exists ? brandingSnap.data() || {} : {};
+      applyCompanyBranding(branding, rootData);
     } catch (error) {
       console.warn("Could not load company branding:", error);
     }
   }
 
+  function listenForBrandingUpdates() {
+    companyRef.collection("branding").doc("main").onSnapshot(snapshot => {
+      if (!snapshot.exists) return;
+      applyCompanyBranding(snapshot.data() || {});
+    }, error => console.warn("Branding listener unavailable:", error));
+  }
+
   await loadCompanyBranding();
+  listenForBrandingUpdates();
 
   const params = new URLSearchParams(window.location.search);
 

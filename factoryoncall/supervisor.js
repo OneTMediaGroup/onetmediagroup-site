@@ -185,36 +185,53 @@ const COMPANY_ID = getActiveCompanyId();
     return boolPerm(currentRole, ["respondMatching", "closeCalls", "closeCall", "acknowledgeCalls", "acceptCall"]) && callRole === userRoleName().toLowerCase();
   }
 
+  function normalizeBrandingTheme(value) {
+    const v = String(value || "dark").toLowerCase();
+    return (v === "light" || v === "bright" || v === "neutral") ? "light" : "dark";
+  }
+
+  function applyCompanyBranding(branding = {}, rootData = {}) {
+    const companyName = branding.companyName || rootData.companyName || localStorage.getItem("factory_on_call_company_name") || "Factory On Call";
+    const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
+    const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
+    const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "dark");
+
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("theme-light", theme === "light");
+    document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    if (document.body) {
+      document.body.dataset.theme = theme;
+      document.body.classList.toggle("theme-light", theme === "light");
+      document.body.classList.toggle("theme-dark", theme === "dark");
+    }
+
+    const nameEl = document.querySelector(".ph-company-name");
+    if (nameEl) nameEl.textContent = companyName;
+    document.querySelectorAll(".ph-logo").forEach(img => { img.src = logo; });
+    document.querySelectorAll(".ph-title").forEach(el => { el.style.display = hasCustomLogo ? "none" : ""; });
+
+    localStorage.setItem("factory_on_call_company_name", companyName);
+    localStorage.setItem("factory_on_call_theme", theme);
+    if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
+  }
+
   async function loadCompanyBranding() {
     try {
       const rootSnap = await companyRef.get();
       const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
-      let branding = {};
       const brandingSnap = await companyRef.collection("branding").doc("main").get().catch(() => null);
-      if (brandingSnap && brandingSnap.exists) branding = brandingSnap.data() || {};
-      const companyName = branding.companyName || rootData.companyName || "Factory On Call";
-      const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
-      const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
-      const rawTheme = branding.theme || localStorage.getItem("factory_on_call_theme") || "dark";
-      const theme = (rawTheme === "light" || rawTheme === "bright" || rawTheme === "neutral") ? "light" : "dark";
-      const nameEl = document.querySelector(".ph-company-name");
-      if (nameEl) nameEl.textContent = companyName;
-      document.documentElement.dataset.theme = theme;
-      document.documentElement.classList.toggle("theme-light", theme === "light");
-      document.documentElement.classList.toggle("theme-dark", theme === "dark");
-      if (document.body) {
-        document.body.dataset.theme = theme;
-        document.body.classList.toggle("theme-light", theme === "light");
-        document.body.classList.toggle("theme-dark", theme === "dark");
-      }
-      document.querySelectorAll(".ph-logo").forEach(img => { img.src = logo; });
-      document.querySelectorAll(".ph-title").forEach(el => { el.style.display = hasCustomLogo ? "none" : ""; });
-      localStorage.setItem("factory_on_call_company_name", companyName);
-      localStorage.setItem("factory_on_call_theme", theme);
-      if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
+      const branding = brandingSnap && brandingSnap.exists ? brandingSnap.data() || {} : {};
+      applyCompanyBranding(branding, rootData);
     } catch (error) {
       console.warn("Could not load branding:", error);
     }
+  }
+
+  function listenForBrandingUpdates() {
+    companyRef.collection("branding").doc("main").onSnapshot(snapshot => {
+      if (!snapshot.exists) return;
+      applyCompanyBranding(snapshot.data() || {});
+    }, error => console.warn("Branding listener unavailable:", error));
   }
 
   function splitName(fullName = "") {
@@ -439,6 +456,7 @@ const COMPANY_ID = getActiveCompanyId();
   async function init() {
     setConn(false);
     await loadCompanyBranding();
+  listenForBrandingUpdates();
     await loadUserAndRole();
     await loadFilters();
     attachFilterEvents();
