@@ -17,7 +17,7 @@ body{overflow:hidden}
 .portal-header{height:70px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0 24px;border-bottom:1px solid var(--border);background:rgba(2,6,23,.98)}
 .ph-left,.ph-center,.ph-right{display:flex;align-items:center;gap:12px}
 .ph-center{justify-content:center}.ph-right{justify-content:flex-end}
-.ph-logo{height:30px}.ph-title{letter-spacing:.16em;font-weight:800;font-size:13px}.ph-subtitle{color:var(--muted);font-size:13px}.ph-company-name{font-size:18px;font-weight:800}
+.ph-logo{max-height:48px;max-width:160px;width:auto;height:auto;object-fit:contain}.ph-title{letter-spacing:.16em;font-weight:800;font-size:13px}.ph-subtitle{color:var(--muted);font-size:13px}.ph-company-name{font-size:18px;font-weight:800}
 .ph-status-dot{width:12px;height:12px;border-radius:999px;background:var(--red)}
 .portal-main{flex:1;overflow:auto;padding:22px 26px 12px}
 .portal-top{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}

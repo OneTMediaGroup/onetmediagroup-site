@@ -53,7 +53,11 @@ body {
 }
 
 .vh-logo {
-    height: 26px;
+    max-height:48px;
+    max-width:160px;
+    width:auto;
+    height:auto;
+    object-fit: contain;
 }
 
 .vh-title {
