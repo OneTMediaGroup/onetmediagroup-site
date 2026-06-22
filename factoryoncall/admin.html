@@ -45,7 +45,7 @@
             <div class="nav-section">
                 <div class="sidebar-section-label">System</div>
                 <button class="nav-item" data-tab="branding">Branding</button>
-                <button class="nav-item" data-tab="settings">System Settings</button>
+                <button class="nav-item" data-tab="settings">Plant Access</button>
                 <button class="nav-item" data-tab="analytics">Analytics</button>
             </div>
         </nav>
@@ -479,102 +479,125 @@
             <div class="grid-2">
 
                 <div class="card">
-                    <h2>Branding</h2>
+                    <h2>Company Branding</h2>
                     <p class="muted">
-                        Update your company branding. Factory On Call logo is fixed and cannot be changed by admins.
+                        Set the plant name, logo, and theme used across Factory On Call screens and call buttons.
                     </p>
 
                     <form id="brandingForm" class="form">
                         <label>
                             Company Name
-                            <input type="text" id="brandCompanyName" />
+                            <input type="text" id="brandCompanyName" placeholder="Example: ABC Manufacturing" />
                         </label>
 
                         <label>
-                            Primary Color
-                            <div class="color-row">
-                                <input type="color" id="brandPrimaryColorPicker" />
-                                <input type="text" id="brandPrimaryColor" placeholder="#1e88e5" />
-                            </div>
-                        </label>
-
-                        <label>
-                            Accent Color
-                            <div class="color-row">
-                                <input type="color" id="brandAccentColorPicker" />
-                                <input type="text" id="brandAccentColor" placeholder="#ffb300" />
-                            </div>
-                        </label>
-
-                        <label>
-                            Company Logo (max 4 MB)
+                            Company Logo
                             <input type="file" id="brandLogo" accept="image/*" />
+                        </label>
+                        <p class="form-help">Logo is compressed for fast loading and appears on Admin, Supervisor Portal, Interactive Viewer, Production Display, Station Screens, and badges.</p>
+
+                        <label>
+                            Theme
+                            <select id="brandTheme">
+                                <option value="dark">Dark</option>
+                                <option value="neutral">Neutral</option>
+                                <option value="bright">Bright</option>
+                            </select>
                         </label>
 
                         <div class="button-row">
                             <button class="btn" type="submit">Save Branding</button>
+                            <button class="btn secondary" type="button" id="brandingResetBtn">Reset</button>
                         </div>
                     </form>
                 </div>
 
                 <div class="card">
                     <h2>Live Preview</h2>
-                    <p class="muted">Preview how your branding appears in headers, cards, and buttons.</p>
+                    <p class="muted">Preview how your branding appears in headers, cards, station buttons, and badges.</p>
 
                     <div id="brandPreviewHeader" class="brand-preview-header">
-                        <img id="brandPreviewLogo" class="company-logo" src="" alt="Brand Logo" />
+                        <img id="brandPreviewLogo" class="company-logo" src="factory_logo.png" alt="Brand Logo" />
                         <div class="brand-preview-text">
                             <div id="brandPreviewCompany" class="brand-preview-company">Your Company</div>
-                            <div class="muted">Factory On Call – Example Viewer</div>
+                            <div class="muted">Factory On Call — Branded plant screen</div>
                         </div>
                     </div>
 
                     <div id="brandPreviewCard" class="brand-preview-card">
-                        <div class="brand-preview-card-title">Sample Card</div>
+                        <div class="brand-preview-card-title">Sample Call Card</div>
                         <div class="brand-preview-card-body">
-                            This is an example tile using your card background, text, and accent colors.
+                            Station and call screens will use this company name, logo, and selected theme.
                         </div>
                     </div>
 
                     <button id="brandPreviewButton" type="button" class="btn" style="margin-top:12px;">
-                        Sample Button
+                        Sample Call Button
                     </button>
                 </div>
 
             </div>
         </section>
 
-        <!-- SYSTEM SETTINGS TAB -->
+        <!-- PLANT ACCESS TAB -->
         <section id="tab-settings" class="tab">
-            <div class="card">
-                <h2>System Settings</h2>
-                <p class="muted">
-                    Control system-level behaviors like auto-close and viewer refresh intervals.
-                </p>
+            <div class="grid-2">
+                <div class="card">
+                    <h2>Plant Access</h2>
+                    <p class="muted">Copy the plant code and open or share the main live screens.</p>
 
-                <form id="systemSettingsForm" class="form">
-                    <label>
-                        Auto-close after (minutes)
-                        <input type="number" id="settingAutoClose" min="0" />
-                    </label>
-
-                    <label>
-                        Require Note on Close
-                        <select id="settingRequireNote">
-                            <option value="false">No</option>
-                            <option value="true">Yes</option>
-                        </select>
-                    </label>
-
-                    <label>
-                        Viewer Refresh Rate (seconds)
-                        <input type="number" id="settingViewerRefresh" min="1" />
-                    </label>
-
-                    <div class="button-row">
-                        <button class="btn" type="submit">Save Settings</button>
+                    <div class="access-block">
+                        <label>
+                            Plant Name
+                            <input type="text" id="accessPlantName" readonly />
+                        </label>
+                        <label>
+                            Plant Code
+                            <div class="copy-row">
+                                <input type="text" id="accessPlantCode" readonly />
+                                <button class="btn secondary" type="button" id="copyPlantCodeBtn">Copy</button>
+                            </div>
+                        </label>
                     </div>
-                </form>
+                </div>
+
+                <div class="card">
+                    <h2>Quick Access Links</h2>
+                    <p class="muted">Use these links for supervisors, common-area screens, and production displays.</p>
+
+                    <div class="quick-links-list">
+                        <div class="quick-link-row">
+                            <div>
+                                <strong>Supervisor Portal</strong>
+                                <p class="muted">Management view for acknowledge, close, filters, and activity review.</p>
+                            </div>
+                            <div class="button-row compact-actions">
+                                <button class="btn secondary" type="button" data-copy-screen="supervisor.html">Copy Link</button>
+                                <button class="btn" type="button" data-open-screen="supervisor.html">Open</button>
+                            </div>
+                        </div>
+                        <div class="quick-link-row">
+                            <div>
+                                <strong>Interactive Viewer</strong>
+                                <p class="muted">Shared common-area screen with action authorization by User ID and PIN.</p>
+                            </div>
+                            <div class="button-row compact-actions">
+                                <button class="btn secondary" type="button" data-copy-screen="viewer.html">Copy Link</button>
+                                <button class="btn" type="button" data-open-screen="viewer.html">Open</button>
+                            </div>
+                        </div>
+                        <div class="quick-link-row">
+                            <div>
+                                <strong>Production Display</strong>
+                                <p class="muted">View-only TV display for live plant calls.</p>
+                            </div>
+                            <div class="button-row compact-actions">
+                                <button class="btn secondary" type="button" data-copy-screen="display.html">Copy Link</button>
+                                <button class="btn" type="button" data-open-screen="display.html">Open</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
 

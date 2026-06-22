@@ -44,3 +44,32 @@ body{overflow:hidden}
 .empty{padding:28px;text-align:center;color:var(--muted)}
 .portal-footer{padding:8px 24px;color:var(--muted);font-size:12px;border-top:1px solid var(--border)}
 @media(max-width:1100px){.portal-top{grid-template-columns:repeat(2,1fr)}.filter-bar{grid-template-columns:1fr}.call-table-header{display:none}.call-row,.recent-row{grid-template-columns:1fr;gap:7px}.actions{justify-content:flex-start}}
+
+
+/* Theme support */
+html[data-theme="neutral"] body,
+html[data-theme="neutral"] .app-shell,
+html[data-theme="neutral"] .vh-shell,
+html[data-theme="neutral"] .ph-shell,
+html[data-theme="neutral"] .dh-shell {
+  background:#e5e7eb !important; color:#111827 !important;
+}
+html[data-theme="bright"] body,
+html[data-theme="bright"] .app-shell,
+html[data-theme="bright"] .vh-shell,
+html[data-theme="bright"] .ph-shell,
+html[data-theme="bright"] .dh-shell {
+  background:#ffffff !important; color:#0f172a !important;
+}
+html[data-theme="neutral"] .call-panel,
+html[data-theme="neutral"] .vh-card,
+html[data-theme="neutral"] .ph-card,
+html[data-theme="neutral"] .dh-card,
+html[data-theme="neutral"] .call-card,
+html[data-theme="bright"] .call-panel,
+html[data-theme="bright"] .vh-card,
+html[data-theme="bright"] .ph-card,
+html[data-theme="bright"] .dh-card,
+html[data-theme="bright"] .call-card {
+  background:#ffffff !important; color:#111827 !important; border-color:#cbd5e1 !important;
+}

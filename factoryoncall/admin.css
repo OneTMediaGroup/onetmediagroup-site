@@ -2970,3 +2970,99 @@ input[type="search"].table-search:focus {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Branding + Plant Access polish */
+html[data-theme="neutral"] body,
+html[data-theme="neutral"] #app-root,
+html[data-theme="neutral"] .sidebar,
+html[data-theme="neutral"] .main,
+html[data-theme="neutral"] .topbar {
+    background: #e5e7eb !important;
+    color: #111827;
+}
+html[data-theme="bright"] body,
+html[data-theme="bright"] #app-root,
+html[data-theme="bright"] .sidebar,
+html[data-theme="bright"] .main,
+html[data-theme="bright"] .topbar {
+    background: #ffffff !important;
+    color: #0f172a;
+}
+html[data-theme="neutral"] .card,
+html[data-theme="neutral"] input,
+html[data-theme="neutral"] select,
+html[data-theme="neutral"] textarea,
+html[data-theme="bright"] .card,
+html[data-theme="bright"] input,
+html[data-theme="bright"] select,
+html[data-theme="bright"] textarea {
+    background: var(--bg-card) !important;
+    color: var(--text-main) !important;
+    border-color: var(--border-soft) !important;
+}
+html[data-theme="neutral"] .nav-item,
+html[data-theme="neutral"] .muted,
+html[data-theme="bright"] .nav-item,
+html[data-theme="bright"] .muted {
+    color: var(--text-muted) !important;
+}
+html[data-theme="neutral"] .brand-title,
+html[data-theme="bright"] .brand-title {
+    color: var(--text-main) !important;
+}
+.brand-preview-header {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 14px;
+}
+.brand-preview-company {
+    font-size: 18px;
+    font-weight: 800;
+    color: var(--text-strong);
+}
+.brand-preview-card {
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 14px;
+    margin-top: 12px;
+    background: rgba(15, 23, 42, 0.35);
+}
+.brand-preview-card-title {
+    font-weight: 800;
+    color: var(--text-strong);
+}
+.brand-preview-card-body {
+    margin-top: 4px;
+    color: var(--text-muted);
+}
+.copy-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+.copy-row input { flex: 1; }
+.quick-links-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 14px;
+}
+.quick-link-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 14px;
+    align-items: center;
+    border: 1px solid var(--border-soft);
+    border-radius: 14px;
+    padding: 14px;
+}
+.quick-link-row p { margin: 4px 0 0; }
+.compact-actions { margin: 0; flex-wrap: nowrap; }
+@media (max-width: 900px) {
+    .quick-link-row { grid-template-columns: 1fr; }
+    .copy-row { flex-direction: column; align-items: stretch; }
+}

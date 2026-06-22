@@ -89,7 +89,15 @@ const COMPANY_ID = getActiveCompanyId();
         console.warn("Branding unavailable:", error);
       }
       COMPANY_NAME = branding.companyName || rootData.companyName || COMPANY_NAME;
+      const logo = branding.logoDataUrl || branding.logoUrl || localStorage.getItem("factory_on_call_logo") || "factory_logo.png";
+      const theme = branding.theme || localStorage.getItem("factory_on_call_theme") || "dark";
       localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+      localStorage.setItem("factory_on_call_theme", theme);
+      if (branding.logoDataUrl || branding.logoUrl) localStorage.setItem("factory_on_call_logo", logo);
+      document.documentElement.dataset.theme = theme;
+      document.querySelectorAll(".factory-logo, .company-logo").forEach(img => { img.src = logo; });
+      const title = document.querySelector(".app-title");
+      if (title) title.textContent = COMPANY_NAME;
     } catch (error) {
       console.warn("Could not load company branding:", error);
     }

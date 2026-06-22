@@ -117,7 +117,7 @@ function escapeHtml(value = "") {
       stations: "Stations",
       roles: "Roles",
       branding: "Branding",
-      settings: "System Settings",
+      settings: "Plant Access",
       analytics: "Analytics"
     };
     return map[tabName] || tabName;
@@ -131,8 +131,8 @@ function escapeHtml(value = "") {
       users: "Manage users and login credentials.",
       stations: "Manage factory call stations.",
       roles: "Manage roles and permissions.",
-      branding: "Customize branding and color system.",
-      settings: "Adjust system-wide behavior.",
+      branding: "Customize plant name, logo, and theme.",
+      settings: "Copy plant code and live screen links.",
       analytics: "Analyze performance and usage trends."
     };
     return map[tabName] || "";
@@ -295,6 +295,20 @@ function escapeHtml(value = "") {
 
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
 
+
+  const brandingForm = document.getElementById("brandingForm");
+  const brandCompanyName = document.getElementById("brandCompanyName");
+  const brandLogo = document.getElementById("brandLogo");
+  const brandTheme = document.getElementById("brandTheme");
+  const brandingResetBtn = document.getElementById("brandingResetBtn");
+  const brandPreviewLogo = document.getElementById("brandPreviewLogo");
+  const brandPreviewCompany = document.getElementById("brandPreviewCompany");
+  const accessPlantName = document.getElementById("accessPlantName");
+  const accessPlantCode = document.getElementById("accessPlantCode");
+  const copyPlantCodeBtn = document.getElementById("copyPlantCodeBtn");
+
+  let cachedBranding = {};
+
   let cachedAreas = [];
   let cachedStations = [];
   let cachedRoles = [];
@@ -378,6 +392,96 @@ function escapeHtml(value = "") {
       .replace(/^-+|-+$/g, "") || String(Date.now());
   }
 
+  function themeColors(theme = "dark") {
+    const map = {
+      dark: {
+        bg: "#020617",
+        panel: "#020617",
+        card: "#0f172a",
+        border: "#1f2937",
+        text: "#e5e7eb",
+        muted: "#9ca3af",
+        accent: "#00b4ff"
+      },
+      neutral: {
+        bg: "#e5e7eb",
+        panel: "#f1f5f9",
+        card: "#ffffff",
+        border: "#cbd5e1",
+        text: "#111827",
+        muted: "#64748b",
+        accent: "#2563eb"
+      },
+      bright: {
+        bg: "#ffffff",
+        panel: "#f8fafc",
+        card: "#ffffff",
+        border: "#dbe3ee",
+        text: "#0f172a",
+        muted: "#475569",
+        accent: "#0ea5e9"
+      }
+    };
+    return map[theme] || map.dark;
+  }
+
+  function applyTheme(theme = "dark") {
+    const colors = themeColors(theme);
+    const root = document.documentElement;
+    root.dataset.theme = theme;
+    root.style.setProperty("--bg-main", colors.bg);
+    root.style.setProperty("--bg-panel", colors.panel);
+    root.style.setProperty("--bg-card", colors.card);
+    root.style.setProperty("--border-soft", colors.border);
+    root.style.setProperty("--text-main", colors.text);
+    root.style.setProperty("--text-muted", colors.muted);
+    root.style.setProperty("--text-strong", colors.text);
+    root.style.setProperty("--accent", colors.accent);
+  }
+
+  function logoSrc() {
+    return cachedBranding.logoDataUrl || cachedBranding.logoUrl || "factory_logo.png";
+  }
+
+  function updateBrandingUI() {
+    if (brandCompanyName) brandCompanyName.value = cachedBranding.companyName || COMPANY_NAME || "";
+    if (brandTheme) brandTheme.value = cachedBranding.theme || "dark";
+    if (brandPreviewCompany) brandPreviewCompany.textContent = cachedBranding.companyName || COMPANY_NAME || "Your Company";
+    if (brandPreviewLogo) brandPreviewLogo.src = logoSrc();
+    const topLogo = document.getElementById("companyLogoImg");
+    if (topLogo) topLogo.src = logoSrc();
+    if (accessPlantName) accessPlantName.value = COMPANY_NAME || "Factory On Call";
+    if (accessPlantCode) accessPlantCode.value = COMPANY_ID;
+    const title = document.querySelector(".brand-title");
+    if (title) title.textContent = "Factory On Call";
+  }
+
+  function resizeLogoToDataUrl(file) {
+    return new Promise((resolve, reject) => {
+      if (!file) return resolve("");
+      const reader = new FileReader();
+      reader.onerror = () => reject(new Error("Could not read logo file."));
+      reader.onload = () => {
+        const img = new Image();
+        img.onerror = () => reject(new Error("Could not load logo image."));
+        img.onload = () => {
+          const maxW = 420;
+          const maxH = 160;
+          const scale = Math.min(1, maxW / img.width, maxH / img.height);
+          const canvas = document.createElement("canvas");
+          canvas.width = Math.max(1, Math.round(img.width * scale));
+          canvas.height = Math.max(1, Math.round(img.height * scale));
+          const ctx = canvas.getContext("2d");
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  }
+
   async function loadCompanyBranding() {
     try {
       const rootSnap = await companyRef.get();
@@ -391,18 +495,31 @@ function escapeHtml(value = "") {
         console.warn("Branding document unavailable:", innerError);
       }
 
+      cachedBranding = {
+        theme: "dark",
+        ...branding
+      };
+
       COMPANY_MODE = rootData.mode || "production";
       ADMIN_LOCKED = rootData.adminLocked === true || rootData.isDemo === true || COMPANY_MODE === "demo";
 
       COMPANY_NAME =
-        branding.companyName ||
+        cachedBranding.companyName ||
         rootData.companyName ||
         localStorage.getItem("factory_on_call_company_name") ||
         "Factory On Call";
 
+      cachedBranding.companyName = COMPANY_NAME;
       localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+      localStorage.setItem("factory_on_call_theme", cachedBranding.theme || "dark");
+      if (cachedBranding.logoDataUrl || cachedBranding.logoUrl) {
+        localStorage.setItem("factory_on_call_logo", logoSrc());
+      }
+      applyTheme(cachedBranding.theme || "dark");
+      updateBrandingUI();
     } catch (error) {
       console.warn("Could not load company branding:", error);
+      applyTheme("dark");
     }
   }
 
@@ -3258,6 +3375,29 @@ module.exports = QRCode;
   }
 
 
+
+  function bindBrandingPreview() {
+    brandCompanyName?.addEventListener("input", () => {
+      if (brandPreviewCompany) brandPreviewCompany.textContent = brandCompanyName.value.trim() || "Your Company";
+      if (accessPlantName) accessPlantName.value = brandCompanyName.value.trim() || COMPANY_NAME;
+    });
+    brandTheme?.addEventListener("change", () => applyTheme(brandTheme.value || "dark"));
+    brandLogo?.addEventListener("change", async () => {
+      try {
+        const file = brandLogo.files?.[0];
+        if (!file) return;
+        const dataUrl = await resizeLogoToDataUrl(file);
+        cachedBranding.logoDataUrl = dataUrl;
+        if (brandPreviewLogo) brandPreviewLogo.src = dataUrl;
+        const topLogo = document.getElementById("companyLogoImg");
+        if (topLogo) topLogo.src = dataUrl;
+      } catch (err) {
+        console.error(err);
+        alert("Could not preview logo.");
+      }
+    });
+  }
+
   // ---------- EVENT WIRING ----------
   function wireEvents() {
     document.addEventListener("click", event => {
@@ -3286,6 +3426,58 @@ module.exports = QRCode;
         printBadges(cachedUsers);
       }
     }, true);
+
+
+    bindBrandingPreview();
+
+    brandingForm?.addEventListener("submit", async e => {
+      e.preventDefault();
+      if (blockDemoAdminAction("Branding")) return;
+
+      try {
+        const payload = {
+          companyName: brandCompanyName?.value.trim() || COMPANY_NAME || "Factory On Call",
+          theme: brandTheme?.value || "dark",
+          logoDataUrl: cachedBranding.logoDataUrl || cachedBranding.logoUrl || "",
+          updatedAt: Date.now()
+        };
+
+        if (brandLogo?.files?.[0]) {
+          payload.logoDataUrl = await resizeLogoToDataUrl(brandLogo.files[0]);
+        }
+
+        await companyRef.set({ companyName: payload.companyName, updatedAt: Date.now() }, { merge: true });
+        await companyRef.collection("branding").doc("main").set(payload, { merge: true });
+        cachedBranding = { ...cachedBranding, ...payload };
+        COMPANY_NAME = payload.companyName;
+        localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+        localStorage.setItem("factory_on_call_theme", payload.theme);
+        if (payload.logoDataUrl) localStorage.setItem("factory_on_call_logo", payload.logoDataUrl);
+        applyTheme(payload.theme);
+        updateBrandingUI();
+        initSidebarLinks();
+        alert("Branding saved.");
+      } catch (err) {
+        console.error(err);
+        alert("Could not save branding.");
+      }
+    });
+
+    brandingResetBtn?.addEventListener("click", () => updateBrandingUI());
+    copyPlantCodeBtn?.addEventListener("click", () => copyText(COMPANY_ID));
+
+    document.addEventListener("click", event => {
+      const copyBtn = event.target.closest?.("[data-copy-screen]");
+      const openBtn = event.target.closest?.("[data-open-screen]");
+      if (copyBtn) {
+        event.preventDefault();
+        copyText(buildScreenUrl(copyBtn.dataset.copyScreen));
+      }
+      if (openBtn) {
+        event.preventDefault();
+        window.open(buildScreenUrl(openBtn.dataset.openScreen), "_blank", "noopener");
+      }
+    });
 
     logsFilterBtn?.addEventListener("click", renderCallLogs);
     logsClearBtn?.addEventListener("click", () => {

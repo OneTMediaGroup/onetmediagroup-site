@@ -506,3 +506,32 @@ html, body {
         padding: 0 16px 18px;
     }
 }
+
+
+/* Theme support */
+html[data-theme="neutral"] body,
+html[data-theme="neutral"] .app-shell,
+html[data-theme="neutral"] .vh-shell,
+html[data-theme="neutral"] .ph-shell,
+html[data-theme="neutral"] .dh-shell {
+  background:#e5e7eb !important; color:#111827 !important;
+}
+html[data-theme="bright"] body,
+html[data-theme="bright"] .app-shell,
+html[data-theme="bright"] .vh-shell,
+html[data-theme="bright"] .ph-shell,
+html[data-theme="bright"] .dh-shell {
+  background:#ffffff !important; color:#0f172a !important;
+}
+html[data-theme="neutral"] .call-panel,
+html[data-theme="neutral"] .vh-card,
+html[data-theme="neutral"] .ph-card,
+html[data-theme="neutral"] .dh-card,
+html[data-theme="neutral"] .call-card,
+html[data-theme="bright"] .call-panel,
+html[data-theme="bright"] .vh-card,
+html[data-theme="bright"] .ph-card,
+html[data-theme="bright"] .dh-card,
+html[data-theme="bright"] .call-card {
+  background:#ffffff !important; color:#111827 !important; border-color:#cbd5e1 !important;
+}
