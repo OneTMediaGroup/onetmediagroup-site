@@ -311,3 +311,144 @@ body {
         gap: 10px;
     }
 }
+
+
+/* DISPLAY CONTROLS */
+.dh-clock {
+    color: var(--fg-muted);
+    font-size: 16px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.display-control-btn,
+.display-options select {
+    border: 1px solid #475569;
+    background: rgba(2, 6, 23, 0.86);
+    color: var(--fg-text);
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+}
+
+.display-control-btn:hover,
+.display-options select:hover {
+    border-color: #38bdf8;
+}
+
+.display-control-btn.is-on {
+    border-color: #22c55e;
+    color: #bbf7d0;
+}
+
+.section-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 16px;
+}
+
+.section-topline .section-title {
+    margin-bottom: 0;
+}
+
+.display-options {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.display-options label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--fg-muted);
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.display-options select {
+    min-width: 145px;
+    border-radius: 12px;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+/* Fullscreen production display mode */
+:fullscreen #display-root,
+:-webkit-full-screen #display-root {
+    width: 100vw;
+    height: 100vh;
+}
+
+/* Compact density */
+#display-root.compact .display-section {
+    padding-top: 18px;
+}
+
+#display-root.compact .call-card {
+    padding: 12px 14px;
+    border-radius: 13px;
+}
+
+#display-root.compact .call-main {
+    gap: 12px;
+}
+
+#display-root.compact .field-value {
+    font-size: 18px;
+}
+
+#display-root.compact .field-label {
+    font-size: 11px;
+}
+
+#display-root.compact .status-pill {
+    padding: 6px 14px;
+    font-size: 15px;
+}
+
+#display-root.compact .bottom-bar {
+    padding: 14px 28px;
+}
+
+#display-root.compact .stat-box {
+    padding: 14px 16px;
+}
+
+#display-root.compact .stat-value {
+    font-size: 32px;
+}
+
+@media (max-width: 1100px) {
+    .display-header {
+        grid-template-columns: 1fr;
+        height: auto;
+        gap: 8px;
+        padding: 14px 18px;
+    }
+
+    .dh-left,
+    .dh-center,
+    .dh-right {
+        justify-content: center;
+    }
+
+    .section-topline {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .display-options {
+        justify-content: flex-start;
+    }
+}

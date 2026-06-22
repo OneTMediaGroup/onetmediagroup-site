@@ -78,12 +78,107 @@ const COMPANY_ID = getActiveCompanyId();
   const statClosed = document.getElementById("statClosed");
   const connDot = document.getElementById("connDot");
   const connLabel = document.getElementById("connLabel");
+  const displayClock = document.getElementById("displayClock");
+  const fullscreenBtn = document.getElementById("fullscreenBtn");
+  const autoScrollBtn = document.getElementById("autoScrollBtn");
+  const densityBtn = document.getElementById("densityBtn");
+  const sortModeEl = document.getElementById("sortMode");
+  const displayRoot = document.getElementById("display-root");
 
   let latestCalls = [];
+  let autoScrollEnabled = true;
+  let compactDensity = false;
+  let scrollDirection = 1;
+  let unsubscribeCalls = null;
 
-  function setConn(ok) {
+  function setConn(ok, label) {
     if (connDot) connDot.style.background = ok ? "#22c55e" : "#ef4444";
-    if (connLabel) connLabel.textContent = ok ? "Online" : "Offline";
+    if (connLabel) connLabel.textContent = label || (ok ? "Online" : "Offline");
+  }
+
+  function updateClock() {
+    if (!displayClock) return;
+    const now = new Date();
+    displayClock.textContent = now.toLocaleTimeString([], {
+      hour: "numeric",
+      minute: "2-digit"
+    });
+  }
+
+  function compareText(a, b) {
+    return String(a || "").localeCompare(String(b || ""), undefined, { sensitivity: "base" });
+  }
+
+  function callArea(call) {
+    return normalizeList(call.cells).join(", ") || call.area || call.location || "General";
+  }
+
+  function callRoles(call) {
+    return normalizeList(call.roles).join(", ") || call.role || call.personnelRequired || "Support";
+  }
+
+  function sortActiveCalls(calls) {
+    const mode = sortModeEl ? sortModeEl.value : "wait";
+
+    return [...calls].sort((a, b) => {
+      if (mode === "area") {
+        const areaCompare = compareText(callArea(a), callArea(b));
+        if (areaCompare) return areaCompare;
+        return compareText(a.station, b.station);
+      }
+
+      if (mode === "status") {
+        const order = { waiting: 0, ack: 1, closed: 2 };
+        const statusCompare = (order[a.status] ?? 9) - (order[b.status] ?? 9);
+        if (statusCompare) return statusCompare;
+        return timestampToMs(a.timeStarted) - timestampToMs(b.timeStarted);
+      }
+
+      if (mode === "station") {
+        return compareText(a.station, b.station);
+      }
+
+      return timestampToMs(a.timeStarted) - timestampToMs(b.timeStarted);
+    });
+  }
+
+  function stepAutoScroll() {
+    if (!autoScrollEnabled || !activeCallsEl) return;
+    const maxScroll = activeCallsEl.scrollHeight - activeCallsEl.clientHeight;
+    if (maxScroll <= 12) return;
+
+    if (activeCallsEl.scrollTop >= maxScroll - 4) {
+      scrollDirection = -1;
+      setTimeout(() => {
+        if (autoScrollEnabled && activeCallsEl) activeCallsEl.scrollTop = 0;
+        scrollDirection = 1;
+      }, 1700);
+      return;
+    }
+
+    if (scrollDirection > 0) {
+      activeCallsEl.scrollTop += 1;
+    }
+  }
+
+  function syncControlLabels() {
+    if (autoScrollBtn) {
+      autoScrollBtn.textContent = autoScrollEnabled ? "Auto Scroll On" : "Auto Scroll Off";
+      autoScrollBtn.classList.toggle("is-on", autoScrollEnabled);
+    }
+
+    if (densityBtn) {
+      densityBtn.textContent = compactDensity ? "Comfortable" : "Compact";
+      densityBtn.classList.toggle("is-on", compactDensity);
+    }
+
+    if (fullscreenBtn) {
+      fullscreenBtn.textContent = document.fullscreenElement ? "Exit Full Screen" : "Full Screen";
+    }
+
+    if (displayRoot) {
+      displayRoot.classList.toggle("compact", compactDensity);
+    }
   }
 
   function timestampToMs(value) {
@@ -188,9 +283,9 @@ const COMPANY_ID = getActiveCompanyId();
   function renderDisplay(calls) {
     if (!activeCallsEl) return;
 
-    const activeCalls = calls
-      .filter(call => call.status === "waiting" || call.status === "ack")
-      .sort((a, b) => timestampToMs(a.timeStarted) - timestampToMs(b.timeStarted));
+    const activeCalls = sortActiveCalls(
+      calls.filter(call => call.status === "waiting" || call.status === "ack")
+    );
 
     let waiting = 0;
     let onWay = 0;
@@ -210,12 +305,9 @@ const COMPANY_ID = getActiveCompanyId();
       if (call.status === "waiting") waiting++;
       if (call.status === "ack") onWay++;
 
-      const roles = normalizeList(call.roles);
-      const cells = normalizeList(call.cells);
-
       const station = call.station || "Unknown Station";
-      const helpNeeded = roles.join(", ") || "Support";
-      const area = cells.join(", ") || "General";
+      const helpNeeded = callRoles(call);
+      const area = callArea(call);
       const status = statusLabel(call.status);
       const ackInfo = call.status === "ack" && call.ackBy ? `Acknowledged by ${call.ackBy}` : "Not yet acknowledged";
 
@@ -270,10 +362,54 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
+
+  updateClock();
+  setInterval(updateClock, 1000);
+
+  if (sortModeEl) {
+    sortModeEl.addEventListener("change", () => renderDisplay(latestCalls));
+  }
+
+  if (autoScrollBtn) {
+    autoScrollBtn.addEventListener("click", () => {
+      autoScrollEnabled = !autoScrollEnabled;
+      if (autoScrollEnabled && activeCallsEl) activeCallsEl.scrollTop = 0;
+      syncControlLabels();
+    });
+  }
+
+  if (densityBtn) {
+    densityBtn.addEventListener("click", () => {
+      compactDensity = !compactDensity;
+      syncControlLabels();
+    });
+  }
+
+  if (fullscreenBtn) {
+    fullscreenBtn.addEventListener("click", async () => {
+      try {
+        if (document.fullscreenElement) {
+          await document.exitFullscreen();
+        } else if (displayRoot && displayRoot.requestFullscreen) {
+          await displayRoot.requestFullscreen();
+        }
+      } catch (error) {
+        console.warn("Fullscreen unavailable:", error);
+      }
+      syncControlLabels();
+    });
+  }
+
+  document.addEventListener("fullscreenchange", syncControlLabels);
+  window.addEventListener("online", () => setConn(true, "Online"));
+  window.addEventListener("offline", () => setConn(false, "Offline"));
+  setInterval(stepAutoScroll, 60);
+  syncControlLabels();
+
   setConn(false);
   await loadBranding();
 
-  callsRef.onSnapshot(
+  unsubscribeCalls = callsRef.onSnapshot(
     snapshot => {
       setConn(true);
       latestCalls = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
