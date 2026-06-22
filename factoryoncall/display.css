@@ -1006,3 +1006,62 @@ body.theme-light .dh-logo {
     max-height: 56px !important;
   }
 }
+
+/* Final branding/header alignment patch */
+.display-header {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    min-height: 78px;
+}
+.dh-left,
+.dh-right {
+    position: relative;
+    z-index: 2;
+    flex: 0 0 auto;
+}
+.dh-center {
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    max-width: 40vw;
+    min-width: 0;
+    pointer-events: none;
+}
+.dh-company-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 100%;
+}
+.dh-logo {
+    max-width: 280px !important;
+    max-height: 70px !important;
+    width: auto !important;
+    height: auto !important;
+    object-fit: contain;
+}
+.dh-title { display: none !important; }
+.dh-right { gap: 14px; }
+.display-options {
+    position: relative;
+    z-index: 3;
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.section-topline {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+@media (max-width: 1100px) {
+    .dh-logo { max-width: 200px !important; max-height: 56px !important; }
+    .dh-center { max-width: 32vw; }
+}

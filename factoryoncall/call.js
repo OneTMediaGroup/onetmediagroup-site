@@ -83,12 +83,13 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   function applyCompanyBranding(branding = {}, rootData = {}) {
-    COMPANY_NAME = branding.companyName || rootData.companyName || COMPANY_NAME || "Factory On Call";
-    const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
-    const logo = hasCustomLogo ? (branding.logoDataUrl || branding.logoUrl) : "factory_logo.png";
+    COMPANY_NAME = (branding.companyName !== undefined ? branding.companyName : (rootData.companyName !== undefined ? rootData.companyName : COMPANY_NAME || ""));
+    const rawLogo = branding.logoDataUrl || branding.logoUrl || "";
+    const hasCustomLogo = Boolean(rawLogo) && !String(rawLogo).includes("factory_logo.png") && !String(rawLogo).includes("headerLogo.png");
+    const logo = hasCustomLogo ? rawLogo : "";
     const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "dark");
 
-    localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+    if (COMPANY_NAME) localStorage.setItem("factory_on_call_company_name", COMPANY_NAME); else localStorage.removeItem("factory_on_call_company_name");
     localStorage.setItem("factory_on_call_theme", theme);
     if (hasCustomLogo) {
       localStorage.setItem("factory_on_call_logo", logo);
@@ -107,7 +108,7 @@ const COMPANY_ID = getActiveCompanyId();
 
     document.querySelectorAll(".factory-logo, .company-logo").forEach(img => { img.src = logo; img.style.display = hasCustomLogo ? "block" : "none"; });
     const title = document.querySelector(".app-title");
-    if (title) { title.textContent = "Factory On Call"; title.style.display = hasCustomLogo ? "none" : ""; }
+    if (title) { title.textContent = ""; title.style.display = "none"; }
     const customer = document.getElementById("customerName");
     if (customer) customer.textContent = COMPANY_NAME;
     const lockCompany = document.querySelector(".lock-company");
@@ -154,7 +155,7 @@ const COMPANY_ID = getActiveCompanyId();
     params.get("department") ||
     "";
 
-  localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
+  if (COMPANY_NAME) localStorage.setItem("factory_on_call_company_name", COMPANY_NAME); else localStorage.removeItem("factory_on_call_company_name");
 
   const FALLBACK_ROLE_DEFINITIONS = [
     "Team Lead",

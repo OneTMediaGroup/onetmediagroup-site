@@ -735,3 +735,9 @@ body.theme-light .dh-logo {
     max-height: 56px !important;
   }
 }
+
+/* Final branding logo fallback patch */
+.app-title { display: none !important; }
+.factory-logo { max-width: 280px !important; max-height: 70px !important; width: auto !important; height: auto !important; object-fit: contain; }
+.header-center { position:absolute; left:50%; transform:translateX(-50%); max-width:45vw; text-align:center; }
+#customerName { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; display:block; }

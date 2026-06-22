@@ -567,17 +567,17 @@ function escapeHtml(value = "") {
   }
 
   function logoSrc() {
-    return cachedBranding.logoDataUrl || cachedBranding.logoUrl || "factory_logo.png";
+    return cachedBranding.logoDataUrl || cachedBranding.logoUrl || "";
   }
 
   function updateBrandingUI() {
-    if (brandCompanyName) brandCompanyName.value = cachedBranding.companyName || COMPANY_NAME || "";
+    if (brandCompanyName) brandCompanyName.value = (cachedBranding.companyName ?? COMPANY_NAME ?? "");
     if (brandTheme) brandTheme.value = normalizeTheme(cachedBranding.theme || "dark");
-    if (brandPreviewCompany) brandPreviewCompany.textContent = cachedBranding.companyName || COMPANY_NAME || "Your Company";
-    if (brandPreviewLogo) brandPreviewLogo.src = logoSrc();
+    if (brandPreviewCompany) brandPreviewCompany.textContent = (cachedBranding.companyName ?? COMPANY_NAME ?? "");
+    if (brandPreviewLogo) { const s = logoSrc(); brandPreviewLogo.src = s; brandPreviewLogo.style.display = s ? "block" : "none"; }
     const topLogo = document.getElementById("companyLogoImg");
     if (topLogo) { const s=logoSrc(); topLogo.src=s; topLogo.style.display=(cachedBranding.logoDataUrl||cachedBranding.logoUrl)?"block":"none"; }
-    if (accessPlantName) accessPlantName.value = COMPANY_NAME || "Factory On Call";
+    if (accessPlantName) accessPlantName.value = COMPANY_NAME || "";
     if (accessPlantCode) accessPlantCode.value = COMPANY_ID;
     const title = document.querySelector(".brand-title");
     if (title) title.textContent = "Factory On Call";
@@ -617,11 +617,12 @@ function escapeHtml(value = "") {
       try {
         cachedBranding.logoDataUrl = "";
         cachedBranding.logoUrl = "";
+        cachedBranding.logoRemoved = true;
         localStorage.removeItem("factory_on_call_logo");
         if (brandLogo) brandLogo.value = "";
 
         const payload = {
-          companyName: brandCompanyName?.value.trim() || COMPANY_NAME || "Factory On Call",
+          companyName: brandCompanyName ? brandCompanyName.value.trim() : (COMPANY_NAME || ""),
           theme: normalizeTheme(brandTheme?.value || cachedBranding.theme || "dark"),
           logoDataUrl: "",
           logoUrl: "",
@@ -634,7 +635,7 @@ function escapeHtml(value = "") {
         updateBrandingUI();
         applyTheme(payload.theme);
         forceAdminThemePaint(payload.theme);
-        alert("Logo removed. The page will reload to update all branding.");
+        alert("Logo removed and saved. Branding will update on all screens.");
         window.location.reload();
       } catch (err) {
         console.error(err);
@@ -665,10 +666,9 @@ async function loadCompanyBranding() {
       ADMIN_LOCKED = rootData.adminLocked === true || rootData.isDemo === true || COMPANY_MODE === "demo";
 
       COMPANY_NAME =
-        cachedBranding.companyName ||
-        rootData.companyName ||
-        localStorage.getItem("factory_on_call_company_name") ||
-        "Factory On Call";
+        (cachedBranding.companyName !== undefined ? cachedBranding.companyName :
+        (rootData.companyName !== undefined ? rootData.companyName :
+        (localStorage.getItem("factory_on_call_company_name") || "")));
 
       cachedBranding.companyName = COMPANY_NAME;
       localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
@@ -3541,8 +3541,8 @@ module.exports = QRCode;
 
   function bindBrandingPreview() {
     brandCompanyName?.addEventListener("input", () => {
-      if (brandPreviewCompany) brandPreviewCompany.textContent = brandCompanyName.value.trim() || "Your Company";
-      if (accessPlantName) accessPlantName.value = brandCompanyName.value.trim() || COMPANY_NAME;
+      if (brandPreviewCompany) brandPreviewCompany.textContent = brandCompanyName.value.trim();
+      if (accessPlantName) accessPlantName.value = brandCompanyName.value.trim();
     });
     brandTheme?.addEventListener("change", () => {
       const nextTheme = normalizeTheme(brandTheme.value || "dark");
@@ -3604,14 +3604,15 @@ module.exports = QRCode;
 
       try {
         const payload = {
-          companyName: brandCompanyName?.value.trim() || COMPANY_NAME || "Factory On Call",
+          companyName: brandCompanyName ? brandCompanyName.value.trim() : (COMPANY_NAME || ""),
           theme: normalizeTheme(brandTheme?.value || "dark"),
-          logoDataUrl: cachedBranding.logoDataUrl || cachedBranding.logoUrl || "",
+          logoDataUrl: cachedBranding.logoRemoved ? "" : (cachedBranding.logoDataUrl || cachedBranding.logoUrl || ""),
           updatedAt: Date.now()
         };
 
         if (brandLogo?.files?.[0]) {
           payload.logoDataUrl = await resizeLogoToDataUrl(brandLogo.files[0]);
+          cachedBranding.logoRemoved = false;
         }
 
         await companyRef.set({ companyName: payload.companyName, updatedAt: Date.now() }, { merge: true });

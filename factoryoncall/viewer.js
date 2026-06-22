@@ -286,9 +286,10 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   function applyCompanyBranding(branding = {}, rootData = {}) {
-    const companyName = branding.companyName || rootData.companyName || localStorage.getItem("factory_on_call_company_name") || "Factory On Call";
-    const hasCustomLogo = Boolean(branding.logoDataUrl || branding.logoUrl);
-    const logo = hasCustomLogo ? (branding.logoDataUrl || branding.logoUrl) : "factory_logo.png";
+    const companyName = (branding.companyName !== undefined ? branding.companyName : (rootData.companyName !== undefined ? rootData.companyName : (localStorage.getItem("factory_on_call_company_name") || "")));
+    const rawLogo = branding.logoDataUrl || branding.logoUrl || "";
+    const hasCustomLogo = Boolean(rawLogo) && !String(rawLogo).includes("factory_logo.png") && !String(rawLogo).includes("headerLogo.png");
+    const logo = hasCustomLogo ? rawLogo : "";
     const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "dark");
 
     document.documentElement.dataset.theme = theme;
@@ -303,9 +304,9 @@ const COMPANY_ID = getActiveCompanyId();
     const nameEl = document.querySelector(".vh-company-name");
     if (nameEl) nameEl.textContent = companyName;
     document.querySelectorAll(".vh-logo").forEach(img => { img.src = logo; img.style.display = hasCustomLogo ? "block" : "none"; });
-    document.querySelectorAll(".vh-title").forEach(el => { el.style.display = hasCustomLogo ? "none" : ""; });
+    document.querySelectorAll(".vh-title").forEach(el => { el.style.display = "none"; });
 
-    localStorage.setItem("factory_on_call_company_name", companyName);
+    if (companyName) localStorage.setItem("factory_on_call_company_name", companyName); else localStorage.removeItem("factory_on_call_company_name");
     localStorage.setItem("factory_on_call_theme", theme);
     if (hasCustomLogo) {
       localStorage.setItem("factory_on_call_logo", logo);
