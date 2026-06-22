@@ -97,6 +97,13 @@ const COMPANY_ID = getActiveCompanyId();
       localStorage.setItem("factory_on_call_theme", theme);
       if (hasCustomLogo) localStorage.setItem("factory_on_call_logo", logo);
       document.documentElement.dataset.theme = theme;
+      document.documentElement.classList.toggle("theme-light", theme === "light");
+      document.documentElement.classList.toggle("theme-dark", theme === "dark");
+      if (document.body) {
+        document.body.dataset.theme = theme;
+        document.body.classList.toggle("theme-light", theme === "light");
+        document.body.classList.toggle("theme-dark", theme === "dark");
+      }
       document.querySelectorAll(".factory-logo, .company-logo").forEach(img => { img.src = logo; });
       const title = document.querySelector(".app-title");
       if (title) { title.textContent = "Factory On Call"; title.style.display = hasCustomLogo ? "none" : ""; }

@@ -341,6 +341,13 @@ const COMPANY_ID = getActiveCompanyId();
       const nameEl = document.querySelector(".dh-company-name");
       if (nameEl) nameEl.textContent = companyName;
       document.documentElement.dataset.theme = theme;
+      document.documentElement.classList.toggle("theme-light", theme === "light");
+      document.documentElement.classList.toggle("theme-dark", theme === "dark");
+      if (document.body) {
+        document.body.dataset.theme = theme;
+        document.body.classList.toggle("theme-light", theme === "light");
+        document.body.classList.toggle("theme-dark", theme === "dark");
+      }
       document.querySelectorAll(".dh-logo").forEach(img => { img.src = logo; });
       document.querySelectorAll(".dh-title").forEach(el => { el.style.display = hasCustomLogo ? "none" : ""; });
       localStorage.setItem("factory_on_call_company_name", companyName);

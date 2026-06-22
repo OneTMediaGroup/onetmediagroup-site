@@ -26,6 +26,21 @@ let COMPANY_NAME = "Factory On Call";
 let COMPANY_MODE = "production";
 let ADMIN_LOCKED = false;
 
+(function applySavedThemeEarly(){
+  try {
+    const savedTheme = (localStorage.getItem("factory_on_call_theme") || "dark").toLowerCase();
+    const theme = (savedTheme === "light" || savedTheme === "bright" || savedTheme === "neutral") ? "light" : "dark";
+    document.documentElement.dataset.theme = theme;
+    document.documentElement.classList.toggle("theme-light", theme === "light");
+    document.documentElement.classList.toggle("theme-dark", theme === "dark");
+    if (document.body) {
+      document.body.dataset.theme = theme;
+      document.body.classList.toggle("theme-light", theme === "light");
+      document.body.classList.toggle("theme-dark", theme === "dark");
+    }
+  } catch (_) {}
+})();
+
 function escapeHtml(value = "") {
   return String(value ?? "")
     .replaceAll("&", "&amp;")
@@ -429,6 +444,13 @@ function escapeHtml(value = "") {
     const colors = themeColors(normalizedTheme);
     const root = document.documentElement;
     root.dataset.theme = normalizedTheme;
+    root.classList.toggle("theme-light", normalizedTheme === "light");
+    root.classList.toggle("theme-dark", normalizedTheme === "dark");
+    if (document.body) {
+      document.body.dataset.theme = normalizedTheme;
+      document.body.classList.toggle("theme-light", normalizedTheme === "light");
+      document.body.classList.toggle("theme-dark", normalizedTheme === "dark");
+    }
     root.style.setProperty("--bg-main", colors.bg);
     root.style.setProperty("--bg-panel", colors.panel);
     root.style.setProperty("--bg-card", colors.card);
