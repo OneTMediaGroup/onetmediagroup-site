@@ -17,7 +17,7 @@ body{overflow:hidden}
 .portal-header{height:70px;display:grid;grid-template-columns:1fr 1fr 1fr;align-items:center;padding:0 24px;border-bottom:1px solid var(--border);background:rgba(2,6,23,.98)}
 .ph-left,.ph-center,.ph-right{display:flex;align-items:center;gap:12px}
 .ph-center{justify-content:center}.ph-right{justify-content:flex-end}
-.ph-logo{max-height:48px;max-width:160px;width:auto;height:auto;object-fit:contain}.ph-title{letter-spacing:.16em;font-weight:800;font-size:13px}.ph-subtitle{color:var(--muted);font-size:13px}.ph-company-name{font-size:18px;font-weight:800}
+.ph-logo{max-height:70px;max-width:220px;width:auto;height:auto;object-fit:contain}.ph-title{letter-spacing:.16em;font-weight:800;font-size:13px}.ph-subtitle{color:var(--muted);font-size:13px}.ph-company-name{font-size:18px;font-weight:800}
 .ph-status-dot{width:12px;height:12px;border-radius:999px;background:var(--red)}
 .portal-main{flex:1;overflow:auto;padding:22px 26px 12px}
 .portal-top{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:16px}
@@ -371,7 +371,7 @@ html[data-theme="light"] * {
 }
 
 /* === DARK MODE POLISH PASS === */
-html[data-theme="dark"] .ph-logo { height:38px !important; max-width:70px !important; object-fit:contain !important; }
+html[data-theme="dark"] .ph-logo { max-width:220px !important; max-height:70px !important; width:auto !important; height:auto !important; object-fit:contain !important; }
 html[data-theme="dark"] .metric-card,
 html[data-theme="dark"] .portal-card,
 html[data-theme="dark"] .call-table,
@@ -409,6 +409,9 @@ html[data-theme="dark"] select {
 .topbar-right .company-logo,
 img.company-logo,
 .factory-logo,
+.ph-logo,
+.dh-logo,
+.vh-logo,
 .brand-logo {
   display: block;
   width: auto !important;
@@ -431,4 +434,20 @@ body.theme-light .topbar-right .company-logo {
 html[data-theme="dark"] .topbar-right .company-logo,
 body.theme-dark .topbar-right .company-logo {
   filter: drop-shadow(0 8px 18px rgba(0, 0, 0, 0.45)) !important;
+}
+
+
+/* Final company logo slot: match admin header sizing across all live screens. */
+.company-logo,
+.factory-logo,
+.ph-logo,
+.dh-logo,
+.vh-logo,
+.brand-logo {
+  width: auto !important;
+  height: auto !important;
+  max-width: 220px !important;
+  max-height: 70px !important;
+  object-fit: contain !important;
+  object-position: left center !important;
 }
