@@ -106,7 +106,19 @@ const COMPANY_ID = getActiveCompanyId();
       document.body.classList.toggle("theme-dark", theme === "dark");
     }
 
-    document.querySelectorAll(".factory-logo, .company-logo").forEach(img => { img.src = logo; img.style.display = hasCustomLogo ? "block" : "none"; });
+    document.querySelectorAll(".factory-logo, .company-logo").forEach(img => {
+      if (hasCustomLogo) {
+        img.src = logo;
+        img.hidden = false;
+        img.classList.add("has-custom-logo");
+        img.style.setProperty("display", "block", "important");
+      } else {
+        img.removeAttribute("src");
+        img.hidden = true;
+        img.classList.remove("has-custom-logo");
+        img.style.setProperty("display", "none", "important");
+      }
+    });
     const title = document.querySelector(".app-title");
     if (title) { title.textContent = ""; title.style.display = "none"; }
     const customer = document.getElementById("customerName");

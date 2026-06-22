@@ -751,3 +751,20 @@ body.theme-light .dh-logo {
 .ph-title, .vh-title, .dh-title, .header-title {
   display: none !important;
 }
+
+/* === FINAL STATION HEADER + ONE-SCREEN FIT + LIGHT BUTTON FIX === */
+.app-header{display:grid!important;grid-template-columns:minmax(340px,1fr) auto minmax(220px,1fr)!important;align-items:center!important;gap:18px!important;position:relative!important}
+.header-left{grid-column:1!important;justify-self:start!important;min-width:0!important}
+.header-center{grid-column:2!important;position:static!important;transform:none!important;justify-self:center!important;text-align:center!important;max-width:42vw!important;min-width:0!important}
+.header-right{grid-column:3!important;justify-self:end!important;margin-left:auto!important;display:flex!important;justify-content:flex-end!important}
+.factory-logo:not([src]),.factory-logo[src=""],.factory-logo[hidden]{display:none!important;visibility:hidden!important;width:0!important;height:0!important;max-width:0!important;margin:0!important}
+.factory-logo.has-custom-logo{display:block!important;visibility:visible!important;width:auto!important;height:auto!important;max-width:320px!important;max-height:78px!important;object-fit:contain!important}
+.app-main{padding:14px 28px!important;min-height:0!important;overflow:hidden!important}
+.call-panel{height:calc(100vh - 92px)!important;max-height:calc(100vh - 92px)!important;overflow:hidden!important;padding:clamp(18px,3vh,38px) 40px!important;justify-content:center!important}
+.circle-wrapper{width:min(34vh,30vw,300px)!important;height:min(34vh,30vw,300px)!important;margin-bottom:clamp(14px,2vh,22px)!important;flex:0 0 auto!important}
+.send-btn{margin:0 0 clamp(10px,1.6vh,16px)!important;flex:0 0 auto!important}
+.hint-text{margin:0 0 clamp(16px,2vh,24px)!important;flex:0 0 auto!important}.roles-title{margin:0 0 14px!important;flex:0 0 auto!important}
+.role-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important;gap:10px!important;width:min(100%,900px)!important;flex:0 0 auto!important}.role-btn{min-height:42px!important;padding:8px 12px!important}
+.unlock-btn,.auth-toggle,.signin-btn,#unlockBtn{background:#fff!important;color:#0f172a!important;border:1px solid #cbd5e1!important;box-shadow:none!important}.theme-dark .unlock-btn,.theme-dark .auth-toggle,.theme-dark .signin-btn,.theme-dark #unlockBtn,html[data-theme="dark"] .unlock-btn,html[data-theme="dark"] .auth-toggle,html[data-theme="dark"] .signin-btn,html[data-theme="dark"] #unlockBtn{background:#020617!important;color:#e5e7eb!important;border-color:#475569!important}
+@media(max-height:760px){.call-panel{padding:14px 34px!important}.circle-wrapper{width:min(28vh,260px)!important;height:min(28vh,260px)!important;margin-bottom:12px!important}.role-grid{gap:8px!important}.role-btn{min-height:38px!important}.hint-text{margin-bottom:12px!important}.roles-title{font-size:22px!important;margin-bottom:10px!important}}
+@media(max-width:900px){.app-header{grid-template-columns:auto 1fr auto!important}.factory-logo.has-custom-logo{max-width:200px!important;max-height:58px!important}.header-center{max-width:44vw!important}.call-panel{height:auto!important;min-height:calc(100vh - 92px)!important;overflow:auto!important}.role-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
