@@ -3456,7 +3456,8 @@ module.exports = QRCode;
         applyTheme(payload.theme);
         updateBrandingUI();
         initSidebarLinks();
-        alert("Branding saved.");
+        alert("Branding saved. The page will reload to apply the selected display mode.");
+        window.location.reload();
       } catch (err) {
         console.error(err);
         alert("Could not save branding.");

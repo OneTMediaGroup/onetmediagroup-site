@@ -3264,3 +3264,197 @@ html[data-theme="light"] .btn.danger {
 }
 html[data-theme="light"] .status-dot { box-shadow: 0 0 14px rgba(34,197,94,.55) !important; }
 html[data-theme="light"] .branding-card-single { background:#ffffff !important; }
+
+
+/* -------------------------------------------------------------
+   FINAL LIGHT MODE PASS — softer business software look
+   Fixes Admin contrast/readability and removes half-dark styling.
+   ------------------------------------------------------------- */
+html[data-theme="light"] {
+  --bg-main: #f5f7fb !important;
+  --bg-panel: #ffffff !important;
+  --bg-card: #ffffff !important;
+  --border-soft: #d8e0ea !important;
+  --accent: #0ea5e9 !important;
+  --accent-soft: rgba(14, 165, 233, .14) !important;
+  --accent-strong: rgba(14, 165, 233, .42) !important;
+  --text-main: #182235 !important;
+  --text-muted: #5f6f86 !important;
+  --text-strong: #101827 !important;
+  --shadow-soft: 0 14px 32px rgba(16, 24, 40, .08) !important;
+  --shadow-glow: 0 0 0 4px rgba(14, 165, 233, .18) !important;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="light"] #app-root,
+html[data-theme="light"] .main,
+html[data-theme="light"] .main .tab {
+  background: #f5f7fb !important;
+  color: #182235 !important;
+}
+
+html[data-theme="light"] .sidebar,
+html[data-theme="light"] .topbar {
+  background: #ffffff !important;
+  color: #182235 !important;
+  border-color: #d8e0ea !important;
+  box-shadow: 0 10px 26px rgba(16, 24, 40, .08) !important;
+}
+
+html[data-theme="light"] .sidebar-header,
+html[data-theme="light"] .sidebar-footer,
+html[data-theme="light"] .topbar {
+  border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] .card,
+html[data-theme="light"] .grid-card,
+html[data-theme="light"] .table-shell,
+html[data-theme="light"] .table-wrap,
+html[data-theme="light"] .admin-table,
+html[data-theme="light"] .quick-link-row,
+html[data-theme="light"] .access-block,
+html[data-theme="light"] .branding-card-single,
+html[data-theme="light"] .modal,
+html[data-theme="light"] .auth-modal,
+html[data-theme="light"] .panel {
+  background: #ffffff !important;
+  color: #182235 !important;
+  border: 1px solid #d8e0ea !important;
+  box-shadow: 0 14px 32px rgba(16, 24, 40, .08) !important;
+}
+
+html[data-theme="light"] table,
+html[data-theme="light"] thead,
+html[data-theme="light"] tbody,
+html[data-theme="light"] tr,
+html[data-theme="light"] td,
+html[data-theme="light"] th {
+  color: #182235 !important;
+  border-color: #e2e8f0 !important;
+}
+
+html[data-theme="light"] tbody tr,
+html[data-theme="light"] .table-row,
+html[data-theme="light"] .list-row {
+  background: #ffffff !important;
+  color: #182235 !important;
+}
+
+html[data-theme="light"] tbody tr:nth-child(even),
+html[data-theme="light"] .table-row:nth-child(even),
+html[data-theme="light"] .list-row:nth-child(even) {
+  background: #f8fafc !important;
+}
+
+html[data-theme="light"] h1,
+html[data-theme="light"] h2,
+html[data-theme="light"] h3,
+html[data-theme="light"] h4,
+html[data-theme="light"] label,
+html[data-theme="light"] strong,
+html[data-theme="light"] .page-title,
+html[data-theme="light"] .topbar-left h1,
+html[data-theme="light"] .brand-title,
+html[data-theme="light"] .card-title {
+  color: #101827 !important;
+}
+
+html[data-theme="light"] p,
+html[data-theme="light"] .muted,
+html[data-theme="light"] .form-help,
+html[data-theme="light"] .page-subtitle,
+html[data-theme="light"] .topbar-left p,
+html[data-theme="light"] .brand-subtitle,
+html[data-theme="light"] .admin-user-display,
+html[data-theme="light"] .admin-footer-brand,
+html[data-theme="light"] #firebaseStatusText {
+  color: #5f6f86 !important;
+}
+
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea {
+  background: #ffffff !important;
+  color: #101827 !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: inset 0 1px 2px rgba(16, 24, 40, .04) !important;
+}
+
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+html[data-theme="light"] input:focus,
+html[data-theme="light"] select:focus,
+html[data-theme="light"] textarea:focus {
+  background: #ffffff !important;
+  color: #101827 !important;
+  border-color: #0ea5e9 !important;
+  box-shadow: 0 0 0 4px rgba(14, 165, 233, .18) !important;
+  outline: none !important;
+}
+
+html[data-theme="light"] .nav-section-title,
+html[data-theme="light"] .nav-heading {
+  color: #101827 !important;
+}
+
+html[data-theme="light"] .nav-item {
+  color: #5f6f86 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .nav-item:hover {
+  color: #101827 !important;
+  background: #eef6ff !important;
+  border-color: #bfdbfe !important;
+}
+
+html[data-theme="light"] .nav-item.active {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #0284c7, #2563eb) !important;
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 22px rgba(14, 165, 233, .55) !important;
+}
+
+html[data-theme="light"] .btn {
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #06b6d4, #22c55e) !important;
+  border-color: transparent !important;
+  box-shadow: 0 10px 24px rgba(14, 165, 233, .18) !important;
+}
+
+html[data-theme="light"] .btn.secondary,
+html[data-theme="light"] .logout-btn {
+  color: #182235 !important;
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .btn.danger,
+html[data-theme="light"] .danger {
+  color: #111827 !important;
+  background: linear-gradient(135deg, #ef4444, #f97316) !important;
+}
+
+html[data-theme="light"] .company-logo {
+  filter: none !important;
+}
+
+html[data-theme="light"] .branding-card-single {
+  max-width: none !important;
+}
+
+html[data-theme="light"] .branding-form-clean {
+  max-width: 100% !important;
+}
+
+html[data-theme="light"] .status-dot {
+  box-shadow: 0 0 14px rgba(34, 197, 94, .55) !important;
+}
