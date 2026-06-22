@@ -70,6 +70,8 @@ const COMPANY_ID = getActiveCompanyId();
 
   const companyRef = db.collection("companies").doc(COMPANY_ID);
   const callsRef = companyRef.collection("calls");
+  const areasRef = companyRef.collection("areas");
+  const stationsRef = companyRef.collection("stations");
 
   const activeCallsEl = document.getElementById("activeCalls");
   const statActive = document.getElementById("statActive");
@@ -83,9 +85,11 @@ const COMPANY_ID = getActiveCompanyId();
   const autoScrollBtn = document.getElementById("autoScrollBtn");
   const densityBtn = document.getElementById("densityBtn");
   const sortModeEl = document.getElementById("sortMode");
+  const areaFilterEl = document.getElementById("areaFilter");
   const displayRoot = document.getElementById("display-root");
 
   let latestCalls = [];
+  let allAreasCache = [];
   let autoScrollEnabled = true;
   let compactDensity = false;
   let scrollDirection = 1;
@@ -110,7 +114,11 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   function callArea(call) {
-    return normalizeList(call.cells).join(", ") || call.area || call.location || "General";
+    return call.area || call.areaName || call.stationArea || call.location || normalizeList(call.cells)[0] || "General";
+  }
+
+  function callLocation(call) {
+    return normalizeList(call.cells).join(", ") || call.location || call.station || callArea(call);
   }
 
   function callRoles(call) {
@@ -258,6 +266,60 @@ const COMPANY_ID = getActiveCompanyId();
     return full || call.callerName || call.callerUid || "Operator";
   }
 
+  function populateAreaFilter() {
+    if (!areaFilterEl) return;
+
+    const current = areaFilterEl.value || localStorage.getItem(`factory_on_call_display_area_${COMPANY_ID}`) || "";
+    const areaNames = new Set(allAreasCache);
+
+    latestCalls.forEach(call => {
+      const areaName = callArea(call);
+      if (areaName && areaName !== "General" && areaName !== "Unassigned") areaNames.add(String(areaName));
+    });
+
+    const options = Array.from(areaNames).filter(Boolean).sort((a, b) => compareText(a, b));
+    areaFilterEl.innerHTML = `<option value="">All Areas</option>` +
+      options.map(name => `<option value="${String(name).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;")}">${String(name).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;")}</option>`).join("");
+
+    if (current && options.includes(current)) {
+      areaFilterEl.value = current;
+    } else {
+      areaFilterEl.value = "";
+    }
+  }
+
+  async function loadAreas() {
+    if (!areaFilterEl) return;
+
+    const areaNames = new Set();
+
+    try {
+      const [areaSnap, stationSnap] = await Promise.all([
+        areasRef.get().catch(() => ({ docs: [] })),
+        stationsRef.get().catch(() => ({ docs: [] }))
+      ]);
+
+      areaSnap.docs
+        .map(doc => doc.data() || {})
+        .filter(area => area.archived !== true && area.active !== false)
+        .forEach(area => {
+          if (area.name) areaNames.add(String(area.name));
+        });
+
+      stationSnap.docs
+        .map(doc => doc.data() || {})
+        .forEach(station => {
+          const areaName = station.area || station.areaName || station.stationArea;
+          if (areaName) areaNames.add(String(areaName));
+        });
+    } catch (error) {
+      console.warn("Could not load display areas:", error);
+    }
+
+    allAreasCache = Array.from(areaNames).sort((a, b) => compareText(a, b));
+    populateAreaFilter();
+  }
+
   async function loadBranding() {
     try {
       const rootSnap = await companyRef.get();
@@ -283,9 +345,15 @@ const COMPANY_ID = getActiveCompanyId();
   function renderDisplay(calls) {
     if (!activeCallsEl) return;
 
+    const selectedArea = areaFilterEl ? areaFilterEl.value : "";
+
     const activeCalls = sortActiveCalls(
-      calls.filter(call => call.status === "waiting" || call.status === "ack")
+      calls
+        .filter(call => call.status === "waiting" || call.status === "ack")
+        .filter(call => !selectedArea || callArea(call) === selectedArea)
     );
+
+    const scopedCalls = calls.filter(call => !selectedArea || callArea(call) === selectedArea);
 
     let waiting = 0;
     let onWay = 0;
@@ -307,7 +375,7 @@ const COMPANY_ID = getActiveCompanyId();
 
       const station = call.station || "Unknown Station";
       const helpNeeded = callRoles(call);
-      const area = callArea(call);
+      const area = callLocation(call);
       const status = statusLabel(call.status);
       const ackInfo = call.status === "ack" && call.ackBy ? `Acknowledged by ${call.ackBy}` : "Not yet acknowledged";
 
@@ -357,7 +425,7 @@ const COMPANY_ID = getActiveCompanyId();
     if (statOnWay) statOnWay.textContent = String(onWay);
     if (statClosed) {
       statClosed.textContent = String(
-        calls.filter(call => call.status === "closed" && isToday(call.timeClosed || call.timeStarted)).length
+        scopedCalls.filter(call => call.status === "closed" && isToday(call.timeClosed || call.timeStarted)).length
       );
     }
   }
@@ -365,6 +433,14 @@ const COMPANY_ID = getActiveCompanyId();
 
   updateClock();
   setInterval(updateClock, 1000);
+
+  if (areaFilterEl) {
+    areaFilterEl.addEventListener("change", () => {
+      localStorage.setItem(`factory_on_call_display_area_${COMPANY_ID}`, areaFilterEl.value || "");
+      if (activeCallsEl) activeCallsEl.scrollTop = 0;
+      renderDisplay(latestCalls);
+    });
+  }
 
   if (sortModeEl) {
     sortModeEl.addEventListener("change", () => renderDisplay(latestCalls));
@@ -408,11 +484,13 @@ const COMPANY_ID = getActiveCompanyId();
 
   setConn(false);
   await loadBranding();
+  await loadAreas();
 
   unsubscribeCalls = callsRef.onSnapshot(
     snapshot => {
       setConn(true);
       latestCalls = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      populateAreaFilter();
       renderDisplay(latestCalls);
     },
     error => {
