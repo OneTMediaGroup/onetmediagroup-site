@@ -207,9 +207,21 @@ const COMPANY_ID = getActiveCompanyId();
     }
 
     const nameEl = document.querySelector(".ph-company-name");
-    if (nameEl) nameEl.textContent = companyName;
-    document.querySelectorAll(".ph-logo").forEach(img => { img.src = logo; img.style.display = hasCustomLogo ? "block" : "none"; });
-    document.querySelectorAll(".ph-title").forEach(el => { el.style.display = "none"; });
+    if (nameEl) nameEl.textContent = companyName || "";
+    document.querySelectorAll(".ph-logo").forEach(img => {
+      if (hasCustomLogo) {
+        img.src = logo;
+        img.hidden = false;
+        img.classList.add("has-custom-logo");
+        img.style.setProperty("display", "block", "important");
+      } else {
+        img.removeAttribute("src");
+        img.hidden = true;
+        img.classList.remove("has-custom-logo");
+        img.style.setProperty("display", "none", "important");
+      }
+    });
+    document.querySelectorAll(".ph-title").forEach(el => { el.style.setProperty("display", "none", "important"); });
 
     if (companyName) localStorage.setItem("factory_on_call_company_name", companyName); else localStorage.removeItem("factory_on_call_company_name");
     localStorage.setItem("factory_on_call_theme", theme);
