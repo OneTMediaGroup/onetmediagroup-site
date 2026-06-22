@@ -481,3 +481,14 @@ html[data-theme="bright"] .dh-card,
 html[data-theme="bright"] .call-card {
   background:#ffffff !important; color:#111827 !important; border-color:#cbd5e1 !important;
 }
+
+/* Final light/neutral themes */
+html[data-theme="light"], html[data-theme="bright"]{--bg-main:#f8fafc;--fg-text:#111827;--fg-muted:#64748b;--panel-bg:#ffffff;--panel-line:#d1d5db}
+html[data-theme="neutral"]{--bg-main:#e5e7eb;--fg-text:#111827;--fg-muted:#64748b;--panel-bg:#f8fafc;--panel-line:#cbd5e1}
+html[data-theme="light"] body, html[data-theme="bright"] body, html[data-theme="light"] #display-root, html[data-theme="bright"] #display-root{background:#f8fafc !important;color:#111827 !important}
+html[data-theme="neutral"] body, html[data-theme="neutral"] #display-root{background:#e5e7eb !important;color:#111827 !important}
+html[data-theme="light"] .display-header, html[data-theme="bright"] .display-header{background:#ffffff !important;border-color:#d1d5db !important;color:#111827 !important}
+html[data-theme="neutral"] .display-header{background:#f1f5f9 !important;border-color:#cbd5e1 !important;color:#111827 !important}
+html[data-theme="light"] .call-card, html[data-theme="light"] .stat-box, html[data-theme="bright"] .call-card, html[data-theme="bright"] .stat-box, html[data-theme="neutral"] .call-card, html[data-theme="neutral"] .stat-box{background:var(--panel-bg) !important;color:#111827 !important;border-color:var(--panel-line) !important;box-shadow:0 14px 30px rgba(15,23,42,.08) !important}
+html[data-theme="light"] .bottom-bar, html[data-theme="bright"] .bottom-bar, html[data-theme="neutral"] .bottom-bar{background:var(--bg-main) !important;border-color:var(--panel-line) !important}
+html[data-theme="light"] select, html[data-theme="bright"] select, html[data-theme="neutral"] select{background:#ffffff !important;color:#111827 !important;border-color:#cbd5e1 !important}

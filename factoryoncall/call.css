@@ -233,3 +233,17 @@ html[data-theme="bright"] .dh-card,
 html[data-theme="bright"] .call-card {
   background:#ffffff !important; color:#111827 !important; border-color:#cbd5e1 !important;
 }
+
+/* Final light/neutral themes */
+html[data-theme="light"] body, html[data-theme="bright"] body, html[data-theme="light"] .app-shell, html[data-theme="bright"] .app-shell{background:#f8fafc !important;color:#111827 !important}
+html[data-theme="neutral"] body, html[data-theme="neutral"] .app-shell{background:#e5e7eb !important;color:#111827 !important}
+html[data-theme="light"] .app-header, html[data-theme="bright"] .app-header{background:#ffffff !important;border-color:#d1d5db !important;color:#111827 !important;box-shadow:0 8px 22px rgba(15,23,42,.08) !important}
+html[data-theme="neutral"] .app-header{background:#f1f5f9 !important;border-color:#cbd5e1 !important;color:#111827 !important;box-shadow:0 8px 22px rgba(15,23,42,.08) !important}
+html[data-theme="light"] .call-panel, html[data-theme="bright"] .call-panel, html[data-theme="neutral"] .call-panel{background:#ffffff !important;color:#111827 !important;border-color:#d1d5db !important;box-shadow:0 18px 40px rgba(15,23,42,.08) !important}
+html[data-theme="neutral"] .call-panel{background:#f8fafc !important;border-color:#cbd5e1 !important}
+html[data-theme="light"] .circle-inner, html[data-theme="bright"] .circle-inner, html[data-theme="neutral"] .circle-inner{background:linear-gradient(145deg,#38bdf8,#0f766e) !important;color:#fff !important}
+html[data-theme="light"] .role-pill, html[data-theme="bright"] .role-pill, html[data-theme="neutral"] .role-pill{background:#ffffff !important;color:#111827 !important;border-color:#cbd5e1 !important}
+html[data-theme="light"] .role-pill.selected, html[data-theme="bright"] .role-pill.selected{background:#2563eb !important;color:#fff !important;border-color:#2563eb !important}
+html[data-theme="neutral"] .role-pill.selected{background:#0f766e !important;color:#fff !important;border-color:#0f766e !important}
+html[data-theme="light"] .lock-card, html[data-theme="bright"] .lock-card, html[data-theme="neutral"] .lock-card{background:#ffffff !important;color:#111827 !important;border-color:#d1d5db !important}
+html[data-theme="light"] .lock-keypad button, html[data-theme="bright"] .lock-keypad button, html[data-theme="neutral"] .lock-keypad button{background:#f8fafc !important;color:#111827 !important;border-color:#cbd5e1 !important}

@@ -392,7 +392,15 @@ function escapeHtml(value = "") {
       .replace(/^-+|-+$/g, "") || String(Date.now());
   }
 
+  function normalizeTheme(theme = "dark") {
+    const value = String(theme || "dark").toLowerCase();
+    if (value === "bright") return "light";
+    if (["dark", "light", "neutral"].includes(value)) return value;
+    return "dark";
+  }
+
   function themeColors(theme = "dark") {
+    const normalizedTheme = normalizeTheme(theme);
     const map = {
       dark: {
         bg: "#020617",
@@ -403,32 +411,33 @@ function escapeHtml(value = "") {
         muted: "#9ca3af",
         accent: "#00b4ff"
       },
-      neutral: {
-        bg: "#e5e7eb",
-        panel: "#f1f5f9",
+      light: {
+        bg: "#f8fafc",
+        panel: "#ffffff",
         card: "#ffffff",
-        border: "#cbd5e1",
+        border: "#d1d5db",
         text: "#111827",
         muted: "#64748b",
         accent: "#2563eb"
       },
-      bright: {
-        bg: "#ffffff",
-        panel: "#f8fafc",
-        card: "#ffffff",
-        border: "#dbe3ee",
-        text: "#0f172a",
-        muted: "#475569",
-        accent: "#0ea5e9"
+      neutral: {
+        bg: "#e5e7eb",
+        panel: "#f1f5f9",
+        card: "#f8fafc",
+        border: "#cbd5e1",
+        text: "#111827",
+        muted: "#64748b",
+        accent: "#0f766e"
       }
     };
-    return map[theme] || map.dark;
+    return map[normalizedTheme] || map.dark;
   }
 
   function applyTheme(theme = "dark") {
-    const colors = themeColors(theme);
+    const normalizedTheme = normalizeTheme(theme);
+    const colors = themeColors(normalizedTheme);
     const root = document.documentElement;
-    root.dataset.theme = theme;
+    root.dataset.theme = normalizedTheme;
     root.style.setProperty("--bg-main", colors.bg);
     root.style.setProperty("--bg-panel", colors.panel);
     root.style.setProperty("--bg-card", colors.card);
@@ -445,7 +454,7 @@ function escapeHtml(value = "") {
 
   function updateBrandingUI() {
     if (brandCompanyName) brandCompanyName.value = cachedBranding.companyName || COMPANY_NAME || "";
-    if (brandTheme) brandTheme.value = cachedBranding.theme || "dark";
+    if (brandTheme) brandTheme.value = normalizeTheme(cachedBranding.theme || "dark");
     if (brandPreviewCompany) brandPreviewCompany.textContent = cachedBranding.companyName || COMPANY_NAME || "Your Company";
     if (brandPreviewLogo) brandPreviewLogo.src = logoSrc();
     const topLogo = document.getElementById("companyLogoImg");
@@ -511,7 +520,7 @@ function escapeHtml(value = "") {
 
       cachedBranding.companyName = COMPANY_NAME;
       localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
-      localStorage.setItem("factory_on_call_theme", cachedBranding.theme || "dark");
+      localStorage.setItem("factory_on_call_theme", normalizeTheme(cachedBranding.theme || "dark"));
       if (cachedBranding.logoDataUrl || cachedBranding.logoUrl) {
         localStorage.setItem("factory_on_call_logo", logoSrc());
       }
@@ -3437,7 +3446,7 @@ module.exports = QRCode;
       try {
         const payload = {
           companyName: brandCompanyName?.value.trim() || COMPANY_NAME || "Factory On Call",
-          theme: brandTheme?.value || "dark",
+          theme: normalizeTheme(brandTheme?.value || "dark"),
           logoDataUrl: cachedBranding.logoDataUrl || cachedBranding.logoUrl || "",
           updatedAt: Date.now()
         };

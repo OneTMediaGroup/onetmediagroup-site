@@ -500,8 +500,8 @@
                             Theme
                             <select id="brandTheme">
                                 <option value="dark">Dark</option>
+                                <option value="light">Light</option>
                                 <option value="neutral">Neutral</option>
-                                <option value="bright">Bright</option>
                             </select>
                         </label>
 
@@ -512,28 +512,17 @@
                     </form>
                 </div>
 
-                <div class="card">
-                    <h2>Live Preview</h2>
-                    <p class="muted">Preview how your branding appears in headers, cards, station buttons, and badges.</p>
-
-                    <div id="brandPreviewHeader" class="brand-preview-header">
-                        <img id="brandPreviewLogo" class="company-logo" src="factory_logo.png" alt="Brand Logo" />
-                        <div class="brand-preview-text">
-                            <div id="brandPreviewCompany" class="brand-preview-company">Your Company</div>
-                            <div class="muted">Factory On Call — Branded plant screen</div>
-                        </div>
+                <div class="card branding-info-card">
+                    <h2>Where Branding Appears</h2>
+                    <p class="muted">Saved branding is applied across the plant system.</p>
+                    <div class="brand-apply-list">
+                        <div><strong>Admin Panel</strong><span>Company name, logo, and theme.</span></div>
+                        <div><strong>Call Stations</strong><span>Station header, call buttons, and lock screen.</span></div>
+                        <div><strong>Supervisor Portal</strong><span>Header branding and selected theme.</span></div>
+                        <div><strong>Interactive Viewer</strong><span>Shared-screen branding and theme.</span></div>
+                        <div><strong>Production Display</strong><span>TV header branding and theme.</span></div>
+                        <div><strong>Badges</strong><span>Company name used on printed badge sheets.</span></div>
                     </div>
-
-                    <div id="brandPreviewCard" class="brand-preview-card">
-                        <div class="brand-preview-card-title">Sample Call Card</div>
-                        <div class="brand-preview-card-body">
-                            Station and call screens will use this company name, logo, and selected theme.
-                        </div>
-                    </div>
-
-                    <button id="brandPreviewButton" type="button" class="btn" style="margin-top:12px;">
-                        Sample Call Button
-                    </button>
                 </div>
 
             </div>
