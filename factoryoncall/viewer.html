@@ -10,7 +10,6 @@
 <body>
 <div id="viewer-root">
 
-    <!-- HEADER -->
     <header class="viewer-header">
         <div class="vh-left">
             <img src="factory_logo.png" class="vh-logo" alt="Factory On Call" />
@@ -27,20 +26,35 @@
         </div>
     </header>
 
-    <!-- MAIN CONTENT -->
     <main class="viewer-main">
-        <!-- ACTIVE CALLS -->
         <section class="viewer-section">
-            <h2 class="section-title">Active Calls</h2>
+            <div class="section-head">
+                <div>
+                    <h2 class="section-title">Active Calls</h2>
+                    <p class="section-subtitle">Shared viewer for tool rooms, offices, tablets, and common areas.</p>
+                </div>
+            </div>
 
-            <!-- Vertical scroll area JUST for active calls -->
+            <div class="viewer-filters">
+                <input id="callSearch" class="viewer-input" type="search" placeholder="Search station, area, personnel..." />
+                <select id="areaFilter" class="viewer-select">
+                    <option value="">All Areas</option>
+                </select>
+                <select id="personnelFilter" class="viewer-select">
+                    <option value="">All Personnel</option>
+                </select>
+                <select id="statusFilter" class="viewer-select">
+                    <option value="active">Active Calls</option>
+                    <option value="waiting">Waiting</option>
+                    <option value="ack">Acknowledged</option>
+                </select>
+            </div>
+
             <div id="activeCalls" class="call-list scroll-vertical">
-                <!-- Cards injected by viewer.js -->
             </div>
         </section>
     </main>
 
-    <!-- BOTTOM SUMMARY BOXES (fixed at bottom, no scroll) -->
     <footer class="viewer-footer">
         <div class="summary-box">
             <div class="sb-label">ACTIVE CALLS</div>
@@ -62,6 +76,26 @@
             <div class="sb-value" id="sbClosed">0</div>
         </div>
     </footer>
+
+    <div id="authModal" class="auth-modal" aria-hidden="true">
+        <div class="auth-card" role="dialog" aria-modal="true" aria-labelledby="authTitle">
+            <h3 id="authTitle">Authorize Action</h3>
+            <p id="authSummary" class="auth-summary">Enter your User ID and PIN to continue.</p>
+
+            <label for="authUserId">User ID</label>
+            <input id="authUserId" class="viewer-input" inputmode="numeric" autocomplete="off" placeholder="Scan badge or enter User ID" />
+
+            <label for="authPin">PIN</label>
+            <input id="authPin" class="viewer-input" inputmode="numeric" autocomplete="off" type="password" placeholder="Enter PIN" />
+
+            <div id="authError" class="auth-error"></div>
+
+            <div class="auth-actions">
+                <button id="authCancel" class="btn-secondary" type="button">Cancel</button>
+                <button id="authSubmit" class="btn-green" type="button">Confirm</button>
+            </div>
+        </div>
+    </div>
 
 </div>
 
