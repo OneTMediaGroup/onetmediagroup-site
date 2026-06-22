@@ -247,3 +247,17 @@ html[data-theme="light"] .role-pill.selected, html[data-theme="bright"] .role-pi
 html[data-theme="neutral"] .role-pill.selected{background:#0f766e !important;color:#fff !important;border-color:#0f766e !important}
 html[data-theme="light"] .lock-card, html[data-theme="bright"] .lock-card, html[data-theme="neutral"] .lock-card{background:#ffffff !important;color:#111827 !important;border-color:#d1d5db !important}
 html[data-theme="light"] .lock-keypad button, html[data-theme="bright"] .lock-keypad button, html[data-theme="neutral"] .lock-keypad button{background:#f8fafc !important;color:#111827 !important;border-color:#cbd5e1 !important}
+
+
+/* Final real light mode */
+html[data-theme="light"] body{background:#f3f4f6!important;color:#111827!important}
+html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:#fff!important;color:#111827!important;border-color:#cbd5e1!important}
+html[data-theme="light"] .muted,html[data-theme="light"] [class*="subtitle"],html[data-theme="light"] [class*="muted"]{color:#4b5563!important}
+html[data-theme="light"] button{color:inherit}
+
+html[data-theme="light"] .app-shell{background:#f3f4f6!important;color:#111827!important}
+html[data-theme="light"] .app-header{background:#fff!important;color:#111827!important;border-color:#d1d5db!important;box-shadow:0 8px 22px rgba(15,23,42,.08)!important}
+html[data-theme="light"] .call-panel,html[data-theme="light"] .lock-card{background:#fff!important;color:#111827!important;border-color:#d1d5db!important;box-shadow:0 12px 32px rgba(15,23,42,.08)!important}
+html[data-theme="light"] .role-pill{background:#fff!important;color:#111827!important;border-color:#cbd5e1!important}
+html[data-theme="light"] .role-pill.selected{background:#2563eb!important;color:#fff!important;border-color:#2563eb!important}
+html[data-theme="light"] .circle-inner{background:linear-gradient(145deg,#0ea5e9,#2563eb)!important;color:#fff!important}

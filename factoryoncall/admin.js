@@ -394,8 +394,8 @@ function escapeHtml(value = "") {
 
   function normalizeTheme(theme = "dark") {
     const value = String(theme || "dark").toLowerCase();
-    if (value === "bright") return "light";
-    if (["dark", "light", "neutral"].includes(value)) return value;
+    if (value === "bright" || value === "neutral") return "light";
+    if (["dark", "light"].includes(value)) return value;
     return "dark";
   }
 
@@ -412,22 +412,13 @@ function escapeHtml(value = "") {
         accent: "#00b4ff"
       },
       light: {
-        bg: "#f8fafc",
+        bg: "#f3f4f6",
         panel: "#ffffff",
         card: "#ffffff",
         border: "#d1d5db",
         text: "#111827",
-        muted: "#64748b",
+        muted: "#4b5563",
         accent: "#2563eb"
-      },
-      neutral: {
-        bg: "#e5e7eb",
-        panel: "#f1f5f9",
-        card: "#f8fafc",
-        border: "#cbd5e1",
-        text: "#111827",
-        muted: "#64748b",
-        accent: "#0f766e"
       }
     };
     return map[normalizedTheme] || map.dark;

@@ -476,59 +476,40 @@
 
         <!-- BRANDING TAB -->
         <section id="tab-branding" class="tab">
-            <div class="grid-2">
+            <div class="card branding-card-single">
+                <h2>Company Branding</h2>
+                <p class="muted">
+                    Set the plant name, logo, and display mode used across Factory On Call.
+                </p>
 
-                <div class="card">
-                    <h2>Company Branding</h2>
-                    <p class="muted">
-                        Set the plant name, logo, and theme used across Factory On Call screens and call buttons.
-                    </p>
+                <form id="brandingForm" class="form branding-form-clean">
+                    <label>
+                        Company Name
+                        <input type="text" id="brandCompanyName" placeholder="Example: ABC Manufacturing" />
+                    </label>
 
-                    <form id="brandingForm" class="form">
-                        <label>
-                            Company Name
-                            <input type="text" id="brandCompanyName" placeholder="Example: ABC Manufacturing" />
-                        </label>
+                    <label>
+                        Company Logo
+                        <input type="file" id="brandLogo" accept="image/*" />
+                    </label>
+                    <p class="form-help">Your logo and company name appear on Admin, Call Stations, Supervisor Portal, Interactive Viewer, Production Display, and badge sheets.</p>
 
-                        <label>
-                            Company Logo
-                            <input type="file" id="brandLogo" accept="image/*" />
-                        </label>
-                        <p class="form-help">Logo is compressed for fast loading and appears on Admin, Supervisor Portal, Interactive Viewer, Production Display, Station Screens, and badges.</p>
+                    <label>
+                        Display Mode
+                        <select id="brandTheme">
+                            <option value="dark">Dark</option>
+                            <option value="light">Light</option>
+                        </select>
+                    </label>
 
-                        <label>
-                            Theme
-                            <select id="brandTheme">
-                                <option value="dark">Dark</option>
-                                <option value="light">Light</option>
-                                <option value="neutral">Neutral</option>
-                            </select>
-                        </label>
-
-                        <div class="button-row">
-                            <button class="btn" type="submit">Save Branding</button>
-                            <button class="btn secondary" type="button" id="brandingResetBtn">Reset</button>
-                        </div>
-                    </form>
-                </div>
-
-                <div class="card branding-info-card">
-                    <h2>Where Branding Appears</h2>
-                    <p class="muted">Saved branding is applied across the plant system.</p>
-                    <div class="brand-apply-list">
-                        <div><strong>Admin Panel</strong><span>Company name, logo, and theme.</span></div>
-                        <div><strong>Call Stations</strong><span>Station header, call buttons, and lock screen.</span></div>
-                        <div><strong>Supervisor Portal</strong><span>Header branding and selected theme.</span></div>
-                        <div><strong>Interactive Viewer</strong><span>Shared-screen branding and theme.</span></div>
-                        <div><strong>Production Display</strong><span>TV header branding and theme.</span></div>
-                        <div><strong>Badges</strong><span>Company name used on printed badge sheets.</span></div>
+                    <div class="button-row">
+                        <button class="btn" type="submit">Save Branding</button>
+                        <button class="btn secondary" type="button" id="brandingResetBtn">Reset</button>
                     </div>
-                </div>
-
+                </form>
             </div>
         </section>
 
-        <!-- PLANT ACCESS TAB -->
         <section id="tab-settings" class="tab">
             <div class="grid-2">
                 <div class="card">

@@ -87,3 +87,16 @@ html[data-theme="light"] .call-table-header, html[data-theme="bright"] .call-tab
 html[data-theme="light"] .call-row, html[data-theme="light"] .recent-row, html[data-theme="bright"] .call-row, html[data-theme="bright"] .recent-row, html[data-theme="neutral"] .call-row, html[data-theme="neutral"] .recent-row{background:#ffffff !important;color:#111827 !important;border-color:#e5e7eb !important}
 html[data-theme="neutral"] .call-row, html[data-theme="neutral"] .recent-row{background:#f8fafc !important}
 html[data-theme="light"] .portal-footer, html[data-theme="bright"] .portal-footer, html[data-theme="neutral"] .portal-footer{border-color:var(--border) !important;background:var(--bg) !important}
+
+
+/* Final real light mode */
+html[data-theme="light"] body{background:#f3f4f6!important;color:#111827!important}
+html[data-theme="light"] input,html[data-theme="light"] select,html[data-theme="light"] textarea{background:#fff!important;color:#111827!important;border-color:#cbd5e1!important}
+html[data-theme="light"] .muted,html[data-theme="light"] [class*="subtitle"],html[data-theme="light"] [class*="muted"]{color:#4b5563!important}
+html[data-theme="light"] button{color:inherit}
+
+html[data-theme="light"] #supervisor-root{background:#f3f4f6!important;color:#111827!important}
+html[data-theme="light"] .portal-header{background:#fff!important;color:#111827!important;border-color:#d1d5db!important;box-shadow:0 8px 22px rgba(15,23,42,.08)!important}
+html[data-theme="light"] .metric-card,html[data-theme="light"] .portal-card,html[data-theme="light"] .call-row,html[data-theme="light"] .recent-row{background:#fff!important;color:#111827!important;border-color:#d1d5db!important;box-shadow:0 10px 28px rgba(15,23,42,.06)!important}
+html[data-theme="light"] .call-row:nth-child(odd),html[data-theme="light"] .recent-row:nth-child(odd){background:#f9fafb!important}
+html[data-theme="light"] .filter-bar input,html[data-theme="light"] .filter-bar select{background:#fff!important;color:#111827!important;border-color:#cbd5e1!important}
