@@ -461,3 +461,123 @@ html[data-theme="dark"] .archive-btn,
 body.theme-dark .archive-btn {
   box-shadow:0 6px 18px rgba(249,115,22,.18) !important;
 }
+
+/* FINAL POLISH — admin sidebar scroll + light dashboard readability */
+.sidebar {
+  height: 100vh !important;
+  max-height: 100vh !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
+  min-height: 0 !important;
+  overscroll-behavior: contain !important;
+  scrollbar-width: thin !important;
+}
+.sidebar::-webkit-scrollbar { width: 8px !important; }
+.sidebar::-webkit-scrollbar-track { background: transparent !important; }
+.sidebar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.35) !important;
+  border-radius: 999px !important;
+}
+.sidebar-footer { flex: 0 0 auto !important; }
+
+html.theme-light #tab-dashboard .dashboard-table,
+html[data-theme="light"] #tab-dashboard .dashboard-table,
+body.theme-light #tab-dashboard .dashboard-table {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+html.theme-light #tab-dashboard .dashboard-table-head,
+html[data-theme="light"] #tab-dashboard .dashboard-table-head,
+body.theme-light #tab-dashboard .dashboard-table-head {
+  background: #f1f5f9 !important;
+  color: #475569 !important;
+  border-bottom: 1px solid #cbd5e1 !important;
+  opacity: 1 !important;
+}
+
+html.theme-light #tab-dashboard .dashboard-table-head > div,
+html[data-theme="light"] #tab-dashboard .dashboard-table-head > div,
+body.theme-light #tab-dashboard .dashboard-table-head > div {
+  color: #475569 !important;
+  opacity: 1 !important;
+}
+
+html.theme-light #tab-dashboard .dashboard-table-row,
+html[data-theme="light"] #tab-dashboard .dashboard-table-row,
+body.theme-light #tab-dashboard .dashboard-table-row {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  opacity: 1 !important;
+}
+
+html.theme-light #tab-dashboard .dashboard-table-row:nth-child(even),
+html[data-theme="light"] #tab-dashboard .dashboard-table-row:nth-child(even),
+body.theme-light #tab-dashboard .dashboard-table-row:nth-child(even) {
+  background: #f8fafc !important;
+}
+
+html.theme-light #tab-dashboard .dashboard-table-row.priority-row,
+html[data-theme="light"] #tab-dashboard .dashboard-table-row.priority-row,
+body.theme-light #tab-dashboard .dashboard-table-row.priority-row {
+  background: #fff7ed !important;
+  border-left-color: #f59e0b !important;
+}
+
+html.theme-light #tab-dashboard .dashboard-cell,
+html.theme-light #tab-dashboard .station-cell,
+html.theme-light #tab-dashboard .personnel-cell,
+html.theme-light #tab-dashboard .status-cell,
+html[data-theme="light"] #tab-dashboard .dashboard-cell,
+html[data-theme="light"] #tab-dashboard .station-cell,
+html[data-theme="light"] #tab-dashboard .personnel-cell,
+html[data-theme="light"] #tab-dashboard .status-cell,
+body.theme-light #tab-dashboard .dashboard-cell,
+body.theme-light #tab-dashboard .station-cell,
+body.theme-light #tab-dashboard .personnel-cell,
+body.theme-light #tab-dashboard .status-cell {
+  color: #0f172a !important;
+  opacity: 1 !important;
+}
+
+html.theme-light #tab-dashboard .time-cell,
+html[data-theme="light"] #tab-dashboard .time-cell,
+body.theme-light #tab-dashboard .time-cell {
+  color: #475569 !important;
+  opacity: 1 !important;
+}
+
+html.theme-light #tab-dashboard .snapshot-item,
+html[data-theme="light"] #tab-dashboard .snapshot-item,
+body.theme-light #tab-dashboard .snapshot-item {
+  background: #f8fafc !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+}
+
+html.theme-light #tab-dashboard .snapshot-label,
+html[data-theme="light"] #tab-dashboard .snapshot-label,
+body.theme-light #tab-dashboard .snapshot-label {
+  color: #64748b !important;
+  opacity: 1 !important;
+}
+
+html.theme-light #tab-dashboard .snapshot-item strong,
+html[data-theme="light"] #tab-dashboard .snapshot-item strong,
+body.theme-light #tab-dashboard .snapshot-item strong {
+  color: #0f172a !important;
+  opacity: 1 !important;
+}
+
+@media (max-height: 760px) {
+  .sidebar {
+    padding-bottom: 26px !important;
+  }
+  .sidebar-footer {
+    margin-top: 18px !important;
+  }
+}
