@@ -1,0 +1,331 @@
+/* Factory On Call — solid admin theme fix
+   This file intentionally loads after admin.css. It removes the old hard-coded
+   dark admin paint when Light mode is selected. */
+
+html.theme-light,
+html[data-theme="light"] {
+  --bg-main:#eef2f7 !important;
+  --bg-panel:#ffffff !important;
+  --bg-card:#ffffff !important;
+  --border-soft:#d8e0ea !important;
+  --accent:#0ea5e9 !important;
+  --accent-soft:rgba(14,165,233,.15) !important;
+  --accent-strong:rgba(14,165,233,.45) !important;
+  --text-main:#111827 !important;
+  --text-muted:#586579 !important;
+  --text-strong:#0f172a !important;
+  --shadow-soft:0 14px 34px rgba(15,23,42,.09) !important;
+}
+
+html.theme-light body,
+html[data-theme="light"] body,
+body.theme-light,
+html.theme-light #app-root,
+html[data-theme="light"] #app-root,
+body.theme-light #app-root,
+html.theme-light .main,
+html[data-theme="light"] .main,
+body.theme-light .main,
+html.theme-light .main .tab,
+html[data-theme="light"] .main .tab,
+body.theme-light .main .tab {
+  background:#eef2f7 !important;
+  background-image:none !important;
+  color:#111827 !important;
+  opacity:1 !important;
+}
+
+html.theme-light .sidebar,
+html[data-theme="light"] .sidebar,
+body.theme-light .sidebar,
+html.theme-light .topbar,
+html[data-theme="light"] .topbar,
+body.theme-light .topbar {
+  background:#ffffff !important;
+  background-image:none !important;
+  color:#111827 !important;
+  border-color:#d8e0ea !important;
+  box-shadow:0 8px 24px rgba(15,23,42,.07) !important;
+  opacity:1 !important;
+}
+
+html.theme-light .card,
+html[data-theme="light"] .card,
+body.theme-light .card,
+html.theme-light .stat-card,
+html[data-theme="light"] .stat-card,
+body.theme-light .stat-card,
+html.theme-light .table-wrapper,
+html[data-theme="light"] .table-wrapper,
+body.theme-light .table-wrapper,
+html.theme-light .dashboard-table,
+html[data-theme="light"] .dashboard-table,
+body.theme-light .dashboard-table,
+html.theme-light .branding-card-single,
+html[data-theme="light"] .branding-card-single,
+body.theme-light .branding-card-single,
+html.theme-light .users-card,
+html[data-theme="light"] .users-card,
+body.theme-light .users-card,
+html.theme-light .user-form-card,
+html[data-theme="light"] .user-form-card,
+body.theme-light .user-form-card,
+html.theme-light .access-row,
+html[data-theme="light"] .access-row,
+body.theme-light .access-row,
+html.theme-light .access-link-row,
+html[data-theme="light"] .access-link-row,
+body.theme-light .access-link-row,
+html.theme-light .analytics-card,
+html[data-theme="light"] .analytics-card,
+body.theme-light .analytics-card,
+html.theme-light .snapshot-item,
+html[data-theme="light"] .snapshot-item,
+body.theme-light .snapshot-item {
+  background:#ffffff !important;
+  background-image:none !important;
+  color:#111827 !important;
+  border-color:#d8e0ea !important;
+  box-shadow:0 14px 32px rgba(15,23,42,.08) !important;
+  opacity:1 !important;
+}
+
+html.theme-light table,
+html.theme-light thead,
+html.theme-light tbody,
+html.theme-light tr,
+html.theme-light td,
+html.theme-light th,
+html[data-theme="light"] table,
+html[data-theme="light"] thead,
+html[data-theme="light"] tbody,
+html[data-theme="light"] tr,
+html[data-theme="light"] td,
+html[data-theme="light"] th,
+body.theme-light table,
+body.theme-light thead,
+body.theme-light tbody,
+body.theme-light tr,
+body.theme-light td,
+body.theme-light th,
+html.theme-light .dashboard-table-head,
+html[data-theme="light"] .dashboard-table-head,
+body.theme-light .dashboard-table-head,
+html.theme-light .dashboard-table-row,
+html[data-theme="light"] .dashboard-table-row,
+body.theme-light .dashboard-table-row {
+  background:#ffffff !important;
+  background-image:none !important;
+  color:#111827 !important;
+  border-color:#e2e8f0 !important;
+  opacity:1 !important;
+}
+
+html.theme-light thead,
+html.theme-light .table thead,
+html.theme-light .dashboard-table-head,
+html[data-theme="light"] thead,
+html[data-theme="light"] .table thead,
+html[data-theme="light"] .dashboard-table-head,
+body.theme-light thead,
+body.theme-light .table thead,
+body.theme-light .dashboard-table-head {
+  background:#f1f5f9 !important;
+  color:#475569 !important;
+}
+
+html.theme-light tbody tr:nth-child(even),
+html[data-theme="light"] tbody tr:nth-child(even),
+body.theme-light tbody tr:nth-child(even),
+html.theme-light .dashboard-table-row:nth-child(even),
+html[data-theme="light"] .dashboard-table-row:nth-child(even),
+body.theme-light .dashboard-table-row:nth-child(even) {
+  background:#f8fafc !important;
+}
+
+html.theme-light h1, html.theme-light h2, html.theme-light h3, html.theme-light h4,
+html.theme-light label, html.theme-light strong,
+html.theme-light .brand-title, html.theme-light .page-title,
+html.theme-light .card-header h2, html.theme-light .stat-big,
+html.theme-light .dashboard-cell, html.theme-light .station-cell,
+html.theme-light .personnel-cell, html.theme-light .snapshot-value,
+html[data-theme="light"] h1, html[data-theme="light"] h2, html[data-theme="light"] h3, html[data-theme="light"] h4,
+html[data-theme="light"] label, html[data-theme="light"] strong,
+html[data-theme="light"] .brand-title, html[data-theme="light"] .page-title,
+html[data-theme="light"] .card-header h2, html[data-theme="light"] .stat-big,
+html[data-theme="light"] .dashboard-cell, html[data-theme="light"] .station-cell,
+html[data-theme="light"] .personnel-cell, html[data-theme="light"] .snapshot-value,
+body.theme-light h1, body.theme-light h2, body.theme-light h3, body.theme-light h4,
+body.theme-light label, body.theme-light strong,
+body.theme-light .brand-title, body.theme-light .page-title,
+body.theme-light .card-header h2, body.theme-light .stat-big,
+body.theme-light .dashboard-cell, body.theme-light .station-cell,
+body.theme-light .personnel-cell, body.theme-light .snapshot-value {
+  color:#0f172a !important;
+  opacity:1 !important;
+}
+
+html.theme-light p, html.theme-light .muted, html.theme-light .brand-subtitle,
+html.theme-light .sidebar-section-label, html.theme-light .topbar-left p,
+html.theme-light .admin-user-display, html.theme-light .admin-footer-brand,
+html.theme-light .form-help, html.theme-light .activity-meta,
+html[data-theme="light"] p, html[data-theme="light"] .muted, html[data-theme="light"] .brand-subtitle,
+html[data-theme="light"] .sidebar-section-label, html[data-theme="light"] .topbar-left p,
+html[data-theme="light"] .admin-user-display, html[data-theme="light"] .admin-footer-brand,
+html[data-theme="light"] .form-help, html[data-theme="light"] .activity-meta,
+body.theme-light p, body.theme-light .muted, body.theme-light .brand-subtitle,
+body.theme-light .sidebar-section-label, body.theme-light .topbar-left p,
+body.theme-light .admin-user-display, body.theme-light .admin-footer-brand,
+body.theme-light .form-help, body.theme-light .activity-meta {
+  color:#586579 !important;
+  opacity:1 !important;
+}
+
+html.theme-light input,
+html.theme-light select,
+html.theme-light textarea,
+html.theme-light input[type="search"],
+html[data-theme="light"] input,
+html[data-theme="light"] select,
+html[data-theme="light"] textarea,
+html[data-theme="light"] input[type="search"],
+body.theme-light input,
+body.theme-light select,
+body.theme-light textarea,
+body.theme-light input[type="search"] {
+  background:#ffffff !important;
+  background-image:none !important;
+  color:#0f172a !important;
+  border:1px solid #cbd5e1 !important;
+  box-shadow:inset 0 1px 2px rgba(15,23,42,.04) !important;
+  opacity:1 !important;
+}
+html.theme-light input::placeholder,
+html.theme-light textarea::placeholder,
+html[data-theme="light"] input::placeholder,
+html[data-theme="light"] textarea::placeholder,
+body.theme-light input::placeholder,
+body.theme-light textarea::placeholder {
+  color:#94a3b8 !important;
+}
+html.theme-light input:focus,
+html.theme-light select:focus,
+html.theme-light textarea:focus,
+html[data-theme="light"] input:focus,
+html[data-theme="light"] select:focus,
+html[data-theme="light"] textarea:focus,
+body.theme-light input:focus,
+body.theme-light select:focus,
+body.theme-light textarea:focus {
+  border-color:#0284c7 !important;
+  box-shadow:0 0 0 4px rgba(2,132,199,.16) !important;
+  outline:none !important;
+}
+
+html.theme-light .nav-item,
+html[data-theme="light"] .nav-item,
+body.theme-light .nav-item {
+  color:#475569 !important;
+  background:transparent !important;
+  border-color:transparent !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+}
+html.theme-light .nav-item:hover,
+html[data-theme="light"] .nav-item:hover,
+body.theme-light .nav-item:hover {
+  color:#0f172a !important;
+  background:#eff6ff !important;
+  border-color:#bfdbfe !important;
+}
+html.theme-light .nav-item.active,
+html[data-theme="light"] .nav-item.active,
+body.theme-light .nav-item.active {
+  color:#ffffff !important;
+  background:linear-gradient(135deg,#0284c7,#0369a1) !important;
+  border-color:#38bdf8 !important;
+  box-shadow:0 0 20px rgba(2,132,199,.42) !important;
+}
+
+html.theme-light .btn:not(.secondary):not(.danger),
+html.theme-light .copy-btn,
+html.theme-light .save-btn,
+html[data-theme="light"] .btn:not(.secondary):not(.danger),
+html[data-theme="light"] .copy-btn,
+html[data-theme="light"] .save-btn,
+body.theme-light .btn:not(.secondary):not(.danger),
+body.theme-light .copy-btn,
+body.theme-light .save-btn {
+  color:#ffffff !important;
+  background:linear-gradient(135deg,#06b6d4,#16a34a) !important;
+  border-color:transparent !important;
+  box-shadow:0 10px 22px rgba(14,165,233,.18) !important;
+  opacity:1 !important;
+}
+html.theme-light .btn.secondary,
+html.theme-light .logout-btn,
+html.theme-light .open-btn,
+html[data-theme="light"] .btn.secondary,
+html[data-theme="light"] .logout-btn,
+html[data-theme="light"] .open-btn,
+body.theme-light .btn.secondary,
+body.theme-light .logout-btn,
+body.theme-light .open-btn {
+  color:#0f172a !important;
+  background:#ffffff !important;
+  border:1px solid #cbd5e1 !important;
+  box-shadow:none !important;
+  opacity:1 !important;
+}
+html.theme-light .btn.danger,
+html.theme-light .delete-btn,
+html.theme-light .archive-btn,
+html[data-theme="light"] .btn.danger,
+html[data-theme="light"] .delete-btn,
+html[data-theme="light"] .archive-btn,
+body.theme-light .btn.danger,
+body.theme-light .delete-btn,
+body.theme-light .archive-btn {
+  color:#111827 !important;
+  background:linear-gradient(135deg,#ef4444,#f97316) !important;
+  border-color:transparent !important;
+  opacity:1 !important;
+}
+
+/* Dark mode readability boost: stronger boxes/outlines so dark does not feel hidden. */
+html.theme-dark .card,
+html[data-theme="dark"] .card,
+body.theme-dark .card,
+html.theme-dark .table-wrapper,
+html[data-theme="dark"] .table-wrapper,
+body.theme-dark .table-wrapper,
+html.theme-dark input,
+html[data-theme="dark"] input,
+body.theme-dark input,
+html.theme-dark select,
+html[data-theme="dark"] select,
+body.theme-dark select,
+html.theme-dark textarea,
+html[data-theme="dark"] textarea,
+body.theme-dark textarea {
+  border-color:#263449 !important;
+}
+html.theme-dark .card,
+html[data-theme="dark"] .card,
+body.theme-dark .card {
+  background:#071121 !important;
+  background-image:none !important;
+}
+html.theme-dark input,
+html[data-theme="dark"] input,
+body.theme-dark input,
+html.theme-dark select,
+html[data-theme="dark"] select,
+body.theme-dark select,
+html.theme-dark textarea,
+html[data-theme="dark"] textarea,
+body.theme-dark textarea {
+  background:#050b18 !important;
+  background-image:none !important;
+  color:#e5e7eb !important;
+}

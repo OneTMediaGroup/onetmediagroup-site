@@ -530,3 +530,19 @@ html[data-theme="light"] .btn {
 html[data-theme="light"] * {
   text-shadow:none !important;
 }
+
+/* Light mode call station ring polish */
+html[data-theme="light"] .circle-outer {
+  border-color: #dbe3ee !important;
+  box-shadow: 0 0 0 1px rgba(15,23,42,.03) !important;
+}
+html[data-theme="light"] .circle-middle {
+  border-color: #93c5fd !important;
+  box-shadow: 0 0 0 1px rgba(37,99,235,.08) !important;
+}
+html[data-theme="light"] .circle-inner {
+  border-color: #38bdf8 !important;
+  background: linear-gradient(145deg,#0ea5e9,#2563eb) !important;
+  color: #ffffff !important;
+  box-shadow: 0 18px 40px rgba(37,99,235,.18) !important;
+}

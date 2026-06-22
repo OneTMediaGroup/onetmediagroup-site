@@ -164,6 +164,7 @@ function escapeHtml(value = "") {
     if (btn) btn.classList.add("active");
     if (pageTitle) pageTitle.textContent = tabTitle(tabName);
     if (pageSubtitle) pageSubtitle.textContent = tabSubtitle(tabName);
+    setTimeout(() => forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark"), 0);
   }
 
   function initTabs() {
@@ -459,6 +460,110 @@ function escapeHtml(value = "") {
     root.style.setProperty("--text-muted", colors.muted);
     root.style.setProperty("--text-strong", colors.text);
     root.style.setProperty("--accent", colors.accent);
+    setTimeout(() => forceAdminThemePaint(normalizedTheme), 0);
+  }
+
+
+
+  function forceAdminThemePaint(theme = "dark") {
+    const normalizedTheme = normalizeTheme(theme);
+    const light = normalizedTheme === "light";
+    const root = document.documentElement;
+    root.dataset.theme = normalizedTheme;
+    root.classList.toggle("theme-light", light);
+    root.classList.toggle("theme-dark", !light);
+    if (document.body) {
+      document.body.dataset.theme = normalizedTheme;
+      document.body.classList.toggle("theme-light", light);
+      document.body.classList.toggle("theme-dark", !light);
+    }
+
+    // Admin has older hard-coded radial backgrounds in many blocks. Inline this
+    // final paint pass so the selected mode wins immediately without a browser hard reset.
+    const paint = (selector, styles) => {
+      document.querySelectorAll(selector).forEach(el => Object.assign(el.style, styles));
+    };
+
+    if (light) {
+      paint("body, #app-root, .main, .main .tab", {
+        background: "#eef2f7",
+        backgroundImage: "none",
+        color: "#111827",
+        opacity: "1"
+      });
+      paint(".sidebar, .topbar", {
+        background: "#ffffff",
+        backgroundImage: "none",
+        color: "#111827",
+        borderColor: "#d8e0ea",
+        boxShadow: "0 8px 24px rgba(15,23,42,.07)",
+        opacity: "1"
+      });
+      paint(".card, .table-wrapper, .dashboard-table, .branding-card-single, .users-card, .user-form-card, .access-row, .access-link-row, .analytics-card, .snapshot-item, .modal", {
+        background: "#ffffff",
+        backgroundImage: "none",
+        color: "#111827",
+        borderColor: "#d8e0ea",
+        boxShadow: "0 14px 32px rgba(15,23,42,.08)",
+        opacity: "1"
+      });
+      paint("input, select, textarea, input[type='search']", {
+        background: "#ffffff",
+        backgroundImage: "none",
+        color: "#0f172a",
+        borderColor: "#cbd5e1",
+        opacity: "1"
+      });
+      paint("h1, h2, h3, h4, label, strong, .brand-title, .page-title, .card-header h2, .stat-big, .dashboard-cell, .station-cell, .personnel-cell, .snapshot-value", {
+        color: "#0f172a",
+        opacity: "1"
+      });
+      paint("p, .muted, .brand-subtitle, .sidebar-section-label, .topbar-left p, .admin-user-display, .admin-footer-brand, .form-help, .activity-meta", {
+        color: "#586579",
+        opacity: "1"
+      });
+      paint("table, thead, tbody, tr, td, th, .dashboard-table-head, .dashboard-table-row", {
+        color: "#111827",
+        borderColor: "#e2e8f0",
+        opacity: "1"
+      });
+    } else {
+      paint("body, #app-root, .main, .main .tab", {
+        background: "#020617",
+        backgroundImage: "radial-gradient(circle at top, #0f172a 0, #020617 60%)",
+        color: "#e5e7eb",
+        opacity: "1"
+      });
+      paint(".sidebar, .topbar", {
+        background: "#020617",
+        backgroundImage: "none",
+        color: "#e5e7eb",
+        borderColor: "#1f2937",
+        opacity: "1"
+      });
+      paint(".card, .table-wrapper, .dashboard-table, .branding-card-single, .users-card, .user-form-card, .access-row, .access-link-row, .analytics-card, .snapshot-item, .modal", {
+        background: "#071121",
+        backgroundImage: "none",
+        color: "#e5e7eb",
+        borderColor: "#263449",
+        opacity: "1"
+      });
+      paint("input, select, textarea, input[type='search']", {
+        background: "#050b18",
+        backgroundImage: "none",
+        color: "#e5e7eb",
+        borderColor: "#263449",
+        opacity: "1"
+      });
+      paint("h1, h2, h3, h4, label, strong, .brand-title, .page-title, .card-header h2, .stat-big, .dashboard-cell, .station-cell, .personnel-cell, .snapshot-value", {
+        color: "#f9fafb",
+        opacity: "1"
+      });
+      paint("p, .muted, .brand-subtitle, .sidebar-section-label, .topbar-left p, .admin-user-display, .admin-footer-brand, .form-help, .activity-meta", {
+        color: "#9ca3af",
+        opacity: "1"
+      });
+    }
   }
 
   function logoSrc() {
@@ -3403,7 +3508,12 @@ module.exports = QRCode;
       if (brandPreviewCompany) brandPreviewCompany.textContent = brandCompanyName.value.trim() || "Your Company";
       if (accessPlantName) accessPlantName.value = brandCompanyName.value.trim() || COMPANY_NAME;
     });
-    brandTheme?.addEventListener("change", () => applyTheme(brandTheme.value || "dark"));
+    brandTheme?.addEventListener("change", () => {
+      const nextTheme = normalizeTheme(brandTheme.value || "dark");
+      localStorage.setItem("factory_on_call_theme", nextTheme);
+      applyTheme(nextTheme);
+      forceAdminThemePaint(nextTheme);
+    });
     brandLogo?.addEventListener("change", async () => {
       try {
         const file = brandLogo.files?.[0];
@@ -4308,6 +4418,22 @@ stationFormReset?.addEventListener("click", resetStationForm);
     }
   }
 
+
+
+  function installThemeRepaintObserver() {
+    let repaintQueued = false;
+    const queue = () => {
+      if (repaintQueued) return;
+      repaintQueued = true;
+      requestAnimationFrame(() => {
+        repaintQueued = false;
+        forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark");
+      });
+    };
+    const target = document.getElementById("app-root") || document.body;
+    if (target) new MutationObserver(queue).observe(target, { childList: true, subtree: true });
+  }
+
   // ---------- BOOT ----------
   async function boot() {
     ensureDashboardTableStyles();
@@ -4315,6 +4441,8 @@ stationFormReset?.addEventListener("click", resetStationForm);
     await loadCompanyBranding();
     renderDemoNoticeIfNeeded();
     initTabs();
+    installThemeRepaintObserver();
+    forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark");
     initSidebarLinks();
     initPlaceholders();
     wireEvents();
