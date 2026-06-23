@@ -327,6 +327,10 @@ function escapeHtml(value = "") {
   const analyticsUserList = document.getElementById("analyticsUserList");
   const analyticsDayList = document.getElementById("analyticsDayList");
   const analyticsHourList = document.getElementById("analyticsHourList");
+  const analyticsSlaList = document.getElementById("analyticsSlaList");
+  const analyticsRepeatStationList = document.getElementById("analyticsRepeatStationList");
+  const analyticsLongestWaitList = document.getElementById("analyticsLongestWaitList");
+  const analyticsLongestResolutionList = document.getElementById("analyticsLongestResolutionList");
 
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
 
@@ -4121,6 +4125,32 @@ stationFormReset?.addEventListener("click", resetStationForm);
     }).join("");
   }
 
+  function renderDetailList(container, entries, empty = "No data yet.") {
+    if (!container) return;
+    const shown = entries.slice(0, 8);
+    if (!shown.length) {
+      container.innerHTML = `<div class="analytics-empty">${empty}</div>`;
+      return;
+    }
+
+    container.innerHTML = shown.map(item => `
+      <div class="analytics-detail-row">
+        <div>
+          <strong>${escapeHtml(item.title)}</strong>
+          <span>${escapeHtml(item.subtitle || "")}</span>
+        </div>
+        <b>${escapeHtml(item.value)}</b>
+      </div>
+    `).join("");
+  }
+
+  function slaBucket(minutes) {
+    if (!Number.isFinite(minutes)) return null;
+    if (minutes <= 5) return "Under 5 min";
+    if (minutes <= 15) return "5–15 min";
+    return "Over 15 min";
+  }
+
   function renderAnalytics() {
     const calls = cachedCalls.slice().sort((a, b) => (callStartMillis(a) || 0) - (callStartMillis(b) || 0));
     const closedCalls = calls.filter(isClosedStatus);
@@ -4144,6 +4174,10 @@ stationFormReset?.addEventListener("click", resetStationForm);
     const byUser = new Map();
     const byDay = new Map();
     const byHour = new Map();
+    const bySla = new Map();
+
+    const longestWait = [];
+    const longestResolution = [];
 
     calls.forEach(call => {
       incrementMap(byStation, callStation(call));
@@ -4155,6 +4189,32 @@ stationFormReset?.addEventListener("click", resetStationForm);
       roles.forEach(role => incrementMap(byRole, role));
 
       const start = callStartMillis(call);
+      const ack = callAckMillis(call);
+      const closed = callClosedMillis(call);
+      const wait = minutesBetween(start, ack);
+      const resolution = isClosedStatus(call) ? minutesBetween(start, closed) : null;
+
+      const bucket = slaBucket(wait);
+      if (bucket) incrementMap(bySla, bucket);
+
+      if (wait) {
+        longestWait.push({
+          minutes: wait,
+          title: callStation(call),
+          subtitle: `${callPersonnel(call)} • ${callArea(call)}`,
+          value: formatDurationMinutes(wait)
+        });
+      }
+
+      if (resolution) {
+        longestResolution.push({
+          minutes: resolution,
+          title: callStation(call),
+          subtitle: `${callPersonnel(call)} • ${callArea(call)}`,
+          value: formatDurationMinutes(resolution)
+        });
+      }
+
       if (start) {
         const d = new Date(start);
         incrementMap(byDay, d.toLocaleDateString([], { weekday: "short" }));
@@ -4172,6 +4232,10 @@ stationFormReset?.addEventListener("click", resetStationForm);
     renderRankList(analyticsAreaList, sortedMapEntries(byArea), { suffix: "calls", max: maxMapValue(byArea) });
     renderRankList(analyticsRoleList, sortedMapEntries(byRole), { suffix: "calls", max: maxMapValue(byRole) });
     renderRankList(analyticsUserList, sortedMapEntries(byUser).filter(([name]) => name !== "—"), { suffix: "closed", max: maxMapValue(byUser), empty: "No closed calls yet." });
+    renderRankList(analyticsSlaList, sortedMapEntries(bySla), { suffix: "calls", max: maxMapValue(bySla), empty: "No acknowledged calls yet." });
+    renderRankList(analyticsRepeatStationList, sortedMapEntries(byStation).filter(([, count]) => count > 1), { suffix: "calls", max: maxMapValue(byStation), empty: "No repeat stations yet." });
+    renderDetailList(analyticsLongestWaitList, longestWait.sort((a, b) => b.minutes - a.minutes), "No acknowledged calls yet.");
+    renderDetailList(analyticsLongestResolutionList, longestResolution.sort((a, b) => b.minutes - a.minutes), "No closed calls yet.");
     renderRankList(analyticsDayList, sortedMapEntries(byDay), { suffix: "calls", max: maxMapValue(byDay), limit: 7 });
     renderRankList(analyticsHourList, hourEntries, { suffix: "calls", max: maxMapValue(byHour), limit: 12 });
   }
