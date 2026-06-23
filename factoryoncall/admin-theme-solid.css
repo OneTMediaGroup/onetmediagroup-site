@@ -581,3 +581,119 @@ body.theme-light #tab-dashboard .snapshot-item strong {
     margin-top: 18px !important;
   }
 }
+
+/* === FINAL PLANT ACCESS LINK BOARD CARDS === */
+#tab-settings .plant-link-board {
+  max-width: 1540px !important;
+  margin: 0 auto !important;
+  padding: 26px !important;
+  display: block !important;
+}
+#tab-settings .plant-id-banner {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 20px !important;
+  padding: 22px 24px !important;
+  margin: 0 0 22px 0 !important;
+  border: 1px solid rgba(37, 99, 235, 0.28) !important;
+  border-radius: 18px !important;
+  background: rgba(37, 99, 235, 0.08) !important;
+}
+#tab-settings .plant-id-label {
+  margin: 0 0 10px 0 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .16em !important;
+  font-size: 13px !important;
+  font-weight: 900 !important;
+  color: #2563eb !important;
+}
+html[data-theme="dark"] #tab-settings .plant-id-label,
+html.theme-dark #tab-settings .plant-id-label,
+body.theme-dark #tab-settings .plant-id-label {
+  color: #60a5fa !important;
+}
+#tab-settings .plant-id-value {
+  color: var(--text-main) !important;
+  font-size: clamp(18px, 2vw, 28px) !important;
+  font-weight: 900 !important;
+  line-height: 1.2 !important;
+  word-break: break-all !important;
+}
+#tab-settings .plant-link-list {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 18px !important;
+}
+#tab-settings .plant-link-card {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 24px !important;
+  padding: 24px !important;
+  border: 1px solid var(--border-soft) !important;
+  border-radius: 18px !important;
+  background: var(--bg-card) !important;
+  box-shadow: 0 14px 34px rgba(15, 23, 42, 0.08) !important;
+}
+html[data-theme="dark"] #tab-settings .plant-link-card,
+html.theme-dark #tab-settings .plant-link-card,
+body.theme-dark #tab-settings .plant-link-card {
+  box-shadow: none !important;
+}
+#tab-settings .plant-link-info {
+  min-width: 0 !important;
+  display: block !important;
+}
+#tab-settings .plant-link-info h3 {
+  margin: 0 0 8px 0 !important;
+  color: var(--text-main) !important;
+  font-size: 22px !important;
+  line-height: 1.15 !important;
+  font-weight: 900 !important;
+}
+#tab-settings .plant-link-info p {
+  margin: 0 0 16px 0 !important;
+  color: var(--text-muted) !important;
+  font-size: 17px !important;
+  line-height: 1.35 !important;
+}
+#tab-settings .plant-link-info code {
+  display: block !important;
+  width: 100% !important;
+  box-sizing: border-box !important;
+  padding: 12px 14px !important;
+  border: 1px solid var(--border-soft) !important;
+  border-radius: 12px !important;
+  background: rgba(148, 163, 184, .18) !important;
+  color: var(--text-main) !important;
+  font-size: 15px !important;
+  font-weight: 800 !important;
+  line-height: 1.35 !important;
+  word-break: break-all !important;
+  white-space: normal !important;
+}
+#tab-settings .plant-link-actions {
+  display: flex !important;
+  gap: 12px !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  flex-wrap: wrap !important;
+}
+#tab-settings .plant-link-actions .btn,
+#tab-settings .plant-id-banner .btn {
+  min-width: 118px !important;
+  justify-content: center !important;
+  margin: 0 !important;
+}
+@media (max-width: 900px) {
+  #tab-settings .plant-id-banner,
+  #tab-settings .plant-link-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  #tab-settings .plant-link-actions {
+    justify-content: flex-start !important;
+  }
+}
