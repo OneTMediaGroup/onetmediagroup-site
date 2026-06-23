@@ -4078,14 +4078,11 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
     if (explicitAck) return explicitAck;
 
-    // Older/demo records may only have closedAt or updatedAt.
-    // Use those as a safe fallback so the SLA and longest-wait analytics
-    // do not show blank when the call clearly reached a response/close state.
-    if (isClosedStatus(call)) {
-      return getMillis(call.timeClosed || call.closedAt || call.closedTime || call.completedAt || call.updatedAt);
-    }
-
-    if (isAcknowledgedStatus(call)) {
+    // Wait time should measure the response/acknowledgement moment only.
+    // Do not fall back to closedAt for closed records, or Avg Wait and
+    // Avg Resolution become the same number. Older records without a real
+    // acknowledgement timestamp are skipped for wait/SLA metrics.
+    if (isAcknowledgedStatus(call) && !isClosedStatus(call)) {
       return getMillis(call.updatedAt || call.timeStarted || call.createdAt || call.requestedAt);
     }
 
@@ -4153,7 +4150,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
     container.innerHTML = shown.map(item => `
       <div class="analytics-detail-row">
-        <div>
+        <div class="analytics-detail-main">
           <strong>${escapeHtml(item.title)}</strong>
           <span>${escapeHtml(item.subtitle || "")}</span>
         </div>
@@ -4244,7 +4241,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
     const hourEntries = sortedMapEntries(byHour);
     const peak = hourEntries[0];
-    if (analyticsPeakHour) analyticsPeakHour.textContent = peak ? `${peak[0]} (${peak[1]})` : "—";
+    if (analyticsPeakHour) analyticsPeakHour.textContent = peak ? `${peak[0]} · ${peak[1]} calls` : "—";
 
     renderRankList(analyticsStationList, sortedMapEntries(byStation), { suffix: "calls", max: maxMapValue(byStation) });
     renderRankList(analyticsAreaList, sortedMapEntries(byArea), { suffix: "calls", max: maxMapValue(byArea) });

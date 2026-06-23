@@ -4190,3 +4190,66 @@ html[data-theme="dark"] .plant-id-label { color: #60a5fa; }
   font-size: 14px;
   white-space: nowrap;
 }
+
+/* ---------- Analytics clarity pass ---------- */
+.analytics-summary-card strong#analyticsPeakHour {
+  font-size: 28px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+
+.analytics-detail-list {
+  gap: 8px;
+}
+
+.analytics-detail-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 14px;
+  min-height: 54px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--panel-soft);
+  box-shadow: none;
+}
+
+.analytics-detail-main {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.analytics-detail-row strong {
+  display: block;
+  color: var(--text-main);
+  font-size: 15px;
+  line-height: 1.1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.analytics-detail-row span {
+  display: block;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.analytics-detail-row b {
+  color: var(--text-main);
+  font-size: 15px;
+  line-height: 1;
+  font-weight: 900;
+  white-space: nowrap;
+}
+
+html[data-theme="light"] body .analytics-detail-row,
+body.theme-light .analytics-detail-row {
+  background: #ffffff;
+}
