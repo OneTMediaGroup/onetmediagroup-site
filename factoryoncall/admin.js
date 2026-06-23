@@ -185,8 +185,7 @@ function escapeHtml(value = "") {
       companyId: COMPANY_ID,
       station: stationName || "",
       cells: Array.isArray(cells) ? cells.join(",") : "",
-      area: areaName || "",
-      companyName: COMPANY_NAME
+      area: areaName || ""
     });
     return `${base}?${params.toString()}`;
   }
@@ -194,8 +193,7 @@ function escapeHtml(value = "") {
   function buildScreenUrl(pageName) {
     const base = `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, pageName)}`;
     const params = new URLSearchParams({
-      companyId: COMPANY_ID,
-      companyName: COMPANY_NAME
+      companyId: COMPANY_ID
     });
     return `${base}?${params.toString()}`;
   }

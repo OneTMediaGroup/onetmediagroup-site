@@ -1,6 +1,7 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
+  collection,
   doc,
   setDoc,
   serverTimestamp
@@ -61,14 +62,11 @@ const state = {
 };
 
 function safeId(value = "") {
-  const base = String(value)
+  return String(value)
     .trim()
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-+|-+$/g, "");
-
-  const suffix = Math.random().toString(36).slice(2, 8);
-  return `${base || "company"}-${suffix}`;
+    .replace(/^-+|-+$/g, "") || "item";
 }
 
 function buildLink(page) {
@@ -329,9 +327,8 @@ async function createCompany() {
 
   setStatus("Creating company...");
 
-  const companyId = state.type === "demo"
-    ? `demo-${safeId(state.companyName)}`
-    : safeId(state.companyName);
+  const companyDocRef = doc(collection(db, "companies"));
+  const companyId = companyDocRef.id;
 
   state.companyId = companyId;
 
@@ -351,7 +348,7 @@ async function createCompany() {
     updatedAt: serverTimestamp()
   };
 
-  await setDoc(doc(db, "companies", companyId), companyPayload, { merge: true });
+  await setDoc(companyDocRef, companyPayload, { merge: true });
 
   await setDoc(doc(db, "companies", companyId, "settings", "main"), {
     requirePinForCalls: true,
@@ -386,7 +383,7 @@ async function createCompany() {
   }
 
   for (const station of state.selectedStations) {
-    const stationId = safeId(station).replace(/-[a-z0-9]{6}$/, "");
+    const stationId = safeId(station);
     await setDoc(doc(db, "companies", companyId, "stations", stationId), {
       stationId,
       name: station,

@@ -41,6 +41,7 @@ export function getActiveCompanyName(defaultName = "Factory On Call") {
 export function buildCompanyLink(page, companyId = getActiveCompanyId()) {
   const url = new URL(page, window.location.href);
   url.searchParams.delete("company");
+  url.searchParams.delete("companyName");
   if (companyId) url.searchParams.set("companyId", companyId);
   return url.toString();
 }
@@ -48,6 +49,7 @@ export function buildCompanyLink(page, companyId = getActiveCompanyId()) {
 export function buildRelativeCompanyLink(page, companyId = getActiveCompanyId()) {
   const url = new URL(page, window.location.href);
   url.searchParams.delete("company");
+  url.searchParams.delete("companyName");
   if (companyId) url.searchParams.set("companyId", companyId);
   return `${url.pathname.split("/").pop()}${url.search}`;
 }
