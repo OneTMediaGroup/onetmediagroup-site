@@ -4398,3 +4398,59 @@ body.theme-light .analytics-detail-row {
     min-width: 760px;
   }
 }
+
+/* ---------- Analytics bottom full-width detail tables ---------- */
+.analytics-full-width-section {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.analytics-full-width-section .analytics-wide-card {
+  width: 100%;
+  min-height: 0;
+}
+
+.analytics-full-width-section .analytics-detail-table {
+  width: 100%;
+  overflow: hidden;
+}
+
+.analytics-full-width-section .analytics-detail-header,
+.analytics-full-width-section .analytics-detail-data {
+  grid-template-columns: minmax(180px, 1.1fr) minmax(220px, 1.25fr) minmax(140px, .75fr) minmax(120px, .45fr);
+  column-gap: 24px;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.analytics-full-width-section .analytics-detail-header span,
+.analytics-full-width-section .analytics-detail-data span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analytics-full-width-section .analytics-detail-header span:last-child,
+.analytics-full-width-section .analytics-detail-data span:last-child {
+  text-align: right;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.analytics-full-width-section .analytics-detail-data {
+  min-height: 50px;
+}
+
+@media (max-width: 900px) {
+  .analytics-full-width-section .analytics-detail-table {
+    overflow-x: auto;
+  }
+  .analytics-full-width-section .analytics-detail-header,
+  .analytics-full-width-section .analytics-detail-data {
+    min-width: 820px;
+  }
+}
