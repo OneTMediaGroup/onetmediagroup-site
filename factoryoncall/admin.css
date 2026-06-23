@@ -4548,3 +4548,49 @@ body.theme-dark .analytics-severity-danger { color: #fca5a5 !important; }
   .analytics-full-width-section .analytics-detail-header,
   .analytics-full-width-section .analytics-detail-data { min-width: 720px !important; }
 }
+
+
+/* ---------- Analytics custom date range ---------- */
+.analytics-custom-range {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.analytics-custom-range[hidden] {
+  display: none !important;
+}
+
+.analytics-custom-range label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.analytics-custom-range input[type="date"] {
+  height: 42px;
+  min-width: 142px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: var(--input-bg);
+  color: var(--text-main);
+  padding: 0 12px;
+  font-weight: 800;
+}
+
+.analytics-custom-range .btn {
+  min-height: 42px;
+  padding: 0 18px;
+}
+
+@media (max-width: 1100px) {
+  .analytics-actions {
+    justify-content: flex-start;
+  }
+}

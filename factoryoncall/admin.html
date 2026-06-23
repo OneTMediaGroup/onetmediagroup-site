@@ -589,7 +589,19 @@
                             <option value="7">Last 7 Days</option>
                             <option value="30" selected>Last 30 Days</option>
                             <option value="all">All Time</option>
+                            <option value="custom">Custom Range</option>
                         </select>
+                        <div id="analyticsCustomRange" class="analytics-custom-range" hidden>
+                            <label>
+                                <span>Start</span>
+                                <input id="analyticsStartDate" type="date" />
+                            </label>
+                            <label>
+                                <span>End</span>
+                                <input id="analyticsEndDate" type="date" />
+                            </label>
+                            <button id="analyticsApplyRangeBtn" class="btn" type="button">Apply</button>
+                        </div>
                         <button id="analyticsExportBtn" class="btn secondary" type="button">Export CSV</button>
                     </div>
                 </div>

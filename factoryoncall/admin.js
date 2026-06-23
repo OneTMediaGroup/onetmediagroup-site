@@ -318,6 +318,10 @@ function escapeHtml(value = "") {
 
   const analyticsExportBtn = document.getElementById("analyticsExportBtn");
   const analyticsDateRange = document.getElementById("analyticsDateRange");
+  const analyticsCustomRange = document.getElementById("analyticsCustomRange");
+  const analyticsStartDate = document.getElementById("analyticsStartDate");
+  const analyticsEndDate = document.getElementById("analyticsEndDate");
+  const analyticsApplyRangeBtn = document.getElementById("analyticsApplyRangeBtn");
   const analyticsTotalCalls = document.getElementById("analyticsTotalCalls");
   const analyticsAvgWait = document.getElementById("analyticsAvgWait");
   const analyticsAvgResolution = document.getElementById("analyticsAvgResolution");
@@ -3687,7 +3691,14 @@ module.exports = QRCode;
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);
     purgeLogsBtn?.addEventListener("click", purgeOldLogs);
     analyticsExportBtn?.addEventListener("click", exportAnalyticsCsv);
-    analyticsDateRange?.addEventListener("change", renderAnalytics);
+    analyticsDateRange?.addEventListener("change", () => {
+      updateAnalyticsCustomRangeUI();
+      renderAnalytics();
+    });
+    analyticsApplyRangeBtn?.addEventListener("click", renderAnalytics);
+    analyticsStartDate?.addEventListener("change", renderAnalytics);
+    analyticsEndDate?.addEventListener("change", renderAnalytics);
+    updateAnalyticsCustomRangeUI();
 
     // Areas
     areaForm?.addEventListener("submit", async e => {
@@ -4149,17 +4160,65 @@ stationFormReset?.addEventListener("click", resetStationForm);
     return "good";
   }
 
-  function analyticsRangeStartMillis() {
+  function updateAnalyticsCustomRangeUI() {
+    if (!analyticsCustomRange) return;
+    const isCustom = analyticsDateRange?.value === "custom";
+    analyticsCustomRange.hidden = !isCustom;
+  }
+
+  function startOfLocalDate(value) {
+    if (!value) return null;
+    const date = new Date(`${value}T00:00:00`);
+    return Number.isNaN(date.getTime()) ? null : date.getTime();
+  }
+
+  function endOfLocalDate(value) {
+    if (!value) return null;
+    const date = new Date(`${value}T23:59:59.999`);
+    return Number.isNaN(date.getTime()) ? null : date.getTime();
+  }
+
+  function analyticsRangeBounds() {
     const value = analyticsDateRange?.value || "30";
-    if (value === "all") return null;
+    if (value === "all") return { start: null, end: null };
+
+    if (value === "custom") {
+      let start = startOfLocalDate(analyticsStartDate?.value);
+      let end = endOfLocalDate(analyticsEndDate?.value);
+
+      // If the user only fills one side, still filter in the useful direction.
+      // If dates are reversed by mistake, swap them instead of showing no data.
+      if (start && end && start > end) {
+        const temp = start;
+        start = startOfLocalDate(analyticsEndDate?.value);
+        end = endOfLocalDate(analyticsStartDate?.value);
+      }
+
+      return { start, end };
+    }
+
     const now = new Date();
     if (value === "today") {
       const start = new Date(now);
       start.setHours(0, 0, 0, 0);
-      return start.getTime();
+      return { start: start.getTime(), end: null };
     }
+
     const days = Number(value) || 30;
-    return Date.now() - (days * 24 * 60 * 60 * 1000);
+    return { start: Date.now() - (days * 24 * 60 * 60 * 1000), end: null };
+  }
+
+  function callInAnalyticsRange(call) {
+    const { start, end } = analyticsRangeBounds();
+    const callTime = callStartMillis(call);
+    if (!callTime) return false;
+    if (start && callTime < start) return false;
+    if (end && callTime > end) return false;
+    return true;
+  }
+
+  function analyticsRangeStartMillis() {
+    return analyticsRangeBounds().start;
   }
 
   function renderDetailList(container, entries, empty = "No data yet.") {
@@ -4201,13 +4260,8 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function renderAnalytics() {
-    const rangeStart = analyticsRangeStartMillis();
     const calls = cachedCalls
-      .filter(call => {
-        if (!rangeStart) return true;
-        const start = callStartMillis(call);
-        return start && start >= rangeStart;
-      })
+      .filter(callInAnalyticsRange)
       .sort((a, b) => (callStartMillis(a) || 0) - (callStartMillis(b) || 0));
     const closedCalls = calls.filter(isClosedStatus);
     const acknowledgedCalls = calls.filter(isAcknowledgedStatus);
@@ -4297,7 +4351,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function exportAnalyticsCsv() {
-    const calls = cachedCalls.slice();
+    const calls = cachedCalls.filter(callInAnalyticsRange);
     if (!calls.length) {
       alert("No analytics data to export yet.");
       return;
