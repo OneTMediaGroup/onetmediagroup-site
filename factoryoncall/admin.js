@@ -316,6 +316,18 @@ function escapeHtml(value = "") {
   const exportLogsBtn = document.getElementById("exportLogsBtn");
   const purgeLogsBtn = document.getElementById("purgeLogsBtn");
 
+  const analyticsExportBtn = document.getElementById("analyticsExportBtn");
+  const analyticsTotalCalls = document.getElementById("analyticsTotalCalls");
+  const analyticsAvgWait = document.getElementById("analyticsAvgWait");
+  const analyticsAvgResolution = document.getElementById("analyticsAvgResolution");
+  const analyticsPeakHour = document.getElementById("analyticsPeakHour");
+  const analyticsStationList = document.getElementById("analyticsStationList");
+  const analyticsAreaList = document.getElementById("analyticsAreaList");
+  const analyticsRoleList = document.getElementById("analyticsRoleList");
+  const analyticsUserList = document.getElementById("analyticsUserList");
+  const analyticsDayList = document.getElementById("analyticsDayList");
+  const analyticsHourList = document.getElementById("analyticsHourList");
+
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
 
 
@@ -3669,6 +3681,7 @@ module.exports = QRCode;
     logsDateTo?.addEventListener("change", renderCallLogs);
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);
     purgeLogsBtn?.addEventListener("click", purgeOldLogs);
+    analyticsExportBtn?.addEventListener("click", exportAnalyticsCsv);
 
     // Areas
     areaForm?.addEventListener("submit", async e => {
@@ -4028,6 +4041,179 @@ stationFormReset?.addEventListener("click", resetStationForm);
     btnPrintAllBadges?.addEventListener("click", () => printBadges(cachedUsers));
   }
 
+
+
+  // ---------- ANALYTICS ----------
+  function isClosedStatus(call) {
+    const status = String(call.status || "").toLowerCase();
+    return status === "closed" || status === "complete" || status === "completed";
+  }
+
+  function isAcknowledgedStatus(call) {
+    const status = String(call.status || "").toLowerCase();
+    return status === "ack" || status === "acknowledged" || isClosedStatus(call);
+  }
+
+  function callArea(call) {
+    return call.area || call.areaName || "Unassigned";
+  }
+
+  function callAckMillis(call) {
+    return getMillis(
+      call.acknowledgedAt ||
+      call.ackAt ||
+      call.acceptedAt ||
+      call.assignedAt ||
+      call.respondedAt ||
+      call.onTheWayAt ||
+      call.updatedAt
+    );
+  }
+
+  function minutesBetween(start, end) {
+    if (!start || !end || end < start) return null;
+    return Math.max(1, Math.round((end - start) / 60000));
+  }
+
+  function average(values) {
+    const clean = values.filter(v => Number.isFinite(v) && v > 0);
+    if (!clean.length) return null;
+    return Math.round(clean.reduce((sum, v) => sum + v, 0) / clean.length);
+  }
+
+  function incrementMap(map, key, amount = 1) {
+    const safeKey = String(key || "Unknown").trim() || "Unknown";
+    map.set(safeKey, (map.get(safeKey) || 0) + amount);
+  }
+
+  function sortedMapEntries(map) {
+    return Array.from(map.entries()).sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0]));
+  }
+
+  function maxMapValue(map) {
+    return Math.max(1, ...Array.from(map.values()).map(v => Number(v) || 0));
+  }
+
+  function renderRankList(container, entries, options = {}) {
+    if (!container) return;
+    const limit = options.limit || 8;
+    const suffix = options.suffix || "calls";
+    const empty = options.empty || "No data yet.";
+    const max = Math.max(1, options.max || (entries[0]?.[1] || 1));
+    const shown = entries.slice(0, limit);
+
+    if (!shown.length) {
+      container.innerHTML = `<div class="analytics-empty">${empty}</div>`;
+      return;
+    }
+
+    container.innerHTML = shown.map(([label, value]) => {
+      const pct = Math.max(4, Math.round((Number(value) || 0) / max * 100));
+      return `
+        <div class="analytics-rank-row">
+          <div class="analytics-rank-top">
+            <strong>${escapeHtml(label)}</strong>
+            <span>${value} ${suffix}</span>
+          </div>
+          <div class="analytics-bar"><i style="width:${pct}%"></i></div>
+        </div>
+      `;
+    }).join("");
+  }
+
+  function renderAnalytics() {
+    const calls = cachedCalls.slice().sort((a, b) => (callStartMillis(a) || 0) - (callStartMillis(b) || 0));
+    const closedCalls = calls.filter(isClosedStatus);
+    const acknowledgedCalls = calls.filter(isAcknowledgedStatus);
+
+    const waitMinutes = acknowledgedCalls
+      .map(call => minutesBetween(callStartMillis(call), callAckMillis(call)))
+      .filter(v => v !== null);
+
+    const resolutionMinutes = closedCalls
+      .map(call => minutesBetween(callStartMillis(call), callClosedMillis(call)))
+      .filter(v => v !== null);
+
+    if (analyticsTotalCalls) analyticsTotalCalls.textContent = String(calls.length);
+    if (analyticsAvgWait) analyticsAvgWait.textContent = formatDurationMinutes(average(waitMinutes));
+    if (analyticsAvgResolution) analyticsAvgResolution.textContent = formatDurationMinutes(average(resolutionMinutes));
+
+    const byStation = new Map();
+    const byArea = new Map();
+    const byRole = new Map();
+    const byUser = new Map();
+    const byDay = new Map();
+    const byHour = new Map();
+
+    calls.forEach(call => {
+      incrementMap(byStation, callStation(call));
+      incrementMap(byArea, callArea(call));
+
+      const roles = Array.isArray(call.roles) && call.roles.length
+        ? call.roles
+        : String(callPersonnel(call)).split(",").map(x => x.trim()).filter(Boolean);
+      roles.forEach(role => incrementMap(byRole, role));
+
+      const start = callStartMillis(call);
+      if (start) {
+        const d = new Date(start);
+        incrementMap(byDay, d.toLocaleDateString([], { weekday: "short" }));
+        incrementMap(byHour, d.toLocaleTimeString([], { hour: "numeric" }));
+      }
+    });
+
+    closedCalls.forEach(call => incrementMap(byUser, assignedTo(call)));
+
+    const hourEntries = sortedMapEntries(byHour);
+    const peak = hourEntries[0];
+    if (analyticsPeakHour) analyticsPeakHour.textContent = peak ? `${peak[0]} (${peak[1]})` : "—";
+
+    renderRankList(analyticsStationList, sortedMapEntries(byStation), { suffix: "calls", max: maxMapValue(byStation) });
+    renderRankList(analyticsAreaList, sortedMapEntries(byArea), { suffix: "calls", max: maxMapValue(byArea) });
+    renderRankList(analyticsRoleList, sortedMapEntries(byRole), { suffix: "calls", max: maxMapValue(byRole) });
+    renderRankList(analyticsUserList, sortedMapEntries(byUser).filter(([name]) => name !== "—"), { suffix: "closed", max: maxMapValue(byUser), empty: "No closed calls yet." });
+    renderRankList(analyticsDayList, sortedMapEntries(byDay), { suffix: "calls", max: maxMapValue(byDay), limit: 7 });
+    renderRankList(analyticsHourList, hourEntries, { suffix: "calls", max: maxMapValue(byHour), limit: 12 });
+  }
+
+  function exportAnalyticsCsv() {
+    const calls = cachedCalls.slice();
+    if (!calls.length) {
+      alert("No analytics data to export yet.");
+      return;
+    }
+
+    const rows = [[
+      "Time",
+      "Station",
+      "Area",
+      "Personnel Required",
+      "Location",
+      "Requested By",
+      "Status",
+      "Assigned To",
+      "Wait Time",
+      "Resolution Time"
+    ]];
+
+    calls.forEach(call => {
+      rows.push([
+        formatDateTime(callStartMillis(call)),
+        callStation(call),
+        callArea(call),
+        callPersonnel(call),
+        callLocation(call),
+        requestedBy(call),
+        dashboardStatusLabel(call),
+        assignedTo(call),
+        formatDurationMinutes(minutesBetween(callStartMillis(call), callAckMillis(call))),
+        isClosedStatus(call) ? callDurationLabel(call) : "—"
+      ]);
+    });
+
+    const csv = rows.map(row => row.map(csvSafe).join(",")).join("\n");
+    downloadText(`factory-on-call-analytics-${COMPANY_ID}-${new Date().toISOString().slice(0, 10)}.csv`, csv, "text/csv");
+  }
 
   // ---------- DASHBOARD LIVE DATA ----------
   function getMillis(value) {
@@ -4452,6 +4638,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
           cachedCalls = rows.map(row => ({ id: row.id, ...row.data }));
           renderDashboardCalls(rows);
           renderCallLogs();
+          renderAnalytics();
         },
         err => {
           console.error("Calls dashboard listener error:", err);

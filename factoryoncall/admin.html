@@ -576,32 +576,61 @@
 
         <!-- ANALYTICS TAB -->
         <section id="tab-analytics" class="tab">
-            <div class="card">
-                <div class="card-header">
-                    <h2>Analytics Overview</h2>
-                    <button id="analyticsExportBtn" class="btn secondary">Export CSV</button>
+            <div class="card analytics-shell">
+                <div class="card-header analytics-header">
+                    <div>
+                        <h2>Analytics Overview</h2>
+                        <p class="muted">Live performance insight from this plant’s call history.</p>
+                    </div>
+                    <button id="analyticsExportBtn" class="btn secondary" type="button">Export CSV</button>
                 </div>
-                <p class="muted">Basic analytics. For deeper analysis, export CSV and use Excel or BI tools.</p>
 
-                <div class="grid">
+                <div class="analytics-summary-grid">
+                    <div class="analytics-summary-card">
+                        <span>Total Calls</span>
+                        <strong id="analyticsTotalCalls">0</strong>
+                    </div>
+                    <div class="analytics-summary-card">
+                        <span>Avg Wait Time</span>
+                        <strong id="analyticsAvgWait">—</strong>
+                    </div>
+                    <div class="analytics-summary-card">
+                        <span>Avg Resolution</span>
+                        <strong id="analyticsAvgResolution">—</strong>
+                    </div>
+                    <div class="analytics-summary-card">
+                        <span>Peak Hour</span>
+                        <strong id="analyticsPeakHour">—</strong>
+                    </div>
+                </div>
+
+                <div class="analytics-grid-two">
                     <div class="analytics-card">
                         <h3>Calls by Station</h3>
-                        <ul id="analyticsStationList" class="simple-list"></ul>
+                        <div id="analyticsStationList" class="analytics-rank-list"></div>
                     </div>
-
                     <div class="analytics-card">
-                        <h3>Calls by Cell</h3>
-                        <ul id="analyticsCellList" class="simple-list"></ul>
+                        <h3>Calls by Area</h3>
+                        <div id="analyticsAreaList" class="analytics-rank-list"></div>
                     </div>
-
                     <div class="analytics-card">
-                        <h3>Calls by User</h3>
-                        <ul id="analyticsUserList" class="simple-list"></ul>
+                        <h3>Calls by Personnel Required</h3>
+                        <div id="analyticsRoleList" class="analytics-rank-list"></div>
                     </div>
-
                     <div class="analytics-card">
-                        <h3>Peak Hour</h3>
-                        <p id="analyticsPeakHour" class="stat-big">–</p>
+                        <h3>Calls Closed by User</h3>
+                        <div id="analyticsUserList" class="analytics-rank-list"></div>
+                    </div>
+                </div>
+
+                <div class="analytics-grid-two analytics-trend-grid">
+                    <div class="analytics-card">
+                        <h3>Calls by Day</h3>
+                        <div id="analyticsDayList" class="analytics-rank-list compact"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Calls by Hour</h3>
+                        <div id="analyticsHourList" class="analytics-rank-list compact"></div>
                     </div>
                 </div>
             </div>

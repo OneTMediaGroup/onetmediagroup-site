@@ -4000,3 +4000,137 @@ html[data-theme="dark"] .plant-id-label { color: #60a5fa; }
   }
   .plant-link-actions { justify-content: flex-start; flex-wrap: wrap; }
 }
+
+/* ---------- Analytics dashboard polish ---------- */
+.analytics-shell {
+  max-width: 1500px;
+  margin: 0 auto;
+}
+
+.analytics-header {
+  align-items: flex-start;
+  gap: 18px;
+}
+
+.analytics-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+  margin: 20px 0;
+}
+
+.analytics-summary-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--panel-soft);
+  padding: 18px 20px;
+  box-shadow: var(--shadow-soft);
+}
+
+.analytics-summary-card span {
+  display: block;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 12px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+
+.analytics-summary-card strong {
+  color: var(--text-main);
+  font-size: 34px;
+  line-height: 1;
+  font-weight: 900;
+}
+
+.analytics-grid-two {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.analytics-card {
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  background: var(--panel-soft);
+  padding: 18px 20px;
+  min-height: 230px;
+  box-shadow: var(--shadow-soft);
+}
+
+.analytics-card h3 {
+  margin: 0 0 14px;
+  color: var(--text-main);
+  font-size: 18px;
+}
+
+.analytics-rank-list {
+  display: grid;
+  gap: 12px;
+}
+
+.analytics-rank-list.compact {
+  gap: 10px;
+}
+
+.analytics-rank-row {
+  display: grid;
+  gap: 7px;
+}
+
+.analytics-rank-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: baseline;
+  color: var(--text-main);
+}
+
+.analytics-rank-top strong {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.analytics-rank-top span {
+  color: var(--text-muted);
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.analytics-bar {
+  height: 9px;
+  border-radius: 999px;
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.analytics-bar i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #06b6d4, #22c55e);
+}
+
+.analytics-empty {
+  color: var(--text-muted);
+  padding: 14px 0;
+}
+
+@media (max-width: 1050px) {
+  .analytics-summary-grid,
+  .analytics-grid-two {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 680px) {
+  .analytics-summary-grid,
+  .analytics-grid-two {
+    grid-template-columns: 1fr;
+  }
+}
