@@ -4063,15 +4063,33 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function callAckMillis(call) {
-    return getMillis(
+    const explicitAck = getMillis(
       call.acknowledgedAt ||
+      call.acknowledgedTime ||
       call.ackAt ||
+      call.ackTime ||
       call.acceptedAt ||
+      call.acceptedTime ||
       call.assignedAt ||
       call.respondedAt ||
-      call.onTheWayAt ||
-      call.updatedAt
+      call.responseAt ||
+      call.onTheWayAt
     );
+
+    if (explicitAck) return explicitAck;
+
+    // Older/demo records may only have closedAt or updatedAt.
+    // Use those as a safe fallback so the SLA and longest-wait analytics
+    // do not show blank when the call clearly reached a response/close state.
+    if (isClosedStatus(call)) {
+      return getMillis(call.timeClosed || call.closedAt || call.closedTime || call.completedAt || call.updatedAt);
+    }
+
+    if (isAcknowledgedStatus(call)) {
+      return getMillis(call.updatedAt || call.timeStarted || call.createdAt || call.requestedAt);
+    }
+
+    return 0;
   }
 
   function minutesBetween(start, end) {
