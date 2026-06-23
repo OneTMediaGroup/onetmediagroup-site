@@ -4253,3 +4253,12 @@ html[data-theme="light"] body .analytics-detail-row,
 body.theme-light .analytics-detail-row {
   background: #ffffff;
 }
+
+
+.analytics-detail-table{width:100%}
+.analytics-detail-header,.analytics-detail-data{
+display:grid;grid-template-columns:2fr 2fr 1.5fr 1fr;
+gap:16px;padding:10px 0;align-items:center}
+.analytics-detail-header{font-weight:700;border-bottom:1px solid rgba(0,0,0,.12);margin-bottom:8px}
+.analytics-detail-data{border-bottom:1px solid rgba(0,0,0,.08)}
+.analytics-detail-data:last-child{border-bottom:none}

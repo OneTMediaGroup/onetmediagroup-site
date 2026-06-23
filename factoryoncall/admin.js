@@ -4142,21 +4142,33 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
   function renderDetailList(container, entries, empty = "No data yet.") {
     if (!container) return;
-    const shown = entries.slice(0, 8);
+    const shown = entries.slice(0, 5);
     if (!shown.length) {
       container.innerHTML = `<div class="analytics-empty">${empty}</div>`;
       return;
     }
 
-    container.innerHTML = shown.map(item => `
-      <div class="analytics-detail-row">
-        <div class="analytics-detail-main">
-          <strong>${escapeHtml(item.title)}</strong>
-          <span>${escapeHtml(item.subtitle || "")}</span>
+    container.innerHTML = `
+      <div class="analytics-detail-table">
+        <div class="analytics-detail-header">
+          <span>Station</span>
+          <span>Personnel</span>
+          <span>Area</span>
+          <span>Time</span>
         </div>
-        <b>${escapeHtml(item.value)}</b>
+        ${shown.map(item => {
+          const parts = String(item.subtitle || "").split("•").map(v => v.trim());
+          return `
+            <div class="analytics-detail-data">
+              <span><strong>${escapeHtml(item.title)}</strong></span>
+              <span>${escapeHtml(parts[0] || "—")}</span>
+              <span>${escapeHtml(parts[1] || "—")}</span>
+              <span><strong>${escapeHtml(item.value)}</strong></span>
+            </div>
+          `;
+        }).join("")}
       </div>
-    `).join("");
+    `;
   }
 
   function slaBucket(minutes) {
