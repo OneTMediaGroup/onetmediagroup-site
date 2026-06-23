@@ -4063,33 +4063,15 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function callAckMillis(call) {
-    const explicitAck = getMillis(
+    return getMillis(
       call.acknowledgedAt ||
-      call.acknowledgedTime ||
       call.ackAt ||
-      call.ackTime ||
       call.acceptedAt ||
-      call.acceptedTime ||
       call.assignedAt ||
       call.respondedAt ||
-      call.responseAt ||
-      call.onTheWayAt
+      call.onTheWayAt ||
+      call.updatedAt
     );
-
-    if (explicitAck) return explicitAck;
-
-    // Older/demo call records may only have closed/updated timestamps.
-    // For analytics, treat a closed call as having at least been responded to
-    // so SLA and longest-wait cards still populate from existing history.
-    if (isClosedStatus(call)) {
-      return getMillis(call.timeClosed || call.closedAt || call.closedTime || call.updatedAt);
-    }
-
-    if (isAcknowledgedStatus(call)) {
-      return getMillis(call.updatedAt || call.timeStarted || call.createdAt || call.requestedAt);
-    }
-
-    return 0;
   }
 
   function minutesBetween(start, end) {
