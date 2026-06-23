@@ -317,6 +317,7 @@ function escapeHtml(value = "") {
   const purgeLogsBtn = document.getElementById("purgeLogsBtn");
 
   const analyticsExportBtn = document.getElementById("analyticsExportBtn");
+  const analyticsDateRange = document.getElementById("analyticsDateRange");
   const analyticsTotalCalls = document.getElementById("analyticsTotalCalls");
   const analyticsAvgWait = document.getElementById("analyticsAvgWait");
   const analyticsAvgResolution = document.getElementById("analyticsAvgResolution");
@@ -3686,6 +3687,7 @@ module.exports = QRCode;
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);
     purgeLogsBtn?.addEventListener("click", purgeOldLogs);
     analyticsExportBtn?.addEventListener("click", exportAnalyticsCsv);
+    analyticsDateRange?.addEventListener("change", renderAnalytics);
 
     // Areas
     areaForm?.addEventListener("submit", async e => {
@@ -4140,9 +4142,29 @@ stationFormReset?.addEventListener("click", resetStationForm);
     }).join("");
   }
 
+  function severityClass(minutes) {
+    const value = Number(minutes) || 0;
+    if (value > 15) return "danger";
+    if (value >= 5) return "warning";
+    return "good";
+  }
+
+  function analyticsRangeStartMillis() {
+    const value = analyticsDateRange?.value || "30";
+    if (value === "all") return null;
+    const now = new Date();
+    if (value === "today") {
+      const start = new Date(now);
+      start.setHours(0, 0, 0, 0);
+      return start.getTime();
+    }
+    const days = Number(value) || 30;
+    return Date.now() - (days * 24 * 60 * 60 * 1000);
+  }
+
   function renderDetailList(container, entries, empty = "No data yet.") {
     if (!container) return;
-    const shown = entries.slice(0, 10);
+    const shown = entries.slice(0, 5);
     if (!shown.length) {
       container.innerHTML = `<div class="analytics-empty">${empty}</div>`;
       return;
@@ -4163,7 +4185,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
               <span><strong>${escapeHtml(item.title)}</strong></span>
               <span>${escapeHtml(parts[0] || "—")}</span>
               <span>${escapeHtml(parts[1] || "—")}</span>
-              <span><strong>${escapeHtml(item.value)}</strong></span>
+              <span><strong class="analytics-severity analytics-severity-${severityClass(item.minutes)}">${escapeHtml(item.value)}</strong></span>
             </div>
           `;
         }).join("")}
@@ -4179,7 +4201,14 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function renderAnalytics() {
-    const calls = cachedCalls.slice().sort((a, b) => (callStartMillis(a) || 0) - (callStartMillis(b) || 0));
+    const rangeStart = analyticsRangeStartMillis();
+    const calls = cachedCalls
+      .filter(call => {
+        if (!rangeStart) return true;
+        const start = callStartMillis(call);
+        return start && start >= rangeStart;
+      })
+      .sort((a, b) => (callStartMillis(a) || 0) - (callStartMillis(b) || 0));
     const closedCalls = calls.filter(isClosedStatus);
     const acknowledgedCalls = calls.filter(isAcknowledgedStatus);
 

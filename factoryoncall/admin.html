@@ -582,7 +582,16 @@
                         <h2>Analytics Overview</h2>
                         <p class="muted">Live performance insight from this plant’s call history.</p>
                     </div>
-                    <button id="analyticsExportBtn" class="btn secondary" type="button">Export CSV</button>
+                    <div class="analytics-actions">
+                        <label class="analytics-range-label" for="analyticsDateRange">Range</label>
+                        <select id="analyticsDateRange" class="analytics-range-select">
+                            <option value="today">Today</option>
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="all">All Time</option>
+                        </select>
+                        <button id="analyticsExportBtn" class="btn secondary" type="button">Export CSV</button>
+                    </div>
                 </div>
 
                 <div class="analytics-summary-grid">
@@ -650,12 +659,12 @@
                 <div class="analytics-full-width-section">
                     <div class="analytics-card analytics-wide-card">
                         <h3>Longest Wait Calls</h3>
-                        <p class="analytics-note">Top 10 calls that waited longest before acknowledgement.</p>
+                        <p class="analytics-note">Top 5 calls that waited longest before acknowledgement.</p>
                         <div id="analyticsLongestWaitList" class="analytics-detail-list"></div>
                     </div>
                     <div class="analytics-card analytics-wide-card">
                         <h3>Longest Resolution Calls</h3>
-                        <p class="analytics-note">Top 10 closed calls with the longest total resolution time.</p>
+                        <p class="analytics-note">Top 5 closed calls with the longest total resolution time.</p>
                         <div id="analyticsLongestResolutionList" class="analytics-detail-list"></div>
                     </div>
                 </div>
