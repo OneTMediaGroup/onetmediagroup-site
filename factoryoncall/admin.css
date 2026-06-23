@@ -4343,3 +4343,58 @@ body.theme-light .analytics-detail-row {
     font-size: 13px;
   }
 }
+
+/* ---------- Analytics full-width manager tables ---------- */
+.analytics-manager-grid .analytics-wide-card {
+  grid-column: 1 / -1;
+  min-height: 0;
+}
+
+.analytics-wide-card .analytics-detail-table {
+  overflow: visible;
+}
+
+.analytics-wide-card .analytics-detail-header,
+.analytics-wide-card .analytics-detail-data {
+  grid-template-columns: minmax(160px, 1.15fr) minmax(190px, 1.25fr) minmax(130px, .8fr) minmax(110px, .55fr);
+  column-gap: 18px;
+  padding-left: 18px;
+  padding-right: 18px;
+}
+
+.analytics-wide-card .analytics-detail-header span,
+.analytics-wide-card .analytics-detail-data span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  padding-right: 0;
+}
+
+.analytics-wide-card .analytics-detail-header span:last-child,
+.analytics-wide-card .analytics-detail-data span:last-child {
+  text-align: right;
+  overflow: visible;
+  text-overflow: clip;
+  white-space: nowrap;
+}
+
+.analytics-wide-card .analytics-detail-header {
+  font-size: 11px;
+  letter-spacing: .14em;
+}
+
+.analytics-wide-card .analytics-detail-data {
+  font-size: 15px;
+  min-height: 54px;
+}
+
+@media (max-width: 900px) {
+  .analytics-wide-card .analytics-detail-table {
+    overflow-x: auto;
+  }
+
+  .analytics-wide-card .analytics-detail-header,
+  .analytics-wide-card .analytics-detail-data {
+    min-width: 760px;
+  }
+}

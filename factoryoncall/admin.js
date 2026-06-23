@@ -4142,7 +4142,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
   function renderDetailList(container, entries, empty = "No data yet.") {
     if (!container) return;
-    const shown = entries.slice(0, 5);
+    const shown = entries.slice(0, 10);
     if (!shown.length) {
       container.innerHTML = `<div class="analytics-empty">${empty}</div>`;
       return;
