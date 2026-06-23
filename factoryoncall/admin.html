@@ -513,60 +513,61 @@
         </section>
 
         <section id="tab-settings" class="tab">
-            <div class="grid-2">
-                <div class="card">
-                    <h2>Plant Access</h2>
-                    <p class="muted">Copy the plant code and open or share the main live screens.</p>
-
-                    <div class="access-block">
-                        <label>
-                            Plant Name
-                            <input type="text" id="accessPlantName" readonly />
-                        </label>
-                        <label>
-                            Plant Code
-                            <div class="copy-row">
-                                <input type="text" id="accessPlantCode" readonly />
-                                <button class="btn secondary" type="button" id="copyPlantCodeBtn">Copy</button>
-                            </div>
-                        </label>
+            <div class="card plant-link-board">
+                <div class="plant-id-banner">
+                    <div>
+                        <div class="plant-id-label">Plant ID</div>
+                        <div class="plant-id-value" id="accessPlantIdText"></div>
                     </div>
+                    <button class="btn secondary" type="button" id="copyPlantCodeBtn">Copy Plant ID</button>
                 </div>
 
-                <div class="card">
-                    <h2>Quick Access Links</h2>
-                    <p class="muted">Use these links for supervisors, common-area screens, and production displays.</p>
+                <div class="plant-link-list" id="plantAccessLinkList">
+                    <div class="plant-link-card" data-page="admin.html">
+                        <div class="plant-link-info">
+                            <h3>Admin Console</h3>
+                            <p>Manage plant setup, users, stations, roles, branding, and controls.</p>
+                            <code data-link-code="admin.html"></code>
+                        </div>
+                        <div class="plant-link-actions">
+                            <button class="btn" type="button" data-open-screen="admin.html">Open</button>
+                            <button class="btn secondary" type="button" data-copy-screen="admin.html">Copy</button>
+                        </div>
+                    </div>
 
-                    <div class="quick-links-list">
-                        <div class="quick-link-row">
-                            <div>
-                                <strong>Supervisor Portal</strong>
-                                <p class="muted">Management view for acknowledge, close, filters, and activity review.</p>
-                            </div>
-                            <div class="button-row compact-actions">
-                                <button class="btn secondary" type="button" data-copy-screen="supervisor.html">Copy Link</button>
-                                <button class="btn" type="button" data-open-screen="supervisor.html">Open</button>
-                            </div>
+                    <div class="plant-link-card" data-page="call.html">
+                        <div class="plant-link-info">
+                            <h3>Call Station</h3>
+                            <p>Operator call-button screen. Station links can also be copied from the Stations tab.</p>
+                            <code data-link-code="call.html"></code>
                         </div>
-                        <div class="quick-link-row">
-                            <div>
-                                <strong>Interactive Viewer</strong>
-                                <p class="muted">Shared common-area screen with action authorization by User ID and PIN.</p>
-                            </div>
-                            <div class="button-row compact-actions">
-                                <button class="btn secondary" type="button" data-copy-screen="viewer.html">Copy Link</button>
-                                <button class="btn" type="button" data-open-screen="viewer.html">Open</button>
-                            </div>
+                        <div class="plant-link-actions">
+                            <button class="btn" type="button" data-open-screen="call.html">Open</button>
+                            <button class="btn secondary" type="button" data-copy-screen="call.html">Copy</button>
                         </div>
-                        <div class="quick-link-row">
-                            <div>
-                                <strong>Production Display</strong>
-                                <p class="muted">View-only TV display for live plant calls.</p>
-                            </div>
-                            <div class="button-row compact-actions">
-                                <button class="btn secondary" type="button" data-copy-screen="display.html">Copy Link</button>
-                                <button class="btn" type="button" data-open-screen="display.html">Open</button>
-                            </div>
+                    </div>
+
+                    <div class="plant-link-card" data-page="viewer.html">
+                        <div class="plant-link-info">
+                            <h3>Supervisor View</h3>
+                            <p>Review, acknowledge, close, filter, and track active calls.</p>
+                            <code data-link-code="viewer.html"></code>
+                        </div>
+                        <div class="plant-link-actions">
+                            <button class="btn" type="button" data-open-screen="viewer.html">Open</button>
+                            <button class="btn secondary" type="button" data-copy-screen="viewer.html">Copy</button>
+                        </div>
+                    </div>
+
+                    <div class="plant-link-card" data-page="display.html">
+                        <div class="plant-link-info">
+                            <h3>Display Board</h3>
+                            <p>Read-only TV/wall display for live factory calls.</p>
+                            <code data-link-code="display.html"></code>
+                        </div>
+                        <div class="plant-link-actions">
+                            <button class="btn" type="button" data-open-screen="display.html">Open</button>
+                            <button class="btn secondary" type="button" data-copy-screen="display.html">Copy</button>
                         </div>
                     </div>
                 </div>

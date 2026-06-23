@@ -3912,3 +3912,91 @@ body.theme-dark .topbar-right .company-logo {
 /* === FINAL ADMIN SIDEBAR SCROLL FIX === */
 .sidebar{height:100vh!important;max-height:100vh!important;overflow-y:auto!important;overflow-x:hidden!important;min-height:0!important;scrollbar-width:thin!important}
 .sidebar-footer{margin-top:auto!important;flex-shrink:0!important}.nav{flex:0 0 auto!important}.main{min-width:0!important}
+
+/* Plant Access link board - Floor Flow style */
+.plant-link-board {
+  max-width: 1540px;
+  margin: 0 auto;
+}
+.plant-id-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 24px;
+  border: 1px solid rgba(37, 99, 235, 0.28);
+  border-radius: 18px;
+  background: rgba(37, 99, 235, 0.08);
+  margin-bottom: 18px;
+}
+.plant-id-label {
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-weight: 900;
+  font-size: 13px;
+  color: #2563eb;
+  margin-bottom: 12px;
+}
+html[data-theme="dark"] .plant-id-label { color: #60a5fa; }
+.plant-id-value {
+  font-size: clamp(18px, 2vw, 28px);
+  font-weight: 900;
+  word-break: break-all;
+  color: var(--text-main);
+}
+.plant-link-list {
+  display: grid;
+  gap: 18px;
+}
+.plant-link-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: center;
+  padding: 20px;
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  background: var(--bg-card);
+}
+.plant-link-info h3 {
+  margin: 0 0 4px;
+  font-size: 22px;
+  color: var(--text-main);
+}
+.plant-link-info p {
+  margin: 0 0 10px;
+  color: var(--text-muted);
+  font-size: 17px;
+}
+.plant-link-info code {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 14px;
+  border: 1px solid var(--border-soft);
+  border-radius: 10px;
+  background: rgba(148, 163, 184, .18);
+  color: var(--text-main);
+  font-size: 15px;
+  font-weight: 800;
+  word-break: break-all;
+}
+.plant-link-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.plant-link-actions .btn,
+.plant-id-banner .btn {
+  min-width: 112px;
+  justify-content: center;
+}
+@media (max-width: 900px) {
+  .plant-id-banner,
+  .plant-link-card {
+    grid-template-columns: 1fr;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  .plant-link-actions { justify-content: flex-start; flex-wrap: wrap; }
+}

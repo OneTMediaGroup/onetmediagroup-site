@@ -198,6 +198,15 @@ function escapeHtml(value = "") {
     return `${base}?${params.toString()}`;
   }
 
+
+  function renderPlantAccessLinks() {
+    if (accessPlantIdText) accessPlantIdText.textContent = COMPANY_ID || "";
+    document.querySelectorAll("[data-link-code]").forEach(code => {
+      const page = code.dataset.linkCode;
+      code.textContent = buildScreenUrl(page);
+    });
+  }
+
   function initSidebarLinks() {
     const viewerLink = document.getElementById("sidebarViewerLink");
     const supervisorLink = document.getElementById("sidebarSupervisorLink");
@@ -317,8 +326,7 @@ function escapeHtml(value = "") {
   const brandingResetBtn = document.getElementById("brandingResetBtn");
   const brandPreviewLogo = document.getElementById("brandPreviewLogo");
   const brandPreviewCompany = document.getElementById("brandPreviewCompany");
-  const accessPlantName = document.getElementById("accessPlantName");
-  const accessPlantCode = document.getElementById("accessPlantCode");
+  const accessPlantIdText = document.getElementById("accessPlantIdText");
   const copyPlantCodeBtn = document.getElementById("copyPlantCodeBtn");
 
   let cachedBranding = {};
@@ -575,8 +583,7 @@ function escapeHtml(value = "") {
     if (brandPreviewLogo) { const s = logoSrc(); brandPreviewLogo.src = s; brandPreviewLogo.style.display = s ? "block" : "none"; }
     const topLogo = document.getElementById("companyLogoImg");
     if (topLogo) { const s=logoSrc(); topLogo.src=s; topLogo.style.display=(cachedBranding.logoDataUrl||cachedBranding.logoUrl)?"block":"none"; }
-    if (accessPlantName) accessPlantName.value = COMPANY_NAME || "";
-    if (accessPlantCode) accessPlantCode.value = COMPANY_ID;
+    renderPlantAccessLinks();
     const title = document.querySelector(".brand-title");
     if (title) title.textContent = "Factory On Call";
   }
@@ -3540,7 +3547,6 @@ module.exports = QRCode;
   function bindBrandingPreview() {
     brandCompanyName?.addEventListener("input", () => {
       if (brandPreviewCompany) brandPreviewCompany.textContent = brandCompanyName.value.trim();
-      if (accessPlantName) accessPlantName.value = brandCompanyName.value.trim();
     });
     brandTheme?.addEventListener("change", () => {
       const nextTheme = normalizeTheme(brandTheme.value || "dark");

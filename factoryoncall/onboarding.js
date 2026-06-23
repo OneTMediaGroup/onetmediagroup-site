@@ -73,98 +73,6 @@ function buildLink(page) {
   return `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, page)}?companyId=${encodeURIComponent(state.companyId)}`;
 }
 
-const LINK_ITEMS = [
-  { label: "Admin Console", page: "admin.html", note: "Manage company setup, users, stations, roles, branding, and access links." },
-  { label: "Supervisor Portal", page: "supervisor.html", note: "Review, acknowledge, close, filter, and export live call activity." },
-  { label: "Interactive Viewer", page: "viewer.html", note: "Shared common-area screen with action authorization by User ID and PIN." },
-  { label: "Production Display", page: "display.html", note: "Read-only TV/wall display for live factory calls." }
-];
-
-function getLinkItems() {
-  return LINK_ITEMS.map(item => ({ ...item, url: buildLink(item.page) }));
-}
-
-async function copyText(value, message = "Copied.") {
-  try {
-    await navigator.clipboard.writeText(value);
-    setStatus(message, true);
-  } catch (error) {
-    console.error(error);
-    setStatus("Copy failed. Select and copy the text manually.");
-  }
-}
-
-function openLink(url) {
-  window.open(url, "_blank", "noopener");
-}
-
-function showLinksModal() {
-  if (!state.companyId) return;
-
-  const existing = document.getElementById("linksModal");
-  if (existing) existing.remove();
-
-  const modal = document.createElement("div");
-  modal.id = "linksModal";
-  modal.className = "links-modal";
-  modal.innerHTML = `
-    <div class="links-modal-backdrop" data-close-links-modal></div>
-    <section class="links-modal-card" role="dialog" aria-modal="true" aria-labelledby="linksModalTitle">
-      <div class="links-modal-head">
-        <div>
-          <div class="eyebrow">Factory On Call</div>
-          <h2 id="linksModalTitle">Company links are ready.</h2>
-          <p>Save these links for quick access. Links use the clean company ID only.</p>
-        </div>
-        <button class="modal-x" type="button" data-close-links-modal aria-label="Close">×</button>
-      </div>
-
-      <div class="company-id-box">
-        <div>
-          <span>Company ID</span>
-          <strong>${escapeHtml(state.companyId)}</strong>
-        </div>
-        <button class="btn secondary modal-copy" type="button" data-copy-value="${escapeHtml(state.companyId)}">Copy Company ID</button>
-      </div>
-
-      <div class="modal-link-list">
-        ${getLinkItems().map(item => `
-          <article class="modal-link-row">
-            <div class="modal-link-text">
-              <h3>${escapeHtml(item.label)}</h3>
-              <p>${escapeHtml(item.note)}</p>
-              <code>${escapeHtml(item.url)}</code>
-            </div>
-            <div class="modal-link-actions">
-              <button class="btn primary modal-open" type="button" data-open-url="${escapeHtml(item.url)}">Open</button>
-              <button class="btn secondary modal-copy" type="button" data-copy-value="${escapeHtml(item.url)}">Copy</button>
-            </div>
-          </article>
-        `).join("")}
-      </div>
-
-      <div class="modal-foot">
-        <button class="btn secondary" type="button" data-close-links-modal>Close</button>
-        <button class="btn primary" type="button" data-open-url="${escapeHtml(buildLink("admin.html"))}">Open Admin</button>
-      </div>
-    </section>
-  `;
-
-  document.body.appendChild(modal);
-
-  modal.querySelectorAll("[data-close-links-modal]").forEach(btn => {
-    btn.addEventListener("click", () => modal.remove());
-  });
-
-  modal.querySelectorAll(".modal-copy").forEach(btn => {
-    btn.addEventListener("click", () => copyText(btn.dataset.copyValue || "", "Link copied."));
-  });
-
-  modal.querySelectorAll(".modal-open").forEach(btn => {
-    btn.addEventListener("click", () => openLink(btn.dataset.openUrl || "#"));
-  });
-}
-
 function setStatus(message = "", good = false) {
   statusText.textContent = message;
   statusText.className = good ? "status-text success" : "status-text";
@@ -326,26 +234,21 @@ function renderReviewStep() {
 }
 
 function renderCompleteStep() {
-  const items = getLinkItems();
-
   stepContent.innerHTML = `
     <h2>Factory On Call is ready.</h2>
-    <p>Your company workspace has been created. Use the link popup to copy or open the main screens.</p>
+    <p>Your company workspace has been created. Save these links for quick access.</p>
 
-    <div class="ready-panel">
-      <div class="ready-id">
-        <span>Company ID</span>
-        <strong>${escapeHtml(state.companyId)}</strong>
-      </div>
-      <button class="btn primary" id="showLinksBtn" type="button">View Links</button>
-    </div>
-
-    <div class="link-list compact-links">
-      ${items.map(item => `
+    <div class="link-list">
+      ${[
+        ["Admin", "admin.html"],
+        ["Call Station", "call.html"],
+        ["Viewer", "viewer.html"],
+        ["Display", "display.html"]
+      ].map(([label, page]) => `
         <div class="link-row">
-          <strong>${escapeHtml(item.label)}</strong>
-          <code>${escapeHtml(item.url)}</code>
-          <button class="btn secondary copy-link" data-link="${escapeHtml(item.url)}" type="button">Copy</button>
+          <strong>${label}</strong>
+          <code>${buildLink(page)}</code>
+          <button class="btn secondary copy-link" data-link="${buildLink(page)}" type="button">Copy</button>
         </div>
       `).join("")}
     </div>
@@ -353,13 +256,12 @@ function renderCompleteStep() {
     ${state.type === "demo" ? `<div class="demo-note"><strong>Demo Company:</strong> You can test calls, viewer updates, and display board updates. Admin setup changes are locked.</div>` : ""}
   `;
 
-  document.getElementById("showLinksBtn")?.addEventListener("click", showLinksModal);
-
   stepContent.querySelectorAll(".copy-link").forEach(btn => {
-    btn.addEventListener("click", () => copyText(btn.dataset.link || "", "Link copied."));
+    btn.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(btn.dataset.link);
+      setStatus("Link copied.", true);
+    });
   });
-
-  setTimeout(showLinksModal, 150);
 }
 
 function collectStepData() {
