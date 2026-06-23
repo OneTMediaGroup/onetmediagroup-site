@@ -4583,6 +4583,14 @@ body.theme-dark .analytics-severity-danger { color: #fca5a5 !important; }
   padding: 0 12px;
   font-weight: 800;
 }
+.dark-theme input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: 0.9;
+    cursor: pointer;
+}
+
+
+
 
 .analytics-custom-range .btn {
   min-height: 42px;
