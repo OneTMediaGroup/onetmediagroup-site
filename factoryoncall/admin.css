@@ -4255,20 +4255,25 @@ body.theme-light .analytics-detail-row {
 }
 
 
+/* Clean compact table for longest wait / resolution cards */
 .analytics-detail-table {
   width: 100%;
   max-width: 100%;
   overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  box-sizing: border-box;
 }
 
 .analytics-detail-header,
 .analytics-detail-data {
   display: grid;
-  grid-template-columns: minmax(95px, 1.25fr) minmax(120px, 1.4fr) minmax(72px, .85fr) minmax(64px, .65fr);
-  gap: 10px;
+  grid-template-columns: 28% 32% 22% 18%;
+  gap: 0;
   align-items: center;
   width: 100%;
   max-width: 100%;
+  box-sizing: border-box;
 }
 
 .analytics-detail-header {
@@ -4277,17 +4282,18 @@ body.theme-light .analytics-detail-row {
   border-radius: 14px 14px 0 0;
   background: var(--panel-soft);
   color: var(--text-muted);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 900;
-  letter-spacing: .18em;
+  letter-spacing: .12em;
   text-transform: uppercase;
 }
 
 .analytics-detail-data {
   min-width: 0;
-  padding: 11px 12px;
+  padding: 12px;
   border-bottom: 1px solid var(--border);
   background: var(--card-bg);
+  font-size: 14px;
 }
 
 .analytics-detail-data:nth-child(odd) {
@@ -4305,11 +4311,15 @@ body.theme-light .analytics-detail-row {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  padding-right: 10px;
 }
 
 .analytics-detail-header span:last-child,
 .analytics-detail-data span:last-child {
   text-align: right;
+  padding-right: 0;
+  overflow: visible;
+  text-overflow: clip;
 }
 
 .analytics-detail-data strong {
@@ -4319,12 +4329,17 @@ body.theme-light .analytics-detail-row {
 @media (max-width: 1280px) {
   .analytics-detail-header,
   .analytics-detail-data {
-    grid-template-columns: minmax(82px, 1.1fr) minmax(105px, 1.25fr) minmax(62px, .75fr) minmax(58px, .65fr);
-    gap: 8px;
+    grid-template-columns: 27% 31% 21% 21%;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 
   .analytics-detail-header {
-    font-size: 10px;
-    letter-spacing: .14em;
+    font-size: 9px;
+    letter-spacing: .1em;
+  }
+
+  .analytics-detail-data {
+    font-size: 13px;
   }
 }
