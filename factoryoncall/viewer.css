@@ -1130,3 +1130,65 @@ body.theme-light .dh-logo {
   .vh-logo.has-custom-logo{max-width:190px!important;max-height:56px!important;}
   .vh-company-name{font-size:16px!important;}
 }
+
+/* === PATCH 116: viewer authorization modal contrast === */
+.auth-modal {
+  background: rgba(2, 6, 23, 0.68) !important;
+  backdrop-filter: blur(7px) !important;
+}
+
+.auth-card {
+  color: var(--fg-text) !important;
+}
+
+.auth-card h3,
+.auth-card label {
+  color: var(--fg-text) !important;
+  opacity: 1 !important;
+}
+
+.auth-summary {
+  color: var(--fg-muted) !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] .auth-modal {
+  background: rgba(15, 23, 42, 0.58) !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .auth-card {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #d8e1ec !important;
+  box-shadow: 0 24px 70px rgba(15, 23, 42, 0.24) !important;
+}
+
+html[data-theme="light"] .auth-card h3,
+html[data-theme="light"] .auth-card label {
+  color: #0f172a !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] .auth-summary {
+  color: #526176 !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] .auth-card .viewer-input,
+html[data-theme="light"] .auth-card input {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .auth-card .btn-secondary {
+  background: #ffffff !important;
+  color: #172033 !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+html[data-theme="light"] .auth-card .btn-green {
+  color: #052e16 !important;
+}
