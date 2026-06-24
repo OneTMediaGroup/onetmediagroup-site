@@ -768,3 +768,95 @@ body.theme-light .dh-logo {
 .unlock-btn,.auth-toggle,.signin-btn,#unlockBtn{background:#fff!important;color:#0f172a!important;border:1px solid #cbd5e1!important;box-shadow:none!important}.theme-dark .unlock-btn,.theme-dark .auth-toggle,.theme-dark .signin-btn,.theme-dark #unlockBtn,html[data-theme="dark"] .unlock-btn,html[data-theme="dark"] .auth-toggle,html[data-theme="dark"] .signin-btn,html[data-theme="dark"] #unlockBtn{background:#020617!important;color:#e5e7eb!important;border-color:#475569!important}
 @media(max-height:760px){.call-panel{padding:14px 34px!important}.circle-wrapper{width:min(28vh,260px)!important;height:min(28vh,260px)!important;margin-bottom:12px!important}.role-grid{gap:8px!important}.role-btn{min-height:38px!important}.hint-text{margin-bottom:12px!important}.roles-title{font-size:22px!important;margin-bottom:10px!important}}
 @media(max-width:900px){.app-header{grid-template-columns:auto 1fr auto!important}.factory-logo.has-custom-logo{max-width:200px!important;max-height:58px!important}.header-center{max-width:44vw!important}.call-panel{height:auto!important;min-height:calc(100vh - 92px)!important;overflow:auto!important}.role-grid{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+
+
+/* === CALL STATION FINAL SMALL POLISH === */
+.lock-card{position:relative!important;}
+.lock-close-btn{
+  position:absolute!important;
+  top:12px!important;
+  right:12px!important;
+  width:34px!important;
+  height:34px!important;
+  border-radius:999px!important;
+  border:1px solid rgba(148,163,184,.45)!important;
+  background:rgba(15,23,42,.92)!important;
+  color:#e5e7eb!important;
+  font-size:22px!important;
+  line-height:1!important;
+  display:flex!important;
+  align-items:center!important;
+  justify-content:center!important;
+  cursor:pointer!important;
+  box-shadow:none!important;
+}
+html[data-theme="light"] .lock-close-btn,
+html[data-theme="bright"] .lock-close-btn,
+html[data-theme="neutral"] .lock-close-btn{
+  background:#ffffff!important;
+  color:#0f172a!important;
+  border-color:#cbd5e1!important;
+}
+.sign-in-btn,
+#signInBtn{
+  background:transparent!important;
+  color:var(--text-main)!important;
+  border:1px solid rgba(148,163,184,.55)!important;
+  box-shadow:none!important;
+  opacity:1!important;
+}
+html[data-theme="light"] .sign-in-btn,
+html[data-theme="bright"] .sign-in-btn,
+html[data-theme="neutral"] .sign-in-btn,
+html[data-theme="light"] #signInBtn,
+html[data-theme="bright"] #signInBtn,
+html[data-theme="neutral"] #signInBtn{
+  background:#ffffff!important;
+  color:#0f172a!important;
+  border-color:#cbd5e1!important;
+}
+html[data-theme="dark"] .sign-in-btn,
+html[data-theme="dark"] #signInBtn,
+body.theme-dark .sign-in-btn,
+body.theme-dark #signInBtn{
+  background:#020617!important;
+  color:#e5e7eb!important;
+  border-color:#475569!important;
+}
+.circle-inner{
+  overflow:hidden!important;
+  text-align:center!important;
+}
+.circle-label-main{
+  width:86%!important;
+  max-width:86%!important;
+  color:#fff!important;
+  line-height:1.05!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.32)!important;
+  overflow:hidden!important;
+  text-overflow:ellipsis!important;
+}
+.circle-label-sub{
+  width:86%!important;
+  max-width:86%!important;
+  color:#fff!important;
+  font-size:clamp(9px,1.15vw,12px)!important;
+  line-height:1.15!important;
+  letter-spacing:.08em!important;
+  text-shadow:0 2px 8px rgba(0,0,0,.32)!important;
+  overflow-wrap:break-word!important;
+  word-break:normal!important;
+}
+html[data-theme="light"] .circle-inner,
+html[data-theme="bright"] .circle-inner,
+html[data-theme="neutral"] .circle-inner{
+  background:linear-gradient(145deg,#0ea5e9,#2563eb)!important;
+}
+.roles-grid{display:grid!important;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))!important;gap:10px!important;width:min(100%,900px)!important;flex:0 0 auto!important;}
+.role-pill{min-height:42px!important;padding:8px 12px!important;}
+@media(max-height:760px){
+  .roles-grid{gap:8px!important;}
+  .role-pill{min-height:38px!important;}
+  .circle-label-main{font-size:20px!important;}
+  .circle-label-sub{font-size:10px!important;letter-spacing:.06em!important;}
+}

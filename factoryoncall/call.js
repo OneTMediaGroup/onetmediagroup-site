@@ -222,6 +222,7 @@ const COMPANY_ID = getActiveCompanyId();
   const lockUserId = document.getElementById("lockUserId");
   const lockPin = document.getElementById("lockPin");
   const unlockBtn = document.getElementById("unlockBtn");
+  const lockCloseBtn = document.getElementById("lockCloseBtn");
 
   let selectedRoles = [];
   let isLocked = false;
@@ -440,6 +441,23 @@ const COMPANY_ID = getActiveCompanyId();
   });
 
   signInBtn?.addEventListener("click", () => openLockOverlay());
+  lockCloseBtn?.addEventListener("click", () => closeLockOverlay());
+  lockOverlay?.addEventListener("click", event => {
+    if (event.target === lockOverlay) closeLockOverlay();
+  });
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape" && lockOverlay && !lockOverlay.classList.contains("hidden")) {
+      closeLockOverlay();
+    }
+  });
+
+  function closeLockOverlay() {
+    if (!lockOverlay) return;
+    lockOverlay.classList.add("hidden");
+    if (lockUserId) lockUserId.value = "";
+    if (lockPin) lockPin.value = "";
+    activeLockField = "user";
+  }
 
   function openLockOverlay() {
     if (!lockOverlay || !lockUserId || !lockPin) return;
