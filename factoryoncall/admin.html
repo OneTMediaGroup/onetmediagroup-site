@@ -4,14 +4,17 @@
     <meta charset="UTF-8" />
     <title>Factory On Call – Admin Panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="admin.css?v=20260622-analytics-table4" />
-    <link rel="stylesheet" href="admin-theme-solid.css?v=20260622-analytics-table4" />
+    <link rel="stylesheet" href="admin.css?v=20260624-mobile-admin-pass" />
+    <link rel="stylesheet" href="admin-theme-solid.css?v=20260624-mobile-admin-pass" />
 </head>
 <body>
 <div id="app-root">
 
+    <button id="mobileMenuBtn" class="mobile-menu-btn" type="button" aria-label="Open navigation" aria-controls="adminSidebar" aria-expanded="false">☰</button>
+    <div id="sidebarBackdrop" class="sidebar-backdrop" aria-hidden="true"></div>
+
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside id="adminSidebar" class="sidebar" aria-label="Admin navigation">
         <div class="sidebar-header">
             <div class="brand-title">Factory On Call</div>
             <div class="brand-subtitle">Admin Panel</div>

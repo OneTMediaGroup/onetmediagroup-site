@@ -4840,6 +4840,55 @@ stationFormReset?.addEventListener("click", resetStationForm);
     if (target) new MutationObserver(queue).observe(target, { childList: true, subtree: true });
   }
 
+
+
+  // ---------- MOBILE ADMIN DRAWER ----------
+  function initMobileAdminDrawer() {
+    const menuBtn = document.getElementById("mobileMenuBtn");
+    const backdrop = document.getElementById("sidebarBackdrop");
+    const sidebar = document.getElementById("adminSidebar") || document.querySelector(".sidebar");
+
+    function setOpen(open) {
+      document.body.classList.toggle("sidebar-open", !!open);
+      if (menuBtn) {
+        menuBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        menuBtn.textContent = open ? "×" : "☰";
+        menuBtn.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+      }
+    }
+
+    if (menuBtn) {
+      menuBtn.addEventListener("click", () => {
+        setOpen(!document.body.classList.contains("sidebar-open"));
+      });
+    }
+
+    if (backdrop) {
+      backdrop.addEventListener("click", () => setOpen(false));
+    }
+
+    if (sidebar) {
+      sidebar.addEventListener("click", event => {
+        const target = event.target;
+        if (target && target.closest && target.closest(".nav-item")) {
+          if (window.matchMedia("(max-width: 1100px)").matches) {
+            setOpen(false);
+          }
+        }
+      });
+    }
+
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") setOpen(false);
+    });
+
+    window.addEventListener("resize", () => {
+      if (!window.matchMedia("(max-width: 1100px)").matches) {
+        setOpen(false);
+      }
+    });
+  }
+
   // ---------- BOOT ----------
   async function boot() {
     ensureDashboardTableStyles();
@@ -4847,6 +4896,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
     await loadCompanyBranding();
     renderDemoNoticeIfNeeded();
     initTabs();
+    initMobileAdminDrawer();
     installThemeRepaintObserver();
     forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark");
     initSidebarLinks();
