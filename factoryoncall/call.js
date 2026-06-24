@@ -472,11 +472,47 @@ const COMPANY_ID = getActiveCompanyId();
     lockPin.value = "";
     activeLockField = "user";
     lockOverlay.classList.remove("hidden");
+
+    setTimeout(() => lockUserId.focus(), 50);
+  }
+
+  function sanitizeLockInput(input, maxLength = 24) {
+    if (!input) return;
+    input.value = String(input.value || "").replace(/\s+/g, "").slice(0, maxLength);
+  }
+
+  function appendLockKey(value) {
+    const target = activeLockField === "user" ? lockUserId : lockPin;
+    if (!target) return;
+
+    const maxLength = activeLockField === "user" ? 24 : 12;
+    target.value = `${target.value || ""}${value}`.slice(0, maxLength);
+    target.focus();
   }
 
   function wireKeypad() {
+    lockUserId?.addEventListener("focus", () => (activeLockField = "user"));
+    lockPin?.addEventListener("focus", () => (activeLockField = "pin"));
     lockUserId?.addEventListener("click", () => (activeLockField = "user"));
     lockPin?.addEventListener("click", () => (activeLockField = "pin"));
+
+    lockUserId?.addEventListener("input", () => sanitizeLockInput(lockUserId, 24));
+    lockPin?.addEventListener("input", () => sanitizeLockInput(lockPin, 12));
+
+    lockUserId?.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        activeLockField = "pin";
+        lockPin?.focus();
+      }
+    });
+
+    lockPin?.addEventListener("keydown", event => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        unlockBtn?.click();
+      }
+    });
 
     document.querySelectorAll(".lock-keypad button").forEach(btn => {
       const key = btn.dataset.key;
@@ -487,11 +523,13 @@ const COMPANY_ID = getActiveCompanyId();
         if (!target) return;
 
         if (key) {
-          if (target.value.length < 4) target.value += key;
+          appendLockKey(key);
         } else if (action === "clear") {
           target.value = "";
+          target.focus();
         } else if (action === "backspace") {
           target.value = target.value.slice(0, -1);
+          target.focus();
         }
       });
     });
