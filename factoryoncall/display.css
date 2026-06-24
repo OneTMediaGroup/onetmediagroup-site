@@ -1261,3 +1261,106 @@ body.theme-light .dh-logo {
     box-sizing: border-box !important;
   }
 }
+
+/* =========================================================
+   PRODUCTION DISPLAY MOBILE READABILITY PASS 3
+   - no header-only/grey empty looking cards on phones
+   - preserve full data in simple stacked cards
+   ========================================================= */
+@media (max-width: 760px) {
+  .scroll-area {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 16px !important;
+    padding-bottom: 170px !important;
+  }
+
+  .call-card {
+    display: block !important;
+    padding: 20px !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    border: 1px solid #d7dee8 !important;
+    box-shadow: 0 12px 28px rgba(15,23,42,.10) !important;
+    overflow: visible !important;
+  }
+
+  .call-main,
+  #display-root.compact .call-main {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 18px 18px !important;
+    align-items: start !important;
+  }
+
+  .call-field {
+    min-width: 0 !important;
+    display: block !important;
+  }
+
+  .field-label,
+  #display-root.compact .field-label {
+    display: block !important;
+    margin-bottom: 6px !important;
+    font-size: 12px !important;
+    line-height: 1.15 !important;
+    color: #64748b !important;
+    letter-spacing: .16em !important;
+    text-transform: uppercase !important;
+    white-space: normal !important;
+  }
+
+  .field-value,
+  #display-root.compact .field-value {
+    display: block !important;
+    color: #0f172a !important;
+    font-size: 22px !important;
+    line-height: 1.15 !important;
+    font-weight: 900 !important;
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    max-width: 100% !important;
+  }
+
+  .status-field {
+    grid-column: 1 / -1 !important;
+    text-align: left !important;
+  }
+
+  .status-note {
+    color: #64748b !important;
+    margin-top: 8px !important;
+    font-size: 15px !important;
+  }
+
+  .status-pill,
+  #display-root.compact .status-pill {
+    width: auto !important;
+    max-width: 100% !important;
+    color: #06210f !important;
+    font-size: 18px !important;
+    line-height: 1.15 !important;
+  }
+
+  body.dark .call-card,
+  html[data-theme="dark"] .call-card,
+  #display-root.theme-dark .call-card {
+    background: rgba(15,23,42,.92) !important;
+    color: #f8fafc !important;
+    border-color: rgba(148,163,184,.22) !important;
+  }
+  body.dark .field-value,
+  html[data-theme="dark"] .field-value,
+  #display-root.theme-dark .field-value {
+    color: #f8fafc !important;
+  }
+  body.dark .field-label,
+  html[data-theme="dark"] .field-label,
+  #display-root.theme-dark .field-label,
+  body.dark .status-note,
+  html[data-theme="dark"] .status-note,
+  #display-root.theme-dark .status-note {
+    color: #94a3b8 !important;
+  }
+}

@@ -5044,3 +5044,121 @@ body.theme-light .sidebar-backdrop {
     white-space: nowrap !important;
   }
 }
+
+/* =========================================================
+   MOBILE POLISH PASS 3 — hamburger, light tables, pills
+   ========================================================= */
+@media (max-width: 820px) {
+  /* Keep the hamburger in the header zone instead of floating over cards/data. */
+  .mobile-menu-btn,
+  #mobileMenuBtn {
+    position: fixed !important;
+    top: 12px !important;
+    left: 12px !important;
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 999px !important;
+    z-index: 1600 !important;
+  }
+
+  .topbar {
+    min-height: 68px !important;
+    padding: 12px 58px !important;
+  }
+
+  .topbar-left h1 {
+    max-width: 62vw !important;
+    margin: 0 auto !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .main .tab {
+    padding: 22px 14px 18px !important;
+  }
+
+  /* Mobile table wells: keep horizontal scrolling but avoid clipped-looking cards. */
+  .table-wrapper {
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    border-radius: 18px !important;
+  }
+
+  .roles-table,
+  .users-table,
+  #tab-logs .table,
+  .stations-table,
+  .areas-table,
+  .table {
+    min-width: 760px !important;
+  }
+
+  #tab-roles .roles-table th,
+  #tab-roles .roles-table td,
+  #tab-users .users-table th,
+  #tab-users .users-table td,
+  #tab-logs .table th,
+  #tab-logs .table td {
+    padding: 12px 16px !important;
+    vertical-align: middle !important;
+  }
+
+  #tab-logs .filters input[type="date"] {
+    min-height: 52px !important;
+    color: #111827 !important;
+  }
+
+  #tab-logs .filters input[type="date"]:before {
+    content: attr(aria-label);
+    color: #64748b;
+    margin-right: 8px;
+  }
+
+  #tab-logs .filters input[type="date"]:valid:before {
+    content: "";
+    margin: 0;
+  }
+}
+
+/* Light mode pill/readability fix — removes washed-out mobile pills. */
+html[data-theme="light"] .permission-pill,
+html[data-theme="bright"] .permission-pill,
+body.theme-light .permission-pill {
+  background: #e0f2fe !important;
+  color: #075985 !important;
+  border-color: #7dd3fc !important;
+  opacity: 1 !important;
+}
+html[data-theme="light"] .permission-pill.strong,
+html[data-theme="bright"] .permission-pill.strong,
+body.theme-light .permission-pill.strong {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #86efac !important;
+}
+html[data-theme="light"] .permission-pill.system,
+html[data-theme="bright"] .permission-pill.system,
+body.theme-light .permission-pill.system {
+  background: #f3e8ff !important;
+  color: #6b21a8 !important;
+  border-color: #d8b4fe !important;
+}
+html[data-theme="light"] .role-pill,
+html[data-theme="bright"] .role-pill,
+body.theme-light .role-pill {
+  background: #e0f2fe !important;
+  color: #075985 !important;
+  border-color: #7dd3fc !important;
+  opacity: 1 !important;
+}
+html[data-theme="light"] .status-pill.active,
+html[data-theme="bright"] .status-pill.active,
+body.theme-light .status-pill.active {
+  background: #dcfce7 !important;
+  color: #166534 !important;
+  border-color: #86efac !important;
+  opacity: 1 !important;
+}
