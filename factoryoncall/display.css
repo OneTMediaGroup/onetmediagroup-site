@@ -1118,3 +1118,79 @@ body.theme-light .dh-logo {
   .dh-center { max-width: 32vw !important; }
   .dh-right { gap: 8px !important; }
 }
+
+/* =========================================================
+   PRODUCTION DISPLAY MOBILE LIGHT LAYOUT CLEANUP — 20260624
+   ========================================================= */
+@media (max-width: 760px) {
+  html, body { overflow: hidden !important; }
+  #display-root { height: 100vh !important; overflow: hidden !important; }
+
+  .display-header {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-areas: "name" "controls" !important;
+    min-height: auto !important;
+    height: auto !important;
+    padding: 12px 14px !important;
+    row-gap: 10px !important;
+    text-align: center !important;
+  }
+  .dh-left { display: none !important; }
+  .dh-center {
+    grid-area: name !important;
+    position: static !important;
+    transform: none !important;
+    justify-self: center !important;
+    max-width: 100% !important;
+  }
+  .dh-right {
+    grid-area: controls !important;
+    justify-self: center !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+  }
+  .dh-company-name { font-size: 20px !important; max-width: 100% !important; }
+  .dh-status-dot { width: 13px !important; height: 13px !important; }
+  #connLabel { font-size: 18px !important; }
+  #clockLabel { font-size: 16px !important; }
+  #fullscreenBtn { min-height: 40px !important; padding: 8px 12px !important; }
+
+  .display-section { padding: 18px 14px 0 !important; }
+  .section-topline { flex-direction: column !important; align-items: center !important; text-align: center !important; gap: 14px !important; }
+  .section-title { font-size: 34px !important; margin-bottom: 4px !important; }
+  .display-options { justify-content: center !important; width: 100% !important; gap: 10px !important; }
+  .display-options label { width: 100% !important; justify-content: center !important; }
+  .display-options select { min-width: 0 !important; width: min(310px, 100%) !important; }
+
+  .scroll-area { overflow-x: hidden !important; padding-right: 0 !important; gap: 16px !important; }
+  .call-card { padding: 18px !important; border-radius: 20px !important; }
+  .call-main {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 16px 18px !important;
+    align-items: start !important;
+  }
+  .field-label { font-size: 12px !important; letter-spacing: .16em !important; }
+  .field-value { font-size: 21px !important; white-space: normal !important; overflow: visible !important; text-overflow: clip !important; }
+  .area-field .field-value,
+  .caller-field .field-value,
+  .time-field .field-value { font-size: 19px !important; }
+  .status-field { grid-column: 1 / -1 !important; text-align: left !important; }
+  .status-pill {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    padding: 10px 16px !important;
+    font-size: 18px !important;
+    white-space: normal !important;
+    text-align: center !important;
+  }
+
+  .stats-footer { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 12px !important; padding: 12px 14px !important; }
+  .stat-box, .summary-card { min-width: 0 !important; padding: 14px !important; }
+  .stat-label, .metric-label { font-size: 12px !important; }
+  .stat-value, .metric-value { font-size: 30px !important; }
+}
