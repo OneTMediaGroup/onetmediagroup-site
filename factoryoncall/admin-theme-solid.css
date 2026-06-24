@@ -1235,3 +1235,79 @@ body.theme-light #tab-users .user-form-card select:focus {
     opacity: 1 !important;
   }
 }
+
+
+/* === Mobile analytics detail table edge fix ===
+   Keeps Longest Wait / Longest Resolution tables inside the card on phones.
+   This prevents the table from opening horizontally scrolled/cut off like the Users table issue. */
+@media (max-width: 700px) {
+  .analytics-full-width-section .analytics-wide-card {
+    overflow: hidden !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-table {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-header,
+  .analytics-full-width-section .analytics-detail-data {
+    min-width: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.05fr) minmax(58px, .7fr) minmax(54px, .55fr) !important;
+    column-gap: 6px !important;
+    padding-left: 8px !important;
+    padding-right: 8px !important;
+    box-sizing: border-box !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-header span,
+  .analytics-full-width-section .analytics-detail-data span {
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    padding-right: 3px !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-header span {
+    font-size: 9px !important;
+    letter-spacing: .09em !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-data {
+    font-size: 12px !important;
+    min-height: 48px !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-data strong {
+    font-size: 12px !important;
+  }
+
+  .analytics-full-width-section .analytics-detail-header span:last-child,
+  .analytics-full-width-section .analytics-detail-data span:last-child {
+    text-align: right !important;
+    overflow: hidden !important;
+    text-overflow: clip !important;
+    padding-right: 0 !important;
+  }
+
+  .analytics-full-width-section .analytics-severity {
+    min-width: 46px !important;
+    max-width: 54px !important;
+    padding: 5px 5px !important;
+    font-size: 10.5px !important;
+    white-space: nowrap !important;
+  }
+}
