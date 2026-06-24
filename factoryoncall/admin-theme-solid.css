@@ -1162,3 +1162,76 @@ body.theme-light .analytics-card .analytics-detail-data:nth-child(even) {
   border-color: #38bdf8 !important;
   box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
 }
+
+/* ISSUE 3 PATCH — Users tab light/mobile input boxes should be white/readable */
+html[data-theme="light"] #tab-users #userSearch,
+html[data-theme="light"] #tab-users #userRoleFilter,
+html[data-theme="light"] #tab-users .user-form-card input,
+html[data-theme="light"] #tab-users .user-form-card select,
+html[data-theme="bright"] #tab-users #userSearch,
+html[data-theme="bright"] #tab-users #userRoleFilter,
+html[data-theme="bright"] #tab-users .user-form-card input,
+html[data-theme="bright"] #tab-users .user-form-card select,
+body.theme-light #tab-users #userSearch,
+body.theme-light #tab-users #userRoleFilter,
+body.theme-light #tab-users .user-form-card input,
+body.theme-light #tab-users .user-form-card select {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color-scheme: light !important;
+}
+
+html[data-theme="light"] #tab-users #userSearch::placeholder,
+html[data-theme="light"] #tab-users .user-form-card input::placeholder,
+html[data-theme="bright"] #tab-users #userSearch::placeholder,
+html[data-theme="bright"] #tab-users .user-form-card input::placeholder,
+body.theme-light #tab-users #userSearch::placeholder,
+body.theme-light #tab-users .user-form-card input::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] #tab-users #userSearch:focus,
+html[data-theme="light"] #tab-users #userRoleFilter:focus,
+html[data-theme="light"] #tab-users .user-form-card input:focus,
+html[data-theme="light"] #tab-users .user-form-card select:focus,
+html[data-theme="bright"] #tab-users #userSearch:focus,
+html[data-theme="bright"] #tab-users #userRoleFilter:focus,
+html[data-theme="bright"] #tab-users .user-form-card input:focus,
+html[data-theme="bright"] #tab-users .user-form-card select:focus,
+body.theme-light #tab-users #userSearch:focus,
+body.theme-light #tab-users #userRoleFilter:focus,
+body.theme-light #tab-users .user-form-card input:focus,
+body.theme-light #tab-users .user-form-card select:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
+}
+
+@media (max-width: 820px) {
+  #tab-users #userSearch,
+  #tab-users #userRoleFilter,
+  #tab-users .user-form-card input,
+  #tab-users .user-form-card select {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    border: 1px solid #cbd5e1 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    color-scheme: light !important;
+  }
+
+  #tab-users #userSearch::placeholder,
+  #tab-users .user-form-card input::placeholder {
+    color: #64748b !important;
+    -webkit-text-fill-color: #64748b !important;
+    opacity: 1 !important;
+  }
+}
