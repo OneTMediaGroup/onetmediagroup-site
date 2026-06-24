@@ -5540,3 +5540,66 @@ body.theme-light .role-simple-form .role-check-row {
     opacity: 1 !important;
   }
 }
+
+/* =========================================================
+   USERS MOBILE TABLE EDGE FIX — keep action buttons from clipping
+   The Users table is intentionally wider than the phone screen.
+   This gives the horizontal scroller breathing room on both edges
+   and lets the Print/Edit/Archive action cell render fully.
+   ========================================================= */
+@media (max-width: 820px) {
+  #tab-users .table-wrapper {
+    padding: 0 14px 12px !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    -webkit-overflow-scrolling: touch !important;
+    scroll-padding-inline: 14px !important;
+  }
+
+  #tab-users .users-table {
+    min-width: 940px !important;
+    width: 940px !important;
+    table-layout: fixed !important;
+  }
+
+  #tab-users .users-table th,
+  #tab-users .users-table td {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  #tab-users .users-table th:nth-child(1),
+  #tab-users .users-table td:nth-child(1) { width: 52px !important; }
+  #tab-users .users-table th:nth-child(2),
+  #tab-users .users-table td:nth-child(2) { width: 210px !important; }
+  #tab-users .users-table th:nth-child(3),
+  #tab-users .users-table td:nth-child(3) { width: 160px !important; }
+  #tab-users .users-table th:nth-child(4),
+  #tab-users .users-table td:nth-child(4) { width: 120px !important; }
+  #tab-users .users-table th:nth-child(5),
+  #tab-users .users-table td:nth-child(5) { width: 130px !important; }
+  #tab-users .users-table th:nth-child(6),
+  #tab-users .users-table td:nth-child(6) { width: 268px !important; }
+
+  #tab-users .users-table td.user-actions {
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+    padding-right: 18px !important;
+  }
+
+  #tab-users .user-actions {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    min-width: max-content !important;
+  }
+
+  #tab-users .user-actions .btn {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+}
