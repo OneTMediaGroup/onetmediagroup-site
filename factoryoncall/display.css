@@ -1364,3 +1364,94 @@ body.theme-light .dh-logo {
     color: #94a3b8 !important;
   }
 }
+
+/* =========================================================
+   PRODUCTION DISPLAY MOBILE HEADER + CARD TEXT FIT PASS
+   - tighter phone header
+   - prevent single words like Maintenance from breaking oddly
+   ========================================================= */
+@media (max-width: 760px) {
+  .display-header {
+    padding: 14px 14px 16px !important;
+    row-gap: 8px !important;
+  }
+
+  .dh-company-name {
+    font-size: 21px !important;
+    line-height: 1.15 !important;
+    font-weight: 850 !important;
+    max-width: 92vw !important;
+  }
+
+  .dh-right {
+    gap: 10px !important;
+    line-height: 1 !important;
+  }
+
+  .dh-clock {
+    font-size: 16px !important;
+    color: #64748b !important;
+  }
+
+  #connLabel {
+    font-size: 19px !important;
+    font-weight: 800 !important;
+  }
+
+  #fullscreenBtn {
+    min-height: 38px !important;
+    padding: 7px 14px !important;
+    font-size: 14px !important;
+    border-radius: 999px !important;
+  }
+
+  .call-main,
+  #display-root.compact .call-main {
+    grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr) !important;
+    column-gap: 18px !important;
+    row-gap: 18px !important;
+  }
+
+  .field-value,
+  #display-root.compact .field-value {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+  }
+
+  .help-field .field-value,
+  #display-root.compact .help-field .field-value {
+    font-size: 20px !important;
+    line-height: 1.18 !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+  }
+
+  .station-field .field-value,
+  #display-root.compact .station-field .field-value {
+    font-size: 22px !important;
+    line-height: 1.15 !important;
+  }
+
+  .area-field .field-value,
+  .caller-field .field-value,
+  .time-field .field-value,
+  #display-root.compact .area-field .field-value,
+  #display-root.compact .caller-field .field-value,
+  #display-root.compact .time-field .field-value {
+    font-size: 19px !important;
+    line-height: 1.18 !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .call-card { padding: 16px !important; }
+  .call-main,
+  #display-root.compact .call-main {
+    column-gap: 14px !important;
+  }
+  .help-field .field-value,
+  #display-root.compact .help-field .field-value {
+    font-size: 19px !important;
+  }
+}
