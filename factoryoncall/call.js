@@ -353,7 +353,7 @@ const COMPANY_ID = getActiveCompanyId();
       const c = doc.data() || {};
       return (
         c.station === STATION_NAME &&
-        c.status === "waiting"
+        (c.status === "waiting" || c.status === "ack" || c.status === "acknowledged")
       );
     });
 
@@ -374,13 +374,13 @@ const COMPANY_ID = getActiveCompanyId();
         .map(d => ({ id: d.id, ...d.data() }))
         .filter(c =>
           c.station === STATION_NAME &&
-          c.status === "waiting"
+          (c.status === "waiting" || c.status === "ack" || c.status === "acknowledged")
         )
         .sort((a, b) => (b.timeStarted || 0) - (a.timeStarted || 0))[0];
 
       if (!active) {
-        // Remote acknowledge or close clears the station back to service.
-        // Only waiting calls should lock this button screen.
+        // Only a remote close clears the station back to service.
+        // Waiting and acknowledged calls both keep this button screen locked.
         isLocked = false;
         selectedRoles = [];
         document.querySelectorAll(".role-pill").forEach(p => p.classList.remove("selected"));
@@ -393,7 +393,8 @@ const COMPANY_ID = getActiveCompanyId();
 
       isLocked = true;
       updateLockVisuals();
-      setCallState("pending");
+      const activeStatus = String(active.status || "").toLowerCase();
+      setCallState(activeStatus === "ack" || activeStatus === "acknowledged" ? "ack" : "pending");
     });
   }
 
@@ -402,7 +403,8 @@ const COMPANY_ID = getActiveCompanyId();
 
     const existing = await findActiveCallForStation();
     if (existing) {
-      setCallState("pending");
+      const existingStatus = String(existing.data()?.status || "").toLowerCase();
+      setCallState(existingStatus === "ack" || existingStatus === "acknowledged" ? "ack" : "pending");
       isLocked = true;
       updateLockVisuals();
       return;
