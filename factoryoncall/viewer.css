@@ -1192,3 +1192,44 @@ html[data-theme="light"] .auth-card .btn-secondary {
 html[data-theme="light"] .auth-card .btn-green {
   color: #052e16 !important;
 }
+
+/* =========================================================
+   VIEWER PHONE CLEANUP PASS 2 — 20260624
+   ========================================================= */
+@media (max-width: 760px) {
+  html, body, #viewer-root {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .viewer-header,
+  .viewer-main,
+  .viewer-panel,
+  .viewer-card,
+  .call-card,
+  .viewer-list {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .viewer-header {
+    padding: 14px 18px !important;
+    gap: 10px !important;
+  }
+
+  .viewer-header .company-logo,
+  .viewer-header img.company-logo,
+  #companyLogoImg {
+    display: none !important;
+  }
+
+  .call-card {
+    overflow: hidden !important;
+  }
+
+  .call-card * {
+    max-width: 100% !important;
+  }
+}

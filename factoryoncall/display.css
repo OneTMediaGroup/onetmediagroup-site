@@ -1194,3 +1194,70 @@ body.theme-light .dh-logo {
   .stat-label, .metric-label { font-size: 12px !important; }
   .stat-value, .metric-value { font-size: 30px !important; }
 }
+
+/* =========================================================
+   PRODUCTION DISPLAY PHONE CLEANUP PASS 2 — 20260624
+   ========================================================= */
+@media (max-width: 760px) {
+  html, body {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  #display-root {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .display-section,
+  .scroll-area,
+  .call-card {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .scroll-area {
+    padding-left: 14px !important;
+    padding-right: 14px !important;
+  }
+
+  .call-card {
+    overflow: hidden !important;
+  }
+
+  .call-main {
+    grid-template-columns: 1fr 1fr !important;
+    gap: 18px 18px !important;
+  }
+
+  .field-value,
+  .station-value,
+  .station-name {
+    max-width: 100% !important;
+    overflow-wrap: anywhere !important;
+    word-break: normal !important;
+  }
+
+  .status-field {
+    grid-column: 1 / -1 !important;
+  }
+
+  .status-pill {
+    display: inline-flex !important;
+    max-width: 100% !important;
+    width: auto !important;
+    overflow-wrap: anywhere !important;
+  }
+
+  .stats-footer,
+  .bottom-bar {
+    left: 0 !important;
+    right: 0 !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+}

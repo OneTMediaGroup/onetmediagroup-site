@@ -731,3 +731,37 @@ body.theme-light .dh-logo {
   .actions { justify-content: stretch !important; }
   .actions .btn { flex: 1 1 auto !important; min-height: 44px !important; }
 }
+
+/* =========================================================
+   SUPERVISOR PHONE CLEANUP PASS 2 — 20260624
+   ========================================================= */
+@media (max-width: 760px) {
+  html, body, #supervisor-root {
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: hidden !important;
+  }
+
+  .topbar-right .company-logo,
+  img.company-logo {
+    display: none !important;
+  }
+
+  .supervisor-main,
+  .card,
+  .call-card,
+  .table-wrapper,
+  .stats-grid {
+    width: 100% !important;
+    max-width: 100% !important;
+    box-sizing: border-box !important;
+  }
+
+  .portal-user,
+  .user-pill {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+}
