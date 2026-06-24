@@ -353,7 +353,7 @@ const COMPANY_ID = getActiveCompanyId();
       const c = doc.data() || {};
       return (
         c.station === STATION_NAME &&
-        (c.status === "waiting" || c.status === "ack")
+        c.status === "waiting"
       );
     });
 
@@ -374,22 +374,26 @@ const COMPANY_ID = getActiveCompanyId();
         .map(d => ({ id: d.id, ...d.data() }))
         .filter(c =>
           c.station === STATION_NAME &&
-          (c.status === "waiting" || c.status === "ack")
+          c.status === "waiting"
         )
         .sort((a, b) => (b.timeStarted || 0) - (a.timeStarted || 0))[0];
 
       if (!active) {
-        if (lockOverlay && !lockOverlay.classList.contains("hidden")) return;
-        if (!isLocked) {
-          setCallState("idle");
-          updateSendButton();
-        }
+        // Remote acknowledge or close clears the station back to service.
+        // Only waiting calls should lock this button screen.
+        isLocked = false;
+        selectedRoles = [];
+        document.querySelectorAll(".role-pill").forEach(p => p.classList.remove("selected"));
+        closeLockOverlay();
+        setCallState("idle");
+        updateLockVisuals();
+        updateSendButton();
         return;
       }
 
       isLocked = true;
       updateLockVisuals();
-      setCallState(active.status === "ack" ? "ack" : "pending");
+      setCallState("pending");
     });
   }
 
@@ -398,7 +402,7 @@ const COMPANY_ID = getActiveCompanyId();
 
     const existing = await findActiveCallForStation();
     if (existing) {
-      setCallState(existing.data()?.status === "ack" ? "ack" : "pending");
+      setCallState("pending");
       isLocked = true;
       updateLockVisuals();
       return;
