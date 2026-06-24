@@ -1134,3 +1134,31 @@ body.theme-light .analytics-card .analytics-detail-data:nth-child(even) {
     gap: 6px !important;
   }
 }
+
+/* ISSUE 2 PATCH — Roles search field must stay light/readable in light mobile admin */
+#tab-roles #roleSearch,
+#tab-roles #roleSearch.table-search,
+#roleSearch,
+#roleSearch.table-search {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+  outline: none !important;
+  color-scheme: light !important;
+}
+
+#tab-roles #roleSearch::placeholder,
+#roleSearch::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+}
+
+#tab-roles #roleSearch:focus,
+#roleSearch:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
+}
