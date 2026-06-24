@@ -4911,3 +4911,22 @@ stationFormReset?.addEventListener("click", resetStationForm);
     boot();
   }
 })();
+
+// Mobile Safari date inputs can render empty date fields as blank boxes.
+// Keep a class on the Call Logs date labels so CSS can show/hide the fake placeholder.
+(function wireMobileCallLogDatePlaceholders() {
+  function refresh() {
+    document.querySelectorAll('#tab-logs .log-date-field').forEach((field) => {
+      const input = field.querySelector('input[type="date"]');
+      if (!input) return;
+      field.classList.toggle('has-value', Boolean(input.value));
+      input.addEventListener('input', () => field.classList.toggle('has-value', Boolean(input.value)), { once: false });
+      input.addEventListener('change', () => field.classList.toggle('has-value', Boolean(input.value)), { once: false });
+    });
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', refresh, { once: true });
+  } else {
+    refresh();
+  }
+})();

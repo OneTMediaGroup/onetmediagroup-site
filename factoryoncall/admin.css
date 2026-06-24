@@ -5391,3 +5391,76 @@ body.theme-light #tab-logs .filters input::placeholder {
     gap: 6px !important;
   }
 }
+
+/* =========================================================
+   ISSUE 1 V3 — Real iPhone date placeholder visibility
+   iOS Safari often renders empty <input type="date"> as a blank box.
+   This adds a visible fake placeholder that sits inside the date field
+   until a date value exists, while keeping the native picker working.
+   ========================================================= */
+@media (max-width: 820px) {
+  #tab-logs .log-date-field {
+    position: relative !important;
+  }
+
+  #tab-logs .log-date-field input[type="date"] {
+    position: relative !important;
+    z-index: 1 !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    caret-color: #0f172a !important;
+    background-color: #ffffff !important;
+  }
+
+  #tab-logs .log-date-field input[type="date"]::-webkit-date-and-time-value,
+  #tab-logs .log-date-field input[type="date"]::-webkit-datetime-edit,
+  #tab-logs .log-date-field input[type="date"]::-webkit-datetime-edit-fields-wrapper,
+  #tab-logs .log-date-field input[type="date"]::-webkit-datetime-edit-text,
+  #tab-logs .log-date-field input[type="date"]::-webkit-datetime-edit-month-field,
+  #tab-logs .log-date-field input[type="date"]::-webkit-datetime-edit-day-field,
+  #tab-logs .log-date-field input[type="date"]::-webkit-datetime-edit-year-field {
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    opacity: 1 !important;
+  }
+
+  #tab-logs .log-date-field input[type="date"]::-webkit-calendar-picker-indicator {
+    opacity: 1 !important;
+    display: block !important;
+    filter: none !important;
+  }
+
+  #tab-logs .log-date-field::after {
+    content: "yyyy-mm-dd";
+    position: absolute !important;
+    left: 88px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    font-size: 16px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0 !important;
+    text-transform: none !important;
+    line-height: 1 !important;
+    opacity: 1 !important;
+  }
+
+  #tab-logs .log-date-field.has-value::after,
+  #tab-logs .log-date-field:focus-within::after {
+    display: none !important;
+    content: none !important;
+  }
+}
+
+@media (max-width: 420px) {
+  #tab-logs .log-date-field::after {
+    left: 18px !important;
+    top: auto !important;
+    bottom: 20px !important;
+    transform: none !important;
+    font-size: 18px !important;
+  }
+}
