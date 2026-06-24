@@ -1455,3 +1455,102 @@ body.theme-light .dh-logo {
     font-size: 19px !important;
   }
 }
+
+/* =========================================================
+   PRODUCTION DISPLAY MOBILE BOTTOM STATS FIT PASS
+   - keep all four bottom summary boxes visible in phone Chrome
+   - make cards uniform and compact without clipping
+   ========================================================= */
+@media (max-width: 760px) {
+  html,
+  body,
+  #display-root {
+    height: 100dvh !important;
+    min-height: 100dvh !important;
+  }
+
+  @supports not (height: 100dvh) {
+    html,
+    body,
+    #display-root {
+      height: 100svh !important;
+      min-height: 100svh !important;
+    }
+  }
+
+  .display-section {
+    min-height: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .scroll-area {
+    padding-bottom: 12px !important;
+  }
+
+  .bottom-bar {
+    flex: 0 0 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+    padding: 8px 8px calc(8px + env(safe-area-inset-bottom)) !important;
+    align-items: stretch !important;
+    background: rgba(238, 243, 248, .98) !important;
+  }
+
+  .stat-box {
+    min-width: 0 !important;
+    min-height: 86px !important;
+    height: 86px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 14px !important;
+    padding: 8px 4px !important;
+    overflow: hidden !important;
+  }
+
+  .stat-title {
+    margin: 0 0 4px !important;
+    font-size: 10px !important;
+    line-height: 1.15 !important;
+    letter-spacing: .12em !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  .stat-value {
+    margin: 0 !important;
+    font-size: 24px !important;
+    line-height: 1 !important;
+  }
+
+  .stat-desc {
+    display: none !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .bottom-bar {
+    gap: 6px !important;
+    padding-left: 6px !important;
+    padding-right: 6px !important;
+  }
+
+  .stat-box {
+    height: 78px !important;
+    min-height: 78px !important;
+    border-radius: 12px !important;
+  }
+
+  .stat-title {
+    font-size: 9px !important;
+    letter-spacing: .10em !important;
+  }
+
+  .stat-value {
+    font-size: 22px !important;
+  }
+}
