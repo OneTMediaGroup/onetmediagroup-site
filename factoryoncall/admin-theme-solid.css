@@ -817,3 +817,158 @@ body.theme-light .analytics-card .analytics-detail-data:nth-child(even) {
     font-size: 13px !important;
   }
 }
+
+
+/* =========================================================
+   Final admin polish overrides - 2026-06-23
+   Fixes role/user table overlap after CSS cleanup and restores
+   clear branding controls without disturbing analytics/layouts.
+   ========================================================= */
+
+/* Keep the admin header logo useful but stop it from squeezing status text. */
+.topbar-right {
+  min-width: 260px;
+  justify-content: flex-end;
+  gap: 12px;
+  overflow: visible;
+}
+.company-logo {
+  flex: 0 0 auto;
+  width: auto !important;
+  max-width: 300px !important;
+  max-height: 70px !important;
+  object-fit: contain !important;
+}
+
+/* Tables should scroll cleanly instead of compressing columns into each other. */
+.table-wrapper {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  max-width: 100% !important;
+}
+.table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+.table th,
+.table td {
+  box-sizing: border-box !important;
+  vertical-align: middle !important;
+}
+
+/* Roles table: fixed, readable columns. */
+.roles-table {
+  width: 100% !important;
+  min-width: 880px !important;
+  table-layout: fixed !important;
+}
+.roles-table th:nth-child(1),
+.roles-table td:nth-child(1) { width: 18% !important; }
+.roles-table th:nth-child(2),
+.roles-table td:nth-child(2) { width: 13% !important; text-align: center !important; }
+.roles-table th:nth-child(3),
+.roles-table td:nth-child(3) { width: 14% !important; text-align: center !important; }
+.roles-table th:nth-child(4),
+.roles-table td:nth-child(4) { width: 24% !important; }
+.roles-table th:nth-child(5),
+.roles-table td:nth-child(5) { width: 12% !important; text-align: center !important; }
+.roles-table th:nth-child(6),
+.roles-table td:nth-child(6) { width: 19% !important; text-align: right !important; }
+.roles-table td,
+.roles-table th {
+  padding-left: 14px !important;
+  padding-right: 14px !important;
+  overflow: hidden !important;
+}
+.roles-table .permission-pill-wrap {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  min-height: 28px !important;
+  overflow: visible !important;
+}
+.roles-table .permission-pill,
+.roles-table .status-pill {
+  position: static !important;
+  transform: none !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+  line-height: 1.1 !important;
+}
+.roles-table .role-actions {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 8px !important;
+  flex-wrap: nowrap !important;
+}
+.roles-table .role-actions .btn {
+  flex: 0 0 auto !important;
+}
+
+/* Users table: prevent action buttons from being half hidden. */
+.users-card .table,
+.users-table {
+  min-width: 840px !important;
+  table-layout: fixed !important;
+}
+.users-card .table th,
+.users-card .table td {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+.users-card .table th:last-child,
+.users-card .table td:last-child {
+  width: 260px !important;
+  overflow: visible !important;
+  text-align: right !important;
+}
+.users-card .table td:last-child {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+.users-card .table td:last-child .btn {
+  flex: 0 0 auto !important;
+}
+
+/* Role form cards should match the selected theme, not gray blocks. */
+.role-simple-form .permission-section,
+.permissions-grid.grouped .checkbox-row {
+  background: var(--panel-soft) !important;
+  border-color: var(--border) !important;
+  color: var(--text-main) !important;
+}
+html[data-theme="light"] body .role-simple-form .permission-section,
+body.theme-light .role-simple-form .permission-section,
+html[data-theme="light"] body .permissions-grid.grouped .checkbox-row,
+body.theme-light .permissions-grid.grouped .checkbox-row {
+  background: #ffffff !important;
+  border-color: #d6e0ec !important;
+  color: #0f172a !important;
+}
+html[data-theme="dark"] body .role-simple-form .permission-section,
+body.theme-dark .role-simple-form .permission-section,
+html[data-theme="dark"] body .permissions-grid.grouped .checkbox-row,
+body.theme-dark .permissions-grid.grouped .checkbox-row {
+  background: #071121 !important;
+  border-color: #263449 !important;
+  color: #e5e7eb !important;
+}
+
+.logo-action-row {
+  margin-top: -8px;
+  margin-bottom: 8px;
+}
+.logo-action-row .btn {
+  min-width: 150px;
+}
+
+@media (max-width: 1100px) {
+  .company-logo { max-width: 230px !important; max-height: 58px !important; }
+  .topbar-right { min-width: 210px; }
+}
