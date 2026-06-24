@@ -5464,3 +5464,79 @@ body.theme-light #tab-logs .filters input::placeholder {
     font-size: 18px !important;
   }
 }
+
+/* =========================================================
+   ISSUE 2 — Roles light-mode box cleanup
+   Keep dark theme alone. In light/bright mode, Roles inputs and
+   permission boxes should match the rest of Admin: white boxes,
+   dark readable text, soft border.
+   ========================================================= */
+html[data-theme="light"] #roleSearch,
+html[data-theme="light"] #roleSearch.table-search,
+html[data-theme="bright"] #roleSearch,
+html[data-theme="bright"] #roleSearch.table-search,
+body.theme-light #roleSearch,
+body.theme-light #roleSearch.table-search {
+  background: #ffffff !important;
+  background-image: none !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] #roleSearch::placeholder,
+html[data-theme="bright"] #roleSearch::placeholder,
+body.theme-light #roleSearch::placeholder {
+  color: #64748b !important;
+  -webkit-text-fill-color: #64748b !important;
+  opacity: 1 !important;
+}
+
+html[data-theme="light"] #roleSearch:focus,
+html[data-theme="bright"] #roleSearch:focus,
+body.theme-light #roleSearch:focus {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.16) !important;
+}
+
+html[data-theme="light"] .role-simple-form .permission-section,
+html[data-theme="bright"] .role-simple-form .permission-section,
+body.theme-light .role-simple-form .permission-section {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  box-shadow: none !important;
+}
+
+html[data-theme="light"] .role-simple-form .permission-section h3,
+html[data-theme="bright"] .role-simple-form .permission-section h3,
+body.theme-light .role-simple-form .permission-section h3,
+html[data-theme="light"] .role-simple-form .role-check-row,
+html[data-theme="bright"] .role-simple-form .role-check-row,
+body.theme-light .role-simple-form .role-check-row {
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+}
+
+@media (max-width: 820px) {
+  html[data-theme="light"] #tab-roles input,
+  html[data-theme="light"] #tab-roles select,
+  html[data-theme="bright"] #tab-roles input,
+  html[data-theme="bright"] #tab-roles select,
+  body.theme-light #tab-roles input,
+  body.theme-light #tab-roles select {
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #0f172a !important;
+    -webkit-text-fill-color: #0f172a !important;
+    border-color: #cbd5e1 !important;
+  }
+
+  html[data-theme="light"] #tab-roles input::placeholder,
+  html[data-theme="bright"] #tab-roles input::placeholder,
+  body.theme-light #tab-roles input::placeholder {
+    color: #64748b !important;
+    -webkit-text-fill-color: #64748b !important;
+    opacity: 1 !important;
+  }
+}
