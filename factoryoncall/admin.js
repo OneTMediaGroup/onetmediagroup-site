@@ -129,8 +129,8 @@ function escapeHtml(value = "") {
   const connLabel = document.getElementById("firebaseStatusText");
 
   function setConn(ok) {
-    if (connDot) connDot.style.background = ok ? "#22c55e" : "#ef4444";
-    if (connLabel) connLabel.textContent = ok ? "Online" : "Offline";
+    if (connDot) connDot.style.background = currentEmergencyActive ? "#ffffff" : (ok ? "#22c55e" : "#ef4444");
+    if (connLabel) connLabel.textContent = currentEmergencyActive ? "EMERGENCY ACTIVE" : (ok ? "Online" : "Offline");
   }
 
   // ---------- SIDEBAR / TABS ----------
@@ -428,6 +428,7 @@ function escapeHtml(value = "") {
   let userRowsFromUsers = [];
   let userRowsFromPins = [];
   let cachedCalls = [];
+  let currentEmergencyActive = false;
   let filteredLogCalls = [];
 
   function splitName(fullName = "") {
@@ -4975,9 +4976,36 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
   // ---------- BOOT ----------
 
+
+  function setAdminEmergencyHeader(active) {
+    currentEmergencyActive = !!active;
+    const topbar = document.querySelector(".topbar");
+    const topRight = document.querySelector(".topbar-right");
+    document.body.classList.toggle("emergency-active", !!active);
+    if (topbar) topbar.classList.toggle("emergency-header-active", !!active);
+
+    let badge = document.getElementById("adminEmergencyHeaderBadge");
+    if (!badge && topRight) {
+      badge = document.createElement("span");
+      badge.id = "adminEmergencyHeaderBadge";
+      badge.className = "admin-emergency-header-badge hidden";
+      badge.textContent = "🚨 PLANT EMERGENCY ACTIVE";
+      topRight.insertBefore(badge, topRight.firstChild);
+    }
+    if (badge) badge.classList.toggle("hidden", !active);
+
+    const statusText = document.getElementById("firebaseStatusText");
+    const statusDot = document.getElementById("firebaseStatusDot");
+    if (statusText) statusText.textContent = active ? "EMERGENCY ACTIVE" : "Online";
+    if (statusDot) {
+      statusDot.classList.toggle("emergency-dot", !!active);
+      statusDot.style.background = active ? "#ffffff" : "#22c55e";
+    }
+  }
+
   function applyEmergencySettingsToForm(data = {}) {
     const emergencyActive = data.enabled === true && data.active === true;
-    document.body.classList.toggle("emergency-active", emergencyActive);
+    setAdminEmergencyHeader(emergencyActive);
 
     if (emergencyEnabled) emergencyEnabled.checked = data.enabled === true;
     if (emergencySoundEnabled) emergencySoundEnabled.checked = data.soundEnabled !== false;
@@ -4987,14 +5015,6 @@ stationFormReset?.addEventListener("click", resetStationForm);
       const activeText = emergencyActive ? "ACTIVE" : "not active";
       emergencyStatusText.textContent = `Emergency status: ${enabledText} / ${activeText}`;
     }
-
-    const statusText = document.getElementById("firebaseStatusText");
-    const statusDot = document.getElementById("firebaseStatusDot");
-    if (statusText) {
-      statusText.textContent = emergencyActive ? "EMERGENCY ACTIVE" : (statusText.dataset.normalText || statusText.textContent || "Online");
-      if (!emergencyActive) statusText.dataset.normalText = statusText.textContent || "Online";
-    }
-    if (statusDot) statusDot.classList.toggle("emergency-dot", emergencyActive);
 
     if (clearEmergencyBtn) clearEmergencyBtn.disabled = data.active !== true;
   }

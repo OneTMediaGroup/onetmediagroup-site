@@ -1311,3 +1311,50 @@ body.theme-light #tab-users .user-form-card select:focus {
     white-space: nowrap !important;
   }
 }
+
+
+/* PATCH 157 — Obvious emergency header, loaded last */
+@keyframes focEmergencyHeaderPulseStrong {
+  0%, 100% { background: linear-gradient(90deg,#7f1d1d,#991b1b,#7f1d1d) !important; box-shadow: 0 0 0 2px rgba(254,202,202,.45), 0 0 28px rgba(239,68,68,.45) !important; }
+  50% { background: linear-gradient(90deg,#dc2626,#ef4444,#dc2626) !important; box-shadow: 0 0 0 2px rgba(255,255,255,.75), 0 0 50px rgba(239,68,68,.80) !important; }
+}
+body.emergency-active .topbar,
+.topbar.emergency-header-active {
+  animation: focEmergencyHeaderPulseStrong 1.05s ease-in-out infinite !important;
+  border-bottom: 2px solid rgba(255,255,255,.85) !important;
+  color: #fff !important;
+}
+body.emergency-active .topbar *,
+.topbar.emergency-header-active * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+.admin-emergency-header-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 34px !important;
+  padding: 8px 14px !important;
+  border-radius: 999px !important;
+  background: rgba(255,255,255,.95) !important;
+  color: #7f1d1d !important;
+  -webkit-text-fill-color: #7f1d1d !important;
+  font-weight: 1000 !important;
+  letter-spacing: .06em !important;
+  text-transform: uppercase !important;
+  border: 2px solid rgba(254,202,202,1) !important;
+  box-shadow: 0 0 20px rgba(255,255,255,.65) !important;
+  white-space: nowrap !important;
+}
+.admin-emergency-header-badge.hidden { display: none !important; }
+@media (max-width: 760px) {
+  .admin-emergency-header-badge {
+    width: 100% !important;
+    font-size: 12px !important;
+    padding: 8px 10px !important;
+  }
+  body.emergency-active .topbar,
+  .topbar.emergency-header-active {
+    min-height: 86px !important;
+  }
+}

@@ -1333,3 +1333,55 @@ body.emergency-active .factory-logo {
     padding: 8px 12px !important;
   }
 }
+
+
+/* PATCH 157 — obvious station emergency awareness */
+@keyframes focStationEmergencyHeaderPulseStrong {
+  0%,100% { background: linear-gradient(90deg,#7f1d1d,#991b1b,#7f1d1d) !important; box-shadow: 0 0 0 2px rgba(254,202,202,.45), 0 0 28px rgba(239,68,68,.45) !important; }
+  50% { background: linear-gradient(90deg,#dc2626,#ef4444,#dc2626) !important; box-shadow: 0 0 0 2px rgba(255,255,255,.75), 0 0 48px rgba(239,68,68,.78) !important; }
+}
+body.emergency-active .app-header,
+.app-header.station-emergency-header-active {
+  animation: focStationEmergencyHeaderPulseStrong 1.05s ease-in-out infinite !important;
+  border-bottom: 2px solid rgba(255,255,255,.9) !important;
+}
+body.emergency-active .app-header *,
+.app-header.station-emergency-header-active * {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+.station-emergency-banner {
+  width: 100% !important;
+  padding: 10px 14px !important;
+  text-align: center !important;
+  background: #fff !important;
+  color: #7f1d1d !important;
+  -webkit-text-fill-color: #7f1d1d !important;
+  font-weight: 1000 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  border-bottom: 2px solid rgba(239,68,68,.55) !important;
+  box-shadow: 0 8px 24px rgba(239,68,68,.25) !important;
+}
+.station-emergency-banner.hidden { display: none !important; }
+body.emergency-active #stationStatus {
+  background: #fff !important;
+  color: #7f1d1d !important;
+  -webkit-text-fill-color: #7f1d1d !important;
+  border: 2px solid #fecaca !important;
+  font-weight: 1000 !important;
+  box-shadow: 0 0 18px rgba(255,255,255,.75) !important;
+}
+body.emergency-active #stationStatus::before { content: "🚨 "; }
+@media (max-width: 760px) {
+  body.emergency-active .app-header,
+  .app-header.station-emergency-header-active {
+    min-height: 78px !important;
+    padding-top: env(safe-area-inset-top, 0) !important;
+  }
+  .station-emergency-banner {
+    font-size: 12px !important;
+    padding: 9px 10px !important;
+    letter-spacing: .05em !important;
+  }
+}

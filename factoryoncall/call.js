@@ -265,11 +265,28 @@ const COMPANY_ID = getActiveCompanyId();
     });
   }
 
+
+  function setStationEmergencyHeader(active) {
+    const header = document.querySelector(".app-header");
+    document.body.classList.toggle("emergency-active", !!active);
+    if (header) header.classList.toggle("station-emergency-header-active", !!active);
+
+    let banner = document.getElementById("stationEmergencyBanner");
+    if (!banner && header) {
+      banner = document.createElement("div");
+      banner.id = "stationEmergencyBanner";
+      banner.className = "station-emergency-banner hidden";
+      banner.textContent = "🚨 PLANT EMERGENCY ACTIVE";
+      header.insertAdjacentElement("afterend", banner);
+    }
+    if (banner) banner.classList.toggle("hidden", !active);
+  }
+
   function renderEmergencyState() {
     ensureEmergencyButton();
     if (emergencyBtn) emergencyBtn.classList.toggle("hidden", !emergencySettings.enabled);
     const active = emergencySettings.enabled && emergencySettings.active;
-    document.body.classList.toggle("emergency-active", active);
+    setStationEmergencyHeader(active);
     if (active) {
       isLocked = true;
       if (stationStatus) {
