@@ -232,15 +232,19 @@ const COMPANY_ID = getActiveCompanyId();
   let currentCaller = { firstName: "", lastName: "", uid: "" };
   let roleDefinitions = [...FALLBACK_ROLE_DEFINITIONS];
   let emergencySettings = { enabled: false, active: false, soundEnabled: true, message: "Plant Emergency — follow company emergency procedures." };
-  let emergencyBtn = null;
+  let emergencyBtn = document.getElementById("emergencyStationBtn");
 
   function ensureEmergencyButton() {
-    if (emergencyBtn || !sendCallBtn) return;
-    emergencyBtn = document.createElement("button");
-    emergencyBtn.type = "button";
-    emergencyBtn.className = "emergency-station-btn hidden";
-    emergencyBtn.textContent = "Emergency";
-    sendCallBtn.insertAdjacentElement("afterend", emergencyBtn);
+    if (!emergencyBtn && sendCallBtn) {
+      emergencyBtn = document.createElement("button");
+      emergencyBtn.id = "emergencyStationBtn";
+      emergencyBtn.type = "button";
+      emergencyBtn.className = "emergency-station-btn hidden";
+      emergencyBtn.textContent = "Emergency";
+      sendCallBtn.insertAdjacentElement("afterend", emergencyBtn);
+    }
+    if (!emergencyBtn || emergencyBtn.dataset.bound === "true") return;
+    emergencyBtn.dataset.bound = "true";
     emergencyBtn.addEventListener("click", async () => {
       if (!emergencySettings.enabled) return;
       if (!confirm("Trigger plant emergency alert? This will notify all Factory On Call screens.")) return;

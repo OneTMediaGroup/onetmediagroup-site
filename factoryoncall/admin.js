@@ -149,6 +149,7 @@ function escapeHtml(value = "") {
       roles: "Roles",
       branding: "Branding",
       settings: "Plant Access",
+      emergency: "Emergency Alerts",
       analytics: "Analytics"
     };
     return map[tabName] || tabName;
@@ -164,6 +165,7 @@ function escapeHtml(value = "") {
       roles: "Manage roles and permissions.",
       branding: "Customize plant name, logo, and theme.",
       settings: "Copy plant code and live screen links.",
+      emergency: "Optional plant-wide emergency notification controls.",
       analytics: "Analyze performance and usage trends."
     };
     return map[tabName] || "";

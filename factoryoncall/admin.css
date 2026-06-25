@@ -5836,3 +5836,25 @@ body.theme-dark #tab-logs .log-date-field input[type="date"] {
 .emergency-settings-form .button-row { align-items: center; }
 .permission-pill.danger { background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.35); color: #ff8a8a; }
 html.theme-light .permission-pill.danger, body.theme-light .permission-pill.danger { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+
+
+/* EMERGENCY SETTINGS TAB FINAL */
+#tab-emergency .emergency-settings-card {
+  max-width: 980px;
+  margin: 0 auto 18px;
+}
+#tab-emergency .emergency-settings-form {
+  gap: 14px;
+}
+#tab-emergency .role-check-row {
+  border: 1px solid rgba(148, 163, 184, .18);
+  border-radius: 14px;
+  padding: 12px 14px;
+}
+.theme-light #tab-emergency .role-check-row,
+body.theme-light #tab-emergency .role-check-row,
+html[data-theme="light"] #tab-emergency .role-check-row {
+  background: #fff;
+  color: #0f172a;
+  border-color: #d8e1ee;
+}

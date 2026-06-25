@@ -962,3 +962,23 @@ html[data-theme="neutral"] .circle-middle {
 body.emergency-active .call-circle { background: radial-gradient(circle at 30% 20%, #ff7676, #dc2626 65%, #7f1d1d); border-color: rgba(248,113,113,.9); }
 body.emergency-active .call-panel { box-shadow: 0 0 0 2px rgba(239,68,68,.35), 0 0 50px rgba(239,68,68,.22); }
 body.emergency-active .station-status { border-color: #fb923c; color: #fb923c; }
+
+
+/* EMERGENCY STATION BUTTON FINAL */
+.emergency-station-btn {
+  margin: 10px auto 14px !important;
+  display: block;
+  width: min(420px, 100%);
+  min-height: 52px;
+  border-radius: 999px;
+  border: 2px solid rgba(239, 68, 68, .85);
+  background: linear-gradient(135deg, #ef4444, #b91c1c);
+  color: #fff;
+  font-weight: 950;
+  font-size: 1rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  box-shadow: 0 16px 34px rgba(239,68,68,.28);
+}
+.emergency-station-btn.hidden { display: none !important; }
+.emergency-station-btn:active { transform: translateY(1px); }
