@@ -1193,3 +1193,103 @@ body.emergency-active .sign-in-btn:not(.hidden) {
     font-size: clamp(18px, 7vw, 25px) !important;
   }
 }
+
+/* === IPHONE CHROME STATION EMERGENCY ACTIVE LAYOUT FIX ===
+   Keeps the active-emergency station view centered and inside the visible mobile page. */
+@media (max-width: 720px) {
+  .app-main {
+    padding: 12px 10px max(22px, env(safe-area-inset-bottom)) !important;
+    overflow: visible !important;
+  }
+
+  .call-panel {
+    width: 100% !important;
+    min-height: auto !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    padding: 22px 12px 28px !important;
+    justify-content: flex-start !important;
+  }
+
+  body.emergency-active .circle-wrapper,
+  .circle-wrapper {
+    width: 190px !important;
+    height: 190px !important;
+    min-width: 190px !important;
+    min-height: 190px !important;
+    margin: 0 auto 12px !important;
+    flex: 0 0 auto !important;
+  }
+
+  body.emergency-active .circle-inner {
+    width: 158px !important;
+    height: 158px !important;
+    min-width: 158px !important;
+    min-height: 158px !important;
+    padding: 0 14px !important;
+  }
+
+  body.emergency-active .circle-label-main {
+    font-size: 19px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  body.emergency-active .circle-label-sub {
+    font-size: 10px !important;
+    line-height: 1.05 !important;
+    letter-spacing: .12em !important;
+    white-space: nowrap !important;
+  }
+
+  .send-btn,
+  .emergency-station-btn {
+    display: block !important;
+    width: 210px !important;
+    max-width: 210px !important;
+    min-width: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding: 12px 20px !important;
+    font-size: 16px !important;
+    line-height: 1.1 !important;
+  }
+
+  .send-btn {
+    margin-top: 8px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .emergency-station-btn {
+    margin-top: 0 !important;
+    margin-bottom: 14px !important;
+    text-align: center !important;
+  }
+
+  .hint-text,
+  #callStatusText,
+  .call-status-text {
+    width: min(100%, 330px) !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    text-align: center !important;
+    line-height: 1.25 !important;
+  }
+
+  .roles-title,
+  .roles-heading {
+    margin-top: 26px !important;
+    margin-bottom: 16px !important;
+    text-align: center !important;
+  }
+
+  .roles-grid {
+    width: min(100%, 360px) !important;
+    padding: 0 !important;
+    grid-template-columns: 1fr !important;
+    gap: 10px !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
