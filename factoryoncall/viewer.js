@@ -505,7 +505,7 @@ const COMPANY_ID = getActiveCompanyId();
     overlay = document.createElement("div");
     overlay.id = "plantEmergencyOverlay";
     overlay.className = "plant-emergency-overlay hidden";
-    overlay.innerHTML = `<div class="plant-emergency-card"><div class="plant-emergency-icon">🚨</div><h1>PLANT EMERGENCY</h1><p id="plantEmergencyMessage">Follow company emergency procedures.</p><div id="plantEmergencyMeta" class="plant-emergency-meta"></div><button id="clearPlantEmergencyBtn" class="plant-emergency-clear" type="button">Clear Emergency</button></div>`;
+    overlay.innerHTML = `<div class="plant-emergency-card"><div class="plant-emergency-icon">🚨</div><h1>PLANT EMERGENCY</h1><p id="plantEmergencyMessage">Follow company emergency procedures.</p><div id="plantEmergencyMeta" class="plant-emergency-meta"></div><button id="clearPlantEmergencyBtn" class="plant-emergency-clear" type="button">CLEAR EMERGENCY</button></div>`;
     document.body.appendChild(overlay);
     overlay.querySelector("#clearPlantEmergencyBtn")?.addEventListener("click", () => {
       pendingAction = { action: "clearEmergency", callId: "" };

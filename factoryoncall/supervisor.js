@@ -457,9 +457,115 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   let emergencyAudio = null;
-  function canCurrentRoleClearEmergency() {
-    if (!currentRole) return true;
-    return boolPerm(currentRole, ["clearEmergency", "canClearEmergency"]);
+  function normalizeEmergencyUser(user = {}, id = "") {
+    const parts = String(user.name || user.fullName || "").trim().split(/\s+/).filter(Boolean);
+    const firstName = user.firstName || parts.shift() || "";
+    const lastName = user.lastName || parts.join(" ") || "";
+    const uid = String(user.uid || user.userId || user.employeeNumber || user.employeeId || id || "").trim();
+    const archived = user.archived === true || String(user.status || "").toLowerCase() === "archived" || user.active === false;
+    return { id, ...user, firstName, lastName, uid, employeeNumber: uid, pin: String(user.pin || ""), active: !archived, archived };
+  }
+
+  function emergencyUserName(user = {}) {
+    return `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.name || user.fullName || user.uid || user.id || "Authorized User";
+  }
+
+  function emergencyRoleForUser(user = {}) {
+    const roleName = String(user.role || user.personnelRole || user.type || "").trim().toLowerCase();
+    return allRolesCache.find(r => String(r.name || "").trim().toLowerCase() === roleName) || null;
+  }
+
+  async function authorizeEmergencyClearFromInputs(userId, pin) {
+    const cleanUserId = String(userId || "").trim();
+    const cleanPin = String(pin || "").trim();
+    if (!cleanUserId || !cleanPin) throw new Error("Enter both User ID and PIN.");
+
+    if (!allRolesCache.length) {
+      const rolesSnap = await rolesRef.get();
+      allRolesCache = rolesSnap.docs.map(d => ({ id: d.id, ...d.data() }));
+    }
+
+    const usersSnap = await usersRef.get();
+    const users = usersSnap.docs.map(d => normalizeEmergencyUser(d.data() || {}, d.id));
+    const user = users.find(u => [u.uid, u.userId, u.employeeNumber, u.employeeId, u.badgeCode, u.id].map(v => String(v || "").trim()).includes(cleanUserId));
+    if (!user || user.active === false || user.archived === true) throw new Error("User not found or inactive.");
+    if (String(user.pin || "") !== cleanPin) throw new Error("Invalid PIN.");
+
+    const role = emergencyRoleForUser(user);
+    if (!role || !boolPerm(role, ["clearEmergency", "canClearEmergency"])) throw new Error("This role cannot clear plant emergency alerts.");
+    return { user, role, userName: emergencyUserName(user) };
+  }
+
+  function ensureEmergencyClearModal() {
+    let modal = document.getElementById("emergencyClearModal");
+    if (modal) return modal;
+
+    modal = document.createElement("div");
+    modal.id = "emergencyClearModal";
+    modal.className = "emergency-clear-modal hidden";
+    modal.innerHTML = `
+      <div class="emergency-clear-box" role="dialog" aria-modal="true" aria-labelledby="emergencyClearTitle">
+        <button class="emergency-clear-x" type="button" aria-label="Cancel">×</button>
+        <h2 id="emergencyClearTitle">Clear Emergency</h2>
+        <p>Enter a User ID and PIN with Emergency Clear access.</p>
+        <label>User ID</label>
+        <input id="emergencyClearUserId" type="text" inputmode="numeric" autocomplete="off" placeholder="Scan badge or enter User ID" />
+        <label>PIN</label>
+        <input id="emergencyClearPin" type="password" inputmode="numeric" autocomplete="off" placeholder="Enter PIN" />
+        <div id="emergencyClearError" class="emergency-clear-error"></div>
+        <div class="emergency-clear-actions">
+          <button id="emergencyClearCancel" class="emergency-clear-cancel" type="button">Cancel</button>
+          <button id="emergencyClearConfirm" class="emergency-clear-confirm" type="button">Clear Emergency</button>
+        </div>
+      </div>`;
+    document.body.appendChild(modal);
+
+    const close = () => {
+      modal.classList.add("hidden");
+      const error = modal.querySelector("#emergencyClearError");
+      if (error) error.textContent = "";
+    };
+
+    modal.querySelector("#emergencyClearCancel")?.addEventListener("click", close);
+    modal.querySelector(".emergency-clear-x")?.addEventListener("click", close);
+    modal.addEventListener("click", (event) => { if (event.target === modal) close(); });
+    modal.querySelector("#emergencyClearConfirm")?.addEventListener("click", async () => {
+      const btn = modal.querySelector("#emergencyClearConfirm");
+      const error = modal.querySelector("#emergencyClearError");
+      try {
+        if (btn) btn.disabled = true;
+        if (error) error.textContent = "";
+        const auth = await authorizeEmergencyClearFromInputs(
+          modal.querySelector("#emergencyClearUserId")?.value || "",
+          modal.querySelector("#emergencyClearPin")?.value || ""
+        );
+        await emergencyRef.set({
+          active: false,
+          clearedBy: auth.userName,
+          clearedByUid: auth.user.uid || auth.user.employeeNumber || auth.user.id || "",
+          clearedAt: Date.now(),
+          updatedAt: Date.now()
+        }, { merge: true });
+        close();
+      } catch (err) {
+        if (error) error.textContent = err.message || "Could not clear emergency.";
+      } finally {
+        if (btn) btn.disabled = false;
+      }
+    });
+    return modal;
+  }
+
+  function openEmergencyClearModal() {
+    const modal = ensureEmergencyClearModal();
+    modal.classList.remove("hidden");
+    const userInput = modal.querySelector("#emergencyClearUserId");
+    const pinInput = modal.querySelector("#emergencyClearPin");
+    const error = modal.querySelector("#emergencyClearError");
+    if (userInput) userInput.value = "";
+    if (pinInput) pinInput.value = "";
+    if (error) error.textContent = "";
+    setTimeout(() => userInput?.focus(), 50);
   }
   function ensureEmergencyOverlay() {
     let overlay = document.getElementById("plantEmergencyOverlay");
@@ -467,12 +573,10 @@ const COMPANY_ID = getActiveCompanyId();
     overlay = document.createElement("div");
     overlay.id = "plantEmergencyOverlay";
     overlay.className = "plant-emergency-overlay hidden";
-    overlay.innerHTML = `<div class="plant-emergency-card"><div class="plant-emergency-icon">🚨</div><h1>PLANT EMERGENCY</h1><p id="plantEmergencyMessage">Follow company emergency procedures.</p><div id="plantEmergencyMeta" class="plant-emergency-meta"></div><button id="clearPlantEmergencyBtn" class="plant-emergency-clear" type="button">Clear Emergency</button></div>`;
+    overlay.innerHTML = `<div class="plant-emergency-card"><div class="plant-emergency-icon">🚨</div><h1>PLANT EMERGENCY</h1><p id="plantEmergencyMessage">Follow company emergency procedures.</p><div id="plantEmergencyMeta" class="plant-emergency-meta"></div><button id="clearPlantEmergencyBtn" class="plant-emergency-clear" type="button">CLEAR EMERGENCY</button></div>`;
     document.body.appendChild(overlay);
-    overlay.querySelector("#clearPlantEmergencyBtn")?.addEventListener("click", async () => {
-      if (!canCurrentRoleClearEmergency()) { alert("This role cannot clear plant emergency alerts."); return; }
-      if (!confirm("Clear plant emergency alert?")) return;
-      await emergencyRef.set({ active: false, clearedBy: portalUserLabel?.textContent || "Supervisor", clearedAt: Date.now(), updatedAt: Date.now() }, { merge: true });
+    overlay.querySelector("#clearPlantEmergencyBtn")?.addEventListener("click", () => {
+      openEmergencyClearModal();
     });
     return overlay;
   }
@@ -490,7 +594,7 @@ const COMPANY_ID = getActiveCompanyId();
       const clearBtn = document.getElementById("clearPlantEmergencyBtn");
       if (msg) msg.textContent = data.message || "Follow company emergency procedures.";
       if (meta) meta.textContent = data.activatedByStation ? `Activated from ${data.activatedByStation}` : "Plant-wide alert active";
-      if (clearBtn) clearBtn.hidden = !canCurrentRoleClearEmergency();
+      if (clearBtn) clearBtn.hidden = false;
       if (active) playEmergencySound(data); else stopEmergencySound();
     }, err => console.warn("Emergency listener unavailable:", err));
   }
