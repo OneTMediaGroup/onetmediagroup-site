@@ -5858,3 +5858,46 @@ html[data-theme="light"] #tab-emergency .role-check-row {
   color: #0f172a;
   border-color: #d8e1ee;
 }
+
+
+/* PATCH 156 — Plant Emergency active header awareness */
+@keyframes focEmergencyHeaderPulse {
+  0%, 100% { background: #991b1b; box-shadow: 0 0 0 1px rgba(248,113,113,.35), 0 0 18px rgba(239,68,68,.30); }
+  50% { background: #dc2626; box-shadow: 0 0 0 1px rgba(254,202,202,.65), 0 0 34px rgba(239,68,68,.55); }
+}
+body.emergency-active .topbar {
+  animation: focEmergencyHeaderPulse 1.15s ease-in-out infinite !important;
+  color: #fff !important;
+  border-bottom-color: rgba(254,202,202,.8) !important;
+}
+body.emergency-active .topbar h1,
+body.emergency-active .topbar p,
+body.emergency-active .topbar-right,
+body.emergency-active #firebaseStatusText {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+body.emergency-active #firebaseStatusText {
+  font-weight: 900 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+}
+body.emergency-active #firebaseStatusText::before { content: "🚨 "; }
+body.emergency-active .status-dot,
+body.emergency-active .status-dot.emergency-dot {
+  background: #fff !important;
+  box-shadow: 0 0 18px rgba(255,255,255,.9) !important;
+}
+body.emergency-active .company-logo {
+  background: rgba(255,255,255,.95) !important;
+  border-radius: 10px !important;
+}
+@media (max-width: 700px) {
+  body.emergency-active .topbar {
+    min-height: 78px !important;
+  }
+  body.emergency-active #firebaseStatusText {
+    font-size: 13px !important;
+    letter-spacing: .04em !important;
+  }
+}

@@ -4976,14 +4976,26 @@ stationFormReset?.addEventListener("click", resetStationForm);
   // ---------- BOOT ----------
 
   function applyEmergencySettingsToForm(data = {}) {
+    const emergencyActive = data.enabled === true && data.active === true;
+    document.body.classList.toggle("emergency-active", emergencyActive);
+
     if (emergencyEnabled) emergencyEnabled.checked = data.enabled === true;
     if (emergencySoundEnabled) emergencySoundEnabled.checked = data.soundEnabled !== false;
     if (emergencyMessage) emergencyMessage.value = data.message || "Plant Emergency — follow company emergency procedures.";
     if (emergencyStatusText) {
       const enabledText = data.enabled === true ? "Enabled" : "Off";
-      const activeText = data.active === true ? "ACTIVE" : "not active";
+      const activeText = emergencyActive ? "ACTIVE" : "not active";
       emergencyStatusText.textContent = `Emergency status: ${enabledText} / ${activeText}`;
     }
+
+    const statusText = document.getElementById("firebaseStatusText");
+    const statusDot = document.getElementById("firebaseStatusDot");
+    if (statusText) {
+      statusText.textContent = emergencyActive ? "EMERGENCY ACTIVE" : (statusText.dataset.normalText || statusText.textContent || "Online");
+      if (!emergencyActive) statusText.dataset.normalText = statusText.textContent || "Online";
+    }
+    if (statusDot) statusDot.classList.toggle("emergency-dot", emergencyActive);
+
     if (clearEmergencyBtn) clearEmergencyBtn.disabled = data.active !== true;
   }
 

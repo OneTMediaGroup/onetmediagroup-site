@@ -1293,3 +1293,43 @@ body.emergency-active .sign-in-btn:not(.hidden) {
     margin-right: auto !important;
   }
 }
+
+
+/* PATCH 156 — Station header flashes during plant emergency */
+@keyframes focStationEmergencyHeaderPulse {
+  0%, 100% { background: #991b1b; box-shadow: 0 0 0 1px rgba(248,113,113,.35), 0 0 18px rgba(239,68,68,.28); }
+  50% { background: #dc2626; box-shadow: 0 0 0 1px rgba(254,202,202,.70), 0 0 34px rgba(239,68,68,.55); }
+}
+body.emergency-active .app-header {
+  animation: focStationEmergencyHeaderPulse 1.15s ease-in-out infinite !important;
+  color: #fff !important;
+  border-bottom-color: rgba(254,202,202,.75) !important;
+}
+body.emergency-active .app-header *,
+body.emergency-active .header-center,
+body.emergency-active .app-title {
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+}
+body.emergency-active .status-pill,
+body.emergency-active #stationStatus {
+  background: rgba(127, 29, 29, .95) !important;
+  border-color: rgba(254, 202, 202, .95) !important;
+  color: #fff !important;
+  -webkit-text-fill-color: #fff !important;
+  box-shadow: 0 0 18px rgba(239,68,68,.65) !important;
+}
+body.emergency-active #stationStatus::before { content: "🚨 "; }
+body.emergency-active .factory-logo {
+  background: rgba(255,255,255,.95) !important;
+  border-radius: 10px !important;
+}
+@media (max-width: 700px) {
+  body.emergency-active .app-header {
+    min-height: 76px !important;
+  }
+  body.emergency-active #stationStatus {
+    font-size: 13px !important;
+    padding: 8px 12px !important;
+  }
+}
