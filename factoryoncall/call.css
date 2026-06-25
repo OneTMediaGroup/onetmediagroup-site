@@ -1037,3 +1037,55 @@ body.emergency-active .station-status { border-color: #fb923c; color: #fb923c; }
     margin-bottom: 12px !important;
   }
 }
+
+/* === STATION EMERGENCY BUTTON / ACTIVE STATE FINAL TUNE === */
+/* Keep Emergency the same visual footprint as Send Call and stop it from pushing layout upward. */
+.emergency-station-btn {
+  width: auto !important;
+  min-width: 160px !important;
+  max-width: 220px !important;
+  min-height: 0 !important;
+  height: auto !important;
+  margin: 8px auto 10px !important;
+  padding: 12px 40px !important;
+  border-radius: var(--radius-pill) !important;
+  border: none !important;
+  background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: .08em !important;
+  text-transform: none !important;
+  box-shadow: 0 12px 28px rgba(239, 68, 68, .24) !important;
+}
+.emergency-station-btn::first-letter { text-transform: uppercase; }
+.emergency-station-btn.hidden { display: none !important; }
+
+body.emergency-active .circle-label-main {
+  font-size: clamp(17px, 2vw, 22px) !important;
+  line-height: 1 !important;
+  letter-spacing: .03em !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+body.emergency-active .circle-label-sub {
+  font-size: clamp(10px, 1.25vw, 13px) !important;
+  line-height: 1.12 !important;
+  letter-spacing: .11em !important;
+  white-space: normal !important;
+}
+
+@media (min-width: 900px) {
+  .call-panel {
+    padding-top: clamp(14px, 2vh, 28px) !important;
+    padding-bottom: clamp(16px, 2vh, 28px) !important;
+    justify-content: center !important;
+  }
+  .circle-wrapper {
+    width: min(30vh, 30vw, 250px) !important;
+    height: min(30vh, 30vw, 250px) !important;
+    margin-bottom: 12px !important;
+  }
+}

@@ -278,7 +278,7 @@ const COMPANY_ID = getActiveCompanyId();
         stationStatus.classList.add("status-locked");
       }
       if (circleMainLabel) circleMainLabel.textContent = "EMERGENCY";
-      if (circleSubLabel) circleSubLabel.textContent = emergencySettings.message || "Follow company emergency procedures";
+      if (circleSubLabel) circleSubLabel.textContent = "Alert active";
       if (hintText) hintText.textContent = "Plant emergency alert is active. Follow company emergency procedures.";
       if (sendCallBtn) sendCallBtn.disabled = true;
     } else {
