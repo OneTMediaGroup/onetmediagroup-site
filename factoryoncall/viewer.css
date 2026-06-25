@@ -1609,3 +1609,16 @@ body[data-theme="dark"] .emergency-clear-box input {
   .emergency-clear-actions { flex-direction: column; }
   .emergency-clear-cancel, .emergency-clear-confirm { width: 100%; }
 }
+
+/* === PATCH 145: keep viewer auth modal above emergency overlay === */
+.auth-modal.open {
+  z-index: 100050 !important;
+}
+.auth-modal.open .auth-card {
+  position: relative;
+  z-index: 100051 !important;
+}
+.plant-emergency-overlay .plant-emergency-card {
+  position: relative;
+  z-index: 100000;
+}
