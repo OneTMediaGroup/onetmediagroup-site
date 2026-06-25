@@ -5830,3 +5830,9 @@ body.theme-dark #tab-logs .log-date-field input[type="date"] {
     content: none !important;
   }
 }
+
+/* Emergency settings */
+.emergency-settings-card { margin-top: 24px; }
+.emergency-settings-form .button-row { align-items: center; }
+.permission-pill.danger { background: rgba(239,68,68,.14); border-color: rgba(239,68,68,.35); color: #ff8a8a; }
+html.theme-light .permission-pill.danger, body.theme-light .permission-pill.danger { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }

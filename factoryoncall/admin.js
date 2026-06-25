@@ -408,6 +408,14 @@ function escapeHtml(value = "") {
   const brandPreviewCompany = document.getElementById("brandPreviewCompany");
   const accessPlantIdText = document.getElementById("accessPlantIdText");
   const copyPlantCodeBtn = document.getElementById("copyPlantCodeBtn");
+  const emergencySettingsForm = document.getElementById("emergencySettingsForm");
+  const emergencyEnabled = document.getElementById("emergencyEnabled");
+  const emergencySoundEnabled = document.getElementById("emergencySoundEnabled");
+  const emergencyMessage = document.getElementById("emergencyMessage");
+  const clearEmergencyBtn = document.getElementById("clearEmergencyBtn");
+  const emergencyStatusText = document.getElementById("emergencyStatusText");
+
+  const emergencyRef = companyRef.collection("settings").doc("emergency");
 
   let cachedBranding = {};
 
@@ -1344,6 +1352,10 @@ async function loadCompanyBranding() {
     return legacyPermissionTrue(role, ["supervisorPortal"]);
   }
 
+  function roleCanClearEmergency(role = {}) {
+    return legacyPermissionTrue(role, ["clearEmergency", "canClearEmergency"]);
+  }
+
   function roleBadgeHtml(label, kind = "") {
     return `<span class="permission-pill ${kind}">${label}</span>`;
   }
@@ -1392,6 +1404,7 @@ async function loadCompanyBranding() {
           roleCanRespondMatching(r) ? "respond matching" : "",
           roleCanRespondAny(r) ? "respond any" : "",
           roleHasSupervisorPortal(r) ? "supervisor portal" : "",
+          roleCanClearEmergency(r) ? "clear emergency" : "",
           roleIsActive(r) ? "active" : "archived"
         ].join(" ").toLowerCase().includes(searchValue);
       });
@@ -1411,6 +1424,9 @@ async function loadCompanyBranding() {
 
       if (roleHasSupervisorPortal(r)) {
         responseBadges.push(roleBadgeHtml("Supervisor Portal", "system"));
+      }
+      if (roleCanClearEmergency(r)) {
+        responseBadges.push(roleBadgeHtml("Clear Emergency", "danger"));
       }
 
       const responseHtml = responseBadges.length
@@ -1461,6 +1477,8 @@ async function loadCompanyBranding() {
             cb.checked = roleCanRespondAny(r);
           } else if (perm === "supervisorPortal") {
             cb.checked = roleHasSupervisorPortal(r);
+          } else if (perm === "clearEmergency") {
+            cb.checked = roleCanClearEmergency(r);
           } else {
             cb.checked = !!(r.permissions && r.permissions[perm]);
           }
@@ -3969,6 +3987,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       const respondAny = !!values.respondAny;
       const respondMatching = respondAny ? false : !!values.respondMatching;
       const supervisorPortal = !!values.supervisorPortal;
+      const clearEmergency = !!values.clearEmergency;
 
       const permissions = {
         canMakeCalls,
@@ -3989,7 +4008,9 @@ stationFormReset?.addEventListener("click", resetStationForm);
         acknowledgeAllCalls: respondAny,
         closeAllCalls: respondAny,
         viewAllCalls: respondAny || supervisorPortal,
-        supervisorPortal
+        supervisorPortal,
+        clearEmergency,
+        canClearEmergency: clearEmergency
       };
 
       const payload = {
@@ -4005,6 +4026,8 @@ stationFormReset?.addEventListener("click", resetStationForm);
         canAcknowledgeAll: respondAny,
         canCloseAll: respondAny,
         supervisorPortal,
+        clearEmergency,
+        canClearEmergency: clearEmergency,
         active: true,
         archived: false,
         updatedAt: Date.now()
@@ -4960,6 +4983,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
     forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark");
     initSidebarLinks();
     initPlaceholders();
+    initEmergencySettings();
     wireEvents();
     initListeners();
   }

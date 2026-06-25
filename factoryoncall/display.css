@@ -1554,3 +1554,61 @@ body.theme-light .dh-logo {
     font-size: 22px !important;
   }
 }
+
+/* Plant Emergency Alert */
+.plant-emergency-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 99999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(127, 29, 29, 0.92);
+  animation: emergencyPulseBg 1.4s infinite alternate;
+}
+.plant-emergency-overlay.hidden { display: none !important; }
+.plant-emergency-card {
+  width: min(920px, 94vw);
+  border-radius: 32px;
+  padding: clamp(28px, 5vw, 70px);
+  text-align: center;
+  color: #fff;
+  background: linear-gradient(135deg, #991b1b, #dc2626 55%, #7f1d1d);
+  border: 4px solid rgba(255,255,255,.75);
+  box-shadow: 0 0 0 10px rgba(239,68,68,.22), 0 35px 90px rgba(0,0,0,.45);
+}
+.plant-emergency-icon { font-size: clamp(48px, 10vw, 110px); margin-bottom: 12px; }
+.plant-emergency-card h1 {
+  margin: 0 0 18px;
+  font-size: clamp(42px, 9vw, 110px);
+  line-height: .95;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.plant-emergency-card p {
+  margin: 0 auto 18px;
+  max-width: 760px;
+  font-size: clamp(22px, 4vw, 44px);
+  font-weight: 900;
+}
+.plant-emergency-meta {
+  font-size: clamp(16px, 2.5vw, 26px);
+  font-weight: 800;
+  opacity: .92;
+  margin-top: 16px;
+}
+.plant-emergency-clear {
+  margin-top: 28px;
+  border: 0;
+  border-radius: 999px;
+  padding: 16px 30px;
+  font-size: 18px;
+  font-weight: 900;
+  color: #7f1d1d;
+  background: #fff;
+}
+@keyframes emergencyPulseBg {
+  from { background: rgba(127, 29, 29, 0.88); }
+  to { background: rgba(220, 38, 38, 0.95); }
+}

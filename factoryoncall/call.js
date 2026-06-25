@@ -72,6 +72,7 @@ const COMPANY_ID = getActiveCompanyId();
   const rolesRef = companyRef.collection("roles");
   const usersRef = companyRef.collection("users");
   const callsRef = companyRef.collection("calls");
+  const emergencyRef = companyRef.collection("settings").doc("emergency");
 
   let COMPANY_NAME = new URLSearchParams(window.location.search).get("companyName") ||
     localStorage.getItem("factory_on_call_company_name") ||
@@ -230,6 +231,65 @@ const COMPANY_ID = getActiveCompanyId();
   let activeLockField = "user";
   let currentCaller = { firstName: "", lastName: "", uid: "" };
   let roleDefinitions = [...FALLBACK_ROLE_DEFINITIONS];
+  let emergencySettings = { enabled: false, active: false, soundEnabled: true, message: "Plant Emergency — follow company emergency procedures." };
+  let emergencyBtn = null;
+
+  function ensureEmergencyButton() {
+    if (emergencyBtn || !sendCallBtn) return;
+    emergencyBtn = document.createElement("button");
+    emergencyBtn.type = "button";
+    emergencyBtn.className = "emergency-station-btn hidden";
+    emergencyBtn.textContent = "Emergency";
+    sendCallBtn.insertAdjacentElement("afterend", emergencyBtn);
+    emergencyBtn.addEventListener("click", async () => {
+      if (!emergencySettings.enabled) return;
+      if (!confirm("Trigger plant emergency alert? This will notify all Factory On Call screens.")) return;
+      try {
+        await emergencyRef.set({
+          enabled: true,
+          active: true,
+          message: emergencySettings.message || "Plant Emergency — follow company emergency procedures.",
+          soundEnabled: emergencySettings.soundEnabled !== false,
+          activatedByStation: STATION_NAME,
+          activatedAt: Date.now(),
+          updatedAt: Date.now()
+        }, { merge: true });
+      } catch (err) {
+        console.error(err);
+        alert("Could not trigger emergency alert.");
+      }
+    });
+  }
+
+  function renderEmergencyState() {
+    ensureEmergencyButton();
+    if (emergencyBtn) emergencyBtn.classList.toggle("hidden", !emergencySettings.enabled);
+    const active = emergencySettings.enabled && emergencySettings.active;
+    document.body.classList.toggle("emergency-active", active);
+    if (active) {
+      isLocked = true;
+      if (stationStatus) {
+        stationStatus.textContent = "Emergency";
+        stationStatus.classList.remove("status-ready");
+        stationStatus.classList.add("status-locked");
+      }
+      if (circleMainLabel) circleMainLabel.textContent = "EMERGENCY";
+      if (circleSubLabel) circleSubLabel.textContent = emergencySettings.message || "Follow company emergency procedures";
+      if (hintText) hintText.textContent = "Plant emergency alert is active. Follow company emergency procedures.";
+      if (sendCallBtn) sendCallBtn.disabled = true;
+    } else {
+      updateLockVisuals();
+      updateSendButton();
+    }
+  }
+
+  function listenForEmergencySettings() {
+    ensureEmergencyButton();
+    emergencyRef.onSnapshot(snap => {
+      emergencySettings = { ...emergencySettings, ...(snap.exists ? snap.data() || {} : {}) };
+      renderEmergencyState();
+    }, err => console.warn("Emergency listener unavailable:", err));
+  }
 
   async function init() {
     if (customerNameEl) {
@@ -244,6 +304,7 @@ const COMPANY_ID = getActiveCompanyId();
     updateSendButton();
     wireKeypad();
     listenForStationCallState();
+    listenForEmergencySettings();
   }
 
   async function loadCallableRoles() {
@@ -301,7 +362,7 @@ const COMPANY_ID = getActiveCompanyId();
 
   function updateSendButton() {
     if (!sendCallBtn) return;
-    const canSend = !isLocked && selectedRoles.length > 0 && callState === "idle";
+    const canSend = !(emergencySettings.enabled && emergencySettings.active) && !isLocked && selectedRoles.length > 0 && callState === "idle";
     sendCallBtn.disabled = !canSend;
   }
 
@@ -379,6 +440,10 @@ const COMPANY_ID = getActiveCompanyId();
         .sort((a, b) => (b.timeStarted || 0) - (a.timeStarted || 0))[0];
 
       if (!active) {
+        if (emergencySettings.enabled && emergencySettings.active) {
+          renderEmergencyState();
+          return;
+        }
         // Only a remote close clears the station back to service.
         // Waiting and acknowledged calls both keep this button screen locked.
         isLocked = false;
@@ -388,6 +453,11 @@ const COMPANY_ID = getActiveCompanyId();
         setCallState("idle");
         updateLockVisuals();
         updateSendButton();
+        return;
+      }
+
+      if (emergencySettings.enabled && emergencySettings.active) {
+        renderEmergencyState();
         return;
       }
 
@@ -405,6 +475,11 @@ const COMPANY_ID = getActiveCompanyId();
     if (existing) {
       const existingStatus = String(existing.data()?.status || "").toLowerCase();
       setCallState(existingStatus === "ack" || existingStatus === "acknowledged" ? "ack" : "pending");
+      if (emergencySettings.enabled && emergencySettings.active) {
+        renderEmergencyState();
+        return;
+      }
+
       isLocked = true;
       updateLockVisuals();
       return;

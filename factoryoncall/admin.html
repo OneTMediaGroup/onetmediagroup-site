@@ -468,6 +468,10 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                                 <input type="checkbox" data-permission="supervisorPortal" />
                                 <span>Supervisor Portal access</span>
                             </label>
+                            <label class="checkbox-row role-check-row">
+                                <input type="checkbox" data-permission="clearEmergency" />
+                                <span>Can clear plant emergency alerts</span>
+                            </label>
                         </div>
 
                         <p class="form-help">
@@ -580,6 +584,31 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                         </div>
                     </div>
                 </div>
+            </div>
+
+            <div class="card emergency-settings-card">
+                <h2>Emergency Alerts</h2>
+                <p class="muted">Optional plant-wide emergency notification. This is an awareness tool and does not replace required safety systems or procedures.</p>
+                <form id="emergencySettingsForm" class="form emergency-settings-form">
+                    <label class="checkbox-row role-check-row">
+                        <input type="checkbox" id="emergencyEnabled" />
+                        <span>Enable Emergency button on station screens</span>
+                    </label>
+                    <label class="checkbox-row role-check-row">
+                        <input type="checkbox" id="emergencySoundEnabled" checked />
+                        <span>Play emergency alert sound on live screens</span>
+                    </label>
+                    <label>
+                        Emergency Message
+                        <input type="text" id="emergencyMessage" placeholder="Plant Emergency — follow company emergency procedures." />
+                    </label>
+                    <p class="form-help">Sound file name: <strong>emergency-alert.mp3</strong>. Put it beside the HTML files in the factoryoncall folder.</p>
+                    <div class="button-row">
+                        <button class="btn" type="submit">Save Emergency Settings</button>
+                        <button class="btn danger" type="button" id="clearEmergencyBtn">Clear Active Emergency</button>
+                    </div>
+                    <p class="form-help" id="emergencyStatusText">Emergency status: loading...</p>
+                </form>
             </div>
         </section>
 

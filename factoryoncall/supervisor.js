@@ -62,6 +62,7 @@ const COMPANY_ID = getActiveCompanyId();
   const rolesRef = companyRef.collection("roles");
   const areasRef = companyRef.collection("areas");
   const stationsRef = companyRef.collection("stations");
+  const emergencyRef = companyRef.collection("settings").doc("emergency");
 
   const params = new URLSearchParams(window.location.search);
   const viewerUid = params.get("uid") || params.get("userId") || "";
@@ -455,6 +456,45 @@ const COMPANY_ID = getActiveCompanyId();
     });
   }
 
+  let emergencyAudio = null;
+  function canCurrentRoleClearEmergency() {
+    if (!currentRole) return true;
+    return boolPerm(currentRole, ["clearEmergency", "canClearEmergency"]);
+  }
+  function ensureEmergencyOverlay() {
+    let overlay = document.getElementById("plantEmergencyOverlay");
+    if (overlay) return overlay;
+    overlay = document.createElement("div");
+    overlay.id = "plantEmergencyOverlay";
+    overlay.className = "plant-emergency-overlay hidden";
+    overlay.innerHTML = `<div class="plant-emergency-card"><div class="plant-emergency-icon">🚨</div><h1>PLANT EMERGENCY</h1><p id="plantEmergencyMessage">Follow company emergency procedures.</p><div id="plantEmergencyMeta" class="plant-emergency-meta"></div><button id="clearPlantEmergencyBtn" class="plant-emergency-clear" type="button">Clear Emergency</button></div>`;
+    document.body.appendChild(overlay);
+    overlay.querySelector("#clearPlantEmergencyBtn")?.addEventListener("click", async () => {
+      if (!canCurrentRoleClearEmergency()) { alert("This role cannot clear plant emergency alerts."); return; }
+      if (!confirm("Clear plant emergency alert?")) return;
+      await emergencyRef.set({ active: false, clearedBy: portalUserLabel?.textContent || "Supervisor", clearedAt: Date.now(), updatedAt: Date.now() }, { merge: true });
+    });
+    return overlay;
+  }
+  function playEmergencySound(settings = {}) { if (settings.soundEnabled === false) return; try { if (!emergencyAudio) { emergencyAudio = new Audio("emergency-alert.mp3"); emergencyAudio.loop = true; } emergencyAudio.play().catch(() => {}); } catch (_) {} }
+  function stopEmergencySound() { try { if (emergencyAudio) { emergencyAudio.pause(); emergencyAudio.currentTime = 0; } } catch (_) {} }
+  function listenForEmergency() {
+    emergencyRef.onSnapshot(snap => {
+      const data = snap.exists ? snap.data() || {} : {};
+      const active = data.enabled === true && data.active === true;
+      const overlay = ensureEmergencyOverlay();
+      overlay.classList.toggle("hidden", !active);
+      document.body.classList.toggle("emergency-active", active);
+      const msg = document.getElementById("plantEmergencyMessage");
+      const meta = document.getElementById("plantEmergencyMeta");
+      const clearBtn = document.getElementById("clearPlantEmergencyBtn");
+      if (msg) msg.textContent = data.message || "Follow company emergency procedures.";
+      if (meta) meta.textContent = data.activatedByStation ? `Activated from ${data.activatedByStation}` : "Plant-wide alert active";
+      if (clearBtn) clearBtn.hidden = !canCurrentRoleClearEmergency();
+      if (active) playEmergencySound(data); else stopEmergencySound();
+    }, err => console.warn("Emergency listener unavailable:", err));
+  }
+
   function updateStats(allCalls) {
     const open = allCalls.filter(c => c.status === "waiting" || c.status === "ack");
     if (sbActive) sbActive.textContent = String(open.length);
@@ -476,6 +516,7 @@ const COMPANY_ID = getActiveCompanyId();
   listenForBrandingUpdates();
     await loadUserAndRole();
     await loadFilters();
+    listenForEmergency();
     attachFilterEvents();
 
     callsRef.onSnapshot(snapshot => {

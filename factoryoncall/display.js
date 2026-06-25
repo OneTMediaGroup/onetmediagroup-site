@@ -72,6 +72,7 @@ const COMPANY_ID = getActiveCompanyId();
   const callsRef = companyRef.collection("calls");
   const areasRef = companyRef.collection("areas");
   const stationsRef = companyRef.collection("stations");
+  const emergencyRef = companyRef.collection("settings").doc("emergency");
 
   const activeCallsEl = document.getElementById("activeCalls");
   const statActive = document.getElementById("statActive");
@@ -386,6 +387,40 @@ const COMPANY_ID = getActiveCompanyId();
     }, error => console.warn("Branding listener unavailable:", error));
   }
 
+  let emergencyAudio = null;
+  function ensureEmergencyOverlay() {
+    let overlay = document.getElementById("plantEmergencyOverlay");
+    if (overlay) return overlay;
+    overlay = document.createElement("div");
+    overlay.id = "plantEmergencyOverlay";
+    overlay.className = "plant-emergency-overlay hidden";
+    overlay.innerHTML = `<div class="plant-emergency-card"><div class="plant-emergency-icon">🚨</div><h1>PLANT EMERGENCY</h1><p id="plantEmergencyMessage">Follow company emergency procedures.</p><div id="plantEmergencyMeta" class="plant-emergency-meta"></div></div>`;
+    document.body.appendChild(overlay);
+    return overlay;
+  }
+  function playEmergencySound(settings = {}) {
+    if (settings.soundEnabled === false) return;
+    try {
+      if (!emergencyAudio) { emergencyAudio = new Audio("emergency-alert.mp3"); emergencyAudio.loop = true; }
+      emergencyAudio.play().catch(() => {});
+    } catch (_) {}
+  }
+  function stopEmergencySound() { try { if (emergencyAudio) { emergencyAudio.pause(); emergencyAudio.currentTime = 0; } } catch (_) {} }
+  function listenForEmergency() {
+    emergencyRef.onSnapshot(snap => {
+      const data = snap.exists ? snap.data() || {} : {};
+      const active = data.enabled === true && data.active === true;
+      const overlay = ensureEmergencyOverlay();
+      overlay.classList.toggle("hidden", !active);
+      document.body.classList.toggle("emergency-active", active);
+      const msg = document.getElementById("plantEmergencyMessage");
+      const meta = document.getElementById("plantEmergencyMeta");
+      if (msg) msg.textContent = data.message || "Follow company emergency procedures.";
+      if (meta) meta.textContent = data.activatedByStation ? `Activated from ${data.activatedByStation}` : "Plant-wide alert active";
+      if (active) playEmergencySound(data); else stopEmergencySound();
+    }, err => console.warn("Emergency listener unavailable:", err));
+  }
+
   function renderDisplay(calls) {
     if (!activeCallsEl) return;
 
@@ -529,6 +564,7 @@ const COMPANY_ID = getActiveCompanyId();
   setConn(false);
   await loadBranding();
   listenForBrandingUpdates();
+  listenForEmergency();
   await loadAreas();
 
   unsubscribeCalls = callsRef.onSnapshot(
