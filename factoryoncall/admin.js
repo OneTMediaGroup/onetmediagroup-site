@@ -4972,6 +4972,74 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   // ---------- BOOT ----------
+
+  function applyEmergencySettingsToForm(data = {}) {
+    if (emergencyEnabled) emergencyEnabled.checked = data.enabled === true;
+    if (emergencySoundEnabled) emergencySoundEnabled.checked = data.soundEnabled !== false;
+    if (emergencyMessage) emergencyMessage.value = data.message || "Plant Emergency — follow company emergency procedures.";
+    if (emergencyStatusText) {
+      const enabledText = data.enabled === true ? "Enabled" : "Off";
+      const activeText = data.active === true ? "ACTIVE" : "not active";
+      emergencyStatusText.textContent = `Emergency status: ${enabledText} / ${activeText}`;
+    }
+    if (clearEmergencyBtn) clearEmergencyBtn.disabled = data.active !== true;
+  }
+
+  function initEmergencySettings() {
+    if (!emergencySettingsForm || !emergencyRef) return;
+
+    emergencyRef.onSnapshot((snap) => {
+      const data = snap.exists ? (snap.data() || {}) : {};
+      applyEmergencySettingsToForm(data);
+    }, (err) => {
+      console.warn("Emergency settings listener unavailable:", err);
+      applyEmergencySettingsToForm({ enabled: false, active: false, soundEnabled: true });
+    });
+
+    emergencySettingsForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      if (blockDemoAdminAction("Emergency settings")) return;
+
+      const enabled = !!emergencyEnabled?.checked;
+      const soundEnabled = emergencySoundEnabled?.checked !== false;
+      const message = String(emergencyMessage?.value || "Plant Emergency — follow company emergency procedures.").trim();
+
+      try {
+        const payload = {
+          enabled,
+          soundEnabled,
+          message,
+          updatedAt: Date.now()
+        };
+        if (!enabled) payload.active = false;
+        await emergencyRef.set(payload, { merge: true });
+        if (emergencyStatusText) emergencyStatusText.textContent = `Emergency status: ${enabled ? "Enabled" : "Off"} / saved`;
+        alert(enabled ? "Emergency button enabled on station screens." : "Emergency button turned off and hidden from station screens.");
+      } catch (err) {
+        console.error(err);
+        alert("Could not save emergency settings.");
+      }
+    });
+
+    if (clearEmergencyBtn) {
+      clearEmergencyBtn.addEventListener("click", async () => {
+        if (blockDemoAdminAction("Clear emergency")) return;
+        if (!confirm("Clear the active plant emergency alert?")) return;
+        try {
+          await emergencyRef.set({
+            active: false,
+            clearedBy: "Admin",
+            clearedAt: Date.now(),
+            updatedAt: Date.now()
+          }, { merge: true });
+        } catch (err) {
+          console.error(err);
+          alert("Could not clear emergency alert.");
+        }
+      });
+    }
+  }
+
   async function boot() {
     ensureDashboardTableStyles();
     setConn(false);
