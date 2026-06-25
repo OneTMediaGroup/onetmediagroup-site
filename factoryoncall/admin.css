@@ -5679,3 +5679,38 @@ body.theme-light .role-simple-form .role-check-row {
     white-space: nowrap !important;
   }
 }
+
+/* =========================================================
+   ADMIN MOBILE NAV + SCROLL RESET FINAL PATCH
+   - drawer can scroll all the way to Sign out in Chrome/iPhone
+   - admin tab changes start at the top instead of remembered position
+   ========================================================= */
+@media (max-width: 820px) {
+  body.sidebar-open {
+    overflow: hidden !important;
+  }
+
+  body.sidebar-open .sidebar,
+  body.sidebar-open #adminSidebar,
+  .sidebar,
+  #adminSidebar {
+    height: 100dvh !important;
+    max-height: 100dvh !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    -webkit-overflow-scrolling: touch !important;
+    overscroll-behavior: contain !important;
+  }
+
+  body.sidebar-open .sidebar,
+  body.sidebar-open #adminSidebar {
+    padding-bottom: calc(150px + env(safe-area-inset-bottom)) !important;
+  }
+
+  body.sidebar-open .sidebar-footer,
+  body.sidebar-open #adminSidebar .sidebar-footer {
+    margin-top: 28px !important;
+    padding-bottom: calc(80px + env(safe-area-inset-bottom)) !important;
+    flex: 0 0 auto !important;
+  }
+}

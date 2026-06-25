@@ -108,6 +108,22 @@ function escapeHtml(value = "") {
   const callsRef = companyRef.collection("calls");
   const activityRef = companyRef.collection("activity");
 
+  if ("scrollRestoration" in history) {
+    try { history.scrollRestoration = "manual"; } catch (_) {}
+  }
+
+  window.addEventListener("pageshow", () => {
+    setTimeout(() => {
+      const main = document.querySelector(".main");
+      const activeTab = document.querySelector(".tab.active");
+      try { window.scrollTo(0, 0); } catch (_) {}
+      if (document.documentElement) document.documentElement.scrollTop = 0;
+      if (document.body) document.body.scrollTop = 0;
+      if (main) main.scrollTop = 0;
+      if (activeTab) activeTab.scrollTop = 0;
+    }, 0);
+  });
+
   // ---------- CONNECTION STATUS ----------
   const connDot = document.getElementById("firebaseStatusDot");
   const connLabel = document.getElementById("firebaseStatusText");
@@ -153,6 +169,48 @@ function escapeHtml(value = "") {
     return map[tabName] || "";
   }
 
+
+
+  function resetAdminScrollToTop() {
+    const activeTab = document.querySelector('.tab.active');
+    const main = document.querySelector('.main');
+    const scrollers = [
+      window,
+      document.documentElement,
+      document.body,
+      main,
+      activeTab
+    ];
+
+    requestAnimationFrame(() => {
+      scrollers.forEach(el => {
+        if (!el) return;
+        try {
+          if (el === window) {
+            el.scrollTo({ top: 0, left: 0, behavior: 'auto' });
+          } else {
+            el.scrollTop = 0;
+            el.scrollLeft = 0;
+          }
+        } catch (_) {}
+      });
+    });
+
+    setTimeout(() => {
+      scrollers.forEach(el => {
+        if (!el) return;
+        try {
+          if (el === window) {
+            el.scrollTo(0, 0);
+          } else {
+            el.scrollTop = 0;
+            el.scrollLeft = 0;
+          }
+        } catch (_) {}
+      });
+    }, 60);
+  }
+
   function activateTab(tabName) {
     tabs.forEach(tab => tab.classList.remove("active"));
     navItems.forEach(btn => btn.classList.remove("active"));
@@ -164,6 +222,7 @@ function escapeHtml(value = "") {
     if (btn) btn.classList.add("active");
     if (pageTitle) pageTitle.textContent = tabTitle(tabName);
     if (pageSubtitle) pageSubtitle.textContent = tabSubtitle(tabName);
+    resetAdminScrollToTop();
     setTimeout(() => forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark"), 0);
   }
 
