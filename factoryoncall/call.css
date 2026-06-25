@@ -982,3 +982,58 @@ body.emergency-active .station-status { border-color: #fb923c; color: #fb923c; }
 }
 .emergency-station-btn.hidden { display: none !important; }
 .emergency-station-btn:active { transform: translateY(1px); }
+
+/* === Emergency button compact station layout fix === */
+.call-panel {
+  height: auto !important;
+  min-height: calc(100vh - 112px) !important;
+  overflow: visible !important;
+}
+
+.emergency-station-btn {
+  width: auto !important;
+  min-width: 160px !important;
+  max-width: 220px !important;
+  min-height: 0 !important;
+  margin: 12px auto 8px !important;
+  padding: 12px 40px !important;
+  border-radius: var(--radius-pill) !important;
+  border: none !important;
+  background: linear-gradient(135deg, #ef4444, #b91c1c) !important;
+  color: #ffffff !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  line-height: 1.1 !important;
+  letter-spacing: .08em !important;
+  text-transform: uppercase !important;
+  box-shadow: 0 12px 28px rgba(239, 68, 68, .26) !important;
+}
+
+@media (min-width: 900px) {
+  .circle-wrapper {
+    width: min(32vh, 32vw, 260px) !important;
+    height: min(32vh, 32vw, 260px) !important;
+    margin-bottom: 12px !important;
+  }
+  .send-btn {
+    margin-top: 8px !important;
+  }
+  .roles-grid {
+    max-width: 820px !important;
+  }
+}
+
+@media (max-height: 760px) and (min-width: 800px) {
+  .call-panel {
+    padding-top: 24px !important;
+    padding-bottom: 24px !important;
+  }
+  .circle-wrapper {
+    width: min(28vh, 28vw, 220px) !important;
+    height: min(28vh, 28vw, 220px) !important;
+  }
+  .roles-heading {
+    margin-top: 12px !important;
+    margin-bottom: 12px !important;
+  }
+}
