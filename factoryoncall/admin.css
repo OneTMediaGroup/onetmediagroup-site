@@ -5714,3 +5714,72 @@ body.theme-light .role-simple-form .role-check-row {
     flex: 0 0 auto !important;
   }
 }
+
+/* =========================================================
+   PATCH 136 — Call Logs mobile date inputs contained
+   Fixes iPhone Chrome/Safari where the From/To date controls
+   could render wider than the Call Logs card in both themes.
+   ========================================================= */
+@media (max-width: 700px) {
+  #tab-logs .filters,
+  #tab-logs .card {
+    overflow-x: hidden !important;
+  }
+
+  #tab-logs .log-date-field {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    gap: 8px !important;
+    overflow: visible !important;
+    color: var(--text-main) !important;
+  }
+
+  #tab-logs .log-date-field span {
+    display: block !important;
+    width: 100% !important;
+    color: var(--text-main) !important;
+    -webkit-text-fill-color: var(--text-main) !important;
+    opacity: 1 !important;
+  }
+
+  #tab-logs .log-date-field input[type="date"] {
+    display: block !important;
+    box-sizing: border-box !important;
+    inline-size: 100% !important;
+    width: 100% !important;
+    max-inline-size: 100% !important;
+    max-width: 100% !important;
+    min-inline-size: 0 !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 14px 44px 14px 16px !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+  }
+
+  /* Keep the fake iPhone placeholder inside the field, not outside the card. */
+  #tab-logs .log-date-field::after {
+    left: 16px !important;
+    right: 48px !important;
+    top: auto !important;
+    bottom: 22px !important;
+    transform: none !important;
+    max-width: calc(100% - 64px) !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+}
+
+html[data-theme="dark"] #tab-logs .log-date-field input[type="date"],
+body.theme-dark #tab-logs .log-date-field input[type="date"] {
+  background: #ffffff !important;
+  color: #0f172a !important;
+  -webkit-text-fill-color: #0f172a !important;
+  border-color: #cbd5e1 !important;
+  color-scheme: light !important;
+}
