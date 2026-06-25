@@ -1130,3 +1130,66 @@ body.emergency-active .circle-label-sub {
     height: min(32vh, 32vw, 270px) !important;
   }
 }
+
+
+/* === EMERGENCY STATION FINAL MICRO TUNE ===
+   Fix active emergency circle centering and keep station unlock button visible. */
+body.emergency-active .circle-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+body.emergency-active .circle-inner {
+  position: relative !important;
+  left: auto !important;
+  top: auto !important;
+  transform: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-align: center !important;
+  width: min(82%, 238px) !important;
+  height: min(82%, 238px) !important;
+  padding: 0 16px !important;
+}
+body.emergency-active .circle-label-main,
+body.emergency-active .circle-label-sub {
+  display: block !important;
+  box-sizing: border-box !important;
+  width: 100% !important;
+  max-width: 100% !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  text-align: center !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+body.emergency-active .circle-label-main {
+  font-size: clamp(19px, 2.35vw, 28px) !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+}
+body.emergency-active .circle-label-sub {
+  font-size: clamp(10px, 1.15vw, 13px) !important;
+  letter-spacing: .14em !important;
+  line-height: 1.05 !important;
+  white-space: nowrap !important;
+}
+body.emergency-active #signInBtn:not(.hidden),
+body.emergency-active .sign-in-btn:not(.hidden) {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin-top: 18px !important;
+}
+@media (max-width: 720px) {
+  body.emergency-active .circle-inner {
+    width: min(84%, 220px) !important;
+    height: min(84%, 220px) !important;
+  }
+  body.emergency-active .circle-label-main {
+    font-size: clamp(18px, 7vw, 25px) !important;
+  }
+}

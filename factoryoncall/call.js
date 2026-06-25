@@ -281,6 +281,8 @@ const COMPANY_ID = getActiveCompanyId();
       if (circleSubLabel) circleSubLabel.textContent = "ALERT ACTIVE";
       if (hintText) hintText.textContent = "Plant emergency alert is active. Follow company emergency procedures.";
       if (sendCallBtn) sendCallBtn.disabled = true;
+      // Keep station unlock visible during a live emergency so operators can still sign in.
+      if (signInBtn) signInBtn.classList.remove("hidden");
     } else {
       updateLockVisuals();
       updateSendButton();
