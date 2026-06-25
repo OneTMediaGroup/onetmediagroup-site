@@ -432,6 +432,51 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
+
+  async function clearEmergencyFromStation(user) {
+    const now = Date.now();
+    const closerName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.uid || "Station User";
+    const closerUid = user.uid || user.employeeNumber || user.id || "";
+
+    try {
+      await emergencyRef.set({
+        active: false,
+        clearedBy: closerName,
+        clearedByUid: closerUid,
+        clearedAt: now,
+        updatedAt: now
+      }, { merge: true });
+    } catch (err) {
+      console.warn("Emergency was cleared locally, but emergency status write failed:", err);
+      throw err;
+    }
+
+    try {
+      const snap = await callsRef.where("station", "==", STATION_NAME).get();
+      const batch = db.batch();
+      let count = 0;
+      snap.forEach(doc => {
+        const data = doc.data() || {};
+        const status = String(data.status || "").toLowerCase();
+        if (status === "waiting" || status === "ack" || status === "acknowledged") {
+          batch.set(doc.ref, {
+            status: "closed",
+            closedAt: now,
+            timeClosed: now,
+            closedBy: closerName,
+            closedByUid: closerUid,
+            emergencyClearedStationReset: true,
+            updatedAt: now
+          }, { merge: true });
+          count += 1;
+        }
+      });
+      if (count) await batch.commit();
+    } catch (err) {
+      console.warn("Emergency cleared, but station call reset was skipped:", err);
+    }
+  }
+
   async function findActiveCallForStation() {
     const snap = await callsRef.get();
 
@@ -666,22 +711,26 @@ const COMPANY_ID = getActiveCompanyId();
         uid: match.uid || match.employeeNumber || ""
       };
 
-      const activeDoc = await findActiveCallForStation();
+      if (emergencySettings.enabled && emergencySettings.active) {
+        await clearEmergencyFromStation(currentCaller);
+      } else {
+        const activeDoc = await findActiveCallForStation();
 
-      if (activeDoc) {
-        const data = activeDoc.data() || {};
-        const timeClosed = Date.now();
-        const duration = data.timeStarted
-          ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000))
-          : null;
+        if (activeDoc) {
+          const data = activeDoc.data() || {};
+          const timeClosed = Date.now();
+          const duration = data.timeStarted
+            ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000))
+            : null;
 
-        await callsRef.doc(activeDoc.id).update({
-          status: "closed",
-          closedBy: `${currentCaller.firstName || ""} ${currentCaller.lastName || ""}`.trim() || currentCaller.uid || "Caller",
-          closedByUid: currentCaller.uid || "",
-          timeClosed,
-          duration
-        });
+          await callsRef.doc(activeDoc.id).update({
+            status: "closed",
+            closedBy: `${currentCaller.firstName || ""} ${currentCaller.lastName || ""}`.trim() || currentCaller.uid || "Caller",
+            closedByUid: currentCaller.uid || "",
+            timeClosed,
+            duration
+          });
+        }
       }
 
       isLocked = false;
