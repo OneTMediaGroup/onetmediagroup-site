@@ -287,11 +287,30 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
+  function resetStationAfterEmergencyClear() {
+    // When an emergency is cleared from Supervisor Portal or Interactive Viewer,
+    // this station screen may not receive the call-close write before the
+    // emergency settings write. Reset the local locked UI immediately so the
+    // station returns to service without a hard refresh.
+    isLocked = false;
+    selectedRoles = [];
+    document.querySelectorAll(".role-pill").forEach(p => p.classList.remove("selected"));
+    closeLockOverlay();
+    setCallState("idle");
+    updateLockVisuals();
+    updateSendButton();
+  }
+
   function listenForEmergencySettings() {
     ensureEmergencyButton();
     emergencyRef.onSnapshot(snap => {
+      const wasActive = Boolean(emergencySettings.enabled && emergencySettings.active);
       emergencySettings = { ...emergencySettings, ...(snap.exists ? snap.data() || {} : {}) };
+      const isActiveNow = Boolean(emergencySettings.enabled && emergencySettings.active);
       renderEmergencyState();
+      if (wasActive && !isActiveNow) {
+        resetStationAfterEmergencyClear();
+      }
     }, err => console.warn("Emergency listener unavailable:", err));
   }
 
