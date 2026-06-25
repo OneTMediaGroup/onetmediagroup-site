@@ -860,3 +860,87 @@ html[data-theme="neutral"] .circle-inner{
   .circle-label-main{font-size:20px!important;}
   .circle-label-sub{font-size:10px!important;letter-spacing:.06em!important;}
 }
+
+
+/* === SAFARI MOBILE SAFE AREA + STATION EDGE POLISH ===
+   Keeps iPhone Safari top/bottom browser safe areas from flashing white in dark mode
+   and softens the light-mode station glow without changing station behavior. */
+html,
+body {
+  min-height: 100%;
+  min-height: 100svh;
+  overscroll-behavior-y: none;
+  color-scheme: dark;
+}
+
+html[data-theme="dark"],
+html[data-theme="dark"] body,
+body.theme-dark {
+  background: #020617 !important;
+}
+
+html[data-theme="light"],
+html[data-theme="light"] body,
+html[data-theme="bright"],
+html[data-theme="bright"] body,
+html[data-theme="neutral"],
+html[data-theme="neutral"] body,
+body.theme-light {
+  color-scheme: light;
+  background: #eef3f8 !important;
+}
+
+.app-shell {
+  min-height: 100svh;
+  background: inherit;
+}
+
+@supports (padding: max(0px)) {
+  .app-header {
+    padding-top: max(0px, env(safe-area-inset-top)) !important;
+    min-height: calc(82px + env(safe-area-inset-top)) !important;
+  }
+
+  .app-main {
+    padding-bottom: max(18px, env(safe-area-inset-bottom)) !important;
+  }
+
+  .call-panel {
+    margin-bottom: env(safe-area-inset-bottom) !important;
+  }
+}
+
+html[data-theme="light"] .call-panel,
+html[data-theme="bright"] .call-panel,
+html[data-theme="neutral"] .call-panel {
+  box-shadow: 0 10px 24px rgba(15, 23, 42, .06) !important;
+}
+
+html[data-theme="light"] .circle-inner,
+html[data-theme="bright"] .circle-inner,
+html[data-theme="neutral"] .circle-inner {
+  box-shadow: 0 10px 24px rgba(37, 99, 235, .10) !important;
+}
+
+html[data-theme="light"] .circle-outer,
+html[data-theme="bright"] .circle-outer,
+html[data-theme="neutral"] .circle-outer,
+html[data-theme="light"] .circle-middle,
+html[data-theme="bright"] .circle-middle,
+html[data-theme="neutral"] .circle-middle {
+  box-shadow: none !important;
+}
+
+@media (max-width: 700px) {
+  html[data-theme="light"] .call-panel,
+  html[data-theme="bright"] .call-panel,
+  html[data-theme="neutral"] .call-panel {
+    box-shadow: 0 8px 18px rgba(15, 23, 42, .05) !important;
+  }
+
+  html[data-theme="light"] .circle-inner,
+  html[data-theme="bright"] .circle-inner,
+  html[data-theme="neutral"] .circle-inner {
+    box-shadow: 0 8px 18px rgba(37, 99, 235, .08) !important;
+  }
+}
