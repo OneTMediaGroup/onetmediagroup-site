@@ -1358,3 +1358,79 @@ body.emergency-active .topbar *,
     min-height: 86px !important;
   }
 }
+
+/* PATCH 161B — admin emergency uses the full header, no small unreadable pill */
+@keyframes focAdminEmergencyFullHeaderPulse {
+  0%, 100% {
+    background: linear-gradient(90deg, #991b1b 0%, #dc2626 45%, #991b1b 100%) !important;
+    box-shadow: 0 0 0 2px rgba(255,255,255,.70), 0 0 28px rgba(239,68,68,.55) !important;
+  }
+  50% {
+    background: linear-gradient(90deg, #dc2626 0%, #ff2d2d 48%, #b91c1c 100%) !important;
+    box-shadow: 0 0 0 3px rgba(255,255,255,1), 0 0 58px rgba(239,68,68,.95) !important;
+  }
+}
+
+body.emergency-active .topbar,
+body.emergency-active .topbar.emergency-header-active {
+  position: sticky !important;
+  top: 0 !important;
+  min-height: 76px !important;
+  background: #dc2626 !important;
+  background-image: linear-gradient(90deg, #991b1b, #dc2626, #991b1b) !important;
+  animation: focAdminEmergencyFullHeaderPulse 1s ease-in-out infinite !important;
+  border-bottom: 4px solid #ffffff !important;
+  outline: 3px solid #7f1d1d !important;
+  z-index: 3000 !important;
+  overflow: hidden !important;
+}
+
+body.emergency-active .topbar::before,
+body.emergency-active .topbar.emergency-header-active::before {
+  content: "🚨  PLANT EMERGENCY ACTIVE" !important;
+  position: absolute !important;
+  inset: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 100% !important;
+  height: 100% !important;
+  pointer-events: none !important;
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+  font-weight: 1000 !important;
+  font-size: clamp(22px, 2.3vw, 38px) !important;
+  line-height: 1 !important;
+  letter-spacing: .14em !important;
+  text-transform: uppercase !important;
+  text-shadow: 0 3px 0 rgba(0,0,0,.42), 0 0 18px rgba(255,255,255,.85) !important;
+  z-index: 10 !important;
+}
+
+body.emergency-active .topbar-left,
+body.emergency-active .topbar-right {
+  opacity: 0 !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+body.emergency-active #adminEmergencyHeaderBadge,
+body.emergency-active .admin-emergency-header-badge {
+  display: none !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+@media (max-width: 760px) {
+  body.emergency-active .topbar,
+  body.emergency-active .topbar.emergency-header-active {
+    min-height: 84px !important;
+  }
+  body.emergency-active .topbar::before,
+  body.emergency-active .topbar.emergency-header-active::before {
+    font-size: 18px !important;
+    letter-spacing: .08em !important;
+    text-align: center !important;
+    padding: 0 18px !important;
+  }
+}

@@ -5077,10 +5077,10 @@ stationFormReset?.addEventListener("click", resetStationForm);
       badge = document.createElement("span");
       badge.id = "adminEmergencyHeaderBadge";
       badge.className = "admin-emergency-header-badge hidden";
-      badge.textContent = "🚨 PLANT EMERGENCY ACTIVE";
+      badge.textContent = "";
       topRight.insertBefore(badge, topRight.firstChild);
     }
-    if (badge) badge.classList.toggle("hidden", !active);
+    if (badge) { badge.classList.add("hidden"); badge.style.display = "none"; }
 
     const statusText = document.getElementById("firebaseStatusText");
     const statusDot = document.getElementById("firebaseStatusDot");
