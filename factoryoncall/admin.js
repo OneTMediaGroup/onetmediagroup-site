@@ -4989,3 +4989,37 @@ stationFormReset?.addEventListener("click", resetStationForm);
     refresh();
   }
 })();
+
+// PATCH 137: iPhone Chrome/Safari native date inputs can overflow the Call Logs card.
+// Use mobile-only text date fields for Call Logs; filtering still receives yyyy-mm-dd values.
+(function installMobileCallLogTextDates() {
+  function apply() {
+    const isMobile = window.matchMedia && window.matchMedia('(max-width: 700px)').matches;
+    document.querySelectorAll('#logsDateFrom, #logsDateTo').forEach((input) => {
+      if (!input) return;
+      if (isMobile) {
+        if (input.type !== 'text') input.type = 'text';
+        input.classList.add('mobile-log-date-text');
+        input.setAttribute('placeholder', 'yyyy-mm-dd');
+        input.setAttribute('inputmode', 'numeric');
+        input.setAttribute('autocomplete', 'off');
+        input.setAttribute('pattern', '\\d{4}-\\d{2}-\\d{2}');
+      } else {
+        input.classList.remove('mobile-log-date-text');
+        input.removeAttribute('inputmode');
+        input.removeAttribute('pattern');
+        input.removeAttribute('autocomplete');
+        input.removeAttribute('placeholder');
+        if (input.type !== 'date') input.type = 'date';
+      }
+    });
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', apply, { once: true });
+  } else {
+    apply();
+  }
+  window.addEventListener('resize', apply);
+  window.addEventListener('orientationchange', apply);
+})();
