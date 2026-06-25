@@ -249,14 +249,27 @@ const COMPANY_ID = getActiveCompanyId();
       if (!emergencySettings.enabled) return;
       if (!confirm("Trigger plant emergency alert? This will notify all Factory On Call screens.")) return;
       try {
+        const now = Date.now();
+        const eventDoc = companyRef.collection("emergencyEvents").doc();
+        await eventDoc.set({
+          active: true,
+          activatedByStation: STATION_NAME,
+          station: STATION_NAME,
+          activatedBy: "Station",
+          activatedAt: now,
+          message: emergencySettings.message || "Plant Emergency — follow company emergency procedures.",
+          createdAt: now,
+          updatedAt: now
+        });
         await emergencyRef.set({
           enabled: true,
           active: true,
+          eventId: eventDoc.id,
           message: emergencySettings.message || "Plant Emergency — follow company emergency procedures.",
           soundEnabled: emergencySettings.soundEnabled !== false,
           activatedByStation: STATION_NAME,
-          activatedAt: Date.now(),
-          updatedAt: Date.now()
+          activatedAt: now,
+          updatedAt: now
         }, { merge: true });
       } catch (err) {
         console.error(err);
@@ -450,6 +463,18 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
 
+
+  async function updateEmergencyEventClear(clearedBy, clearedByUid, clearedAt) {
+    try {
+      const eventId = emergencySettings.eventId || "";
+      if (eventId) {
+        await companyRef.collection("emergencyEvents").doc(eventId).set({ active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true });
+      }
+    } catch (err) {
+      console.warn("Could not update emergency history event:", err);
+    }
+  }
+
   async function clearEmergencyFromStation(user) {
     const now = Date.now();
     const closerName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.uid || "Station User";
@@ -463,6 +488,7 @@ const COMPANY_ID = getActiveCompanyId();
         clearedAt: now,
         updatedAt: now
       }, { merge: true });
+      await updateEmergencyEventClear(closerName, closerUid, now);
     } catch (err) {
       console.warn("Emergency was cleared locally, but emergency status write failed:", err);
       throw err;

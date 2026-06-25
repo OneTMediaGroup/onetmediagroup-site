@@ -107,6 +107,7 @@ function escapeHtml(value = "") {
   const authorizedPinsRef = companyRef.collection("authorized_pins");
   const callsRef = companyRef.collection("calls");
   const activityRef = companyRef.collection("activity");
+  const emergencyEventsRef = companyRef.collection("emergencyEvents");
 
   if ("scrollRestoration" in history) {
     try { history.scrollRestoration = "manual"; } catch (_) {}
@@ -397,6 +398,11 @@ function escapeHtml(value = "") {
   const analyticsRepeatStationList = document.getElementById("analyticsRepeatStationList");
   const analyticsLongestWaitList = document.getElementById("analyticsLongestWaitList");
   const analyticsLongestResolutionList = document.getElementById("analyticsLongestResolutionList");
+  const analyticsEmergencyCount = document.getElementById("analyticsEmergencyCount");
+  const analyticsEmergencyAvgDuration = document.getElementById("analyticsEmergencyAvgDuration");
+  const analyticsEmergencyLongest = document.getElementById("analyticsEmergencyLongest");
+  const analyticsEmergencyTopStation = document.getElementById("analyticsEmergencyTopStation");
+  const analyticsEmergencyHistoryList = document.getElementById("analyticsEmergencyHistoryList");
 
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
 
@@ -428,6 +434,7 @@ function escapeHtml(value = "") {
   let userRowsFromUsers = [];
   let userRowsFromPins = [];
   let cachedCalls = [];
+  let cachedEmergencyEvents = [];
   let currentEmergencyActive = false;
   let filteredLogCalls = [];
 
@@ -4344,6 +4351,54 @@ stationFormReset?.addEventListener("click", resetStationForm);
     return "Over 15 min";
   }
 
+
+  function emergencyEventStartMillis(event = {}) {
+    return getMillis(event.activatedAt || event.startedAt || event.createdAt || event.timeStarted || event.updatedAt);
+  }
+
+  function emergencyEventEndMillis(event = {}) {
+    return getMillis(event.clearedAt || event.endedAt || event.resolvedAt || event.updatedAt);
+  }
+
+  function emergencyInAnalyticsRange(event = {}) {
+    const start = emergencyEventStartMillis(event);
+    if (!start) return false;
+    const bounds = analyticsRangeBounds();
+    return start >= bounds.start && start <= bounds.end;
+  }
+
+  function renderEmergencyAnalytics() {
+    const events = cachedEmergencyEvents
+      .filter(emergencyInAnalyticsRange)
+      .sort((a, b) => (emergencyEventStartMillis(b) || 0) - (emergencyEventStartMillis(a) || 0));
+
+    const stationCounts = new Map();
+    const durations = [];
+    const historyItems = [];
+
+    events.forEach(event => {
+      const station = event.activatedByStation || event.station || event.location || "Plant-wide";
+      incrementMap(stationCounts, station);
+      const start = emergencyEventStartMillis(event);
+      const end = emergencyEventEndMillis(event);
+      const duration = end && start && end >= start ? Math.max(1, Math.round((end - start) / 60000)) : null;
+      if (duration) durations.push(duration);
+      historyItems.push({
+        minutes: duration || 0,
+        title: station,
+        subtitle: `${event.activatedBy || event.requestedBy || "Station"} → ${event.clearedBy || (event.active ? "Active" : "Not recorded")}`,
+        value: duration ? formatDurationMinutes(duration) : (event.active ? "Active" : "—")
+      });
+    });
+
+    const topStation = sortedMapEntries(stationCounts)[0];
+    if (analyticsEmergencyCount) analyticsEmergencyCount.textContent = String(events.length);
+    if (analyticsEmergencyAvgDuration) analyticsEmergencyAvgDuration.textContent = formatDurationMinutes(average(durations));
+    if (analyticsEmergencyLongest) analyticsEmergencyLongest.textContent = formatDurationMinutes(durations.length ? Math.max(...durations) : null);
+    if (analyticsEmergencyTopStation) analyticsEmergencyTopStation.textContent = topStation ? topStation[0] : "—";
+    renderDetailList(analyticsEmergencyHistoryList, historyItems, "No emergency alerts in this range.");
+  }
+
   function renderAnalytics() {
     const calls = cachedCalls
       .filter(callInAnalyticsRange)
@@ -4433,6 +4488,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
     renderDetailList(analyticsLongestResolutionList, longestResolution.sort((a, b) => b.minutes - a.minutes), "No closed calls yet.");
     renderRankList(analyticsDayList, sortedMapEntries(byDay), { suffix: "calls", max: maxMapValue(byDay), limit: 7 });
     renderRankList(analyticsHourList, hourEntries, { suffix: "calls", max: maxMapValue(byHour), limit: 12 });
+    renderEmergencyAnalytics();
   }
 
   function exportAnalyticsCsv() {
@@ -4885,6 +4941,20 @@ stationFormReset?.addEventListener("click", resetStationForm);
         }
       );
 
+
+
+      emergencyEventsRef.onSnapshot(
+        snapshot => {
+          cachedEmergencyEvents = snapshot.docs
+            .filter(doc => doc.id !== "_seed_marker")
+            .map(doc => ({ id: doc.id, ...(doc.data() || {}) }));
+          renderAnalytics();
+        },
+        err => {
+          console.warn("Emergency history listener unavailable:", err);
+        }
+      );
+
       callsRef.onSnapshot(
         snapshot => {
           const rows = snapshot.docs
@@ -4977,6 +5047,24 @@ stationFormReset?.addEventListener("click", resetStationForm);
   // ---------- BOOT ----------
 
 
+
+
+  async function updateEmergencyEventClear(emergencyData = {}, clearedBy = "", clearedByUid = "", clearedAt = Date.now()) {
+    try {
+      const eventId = emergencyData.eventId || "";
+      if (eventId) {
+        await emergencyEventsRef.doc(eventId).set({ active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true });
+        return;
+      }
+      const snap = await emergencyEventsRef.where("active", "==", true).limit(1).get();
+      const batch = db.batch();
+      snap.docs.forEach(doc => batch.set(doc.ref, { active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true }));
+      if (!snap.empty) await batch.commit();
+    } catch (err) {
+      console.warn("Could not update emergency history event:", err);
+    }
+  }
+
   function setAdminEmergencyHeader(active) {
     currentEmergencyActive = !!active;
     const topbar = document.querySelector(".topbar");
@@ -5060,12 +5148,16 @@ stationFormReset?.addEventListener("click", resetStationForm);
         if (blockDemoAdminAction("Clear emergency")) return;
         if (!confirm("Clear the active plant emergency alert?")) return;
         try {
+          const emergencySnap = await emergencyRef.get();
+          const emergencyData = emergencySnap.exists ? (emergencySnap.data() || {}) : {};
+          const now = Date.now();
           await emergencyRef.set({
             active: false,
             clearedBy: "Admin",
-            clearedAt: Date.now(),
-            updatedAt: Date.now()
+            clearedAt: now,
+            updatedAt: now
           }, { merge: true });
+          await updateEmergencyEventClear(emergencyData, "Admin", "", now);
         } catch (err) {
           console.error(err);
           alert("Could not clear emergency alert.");

@@ -438,6 +438,23 @@ const COMPANY_ID = getActiveCompanyId();
 
 
 
+
+  async function updateEmergencyEventClear(emergencyData = {}, clearedBy = "", clearedByUid = "", clearedAt = Date.now()) {
+    try {
+      const eventId = emergencyData.eventId || "";
+      if (eventId) {
+        await companyRef.collection("emergencyEvents").doc(eventId).set({ active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true });
+        return;
+      }
+      const snap = await companyRef.collection("emergencyEvents").where("active", "==", true).limit(1).get();
+      const batch = db.batch();
+      snap.docs.forEach(doc => batch.set(doc.ref, { active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true }));
+      if (!snap.empty) await batch.commit();
+    } catch (err) {
+      console.warn("Could not update emergency history event:", err);
+    }
+  }
+
   async function resetEmergencyStationCalls(auth, emergencyData = {}) {
     const stationName = emergencyData.activatedByStation || emergencyData.station || "";
     if (!stationName) return;
@@ -493,7 +510,10 @@ const COMPANY_ID = getActiveCompanyId();
         const auth = await authorizeEmergencyClear();
         const emergencySnap = await emergencyRef.get();
         const emergencyData = emergencySnap.exists ? (emergencySnap.data() || {}) : {};
-        await emergencyRef.set({ active: false, clearedBy: auth.userName, clearedByUid: auth.user.uid || auth.user.employeeNumber || auth.user.id || "", clearedAt: Date.now(), updatedAt: Date.now() }, { merge: true });
+        const now = Date.now();
+        const clearedByUid = auth.user.uid || auth.user.employeeNumber || auth.user.id || "";
+        await emergencyRef.set({ active: false, clearedBy: auth.userName, clearedByUid, clearedAt: now, updatedAt: now }, { merge: true });
+        await updateEmergencyEventClear(emergencyData, auth.userName, clearedByUid, now);
         await resetEmergencyStationCalls(auth, emergencyData);
         closeAuthModal();
         return;

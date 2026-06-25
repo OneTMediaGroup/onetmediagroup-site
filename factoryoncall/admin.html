@@ -669,6 +669,19 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                     </div>
                 </div>
 
+
+
+                <div class="analytics-card analytics-emergency-card">
+                    <h2>Emergency History</h2>
+                    <p class="analytics-note">Plant emergency alerts in the selected range.</p>
+                    <div class="analytics-emergency-grid">
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Emergency Events</span><strong id="analyticsEmergencyCount">0</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Average Duration</span><strong id="analyticsEmergencyAvgDuration">—</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Longest Emergency</span><strong id="analyticsEmergencyLongest">—</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Top Station</span><strong id="analyticsEmergencyTopStation">—</strong></div>
+                    </div>
+                    <div id="analyticsEmergencyHistoryList" class="analytics-detail-list"></div>
+                </div>
                 <div class="analytics-grid-two">
                     <div class="analytics-card">
                         <h3>Calls by Station</h3>
