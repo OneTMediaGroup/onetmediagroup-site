@@ -436,6 +436,39 @@ const COMPANY_ID = getActiveCompanyId();
     setTimeout(() => authUserId?.focus(), 50);
   }
 
+
+
+  async function resetEmergencyStationCalls(auth, emergencyData = {}) {
+    const stationName = emergencyData.activatedByStation || emergencyData.station || "";
+    if (!stationName) return;
+    const closerName = auth?.userName || "Emergency Clear";
+    const closerUid = auth?.user?.uid || auth?.user?.employeeNumber || auth?.user?.id || "";
+    const now = Date.now();
+    try {
+      const snap = await callsRef.where("station", "==", stationName).get();
+      const batch = db.batch();
+      let count = 0;
+      snap.forEach(doc => {
+        const data = doc.data() || {};
+        const status = String(data.status || "").toLowerCase();
+        if (status === "waiting" || status === "ack" || status === "acknowledged") {
+          batch.set(doc.ref, {
+            status: "closed",
+            closedAt: now,
+            timeClosed: now,
+            closedBy: closerName,
+            closedByUid: closerUid,
+            emergencyClearedStationReset: true,
+            updatedAt: now
+          }, { merge: true });
+          count += 1;
+        }
+      });
+      if (count) await batch.commit();
+    } catch (err) {
+      console.warn("Emergency cleared, but station call reset was skipped:", err);
+    }
+  }
   function closeAuthModal() {
     pendingAction = null;
     if (authModal) {
@@ -458,7 +491,10 @@ const COMPANY_ID = getActiveCompanyId();
       if (authError) authError.textContent = "";
       if (pendingAction.action === "clearEmergency") {
         const auth = await authorizeEmergencyClear();
+        const emergencySnap = await emergencyRef.get();
+        const emergencyData = emergencySnap.exists ? (emergencySnap.data() || {}) : {};
         await emergencyRef.set({ active: false, clearedBy: auth.userName, clearedByUid: auth.user.uid || auth.user.employeeNumber || auth.user.id || "", clearedAt: Date.now(), updatedAt: Date.now() }, { merge: true });
+        await resetEmergencyStationCalls(auth, emergencyData);
         closeAuthModal();
         return;
       }

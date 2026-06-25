@@ -1089,3 +1089,44 @@ body.emergency-active .circle-label-sub {
     margin-bottom: 12px !important;
   }
 }
+
+
+/* === EMERGENCY CIRCLE FINAL CLEANUP === */
+/* During an active emergency, use the whole circle area instead of squeezing text inside the small inner ring. */
+body.emergency-active .circle-outer,
+body.emergency-active .circle-middle {
+  display: none !important;
+}
+body.emergency-active .circle-inner {
+  width: min(84%, 230px) !important;
+  height: min(84%, 230px) !important;
+  padding: 18px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+body.emergency-active .circle-label-main {
+  width: 100% !important;
+  max-width: 100% !important;
+  font-size: clamp(20px, 2.6vw, 30px) !important;
+  line-height: 1 !important;
+  letter-spacing: .02em !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+body.emergency-active .circle-label-sub {
+  width: 100% !important;
+  max-width: 100% !important;
+  font-size: clamp(11px, 1.35vw, 15px) !important;
+  line-height: 1.05 !important;
+  letter-spacing: .13em !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+@media (min-width: 900px) {
+  body.emergency-active .circle-wrapper {
+    width: min(32vh, 32vw, 270px) !important;
+    height: min(32vh, 32vw, 270px) !important;
+  }
+}
