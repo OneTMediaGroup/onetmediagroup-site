@@ -6166,3 +6166,59 @@ body.emergency-active .company-logo {
 #tab-logs .table td:nth-child(8),
 #tab-logs .table td:nth-child(9),
 #tab-logs .table td:nth-child(10) { text-align: center; white-space: nowrap; }
+
+
+/* Call Logs timing columns alignment fix */
+#tab-logs .table-wrapper {
+  width: 100% !important;
+  overflow-x: auto !important;
+  overflow-y: auto !important;
+}
+
+#tab-logs .call-logs-table {
+  width: 1915px !important;
+  min-width: 1915px !important;
+  table-layout: fixed !important;
+}
+
+#tab-logs .call-logs-table th,
+#tab-logs .call-logs-table td {
+  box-sizing: border-box !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  vertical-align: middle !important;
+}
+
+#tab-logs .call-logs-table th:nth-child(1),
+#tab-logs .call-logs-table td:nth-child(1) { width: 180px !important; }
+#tab-logs .call-logs-table th:nth-child(2),
+#tab-logs .call-logs-table td:nth-child(2) { width: 170px !important; }
+#tab-logs .call-logs-table th:nth-child(3),
+#tab-logs .call-logs-table td:nth-child(3) { width: 210px !important; }
+#tab-logs .call-logs-table th:nth-child(4),
+#tab-logs .call-logs-table td:nth-child(4) { width: 160px !important; }
+#tab-logs .call-logs-table th:nth-child(5),
+#tab-logs .call-logs-table td:nth-child(5) { width: 150px !important; }
+#tab-logs .call-logs-table th:nth-child(6),
+#tab-logs .call-logs-table td:nth-child(6) { width: 135px !important; }
+#tab-logs .call-logs-table th:nth-child(7),
+#tab-logs .call-logs-table td:nth-child(7) { width: 165px !important; }
+#tab-logs .call-logs-table th:nth-child(8),
+#tab-logs .call-logs-table td:nth-child(8) { width: 130px !important; }
+#tab-logs .call-logs-table th:nth-child(9),
+#tab-logs .call-logs-table td:nth-child(9) { width: 140px !important; }
+#tab-logs .call-logs-table th:nth-child(10),
+#tab-logs .call-logs-table td:nth-child(10) { width: 155px !important; }
+#tab-logs .call-logs-table th:nth-child(11),
+#tab-logs .call-logs-table td:nth-child(11) {
+  width: 320px !important;
+  white-space: normal !important;
+  line-height: 1.35 !important;
+}
+
+#tab-logs .call-logs-table .status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
