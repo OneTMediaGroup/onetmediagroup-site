@@ -668,26 +668,6 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                         <strong id="analyticsPeakHour">—</strong>
                     </div>
                 </div>
-
-
-
-                <div class="analytics-card analytics-emergency-card analytics-full-width-section">
-                    <div class="analytics-card-head">
-                        <div>
-                            <h2>Emergency History</h2>
-                            <p class="analytics-note">Plant emergency alerts in the selected range.</p>
-                        </div>
-                        <button id="analyticsEmergencyExportBtn" class="btn secondary" type="button">Export Emergency CSV</button>
-                    </div>
-                    <div class="analytics-emergency-grid">
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Total Emergencies</span><strong id="analyticsEmergencyCount">0</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Active Emergency</span><strong id="analyticsEmergencyActive">No</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Average Duration</span><strong id="analyticsEmergencyAvgDuration">—</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Longest Duration</span><strong id="analyticsEmergencyLongest">—</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">This Month</span><strong id="analyticsEmergencyThisMonth">0</strong></div>
-                    </div>
-                    <div id="analyticsEmergencyHistoryList" class="analytics-detail-list"></div>
-                </div>
                 <div class="analytics-grid-two">
                     <div class="analytics-card">
                         <h3>Calls by Station</h3>
@@ -742,6 +722,24 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                         <p class="analytics-note">Top 5 closed calls with the longest total resolution time.</p>
                         <div id="analyticsLongestResolutionList" class="analytics-detail-list"></div>
                     </div>
+                </div>
+
+                <div class="analytics-card analytics-emergency-card analytics-wide-card">
+                    <div class="analytics-card-head">
+                        <div>
+                            <h3>Emergency History</h3>
+                            <p class="analytics-note">Plant emergency alerts in the selected range.</p>
+                        </div>
+                        <button id="analyticsEmergencyExportBtn" class="btn secondary" type="button">Export Emergency CSV</button>
+                    </div>
+                    <div class="analytics-emergency-grid">
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Total Emergencies</span><strong id="analyticsEmergencyCount">0</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Active Emergency</span><strong id="analyticsEmergencyActive">No</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Average Duration</span><strong id="analyticsEmergencyAvgDuration">—</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Longest Duration</span><strong id="analyticsEmergencyLongest">—</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">This Month</span><strong id="analyticsEmergencyThisMonth">0</strong></div>
+                    </div>
+                    <div id="analyticsEmergencyHistoryList" class="analytics-detail-list"></div>
                 </div>
             </div>
         </section>

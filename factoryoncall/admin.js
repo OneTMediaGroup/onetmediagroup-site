@@ -4389,7 +4389,9 @@ stationFormReset?.addEventListener("click", resetStationForm);
     const start = emergencyEventStartMillis(event);
     if (!start) return false;
     const bounds = analyticsRangeBounds();
-    return start >= bounds.start && start <= bounds.end;
+    if (bounds.start && start < bounds.start) return false;
+    if (bounds.end && start > bounds.end) return false;
+    return true;
   }
 
   function monthBoundsNow() {
