@@ -5190,6 +5190,9 @@ body.theme-light .status-pill.active {
 html.theme-light #tab-logs .filters input,
 html[data-theme="light"] #tab-logs .filters input,
 body.theme-light #tab-logs .filters input,
+html.theme-light #tab-logs .filters select,
+html[data-theme="light"] #tab-logs .filters select,
+body.theme-light #tab-logs .filters select,
 html.theme-light #tab-logs .log-date-field input,
 html[data-theme="light"] #tab-logs .log-date-field input,
 body.theme-light #tab-logs .log-date-field input {
@@ -5247,6 +5250,7 @@ body.theme-light #tab-logs .filters input::placeholder {
     gap: 12px !important;
   }
   #tab-logs .filters > input,
+  #tab-logs .filters > select,
   #tab-logs .filters > button,
   #tab-logs .log-date-field {
     width: 100% !important;

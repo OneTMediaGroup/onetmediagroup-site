@@ -371,6 +371,8 @@ function escapeHtml(value = "") {
 
   const logsTableBody = document.getElementById("logsTableBody");
   const logsSearch = document.getElementById("logsSearch");
+  const logsResolutionSearch = document.getElementById("logsResolutionSearch");
+  const logsResolutionFilter = document.getElementById("logsResolutionFilter");
   const logsDateFrom = document.getElementById("logsDateFrom");
   const logsDateTo = document.getElementById("logsDateTo");
   const logsFilterBtn = document.getElementById("logsFilterBtn");
@@ -3521,6 +3523,8 @@ module.exports = QRCode;
   function currentLogFilters() {
     return {
       search: (logsSearch?.value || "").trim().toLowerCase(),
+      resolutionSearch: (logsResolutionSearch?.value || "").trim().toLowerCase(),
+      resolutionFilter: logsResolutionFilter?.value || "all",
       from: logsDateFrom?.value || "",
       to: logsDateTo?.value || ""
     };
@@ -3532,6 +3536,11 @@ module.exports = QRCode;
     return calls.filter(call => {
       const start = callStartMillis(call);
       if (filters.search && !callSearchText(call).includes(filters.search)) return false;
+
+      const summaryText = resolutionSummary(call).toLowerCase();
+      if (filters.resolutionSearch && !summaryText.includes(filters.resolutionSearch)) return false;
+      if (filters.resolutionFilter === "with" && !summaryText) return false;
+      if (filters.resolutionFilter === "without" && summaryText) return false;
 
       if (filters.from) {
         const fromTime = new Date(`${filters.from}T00:00:00`).getTime();
@@ -3807,11 +3816,15 @@ module.exports = QRCode;
     logsFilterBtn?.addEventListener("click", renderCallLogs);
     logsClearBtn?.addEventListener("click", () => {
       if (logsSearch) logsSearch.value = "";
+      if (logsResolutionSearch) logsResolutionSearch.value = "";
+      if (logsResolutionFilter) logsResolutionFilter.value = "all";
       if (logsDateFrom) logsDateFrom.value = "";
       if (logsDateTo) logsDateTo.value = "";
       renderCallLogs();
     });
     logsSearch?.addEventListener("input", renderCallLogs);
+    logsResolutionSearch?.addEventListener("input", renderCallLogs);
+    logsResolutionFilter?.addEventListener("change", renderCallLogs);
     logsDateFrom?.addEventListener("change", renderCallLogs);
     logsDateTo?.addEventListener("change", renderCallLogs);
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);

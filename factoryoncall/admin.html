@@ -221,6 +221,12 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 
                 <div class="filters">
                     <input id="logsSearch" type="text" placeholder="Search logs..." />
+                    <input id="logsResolutionSearch" type="text" placeholder="Search resolution summary..." />
+                    <select id="logsResolutionFilter" aria-label="Resolution summary filter">
+                        <option value="all">All summaries</option>
+                        <option value="with">With summary</option>
+                        <option value="without">No summary</option>
+                    </select>
                     <label class="log-date-field" for="logsDateFrom"><span>From</span><input id="logsDateFrom" type="date" aria-label="Start" /></label>
                     <label class="log-date-field" for="logsDateTo"><span>To</span><input id="logsDateTo" type="date" aria-label="End" /></label>
                     <button id="logsFilterBtn" class="btn small">Apply</button>
@@ -861,6 +867,6 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 </div>
 
 <script src="firebase.js"></script>
-<script src="admin.js?v=call-log-time-cols-v177"></script>
+<script src="admin.js?v=resolution-summary-filter-v178"></script>
 </body>
 </html>
