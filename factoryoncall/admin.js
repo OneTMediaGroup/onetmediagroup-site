@@ -4368,9 +4368,12 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function emergencyEventIsActive(event = {}) {
-    // Only the live emergency settings document decides whether an alert is currently active.
-    // Older history docs may still have active:true from earlier builds, so do not let stale
-    // event flags keep Analytics showing "Active" after the plant alarm has been cleared.
+    // A history row is active only when the live plant emergency is active AND this is
+    // the matching open history record. Older rows can keep active:true from earlier
+    // builds, so any cleared timestamp/duration always wins and makes the row cleared.
+    const clearedAt = getMillis(event.clearedAt || event.endedAt || event.resolvedAt || event.closedAt || 0);
+    const hasDuration = Number.isFinite(Number(event.durationSeconds)) && Number(event.durationSeconds) > 0;
+    if (clearedAt || hasDuration) return false;
     if (!currentEmergencyActive) return false;
     if (event.active !== true) return false;
     if (currentEmergencyEventId && event.id && event.id !== currentEmergencyEventId) return false;
@@ -4453,30 +4456,36 @@ stationFormReset?.addEventListener("click", resetStationForm);
     }
 
     container.innerHTML = `
-      <div class="analytics-detail-table emergency-history-table">
-        <div class="analytics-detail-header">
-          <span>Date / Time</span>
-          <span>Station</span>
-          <span>Area</span>
-          <span>Cleared By</span>
-          <span>Duration</span>
-          <span>Status</span>
-        </div>
-        ${events.map(event => {
-          const duration = emergencyDurationMinutes(event);
-          const status = emergencyStatus(event);
-          const active = status === "Active";
-          return `
-            <div class="analytics-detail-data">
-              <span>${escapeHtml(formatDateTime(emergencyEventStartMillis(event)))}</span>
-              <span><strong>${escapeHtml(emergencyStation(event))}</strong></span>
-              <span>${escapeHtml(emergencyArea(event))}</span>
-              <span>${escapeHtml(active ? "—" : emergencyClearedBy(event))}</span>
-              <span><strong>${escapeHtml(duration ? formatDurationMinutes(duration) : (active ? "Active" : "—"))}</strong></span>
-              <span><b class="status-pill ${active ? "status-waiting" : "status-closed"}">${escapeHtml(status)}</b></span>
-            </div>
-          `;
-        }).join("")}
+      <div class="emergency-history-table-wrap">
+        <table class="emergency-history-table">
+          <thead>
+            <tr>
+              <th>Date / Time</th>
+              <th>Station</th>
+              <th>Area</th>
+              <th>Cleared By</th>
+              <th>Duration</th>
+              <th>Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${events.map(event => {
+              const duration = emergencyDurationMinutes(event);
+              const status = emergencyStatus(event);
+              const active = status === "Active";
+              return `
+                <tr>
+                  <td>${escapeHtml(formatDateTime(emergencyEventStartMillis(event)))}</td>
+                  <td><strong>${escapeHtml(emergencyStation(event))}</strong></td>
+                  <td>${escapeHtml(emergencyArea(event))}</td>
+                  <td>${escapeHtml(active ? "—" : emergencyClearedBy(event))}</td>
+                  <td><strong>${escapeHtml(duration ? formatDurationMinutes(duration) : (active ? "Active" : "—"))}</strong></td>
+                  <td><b class="status-pill ${active ? "status-waiting" : "status-closed"}">${escapeHtml(status)}</b></td>
+                </tr>
+              `;
+            }).join("")}
+          </tbody>
+        </table>
       </div>
     `;
   }
@@ -4484,7 +4493,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
   function renderEmergencyAnalytics() {
     const events = emergencyHistoryRowsInRange();
     const durations = events.map(emergencyDurationMinutes).filter(v => Number.isFinite(v) && v > 0);
-    const activeCount = currentEmergencyActive ? 1 : 0;
+    const activeCount = events.some(event => emergencyEventIsActive(event)) ? 1 : 0;
     const month = monthBoundsNow();
     const thisMonthCount = cachedEmergencyEvents.filter(event => {
       const start = emergencyEventStartMillis(event);

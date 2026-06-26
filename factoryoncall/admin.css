@@ -6075,3 +6075,78 @@ body.emergency-active .company-logo {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* PATCH 168 — Emergency History fixed table alignment */
+.analytics-emergency-card .emergency-history-wrap {
+  overflow-x: auto !important;
+}
+
+.emergency-history-table-wrap {
+  width: 100% !important;
+  overflow-x: auto !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 18px !important;
+  background: var(--card) !important;
+}
+
+.emergency-history-table {
+  width: 100% !important;
+  min-width: 920px !important;
+  border-collapse: collapse !important;
+  table-layout: fixed !important;
+  background: var(--card) !important;
+}
+
+.emergency-history-table th,
+.emergency-history-table td {
+  padding: 14px 16px !important;
+  border-bottom: 1px solid var(--line) !important;
+  text-align: left !important;
+  vertical-align: middle !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere !important;
+  color: var(--text) !important;
+}
+
+.emergency-history-table th {
+  background: var(--table-head, rgba(148,163,184,.14)) !important;
+  color: var(--muted) !important;
+  font-size: 12px !important;
+  line-height: 1.2 !important;
+  letter-spacing: .18em !important;
+  text-transform: uppercase !important;
+  font-weight: 900 !important;
+}
+
+.emergency-history-table tbody tr:nth-child(odd) td {
+  background: rgba(148, 163, 184, .06) !important;
+}
+
+.emergency-history-table tbody tr:last-child td {
+  border-bottom: 0 !important;
+}
+
+.emergency-history-table th:nth-child(1),
+.emergency-history-table td:nth-child(1) { width: 23% !important; }
+.emergency-history-table th:nth-child(2),
+.emergency-history-table td:nth-child(2) { width: 18% !important; }
+.emergency-history-table th:nth-child(3),
+.emergency-history-table td:nth-child(3) { width: 15% !important; }
+.emergency-history-table th:nth-child(4),
+.emergency-history-table td:nth-child(4) { width: 18% !important; }
+.emergency-history-table th:nth-child(5),
+.emergency-history-table td:nth-child(5) { width: 13% !important; }
+.emergency-history-table th:nth-child(6),
+.emergency-history-table td:nth-child(6) { width: 13% !important; }
+
+.emergency-history-table .status-pill {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 86px !important;
+  padding: 7px 12px !important;
+  border-radius: 999px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  line-height: 1 !important;
+}
