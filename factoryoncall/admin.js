@@ -4456,36 +4456,32 @@ stationFormReset?.addEventListener("click", resetStationForm);
     }
 
     container.innerHTML = `
-      <div class="emergency-history-table-wrap">
-        <table class="emergency-history-table">
-          <thead>
-            <tr>
-              <th>Date / Time</th>
-              <th>Station</th>
-              <th>Area</th>
-              <th>Cleared By</th>
-              <th>Duration</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${events.map(event => {
-              const duration = emergencyDurationMinutes(event);
-              const status = emergencyStatus(event);
-              const active = status === "Active";
-              return `
-                <tr>
-                  <td>${escapeHtml(formatDateTime(emergencyEventStartMillis(event)))}</td>
-                  <td><strong>${escapeHtml(emergencyStation(event))}</strong></td>
-                  <td>${escapeHtml(emergencyArea(event))}</td>
-                  <td>${escapeHtml(active ? "—" : emergencyClearedBy(event))}</td>
-                  <td><strong>${escapeHtml(duration ? formatDurationMinutes(duration) : (active ? "Active" : "—"))}</strong></td>
-                  <td><b class="status-pill ${active ? "status-waiting" : "status-closed"}">${escapeHtml(status)}</b></td>
-                </tr>
-              `;
-            }).join("")}
-          </tbody>
-        </table>
+      <div class="emergency-audit-table-wrap">
+        <div class="emergency-audit-table" role="table" aria-label="Emergency History">
+          <div class="emergency-audit-row emergency-audit-head" role="row">
+            <div role="columnheader">Date / Time</div>
+            <div role="columnheader">Station</div>
+            <div role="columnheader">Area</div>
+            <div role="columnheader">Cleared By</div>
+            <div role="columnheader">Duration</div>
+            <div role="columnheader">Status</div>
+          </div>
+          ${events.map(event => {
+            const duration = emergencyDurationMinutes(event);
+            const status = emergencyStatus(event);
+            const active = status === "Active";
+            return `
+              <div class="emergency-audit-row" role="row">
+                <div role="cell">${escapeHtml(formatDateTime(emergencyEventStartMillis(event)))}</div>
+                <div role="cell"><strong>${escapeHtml(emergencyStation(event))}</strong></div>
+                <div role="cell">${escapeHtml(emergencyArea(event))}</div>
+                <div role="cell">${escapeHtml(active ? "—" : emergencyClearedBy(event))}</div>
+                <div role="cell"><strong>${escapeHtml(duration ? formatDurationMinutes(duration) : (active ? "Active" : "—"))}</strong></div>
+                <div role="cell"><b class="status-pill ${active ? "status-waiting" : "status-closed"}">${escapeHtml(status)}</b></div>
+              </div>
+            `;
+          }).join("")}
+        </div>
       </div>
     `;
   }
