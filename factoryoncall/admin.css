@@ -5957,3 +5957,39 @@ body.emergency-active .company-logo {
 .analytics-emergency-card .analytics-summary-label { color: #991b1b !important; }
 @media (max-width: 900px) { .analytics-emergency-grid { grid-template-columns: repeat(2, minmax(0,1fr)); } }
 @media (max-width: 520px) { .analytics-emergency-grid { grid-template-columns: 1fr; } }
+
+/* PATCH 165 — Emergency History audit table */
+.analytics-emergency-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+.analytics-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 14px;
+}
+.emergency-history-table .analytics-detail-header,
+.emergency-history-table .analytics-detail-data {
+  grid-template-columns: 20% 18% 16% 18% 14% 14% !important;
+}
+.emergency-history-table .status-pill {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  min-width: 82px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+}
+@media (max-width: 1100px) {
+  .analytics-emergency-grid { grid-template-columns: repeat(2, minmax(0,1fr)) !important; }
+  .analytics-card-head { flex-direction: column; }
+  .emergency-history-table { overflow-x: auto !important; }
+  .emergency-history-table .analytics-detail-header,
+  .emergency-history-table .analytics-detail-data { min-width: 760px !important; }
+}
+@media (max-width: 520px) {
+  .analytics-emergency-grid { grid-template-columns: 1fr !important; }
+}

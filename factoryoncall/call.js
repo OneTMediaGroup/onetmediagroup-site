@@ -255,7 +255,9 @@ const COMPANY_ID = getActiveCompanyId();
           active: true,
           activatedByStation: STATION_NAME,
           station: STATION_NAME,
-          activatedBy: "Station",
+          stationName: STATION_NAME,
+          area: STATION_AREA || "",
+          areaName: STATION_AREA || "",
           activatedAt: now,
           message: emergencySettings.message || "Plant Emergency — follow company emergency procedures.",
           createdAt: now,
@@ -268,6 +270,10 @@ const COMPANY_ID = getActiveCompanyId();
           message: emergencySettings.message || "Plant Emergency — follow company emergency procedures.",
           soundEnabled: emergencySettings.soundEnabled !== false,
           activatedByStation: STATION_NAME,
+          station: STATION_NAME,
+          stationName: STATION_NAME,
+          area: STATION_AREA || "",
+          areaName: STATION_AREA || "",
           activatedAt: now,
           updatedAt: now
         }, { merge: true });
@@ -468,7 +474,12 @@ const COMPANY_ID = getActiveCompanyId();
     try {
       const eventId = emergencySettings.eventId || "";
       if (eventId) {
-        await companyRef.collection("emergencyEvents").doc(eventId).set({ active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true });
+        const startAt = emergencySettings.activatedAt ? Number(emergencySettings.activatedAt) : 0;
+        const payload = { active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt };
+        if (startAt && clearedAt >= startAt) {
+          payload.durationSeconds = Math.max(1, Math.round((clearedAt - startAt) / 1000));
+        }
+        await companyRef.collection("emergencyEvents").doc(eventId).set(payload, { merge: true });
       }
     } catch (err) {
       console.warn("Could not update emergency history event:", err);

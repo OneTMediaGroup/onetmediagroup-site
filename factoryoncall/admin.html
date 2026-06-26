@@ -671,14 +671,20 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 
 
 
-                <div class="analytics-card analytics-emergency-card">
-                    <h2>Emergency History</h2>
-                    <p class="analytics-note">Plant emergency alerts in the selected range.</p>
+                <div class="analytics-card analytics-emergency-card analytics-full-width-section">
+                    <div class="analytics-card-head">
+                        <div>
+                            <h2>Emergency History</h2>
+                            <p class="analytics-note">Plant emergency alerts in the selected range.</p>
+                        </div>
+                        <button id="analyticsEmergencyExportBtn" class="btn secondary" type="button">Export Emergency CSV</button>
+                    </div>
                     <div class="analytics-emergency-grid">
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Emergency Events</span><strong id="analyticsEmergencyCount">0</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Total Emergencies</span><strong id="analyticsEmergencyCount">0</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Active Emergency</span><strong id="analyticsEmergencyActive">No</strong></div>
                         <div class="analytics-summary-card"><span class="analytics-summary-label">Average Duration</span><strong id="analyticsEmergencyAvgDuration">—</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Longest Emergency</span><strong id="analyticsEmergencyLongest">—</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Top Station</span><strong id="analyticsEmergencyTopStation">—</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">Longest Duration</span><strong id="analyticsEmergencyLongest">—</strong></div>
+                        <div class="analytics-summary-card"><span class="analytics-summary-label">This Month</span><strong id="analyticsEmergencyThisMonth">0</strong></div>
                     </div>
                     <div id="analyticsEmergencyHistoryList" class="analytics-detail-list"></div>
                 </div>

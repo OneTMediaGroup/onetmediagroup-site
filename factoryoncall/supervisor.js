@@ -502,50 +502,46 @@ const COMPANY_ID = getActiveCompanyId();
   async function updateEmergencyEventClear(emergencyData = {}, clearedBy = "", clearedByUid = "", clearedAt = Date.now()) {
     try {
       const eventId = emergencyData.eventId || "";
+      const toMillis = (value) => {
+        if (!value) return 0;
+        if (typeof value === "number") return value;
+        if (value && typeof value.toMillis === "function") return value.toMillis();
+        if (value && typeof value.seconds === "number") return value.seconds * 1000;
+        const parsed = Date.parse(value);
+        return Number.isNaN(parsed) ? 0 : parsed;
+      };
+      const startAt = toMillis(emergencyData.activatedAt || emergencyData.startedAt || emergencyData.createdAt || 0);
+      const clearPayload = {
+        active: false,
+        clearedBy,
+        clearedByUid,
+        clearedAt,
+        updatedAt: clearedAt
+      };
+      if (startAt && clearedAt >= startAt) {
+        clearPayload.durationSeconds = Math.max(1, Math.round((clearedAt - startAt) / 1000));
+      }
       if (eventId) {
-        await companyRef.collection("emergencyEvents").doc(eventId).set({ active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true });
+        await companyRef.collection("emergencyEvents").doc(eventId).set(clearPayload, { merge: true });
         return;
       }
       const snap = await companyRef.collection("emergencyEvents").where("active", "==", true).limit(1).get();
       const batch = db.batch();
-      snap.docs.forEach(doc => batch.set(doc.ref, { active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true }));
+      snap.docs.forEach(doc => {
+        const data = doc.data() || {};
+        const docStart = toMillis(data.activatedAt || data.startedAt || data.createdAt || 0);
+        const payload = { ...clearPayload };
+        if (docStart && clearedAt >= docStart) {
+          payload.durationSeconds = Math.max(1, Math.round((clearedAt - docStart) / 1000));
+        }
+        batch.set(doc.ref, payload, { merge: true });
+      });
       if (!snap.empty) await batch.commit();
     } catch (err) {
       console.warn("Could not update emergency history event:", err);
     }
   }
 
-  async function resetEmergencyStationCalls(auth, emergencyData = {}) {
-    const stationName = emergencyData.activatedByStation || emergencyData.station || "";
-    if (!stationName) return;
-    const closerName = auth?.userName || "Emergency Clear";
-    const closerUid = auth?.user?.uid || auth?.user?.employeeNumber || auth?.user?.id || "";
-    const now = Date.now();
-    try {
-      const snap = await callsRef.where("station", "==", stationName).get();
-      const batch = db.batch();
-      let count = 0;
-      snap.forEach(doc => {
-        const data = doc.data() || {};
-        const status = String(data.status || "").toLowerCase();
-        if (status === "waiting" || status === "ack" || status === "acknowledged") {
-          batch.set(doc.ref, {
-            status: "closed",
-            closedAt: now,
-            timeClosed: now,
-            closedBy: closerName,
-            closedByUid: closerUid,
-            emergencyClearedStationReset: true,
-            updatedAt: now
-          }, { merge: true });
-          count += 1;
-        }
-      });
-      if (count) await batch.commit();
-    } catch (err) {
-      console.warn("Emergency cleared, but station call reset was skipped:", err);
-    }
-  }
   function ensureEmergencyClearModal() {
     let modal = document.getElementById("emergencyClearModal");
     if (modal) return modal;

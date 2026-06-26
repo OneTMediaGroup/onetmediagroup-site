@@ -401,7 +401,9 @@ function escapeHtml(value = "") {
   const analyticsEmergencyCount = document.getElementById("analyticsEmergencyCount");
   const analyticsEmergencyAvgDuration = document.getElementById("analyticsEmergencyAvgDuration");
   const analyticsEmergencyLongest = document.getElementById("analyticsEmergencyLongest");
-  const analyticsEmergencyTopStation = document.getElementById("analyticsEmergencyTopStation");
+  const analyticsEmergencyActive = document.getElementById("analyticsEmergencyActive");
+  const analyticsEmergencyThisMonth = document.getElementById("analyticsEmergencyThisMonth");
+  const analyticsEmergencyExportBtn = document.getElementById("analyticsEmergencyExportBtn");
   const analyticsEmergencyHistoryList = document.getElementById("analyticsEmergencyHistoryList");
 
   const permissionCheckboxes = document.querySelectorAll("input[data-permission]");
@@ -3778,6 +3780,7 @@ module.exports = QRCode;
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);
     purgeLogsBtn?.addEventListener("click", purgeOldLogs);
     analyticsExportBtn?.addEventListener("click", exportAnalyticsCsv);
+    analyticsEmergencyExportBtn?.addEventListener("click", exportEmergencyHistoryCsv);
     analyticsDateRange?.addEventListener("change", () => {
       updateAnalyticsCustomRangeUI();
       renderAnalytics();
@@ -4357,7 +4360,29 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function emergencyEventEndMillis(event = {}) {
+    if (event.active === true) return 0;
     return getMillis(event.clearedAt || event.endedAt || event.resolvedAt || event.updatedAt);
+  }
+
+  function emergencyStation(event = {}) {
+    return event.stationName || event.activatedByStation || event.station || event.location || "Plant-wide";
+  }
+
+  function emergencyArea(event = {}) {
+    return event.areaName || event.area || event.department || "—";
+  }
+
+  function emergencyStatus(event = {}) {
+    return event.active === true ? "Active" : "Cleared";
+  }
+
+  function emergencyDurationMinutes(event = {}) {
+    const start = emergencyEventStartMillis(event);
+    const end = emergencyEventEndMillis(event);
+    if (!start) return null;
+    if (event.active === true) return null;
+    if (!end || end < start) return null;
+    return Math.max(1, Math.round((end - start) / 60000));
   }
 
   function emergencyInAnalyticsRange(event = {}) {
@@ -4367,36 +4392,103 @@ stationFormReset?.addEventListener("click", resetStationForm);
     return start >= bounds.start && start <= bounds.end;
   }
 
-  function renderEmergencyAnalytics() {
-    const events = cachedEmergencyEvents
+  function monthBoundsNow() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), 1, 0, 0, 0, 0).getTime();
+    const end = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59, 999).getTime();
+    return { start, end };
+  }
+
+  function emergencyHistoryRowsInRange() {
+    return cachedEmergencyEvents
       .filter(emergencyInAnalyticsRange)
       .sort((a, b) => (emergencyEventStartMillis(b) || 0) - (emergencyEventStartMillis(a) || 0));
+  }
 
-    const stationCounts = new Map();
-    const durations = [];
-    const historyItems = [];
+  function renderEmergencyHistoryTable(container, events) {
+    if (!container) return;
+    if (!events.length) {
+      container.innerHTML = `<div class="analytics-empty">No emergency alerts in this range.</div>`;
+      return;
+    }
 
-    events.forEach(event => {
-      const station = event.activatedByStation || event.station || event.location || "Plant-wide";
-      incrementMap(stationCounts, station);
+    container.innerHTML = `
+      <div class="analytics-detail-table emergency-history-table">
+        <div class="analytics-detail-header">
+          <span>Date / Time</span>
+          <span>Station</span>
+          <span>Area</span>
+          <span>Cleared By</span>
+          <span>Duration</span>
+          <span>Status</span>
+        </div>
+        ${events.map(event => {
+          const duration = emergencyDurationMinutes(event);
+          const status = emergencyStatus(event);
+          const statusClass = status.toLowerCase();
+          return `
+            <div class="analytics-detail-data">
+              <span>${escapeHtml(formatDateTime(emergencyEventStartMillis(event)))}</span>
+              <span><strong>${escapeHtml(emergencyStation(event))}</strong></span>
+              <span>${escapeHtml(emergencyArea(event))}</span>
+              <span>${escapeHtml(event.clearedBy || (event.active ? "—" : "Not recorded"))}</span>
+              <span><strong>${escapeHtml(duration ? formatDurationMinutes(duration) : (event.active ? "Active" : "—"))}</strong></span>
+              <span><b class="status-pill ${statusClass === "active" ? "status-waiting" : "status-closed"}">${escapeHtml(status)}</b></span>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
+  function renderEmergencyAnalytics() {
+    const events = emergencyHistoryRowsInRange();
+    const durations = events.map(emergencyDurationMinutes).filter(v => Number.isFinite(v) && v > 0);
+    const activeCount = cachedEmergencyEvents.filter(event => event.active === true).length;
+    const month = monthBoundsNow();
+    const thisMonthCount = cachedEmergencyEvents.filter(event => {
       const start = emergencyEventStartMillis(event);
-      const end = emergencyEventEndMillis(event);
-      const duration = end && start && end >= start ? Math.max(1, Math.round((end - start) / 60000)) : null;
-      if (duration) durations.push(duration);
-      historyItems.push({
-        minutes: duration || 0,
-        title: station,
-        subtitle: `${event.activatedBy || event.requestedBy || "Station"} → ${event.clearedBy || (event.active ? "Active" : "Not recorded")}`,
-        value: duration ? formatDurationMinutes(duration) : (event.active ? "Active" : "—")
-      });
-    });
+      return start >= month.start && start <= month.end;
+    }).length;
 
-    const topStation = sortedMapEntries(stationCounts)[0];
     if (analyticsEmergencyCount) analyticsEmergencyCount.textContent = String(events.length);
+    if (analyticsEmergencyActive) analyticsEmergencyActive.textContent = activeCount ? "Yes" : "No";
     if (analyticsEmergencyAvgDuration) analyticsEmergencyAvgDuration.textContent = formatDurationMinutes(average(durations));
     if (analyticsEmergencyLongest) analyticsEmergencyLongest.textContent = formatDurationMinutes(durations.length ? Math.max(...durations) : null);
-    if (analyticsEmergencyTopStation) analyticsEmergencyTopStation.textContent = topStation ? topStation[0] : "—";
-    renderDetailList(analyticsEmergencyHistoryList, historyItems, "No emergency alerts in this range.");
+    if (analyticsEmergencyThisMonth) analyticsEmergencyThisMonth.textContent = String(thisMonthCount);
+    renderEmergencyHistoryTable(analyticsEmergencyHistoryList, events);
+  }
+
+  function exportEmergencyHistoryCsv() {
+    const events = emergencyHistoryRowsInRange();
+    if (!events.length) {
+      alert("No emergency history to export in this range.");
+      return;
+    }
+
+    const rows = [[
+      "Date / Time",
+      "Station",
+      "Area",
+      "Cleared By",
+      "Duration",
+      "Status"
+    ]];
+
+    events.forEach(event => {
+      const duration = emergencyDurationMinutes(event);
+      rows.push([
+        formatDateTime(emergencyEventStartMillis(event)),
+        emergencyStation(event),
+        emergencyArea(event),
+        event.clearedBy || (event.active ? "" : "Not recorded"),
+        duration ? formatDurationMinutes(duration) : (event.active ? "Active" : ""),
+        emergencyStatus(event)
+      ]);
+    });
+
+    const csv = rows.map(row => row.map(csvSafe).join(",")).join("\n");
+    downloadText(`factory-on-call-emergency-history-${COMPANY_ID}-${new Date().toISOString().slice(0, 10)}.csv`, csv, "text/csv");
   }
 
   function renderAnalytics() {
@@ -5052,13 +5144,32 @@ stationFormReset?.addEventListener("click", resetStationForm);
   async function updateEmergencyEventClear(emergencyData = {}, clearedBy = "", clearedByUid = "", clearedAt = Date.now()) {
     try {
       const eventId = emergencyData.eventId || "";
+      const startAt = getMillis(emergencyData.activatedAt || emergencyData.startedAt || emergencyData.createdAt || 0);
+      const clearPayload = {
+        active: false,
+        clearedBy,
+        clearedByUid,
+        clearedAt,
+        updatedAt: clearedAt
+      };
+      if (startAt && clearedAt >= startAt) {
+        clearPayload.durationSeconds = Math.max(1, Math.round((clearedAt - startAt) / 1000));
+      }
       if (eventId) {
-        await emergencyEventsRef.doc(eventId).set({ active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true });
+        await emergencyEventsRef.doc(eventId).set(clearPayload, { merge: true });
         return;
       }
       const snap = await emergencyEventsRef.where("active", "==", true).limit(1).get();
       const batch = db.batch();
-      snap.docs.forEach(doc => batch.set(doc.ref, { active: false, clearedBy, clearedByUid, clearedAt, updatedAt: clearedAt }, { merge: true }));
+      snap.docs.forEach(doc => {
+        const data = doc.data() || {};
+        const docStart = getMillis(data.activatedAt || data.startedAt || data.createdAt || 0);
+        const payload = { ...clearPayload };
+        if (docStart && clearedAt >= docStart) {
+          payload.durationSeconds = Math.max(1, Math.round((clearedAt - docStart) / 1000));
+        }
+        batch.set(doc.ref, payload, { merge: true });
+      });
       if (!snap.empty) await batch.commit();
     } catch (err) {
       console.warn("Could not update emergency history event:", err);
