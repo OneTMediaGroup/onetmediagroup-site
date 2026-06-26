@@ -1442,3 +1442,45 @@ body.emergency-active .station-emergency-banner.hidden { display: none !importan
   body.emergency-active .app-header::after,
   .app-header.station-emergency-header-active::after { font-size: 16px; letter-spacing: .06em; padding: 0 66px; text-align: center; }
 }
+
+
+/* STATION RESOLUTION SUMMARY TEXTAREA ONLY */
+.lock-resolution-label {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  margin: 12px 0 10px;
+  text-align: left;
+  color: var(--text-main, #e5e7eb);
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+.lock-resolution-input {
+  width: 100%;
+  min-height: 78px;
+  resize: vertical;
+  border-radius: 14px;
+  border: 1px solid rgba(148, 163, 184, .45);
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+  color: #0f172a;
+  background: #ffffff;
+  outline: none;
+  box-sizing: border-box;
+}
+.lock-resolution-input::placeholder { color: #64748b; opacity: 1; }
+html[data-theme="dark"] .lock-resolution-input,
+body.theme-dark .lock-resolution-input {
+  color: #e5e7eb;
+  background: #020617;
+  border-color: rgba(148, 163, 184, .5);
+}
+@media (max-width: 720px) {
+  .lock-resolution-input { min-height: 70px; font-size: 16px; }
+}

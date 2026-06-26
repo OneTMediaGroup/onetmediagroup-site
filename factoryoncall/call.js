@@ -222,6 +222,7 @@ const COMPANY_ID = getActiveCompanyId();
   const lockOverlay = document.getElementById("lockOverlay");
   const lockUserId = document.getElementById("lockUserId");
   const lockPin = document.getElementById("lockPin");
+  const lockResolutionSummary = document.getElementById("lockResolutionSummary");
   const unlockBtn = document.getElementById("unlockBtn");
   const lockCloseBtn = document.getElementById("lockCloseBtn");
 
@@ -486,7 +487,7 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
-  async function clearEmergencyFromStation(user) {
+  async function clearEmergencyFromStation(user, resolutionSummary = "") {
     const now = Date.now();
     const closerName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.uid || "Station User";
     const closerUid = user.uid || user.employeeNumber || user.id || "";
@@ -520,6 +521,7 @@ const COMPANY_ID = getActiveCompanyId();
             closedBy: closerName,
             closedByUid: closerUid,
             emergencyClearedStationReset: true,
+            resolutionSummary: resolutionSummary || data.resolutionSummary || "",
             updatedAt: now
           }, { merge: true });
           count += 1;
@@ -661,6 +663,7 @@ const COMPANY_ID = getActiveCompanyId();
     lockOverlay.classList.add("hidden");
     if (lockUserId) lockUserId.value = "";
     if (lockPin) lockPin.value = "";
+    if (lockResolutionSummary) lockResolutionSummary.value = "";
     activeLockField = "user";
   }
 
@@ -669,6 +672,7 @@ const COMPANY_ID = getActiveCompanyId();
 
     lockUserId.value = "";
     lockPin.value = "";
+    if (lockResolutionSummary) lockResolutionSummary.value = "";
     activeLockField = "user";
     lockOverlay.classList.remove("hidden");
 
@@ -737,6 +741,7 @@ const COMPANY_ID = getActiveCompanyId();
   unlockBtn?.addEventListener("click", async () => {
     const uid = lockUserId?.value.trim() || "";
     const pin = lockPin?.value.trim() || "";
+    const resolutionSummary = (lockResolutionSummary?.value || "").trim();
 
     if (uid.length < 2 || pin.length < 2) {
       alert("Enter valid ID + PIN");
@@ -766,7 +771,7 @@ const COMPANY_ID = getActiveCompanyId();
       };
 
       if (emergencySettings.enabled && emergencySettings.active) {
-        await clearEmergencyFromStation(currentCaller);
+        await clearEmergencyFromStation(currentCaller, resolutionSummary);
       } else {
         const activeDoc = await findActiveCallForStation();
 
@@ -782,7 +787,8 @@ const COMPANY_ID = getActiveCompanyId();
             closedBy: `${currentCaller.firstName || ""} ${currentCaller.lastName || ""}`.trim() || currentCaller.uid || "Caller",
             closedByUid: currentCaller.uid || "",
             timeClosed,
-            duration
+            duration,
+            resolutionSummary
           });
         }
       }
