@@ -217,6 +217,10 @@ const COMPANY_ID = getActiveCompanyId();
   const circleMainLabel = document.getElementById("circleMainLabel");
   const circleSubLabel = document.getElementById("circleSubLabel");
   const hintText = document.getElementById("hintText");
+  const stationLiveStatus = document.getElementById("stationLiveStatus");
+  const stationElapsedTime = document.getElementById("stationElapsedTime");
+  const stationCallStatusText = document.getElementById("stationCallStatusText");
+  const stationAckByText = document.getElementById("stationAckByText");
   const customerNameEl = document.getElementById("customerName");
 
   const lockOverlay = document.getElementById("lockOverlay");
@@ -229,6 +233,8 @@ const COMPANY_ID = getActiveCompanyId();
   let selectedRoles = [];
   let isLocked = false;
   let callState = "idle";
+  let currentActiveCall = null;
+  let stationTimerId = null;
   let activeLockField = "user";
   let currentCaller = { firstName: "", lastName: "", uid: "" };
   let roleDefinitions = [...FALLBACK_ROLE_DEFINITIONS];
@@ -318,6 +324,7 @@ const COMPANY_ID = getActiveCompanyId();
       if (circleSubLabel) circleSubLabel.textContent = "ALERT ACTIVE";
       if (hintText) hintText.textContent = "Plant emergency alert is active. Follow company emergency procedures.";
       if (sendCallBtn) sendCallBtn.disabled = true;
+      if (stationLiveStatus) stationLiveStatus.classList.add("hidden");
       // Keep station unlock visible during a live emergency so operators can still sign in.
       if (signInBtn) signInBtn.classList.remove("hidden");
     } else {
@@ -428,8 +435,70 @@ const COMPANY_ID = getActiveCompanyId();
     sendCallBtn.disabled = !canSend;
   }
 
-  function setCallState(state) {
+  function formatElapsed(ms) {
+    const total = Math.max(0, Math.floor(Number(ms || 0) / 1000));
+    const h = Math.floor(total / 3600);
+    const m = Math.floor((total % 3600) / 60);
+    const sec = total % 60;
+    if (h > 0) return `${String(h).padStart(2, "0")}:${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+    return `${String(m).padStart(2, "0")}:${String(sec).padStart(2, "0")}`;
+  }
+
+  function stationRoleText(call) {
+    if (!call) return "—";
+    if (Array.isArray(call.roles) && call.roles.length) return call.roles.join(", ");
+    return call.role || call.personnelRequired || call.personnel || "—";
+  }
+
+  function updateStationLiveDetails() {
+    const call = currentActiveCall;
+    const active = call && callState !== "idle";
+    if (stationLiveStatus) stationLiveStatus.classList.toggle("hidden", !active);
+    if (!active) {
+      if (stationElapsedTime) stationElapsedTime.textContent = "00:00";
+      if (stationCallStatusText) stationCallStatusText.textContent = "Ready";
+      if (stationAckByText) stationAckByText.textContent = "—";
+      return;
+    }
+
+    const started = Number(call.timeStarted || call.createdAt || 0) || Date.now();
+    if (stationElapsedTime) stationElapsedTime.textContent = formatElapsed(Date.now() - started);
+
+    const ackName = call.ackBy || call.assignedTo || "—";
+    const roleText = stationRoleText(call);
+    if (stationCallStatusText) stationCallStatusText.textContent = callState === "ack" ? "Acknowledged" : "Waiting";
+    if (stationAckByText) stationAckByText.textContent = callState === "ack" ? (ackName !== "—" ? `${roleText} · ${ackName}` : roleText) : "Not yet";
+  }
+
+  function startStationTimer() {
+    if (stationTimerId) return;
+    stationTimerId = setInterval(updateStationLiveDetails, 1000);
+  }
+
+  function stopStationTimer() {
+    if (stationTimerId) {
+      clearInterval(stationTimerId);
+      stationTimerId = null;
+    }
+  }
+
+  function setCallState(state, activeCall = null) {
     callState = state;
+    currentActiveCall = activeCall || (state === "idle" ? null : currentActiveCall);
+
+    document.body.classList.remove("station-state-idle", "station-state-pending", "station-state-ack");
+    document.body.classList.add(`station-state-${state}`);
+    if (callPanel) {
+      callPanel.classList.remove("station-state-idle", "station-state-pending", "station-state-ack");
+      callPanel.classList.add(`station-state-${state}`);
+    }
+
+    if (state === "idle") {
+      stopStationTimer();
+    } else {
+      startStationTimer();
+    }
+    updateStationLiveDetails();
 
     if (!circleMainLabel || !circleSubLabel || !hintText) return;
 
@@ -443,13 +512,16 @@ const COMPANY_ID = getActiveCompanyId();
     } else if (state === "pending") {
       circleMainLabel.textContent = STATION_NAME;
       circleSubLabel.textContent = "Waiting for acknowledgment";
-      hintText.textContent = "Call sent. Waiting for someone to respond.";
+      const roleText = stationRoleText(currentActiveCall);
+      hintText.textContent = `${roleText} has been notified. Waiting for acknowledgement.`;
     } else if (state === "ack") {
       circleMainLabel.textContent = STATION_NAME;
       circleSubLabel.textContent = "Acknowledged";
-      hintText.textContent = "Someone has accepted this call.";
+      const ackName = currentActiveCall?.ackBy || currentActiveCall?.assignedTo || "someone";
+      hintText.textContent = `Acknowledged by ${ackName}. Help is on the way.`;
     }
 
+    updateStationLiveDetails();
     updateSendButton();
   }
 
@@ -590,7 +662,7 @@ const COMPANY_ID = getActiveCompanyId();
       isLocked = true;
       updateLockVisuals();
       const activeStatus = String(active.status || "").toLowerCase();
-      setCallState(activeStatus === "ack" || activeStatus === "acknowledged" ? "ack" : "pending");
+      setCallState(activeStatus === "ack" || activeStatus === "acknowledged" ? "ack" : "pending", active);
     });
   }
 
@@ -600,7 +672,7 @@ const COMPANY_ID = getActiveCompanyId();
     const existing = await findActiveCallForStation();
     if (existing) {
       const existingStatus = String(existing.data()?.status || "").toLowerCase();
-      setCallState(existingStatus === "ack" || existingStatus === "acknowledged" ? "ack" : "pending");
+      setCallState(existingStatus === "ack" || existingStatus === "acknowledged" ? "ack" : "pending", { id: existing.id, ...(existing.data() || {}) });
       if (emergencySettings.enabled && emergencySettings.active) {
         renderEmergencyState();
         return;
@@ -641,7 +713,7 @@ const COMPANY_ID = getActiveCompanyId();
       setTimeout(() => callPanel.classList.remove("sending"), 900);
     }
 
-    setCallState("pending");
+    setCallState("pending", payload);
     isLocked = true;
     updateLockVisuals();
     updateSendButton();

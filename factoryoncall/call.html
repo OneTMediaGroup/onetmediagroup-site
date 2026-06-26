@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#eef3f8" media="(prefers-color-scheme: light)" />
-    <link rel="stylesheet" href="call.css?v=station-emergency-header-v157" />
+    <link rel="stylesheet" href="call.css?v=station-floor-visibility-v181" />
 <script>
 if('scrollRestoration' in history){history.scrollRestoration='manual';}
 window.addEventListener('pageshow',()=>window.scrollTo(0,0));
@@ -41,6 +41,21 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                     <div class="circle-inner">
                         <div id="circleMainLabel" class="circle-label-main">Roles</div>
                         <div id="circleSubLabel" class="circle-label-sub">Select then send call</div>
+                    </div>
+                </div>
+
+                <div id="stationLiveStatus" class="station-live-status hidden" aria-live="polite">
+                    <div class="station-live-card">
+                        <span class="station-live-label">Current Downtime</span>
+                        <strong id="stationElapsedTime">00:00</strong>
+                    </div>
+                    <div class="station-live-card">
+                        <span class="station-live-label">Call Status</span>
+                        <strong id="stationCallStatusText">Ready</strong>
+                    </div>
+                    <div class="station-live-card">
+                        <span class="station-live-label">Acknowledged By</span>
+                        <strong id="stationAckByText">—</strong>
                     </div>
                 </div>
 
@@ -93,6 +108,6 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
         </div>
     </div>
 
-    <script src="call.js?v=station-resolution-summary-v174"></script>
+    <script src="call.js?v=station-floor-visibility-v181"></script>
 </body>
 </html>
