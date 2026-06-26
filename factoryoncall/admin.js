@@ -3481,6 +3481,27 @@ module.exports = QRCode;
   }
 
 
+  function callTimeToAckLabel(call) {
+    const explicit = Number(call.timeToAcknowledgeMinutes || call.responseMinutes || call.waitMinutes || 0);
+    if (Number.isFinite(explicit) && explicit > 0) return formatDurationMinutes(explicit);
+
+    const start = callStartMillis(call);
+    const ack = callAckMillis(call);
+    const minutes = minutesBetween(start, ack);
+    return minutes ? formatDurationMinutes(minutes) : "—";
+  }
+
+  function callTimeToClearLabel(call) {
+    const explicit = Number(call.clearMinutesAfterAck || call.timeToClearMinutes || call.resolutionMinutes || 0);
+    if (Number.isFinite(explicit) && explicit > 0) return formatDurationMinutes(explicit);
+
+    const ack = callAckMillis(call);
+    const closed = callClosedMillis(call);
+    const minutes = minutesBetween(ack, closed);
+    return minutes ? formatDurationMinutes(minutes) : "—";
+  }
+
+
   function resolutionSummary(call) {
     return String(call.resolutionSummary || call.notes || call.closeNotes || "").trim();
   }
@@ -3537,7 +3558,7 @@ module.exports = QRCode;
 
     if (!filteredLogCalls.length) {
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="9" class="table-empty">No call logs found.</td>`;
+      tr.innerHTML = `<td colspan="11" class="table-empty">No call logs found.</td>`;
       logsTableBody.appendChild(tr);
       return;
     }
@@ -3555,6 +3576,8 @@ module.exports = QRCode;
         <td>${requestedBy(call)}</td>
         <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
         <td>${assignedTo(call)}</td>
+        <td>${callTimeToAckLabel(call)}</td>
+        <td>${callTimeToClearLabel(call)}</td>
         <td>${callDurationLabel(call)}</td>
         <td class="resolution-summary-cell">${resolutionSummary(call) || "—"}</td>
       `;
@@ -3584,7 +3607,9 @@ module.exports = QRCode;
       "Requested By",
       "Status",
       "Assigned To",
-      "Duration",
+      "Time to Ack",
+      "Time to Clear",
+      "Total Duration",
       "Resolution Summary"
     ];
 
@@ -3598,6 +3623,8 @@ module.exports = QRCode;
         requestedBy(call),
         dashboardStatusLabel(call),
         assignedTo(call),
+        callTimeToAckLabel(call),
+        callTimeToClearLabel(call),
         callDurationLabel(call),
         resolutionSummary(call)
       ].map(csvSafe).join(","))

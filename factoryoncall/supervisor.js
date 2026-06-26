@@ -433,24 +433,37 @@ const COMPANY_ID = getActiveCompanyId();
         const data = snap.data() || {};
         const userName = currentUser ? (`${currentUser.firstName || ""} ${currentUser.lastName || ""}`.trim() || currentUser.name || currentUser.uid) : "Supervisor";
         if (action === "ack") {
+          const acknowledgedAt = Date.now();
+          const timeToAcknowledgeMinutes = data.timeStarted
+            ? Math.max(1, Math.round((acknowledgedAt - data.timeStarted) / 60000))
+            : null;
           await ref.update({
             status: "ack",
             ackBy: userName,
             assignedTo: userName,
             ackByUid: viewerUid || "",
-            timeAck: Date.now()
+            timeAck: acknowledgedAt,
+            acknowledgedAt,
+            timeToAcknowledgeMinutes,
+            updatedAt: acknowledgedAt
           });
         }
         if (action === "close") {
           const resolutionSummary = window.prompt("Resolution Summary\n\nWhat was the issue / fix?", "") || "";
           const timeClosed = Date.now();
           const duration = data.timeStarted ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000)) : null;
+          const ackAt = data.acknowledgedAt || data.timeAck || data.ackAt || data.acceptedAt || null;
+          const clearMinutesAfterAck = ackAt ? Math.max(1, Math.round((timeClosed - ackAt) / 60000)) : null;
           const payload = {
             status: "closed",
             closedBy: userName,
             closedByUid: viewerUid || "",
             timeClosed,
-            duration
+            closedAt: timeClosed,
+            duration,
+            clearMinutesAfterAck,
+            timeToClearMinutes: clearMinutesAfterAck,
+            updatedAt: timeClosed
           };
           if (resolutionSummary.trim()) payload.resolutionSummary = resolutionSummary.trim();
           await ref.update(payload);

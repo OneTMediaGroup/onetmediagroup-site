@@ -6156,3 +6156,13 @@ body.emergency-active .company-logo {
 .auth-resolution-wrap.hidden { display: none !important; }
 .auth-resolution-input { min-height: 96px !important; resize: vertical !important; line-height: 1.35 !important; }
 .resolution-summary-cell { max-width: 360px; white-space: normal !important; line-height: 1.35; color: var(--text-main); }
+
+
+/* CALL LOG TIMING COLUMNS */
+#tab-logs .table { min-width: 1180px; }
+#tab-logs .table th:nth-child(8),
+#tab-logs .table th:nth-child(9),
+#tab-logs .table th:nth-child(10),
+#tab-logs .table td:nth-child(8),
+#tab-logs .table td:nth-child(9),
+#tab-logs .table td:nth-child(10) { text-align: center; white-space: nowrap; }

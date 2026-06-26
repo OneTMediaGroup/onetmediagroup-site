@@ -787,8 +787,13 @@ const COMPANY_ID = getActiveCompanyId();
             closedBy: `${currentCaller.firstName || ""} ${currentCaller.lastName || ""}`.trim() || currentCaller.uid || "Caller",
             closedByUid: currentCaller.uid || "",
             timeClosed,
+            closedAt: timeClosed,
             duration,
-            resolutionSummary
+            timeToAcknowledgeMinutes: null,
+            clearMinutesAfterAck: null,
+            timeToClearMinutes: null,
+            resolutionSummary,
+            updatedAt: timeClosed
           });
         }
       }
