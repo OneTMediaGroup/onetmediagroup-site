@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
     <meta name="theme-color" content="#020617" media="(prefers-color-scheme: dark)" />
     <meta name="theme-color" content="#eef3f8" media="(prefers-color-scheme: light)" />
-    <link rel="stylesheet" href="call.css?v=station-emergency-header-v157" />
+    <link rel="stylesheet" href="call.css?v=station-resolution-summary-v1" />
 <script>
 if('scrollRestoration' in history){history.scrollRestoration='manual';}
 window.addEventListener('pageshow',()=>window.scrollTo(0,0));
@@ -83,11 +83,16 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                 <button data-action="backspace">⌫</button>
             </div>
 
+            <label class="resolution-summary-field" for="resolutionSummary">
+                <span>Resolution Summary</span>
+                <textarea id="resolutionSummary" rows="3" placeholder="Example: Cleaned sensor, reset fault, returned to production."></textarea>
+            </label>
+
             <button id="unlockBtn" class="unlock-btn">Unlock</button>
 
         </div>
     </div>
 
-    <script src="call.js?v=station-emergency-header-v157"></script>
+    <script src="call.js?v=station-resolution-summary-v1"></script>
 </body>
 </html>

@@ -3480,11 +3480,6 @@ module.exports = QRCode;
     return formatDurationMinutes(minutes);
   }
 
-
-  function resolutionSummary(call) {
-    return String(call.resolutionSummary || call.notes || call.closeNotes || "").trim();
-  }
-
   function callSearchText(call) {
     return [
       callStation(call),
@@ -3492,8 +3487,7 @@ module.exports = QRCode;
       callLocation(call),
       requestedBy(call),
       assignedTo(call),
-      dashboardStatusLabel(call),
-      resolutionSummary(call)
+      dashboardStatusLabel(call)
     ].join(" ").toLowerCase();
   }
 
@@ -3537,7 +3531,7 @@ module.exports = QRCode;
 
     if (!filteredLogCalls.length) {
       const tr = document.createElement("tr");
-      tr.innerHTML = `<td colspan="9" class="table-empty">No call logs found.</td>`;
+      tr.innerHTML = `<td colspan="8" class="table-empty">No call logs found.</td>`;
       logsTableBody.appendChild(tr);
       return;
     }
@@ -3556,7 +3550,6 @@ module.exports = QRCode;
         <td><span class="status-pill ${statusClass}">${statusLabel}</span></td>
         <td>${assignedTo(call)}</td>
         <td>${callDurationLabel(call)}</td>
-        <td class="resolution-summary-cell">${resolutionSummary(call) || "—"}</td>
       `;
 
       logsTableBody.appendChild(tr);
@@ -3584,8 +3577,7 @@ module.exports = QRCode;
       "Requested By",
       "Status",
       "Assigned To",
-      "Duration",
-      "Resolution Summary"
+      "Duration"
     ];
 
     const lines = [
@@ -3598,8 +3590,7 @@ module.exports = QRCode;
         requestedBy(call),
         dashboardStatusLabel(call),
         assignedTo(call),
-        callDurationLabel(call),
-        resolutionSummary(call)
+        callDurationLabel(call)
       ].map(csvSafe).join(","))
     ];
 

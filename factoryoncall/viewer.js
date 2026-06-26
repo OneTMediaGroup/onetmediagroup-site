@@ -92,8 +92,6 @@ const COMPANY_ID = getActiveCompanyId();
   const authSummary = document.getElementById("authSummary");
   const authUserId = document.getElementById("authUserId");
   const authPin = document.getElementById("authPin");
-  const authResolutionWrap = document.getElementById("authResolutionWrap");
-  const authResolutionSummary = document.getElementById("authResolutionSummary");
   const authError = document.getElementById("authError");
   const authCancel = document.getElementById("authCancel");
   const authSubmit = document.getElementById("authSubmit");
@@ -431,8 +429,6 @@ const COMPANY_ID = getActiveCompanyId();
     if (authError) authError.textContent = "";
     if (authUserId) authUserId.value = "";
     if (authPin) authPin.value = "";
-    if (authResolutionSummary) authResolutionSummary.value = "";
-    if (authResolutionWrap) authResolutionWrap.classList.toggle("hidden", action !== "close");
     if (authModal) {
       authModal.classList.add("open");
       authModal.setAttribute("aria-hidden", "false");
@@ -537,16 +533,13 @@ const COMPANY_ID = getActiveCompanyId();
       if (pendingAction.action === "close") {
         const timeClosed = Date.now();
         const duration = data.timeStarted ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000)) : null;
-        const resolutionSummary = String(authResolutionSummary?.value || "").trim();
-        const payload = {
+        await ref.update({
           status: "closed",
           closedBy: auth.userName,
           closedByUid: auth.user.uid || auth.user.employeeNumber || auth.user.id || "",
           timeClosed,
           duration
-        };
-        if (resolutionSummary) payload.resolutionSummary = resolutionSummary;
-        await ref.update(payload);
+        });
       }
 
       closeAuthModal();
@@ -573,8 +566,6 @@ const COMPANY_ID = getActiveCompanyId();
       if (authUserId) authUserId.value = "";
       if (authPin) authPin.value = "";
       if (authError) authError.textContent = "";
-      if (authResolutionSummary) authResolutionSummary.value = "";
-      if (authResolutionWrap) authResolutionWrap.classList.add("hidden");
       authModal?.classList.add("open");
       authModal?.setAttribute("aria-hidden", "false");
       setTimeout(() => authUserId?.focus(), 50);
