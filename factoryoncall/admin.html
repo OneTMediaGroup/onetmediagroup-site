@@ -732,14 +732,14 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                         </div>
                         <button id="analyticsEmergencyExportBtn" class="btn secondary" type="button">Export Emergency CSV</button>
                     </div>
-                    <div class="analytics-emergency-grid">
+                    <div id="analyticsEmergencyHistoryList" class="analytics-detail-list emergency-history-wrap"></div>
+                    <div class="analytics-emergency-grid analytics-emergency-summary-row">
                         <div class="analytics-summary-card"><span class="analytics-summary-label">Total Emergencies</span><strong id="analyticsEmergencyCount">0</strong></div>
                         <div class="analytics-summary-card"><span class="analytics-summary-label">Active Emergency</span><strong id="analyticsEmergencyActive">No</strong></div>
                         <div class="analytics-summary-card"><span class="analytics-summary-label">Average Duration</span><strong id="analyticsEmergencyAvgDuration">—</strong></div>
                         <div class="analytics-summary-card"><span class="analytics-summary-label">Longest Duration</span><strong id="analyticsEmergencyLongest">—</strong></div>
                         <div class="analytics-summary-card"><span class="analytics-summary-label">This Month</span><strong id="analyticsEmergencyThisMonth">0</strong></div>
                     </div>
-                    <div id="analyticsEmergencyHistoryList" class="analytics-detail-list"></div>
                 </div>
             </div>
         </section>

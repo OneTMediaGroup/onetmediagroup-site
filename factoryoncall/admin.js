@@ -438,6 +438,7 @@ function escapeHtml(value = "") {
   let cachedCalls = [];
   let cachedEmergencyEvents = [];
   let currentEmergencyActive = false;
+  let currentEmergencyEventId = "";
   let filteredLogCalls = [];
 
   function splitName(fullName = "") {
@@ -4356,12 +4357,35 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
 
   function emergencyEventStartMillis(event = {}) {
-    return getMillis(event.activatedAt || event.startedAt || event.createdAt || event.timeStarted || event.updatedAt);
+    return getMillis(
+      event.activatedAt ||
+      event.startedAt ||
+      event.createdAt ||
+      event.timeStarted ||
+      event.created ||
+      event.updatedAt
+    );
+  }
+
+  function emergencyEventIsActive(event = {}) {
+    // Only the live emergency settings document decides whether an alert is currently active.
+    // Older history docs may still have active:true from earlier builds, so do not let stale
+    // event flags keep Analytics showing "Active" after the plant alarm has been cleared.
+    if (!currentEmergencyActive) return false;
+    if (event.active !== true) return false;
+    if (currentEmergencyEventId && event.id && event.id !== currentEmergencyEventId) return false;
+    return true;
   }
 
   function emergencyEventEndMillis(event = {}) {
-    if (event.active === true) return 0;
-    return getMillis(event.clearedAt || event.endedAt || event.resolvedAt || event.updatedAt);
+    if (emergencyEventIsActive(event)) return 0;
+    return getMillis(
+      event.clearedAt ||
+      event.endedAt ||
+      event.resolvedAt ||
+      event.closedAt ||
+      event.updatedAt
+    );
   }
 
   function emergencyStation(event = {}) {
@@ -4372,22 +4396,30 @@ stationFormReset?.addEventListener("click", resetStationForm);
     return event.areaName || event.area || event.department || "—";
   }
 
+  function emergencyClearedBy(event = {}) {
+    return event.clearedByName || event.clearedBy || event.resolvedByName || event.resolvedBy || "—";
+  }
+
   function emergencyStatus(event = {}) {
-    return event.active === true ? "Active" : "Cleared";
+    return emergencyEventIsActive(event) ? "Active" : "Cleared";
   }
 
   function emergencyDurationMinutes(event = {}) {
+    if (Number.isFinite(Number(event.durationSeconds)) && Number(event.durationSeconds) > 0) {
+      return Math.max(1, Math.round(Number(event.durationSeconds) / 60));
+    }
+
     const start = emergencyEventStartMillis(event);
     const end = emergencyEventEndMillis(event);
     if (!start) return null;
-    if (event.active === true) return null;
+    if (emergencyEventIsActive(event)) return null;
     if (!end || end < start) return null;
     return Math.max(1, Math.round((end - start) / 60000));
   }
 
   function emergencyInAnalyticsRange(event = {}) {
     const start = emergencyEventStartMillis(event);
-    if (!start) return false;
+    if (!start) return true;
     const bounds = analyticsRangeBounds();
     if (bounds.start && start < bounds.start) return false;
     if (bounds.end && start > bounds.end) return false;
@@ -4402,9 +4434,15 @@ stationFormReset?.addEventListener("click", resetStationForm);
   }
 
   function emergencyHistoryRowsInRange() {
-    return cachedEmergencyEvents
-      .filter(emergencyInAnalyticsRange)
+    const sorted = cachedEmergencyEvents
+      .slice()
       .sort((a, b) => (emergencyEventStartMillis(b) || 0) - (emergencyEventStartMillis(a) || 0));
+
+    const filtered = sorted.filter(emergencyInAnalyticsRange);
+
+    // If range filtering somehow hides new Firestore history because of older field formats,
+    // still show the history table instead of showing "No emergency alerts" while counters exist.
+    return filtered.length ? filtered : sorted;
   }
 
   function renderEmergencyHistoryTable(container, events) {
@@ -4427,15 +4465,15 @@ stationFormReset?.addEventListener("click", resetStationForm);
         ${events.map(event => {
           const duration = emergencyDurationMinutes(event);
           const status = emergencyStatus(event);
-          const statusClass = status.toLowerCase();
+          const active = status === "Active";
           return `
             <div class="analytics-detail-data">
               <span>${escapeHtml(formatDateTime(emergencyEventStartMillis(event)))}</span>
               <span><strong>${escapeHtml(emergencyStation(event))}</strong></span>
               <span>${escapeHtml(emergencyArea(event))}</span>
-              <span>${escapeHtml(event.clearedBy || (event.active ? "—" : "Not recorded"))}</span>
-              <span><strong>${escapeHtml(duration ? formatDurationMinutes(duration) : (event.active ? "Active" : "—"))}</strong></span>
-              <span><b class="status-pill ${statusClass === "active" ? "status-waiting" : "status-closed"}">${escapeHtml(status)}</b></span>
+              <span>${escapeHtml(active ? "—" : emergencyClearedBy(event))}</span>
+              <span><strong>${escapeHtml(duration ? formatDurationMinutes(duration) : (active ? "Active" : "—"))}</strong></span>
+              <span><b class="status-pill ${active ? "status-waiting" : "status-closed"}">${escapeHtml(status)}</b></span>
             </div>
           `;
         }).join("")}
@@ -4446,11 +4484,11 @@ stationFormReset?.addEventListener("click", resetStationForm);
   function renderEmergencyAnalytics() {
     const events = emergencyHistoryRowsInRange();
     const durations = events.map(emergencyDurationMinutes).filter(v => Number.isFinite(v) && v > 0);
-    const activeCount = cachedEmergencyEvents.filter(event => event.active === true).length;
+    const activeCount = currentEmergencyActive ? 1 : 0;
     const month = monthBoundsNow();
     const thisMonthCount = cachedEmergencyEvents.filter(event => {
       const start = emergencyEventStartMillis(event);
-      return start >= month.start && start <= month.end;
+      return !start || (start >= month.start && start <= month.end);
     }).length;
 
     if (analyticsEmergencyCount) analyticsEmergencyCount.textContent = String(events.length);
@@ -4483,8 +4521,8 @@ stationFormReset?.addEventListener("click", resetStationForm);
         formatDateTime(emergencyEventStartMillis(event)),
         emergencyStation(event),
         emergencyArea(event),
-        event.clearedBy || (event.active ? "" : "Not recorded"),
-        duration ? formatDurationMinutes(duration) : (event.active ? "Active" : ""),
+        emergencyStatus(event) === "Active" ? "" : emergencyClearedBy(event),
+        duration ? formatDurationMinutes(duration) : (emergencyStatus(event) === "Active" ? "Active" : ""),
         emergencyStatus(event)
       ]);
     });
@@ -5206,7 +5244,9 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
   function applyEmergencySettingsToForm(data = {}) {
     const emergencyActive = data.enabled === true && data.active === true;
+    currentEmergencyEventId = data.eventId || "";
     setAdminEmergencyHeader(emergencyActive);
+    renderEmergencyAnalytics();
 
     if (emergencyEnabled) emergencyEnabled.checked = data.enabled === true;
     if (emergencySoundEnabled) emergencySoundEnabled.checked = data.soundEnabled !== false;

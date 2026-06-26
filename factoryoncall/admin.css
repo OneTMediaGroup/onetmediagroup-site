@@ -5993,3 +5993,85 @@ body.emergency-active .company-logo {
 @media (max-width: 520px) {
   .analytics-emergency-grid { grid-template-columns: 1fr !important; }
 }
+
+
+/* PATCH 167 — Emergency History: table first, compact stats at bottom */
+.analytics-emergency-card .emergency-history-wrap {
+  margin-top: 12px;
+  margin-bottom: 16px;
+}
+
+.analytics-emergency-card .analytics-emergency-summary-row {
+  display: grid !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+  margin-top: 14px !important;
+  margin-bottom: 0 !important;
+}
+
+.analytics-emergency-card .analytics-emergency-summary-row .analytics-summary-card {
+  min-height: 76px !important;
+  padding: 14px 16px !important;
+  border-radius: 16px !important;
+}
+
+.analytics-emergency-card .analytics-emergency-summary-row .analytics-summary-card strong {
+  font-size: 28px !important;
+  line-height: 1.05 !important;
+}
+
+.emergency-history-table {
+  width: 100% !important;
+  overflow: hidden !important;
+  border: 1px solid var(--line) !important;
+  border-radius: 18px !important;
+  background: var(--card) !important;
+}
+
+.emergency-history-table .analytics-detail-header,
+.emergency-history-table .analytics-detail-data {
+  display: grid !important;
+  grid-template-columns: 1.25fr 1fr .9fr 1fr .8fr .75fr !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 14px 18px !important;
+}
+
+.emergency-history-table .analytics-detail-header {
+  background: var(--table-head, rgba(148,163,184,.14)) !important;
+  border-bottom: 1px solid var(--line) !important;
+}
+
+.emergency-history-table .analytics-detail-data {
+  border-bottom: 1px solid var(--line) !important;
+}
+
+.emergency-history-table .analytics-detail-data:last-child {
+  border-bottom: 0 !important;
+}
+
+.emergency-history-table .analytics-detail-data span {
+  min-width: 0 !important;
+  overflow-wrap: anywhere !important;
+}
+
+@media (max-width: 1100px) {
+  .analytics-emergency-card .analytics-emergency-summary-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .emergency-history-table {
+    overflow-x: auto !important;
+  }
+
+  .emergency-history-table .analytics-detail-header,
+  .emergency-history-table .analytics-detail-data {
+    min-width: 880px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .analytics-emergency-card .analytics-emergency-summary-row {
+    grid-template-columns: 1fr !important;
+  }
+}
