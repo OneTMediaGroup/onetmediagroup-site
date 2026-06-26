@@ -442,8 +442,6 @@ const COMPANY_ID = getActiveCompanyId();
           });
         }
         if (action === "close") {
-          const summary = window.prompt("Resolution Summary\n\nWhat was the issue and what was done?", data.resolutionSummary || "");
-          if (summary === null) return;
           const timeClosed = Date.now();
           const duration = data.timeStarted ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000)) : null;
           await ref.update({
@@ -451,10 +449,7 @@ const COMPANY_ID = getActiveCompanyId();
             closedBy: userName,
             closedByUid: viewerUid || "",
             timeClosed,
-            duration,
-            resolutionSummary: String(summary || "").trim(),
-            resolutionSummaryUpdatedAt: timeClosed,
-            resolutionSummaryUpdatedBy: userName
+            duration
           });
         }
       };

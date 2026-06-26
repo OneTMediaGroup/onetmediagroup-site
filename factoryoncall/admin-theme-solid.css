@@ -1520,8 +1520,3 @@ body.emergency-active .admin-emergency-header-badge {
 .emergency-history-table {
   display: none !important;
 }
-
-
-/* Resolution Summary call log column */
-.resolution-summary-cell { max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-@media (max-width: 820px) { .resolution-summary-cell { max-width: 260px; } }

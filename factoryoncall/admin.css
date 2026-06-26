@@ -6150,8 +6150,3 @@ body.emergency-active .company-logo {
   font-weight: 900 !important;
   line-height: 1 !important;
 }
-
-
-/* Resolution Summary call log column */
-.resolution-summary-cell { max-width: 360px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-@media (max-width: 820px) { .resolution-summary-cell { max-width: 260px; } }
