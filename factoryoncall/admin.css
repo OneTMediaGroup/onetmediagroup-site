@@ -6226,3 +6226,26 @@ body.emergency-active .company-logo {
   align-items: center !important;
   justify-content: center !important;
 }
+
+
+/* Resolution Summary search highlight */
+.resolution-summary-cell {
+  white-space: normal !important;
+  min-width: 260px;
+  max-width: 520px;
+  line-height: 1.35;
+}
+.resolution-hit {
+  display: inline;
+  padding: 1px 4px;
+  border-radius: 6px;
+  background: #fde047;
+  color: #111827;
+  font-weight: 900;
+  box-shadow: 0 0 0 1px rgba(17, 24, 39, .08);
+}
+html[data-theme="dark"] .resolution-hit,
+body.theme-dark .resolution-hit {
+  background: #facc15;
+  color: #020617;
+}

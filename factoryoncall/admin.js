@@ -3508,6 +3508,35 @@ module.exports = QRCode;
     return String(call.resolutionSummary || call.notes || call.closeNotes || "").trim();
   }
 
+  function escapeHtml(value) {
+    return String(value ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;")
+      .replace(/'/g, "&#039;");
+  }
+
+  function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  }
+
+  function highlightedResolutionSummary(call) {
+    const raw = resolutionSummary(call);
+    if (!raw) return "—";
+
+    const query = (logsResolutionSearch?.value || "").trim();
+    const safe = escapeHtml(raw);
+
+    if (!query) return safe;
+
+    const parts = query.split(/\s+/).filter(Boolean).map(escapeRegExp);
+    if (!parts.length) return safe;
+
+    const re = new RegExp(`(${parts.join("|")})`, "gi");
+    return safe.replace(re, '<mark class="resolution-hit">$1</mark>');
+  }
+
   function callSearchText(call) {
     return [
       callStation(call),
@@ -3588,7 +3617,7 @@ module.exports = QRCode;
         <td>${callTimeToAckLabel(call)}</td>
         <td>${callTimeToClearLabel(call)}</td>
         <td>${callDurationLabel(call)}</td>
-        <td class="resolution-summary-cell">${resolutionSummary(call) || "—"}</td>
+        <td class="resolution-summary-cell">${highlightedResolutionSummary(call)}</td>
       `;
 
       logsTableBody.appendChild(tr);
