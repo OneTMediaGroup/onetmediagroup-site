@@ -6150,3 +6150,9 @@ body.emergency-active .company-logo {
   font-weight: 900 !important;
   line-height: 1 !important;
 }
+
+
+/* RESOLUTION SUMMARY PATCH */
+.auth-resolution-wrap.hidden { display: none !important; }
+.auth-resolution-input { min-height: 96px !important; resize: vertical !important; line-height: 1.35 !important; }
+.resolution-summary-cell { max-width: 360px; white-space: normal !important; line-height: 1.35; color: var(--text-main); }

@@ -442,15 +442,18 @@ const COMPANY_ID = getActiveCompanyId();
           });
         }
         if (action === "close") {
+          const resolutionSummary = window.prompt("Resolution Summary\n\nWhat was the issue / fix?", "") || "";
           const timeClosed = Date.now();
           const duration = data.timeStarted ? Math.max(1, Math.round((timeClosed - data.timeStarted) / 60000)) : null;
-          await ref.update({
+          const payload = {
             status: "closed",
             closedBy: userName,
             closedByUid: viewerUid || "",
             timeClosed,
             duration
-          });
+          };
+          if (resolutionSummary.trim()) payload.resolutionSummary = resolutionSummary.trim();
+          await ref.update(payload);
         }
       };
     });

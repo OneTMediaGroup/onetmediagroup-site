@@ -223,7 +223,6 @@ const COMPANY_ID = getActiveCompanyId();
   const lockUserId = document.getElementById("lockUserId");
   const lockPin = document.getElementById("lockPin");
   const unlockBtn = document.getElementById("unlockBtn");
-  const resolutionSummary = document.getElementById("resolutionSummary");
   const lockCloseBtn = document.getElementById("lockCloseBtn");
 
   let selectedRoles = [];
@@ -487,7 +486,7 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
-  async function clearEmergencyFromStation(user, summary = "") {
+  async function clearEmergencyFromStation(user) {
     const now = Date.now();
     const closerName = `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.uid || "Station User";
     const closerUid = user.uid || user.employeeNumber || user.id || "";
@@ -498,7 +497,6 @@ const COMPANY_ID = getActiveCompanyId();
         clearedBy: closerName,
         clearedByUid: closerUid,
         clearedAt: now,
-        resolutionSummary: String(summary || "").trim(),
         updatedAt: now
       }, { merge: true });
       await updateEmergencyEventClear(closerName, closerUid, now);
@@ -522,7 +520,6 @@ const COMPANY_ID = getActiveCompanyId();
             closedBy: closerName,
             closedByUid: closerUid,
             emergencyClearedStationReset: true,
-            resolutionSummary: String(summary || "").trim(),
             updatedAt: now
           }, { merge: true });
           count += 1;
@@ -664,7 +661,6 @@ const COMPANY_ID = getActiveCompanyId();
     lockOverlay.classList.add("hidden");
     if (lockUserId) lockUserId.value = "";
     if (lockPin) lockPin.value = "";
-    if (resolutionSummary) resolutionSummary.value = "";
     activeLockField = "user";
   }
 
@@ -769,10 +765,8 @@ const COMPANY_ID = getActiveCompanyId();
         uid: match.uid || match.employeeNumber || ""
       };
 
-      const summary = String(resolutionSummary?.value || "").trim();
-
       if (emergencySettings.enabled && emergencySettings.active) {
-        await clearEmergencyFromStation(currentCaller, summary);
+        await clearEmergencyFromStation(currentCaller);
       } else {
         const activeDoc = await findActiveCallForStation();
 
@@ -788,8 +782,7 @@ const COMPANY_ID = getActiveCompanyId();
             closedBy: `${currentCaller.firstName || ""} ${currentCaller.lastName || ""}`.trim() || currentCaller.uid || "Caller",
             closedByUid: currentCaller.uid || "",
             timeClosed,
-            duration,
-            resolutionSummary: summary
+            duration
           });
         }
       }
@@ -799,7 +792,6 @@ const COMPANY_ID = getActiveCompanyId();
       document.querySelectorAll(".role-pill").forEach(p => p.classList.remove("selected"));
 
       if (lockOverlay) lockOverlay.classList.add("hidden");
-      if (resolutionSummary) resolutionSummary.value = "";
       setCallState("idle");
       updateLockVisuals();
       updateSendButton();
