@@ -1622,3 +1622,11 @@ body[data-theme="dark"] .emergency-clear-box input {
   position: relative;
   z-index: 100000;
 }
+
+
+/* Resolution Summary close-call input */
+.resolution-summary-wrap.hidden { display: none !important; }
+.resolution-summary-wrap { margin-top: 12px; }
+.resolution-summary-input { min-height: 96px; resize: vertical; line-height: 1.35; }
+.resolution-summary-help { margin: 6px 0 0; font-size: 12px; color: var(--fg-muted); }
+html[data-theme="light"] .resolution-summary-input { background:#fff !important; color:#0f172a !important; border-color:#cbd5e1 !important; }

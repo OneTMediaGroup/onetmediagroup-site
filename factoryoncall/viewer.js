@@ -93,6 +93,8 @@ const COMPANY_ID = getActiveCompanyId();
   const authUserId = document.getElementById("authUserId");
   const authPin = document.getElementById("authPin");
   const authError = document.getElementById("authError");
+  const resolutionSummaryWrap = document.getElementById("resolutionSummaryWrap");
+  const resolutionSummaryInput = document.getElementById("resolutionSummaryInput");
   const authCancel = document.getElementById("authCancel");
   const authSubmit = document.getElementById("authSubmit");
 
@@ -429,6 +431,8 @@ const COMPANY_ID = getActiveCompanyId();
     if (authError) authError.textContent = "";
     if (authUserId) authUserId.value = "";
     if (authPin) authPin.value = "";
+    if (resolutionSummaryInput) resolutionSummaryInput.value = "";
+    if (resolutionSummaryWrap) resolutionSummaryWrap.classList.toggle("hidden", action !== "close");
     if (authModal) {
       authModal.classList.add("open");
       authModal.setAttribute("aria-hidden", "false");
@@ -489,6 +493,8 @@ const COMPANY_ID = getActiveCompanyId();
       authModal.setAttribute("aria-hidden", "true");
     }
     if (authError) authError.textContent = "";
+    if (resolutionSummaryInput) resolutionSummaryInput.value = "";
+    if (resolutionSummaryWrap) resolutionSummaryWrap.classList.add("hidden");
   }
 
   async function submitAuthAction() {
@@ -538,7 +544,10 @@ const COMPANY_ID = getActiveCompanyId();
           closedBy: auth.userName,
           closedByUid: auth.user.uid || auth.user.employeeNumber || auth.user.id || "",
           timeClosed,
-          duration
+          duration,
+          resolutionSummary: (resolutionSummaryInput?.value || "").trim(),
+          resolutionSummaryUpdatedAt: timeClosed,
+          resolutionSummaryUpdatedBy: auth.userName
         });
       }
 
