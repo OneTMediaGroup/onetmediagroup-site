@@ -251,8 +251,14 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                 </div>
 
                 <div class="logs-filter-status">
-                    <div id="logsResultCount" class="logs-result-count">Showing 0 of 0 calls</div>
-                    <div id="logsFilterChips" class="logs-filter-chips" aria-label="Active log filters"></div>
+                    <div class="logs-status-row">
+                        <div id="logsResultCount" class="logs-result-count">Showing 0 of 0 calls</div>
+                        <div id="logsSortStatus" class="logs-sort-status">Sorted: Newest first</div>
+                    </div>
+                    <div id="logsFilterPanel" class="logs-filter-panel" hidden>
+                        <div class="logs-filter-label">Filters</div>
+                        <div id="logsFilterChips" class="logs-filter-chips" aria-label="Active log filters"></div>
+                    </div>
                 </div>
 
                 <div class="table-wrapper">

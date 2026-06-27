@@ -376,6 +376,8 @@ function escapeHtml(value = "") {
   const logsSortBy = document.getElementById("logsSortBy");
   const logsExportMode = document.getElementById("logsExportMode");
   const logsResultCount = document.getElementById("logsResultCount");
+  const logsSortStatus = document.getElementById("logsSortStatus");
+  const logsFilterPanel = document.getElementById("logsFilterPanel");
   const logsFilterChips = document.getElementById("logsFilterChips");
   const logsDateFrom = document.getElementById("logsDateFrom");
   const logsDateTo = document.getElementById("logsDateTo");
@@ -3598,24 +3600,32 @@ module.exports = QRCode;
   }
 
   function renderLogFilterStatus(totalRows, visibleRows) {
+    const meta = buildLogFilterMeta();
+
     if (logsResultCount) {
       logsResultCount.textContent = `Showing ${visibleRows.toLocaleString()} of ${totalRows.toLocaleString()} calls`;
     }
 
+    if (logsSortStatus) {
+      logsSortStatus.textContent = `Sorted: ${meta.sortLabel}`;
+    }
+
+    if (logsFilterPanel) {
+      logsFilterPanel.hidden = !meta.active.length;
+    }
+
     if (!logsFilterChips) return;
 
-    const meta = buildLogFilterMeta();
-    const chips = [
-      `<span class="log-chip log-chip-static">Sort: ${escapeHtml(meta.sortLabel)}</span>`
-    ];
-
-    meta.active.forEach(item => {
-      chips.push(`<button type="button" class="log-chip log-chip-clear" data-clear-log-filter="${escapeHtml(item.key)}">${escapeHtml(item.label)} <span aria-hidden="true">×</span></button>`);
-    });
-
-    if (meta.active.length) {
-      chips.push(`<button type="button" class="log-chip log-chip-reset" data-clear-log-filter="all">Clear all filters</button>`);
+    if (!meta.active.length) {
+      logsFilterChips.innerHTML = "";
+      return;
     }
+
+    const chips = meta.active.map(item =>
+      `<button type="button" class="log-chip log-chip-clear" data-clear-log-filter="${escapeHtml(item.key)}">${escapeHtml(item.label)} <span aria-hidden="true">×</span></button>`
+    );
+
+    chips.push(`<button type="button" class="log-filter-reset" data-clear-log-filter="all">Clear All</button>`);
 
     logsFilterChips.innerHTML = chips.join("");
   }
