@@ -465,9 +465,8 @@ const COMPANY_ID = getActiveCompanyId();
     if (stationElapsedTime) stationElapsedTime.textContent = formatElapsed(Date.now() - started);
 
     const ackName = call.ackBy || call.assignedTo || "—";
-    const roleText = stationRoleText(call);
     if (stationCallStatusText) stationCallStatusText.textContent = callState === "ack" ? "Acknowledged" : "Waiting";
-    if (stationAckByText) stationAckByText.textContent = callState === "ack" ? (ackName !== "—" ? `${roleText} · ${ackName}` : roleText) : "Not yet";
+    if (stationAckByText) stationAckByText.textContent = callState === "ack" ? (ackName !== "—" ? ackName : "Acknowledged") : "Not yet";
   }
 
   function startStationTimer() {
@@ -511,14 +510,14 @@ const COMPANY_ID = getActiveCompanyId();
         `Select one or more roles below, then press <strong>Send Call</strong>.`;
     } else if (state === "pending") {
       circleMainLabel.textContent = STATION_NAME;
-      circleSubLabel.textContent = "Waiting for acknowledgment";
+      circleSubLabel.textContent = "Waiting for ack";
       const roleText = stationRoleText(currentActiveCall);
       hintText.textContent = `${roleText} has been notified. Waiting for acknowledgement.`;
     } else if (state === "ack") {
       circleMainLabel.textContent = STATION_NAME;
       circleSubLabel.textContent = "Acknowledged";
       const ackName = currentActiveCall?.ackBy || currentActiveCall?.assignedTo || "someone";
-      hintText.textContent = `Acknowledged by ${ackName}. Help is on the way.`;
+      hintText.textContent = `${ackName} acknowledged your call. Help is on the way.`;
     }
 
     updateStationLiveDetails();
