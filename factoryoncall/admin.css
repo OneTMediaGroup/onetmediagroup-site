@@ -6263,49 +6263,197 @@ body.theme-dark .resolution-hit {
 
 /* =========================================================
    Factory On Call — Call Log Export Polish
-   Clean result row, active filter panel, and roomier chips.
+   Result count, active filter chips, and export metadata UI.
+   ========================================================= */
+
+#tab-logs .logs-filter-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 4px 0 14px;
+}
+
+#tab-logs .logs-result-count {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+#tab-logs .logs-filter-chips {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-height: 30px;
+}
+
+#tab-logs .log-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, .35);
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .04em;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(15, 23, 42, .7);
+  color: var(--text-strong);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .12);
+}
+
+#tab-logs button.log-chip {
+  cursor: pointer;
+}
+
+#tab-logs button.log-chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(56, 189, 248, .65);
+}
+
+#tab-logs .log-chip-static {
+  background: rgba(37, 99, 235, .12);
+  border-color: rgba(59, 130, 246, .36);
+}
+
+#tab-logs .log-chip-clear {
+  background: rgba(14, 165, 233, .10);
+}
+
+#tab-logs .log-chip-clear span {
+  font-size: 14px;
+  font-weight: 950;
+  line-height: .8;
+}
+
+#tab-logs .log-chip-reset {
+  background: rgba(249, 115, 22, .13);
+  border-color: rgba(249, 115, 22, .38);
+}
+
+html.theme-light #tab-logs .logs-result-count,
+html[data-theme="light"] #tab-logs .logs-result-count,
+body.theme-light #tab-logs .logs-result-count {
+  color: #64748b;
+}
+
+html.theme-light #tab-logs .log-chip,
+html[data-theme="light"] #tab-logs .log-chip,
+body.theme-light #tab-logs .log-chip {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #dbe4ee;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .06);
+}
+
+html.theme-light #tab-logs .log-chip-static,
+html[data-theme="light"] #tab-logs .log-chip-static,
+body.theme-light #tab-logs .log-chip-static {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+html.theme-light #tab-logs .log-chip-clear,
+html[data-theme="light"] #tab-logs .log-chip-clear,
+body.theme-light #tab-logs .log-chip-clear {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+html.theme-light #tab-logs .log-chip-reset,
+html[data-theme="light"] #tab-logs .log-chip-reset,
+body.theme-light #tab-logs .log-chip-reset {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+@media (max-width: 900px) {
+  #tab-logs .logs-filter-status {
+    align-items: flex-start;
+  }
+
+  #tab-logs .logs-filter-chips {
+    justify-content: flex-start;
+  }
+
+  #tab-logs .logs-result-count {
+    width: 100%;
+  }
+}
+
+
+/* =========================================================
+   Factory On Call — Call Log Filter Layout Fix v189
+   Keeps count/sort aligned and forces active filter chips to show.
    ========================================================= */
 
 #tab-logs .filters {
+  display: flex;
   align-items: center;
-  gap: 10px;
+  flex-wrap: wrap;
+  gap: 12px;
   margin-bottom: 18px;
 }
 
 #tab-logs .logs-filter-status {
-  display: grid;
-  gap: 12px;
-  margin: 4px 0 18px;
+  display: block;
+  width: 100%;
+  margin: 8px 0 18px;
 }
 
 #tab-logs .logs-status-row {
-  display: flex;
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) auto;
   align-items: center;
-  justify-content: space-between;
   gap: 16px;
-  flex-wrap: wrap;
+  width: 100%;
+  margin-bottom: 12px;
   padding: 0 2px;
 }
 
-#tab-logs .logs-result-count,
-#tab-logs .logs-sort-status {
+#tab-logs .logs-result-count {
   font-size: 13px;
-  font-weight: 750;
+  line-height: 1.25;
+  font-weight: 700;
   color: var(--text-muted);
-  line-height: 1.2;
 }
 
 #tab-logs .logs-sort-status {
+  justify-self: end;
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 5px 10px;
+  border: 1px solid rgba(148, 163, 184, .28);
+  border-radius: 999px;
+  background: rgba(148, 163, 184, .10);
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 800;
+  color: var(--text-muted);
   white-space: nowrap;
 }
 
 #tab-logs .logs-filter-panel {
-  display: grid;
-  gap: 8px;
+  display: none;
+  width: 100%;
+  margin-top: 2px;
   padding: 12px 14px;
-  border: 1px solid rgba(148, 163, 184, .22);
+  border: 1px solid rgba(148, 163, 184, .24);
   border-radius: 16px;
-  background: rgba(15, 23, 42, .22);
+  background: rgba(148, 163, 184, .08);
+}
+
+#tab-logs .logs-filter-panel.is-visible {
+  display: block !important;
 }
 
 #tab-logs .logs-filter-panel[hidden] {
@@ -6313,7 +6461,10 @@ body.theme-dark .resolution-hit {
 }
 
 #tab-logs .logs-filter-label {
+  display: block;
+  margin-bottom: 9px;
   font-size: 11px;
+  line-height: 1;
   font-weight: 850;
   letter-spacing: .12em;
   text-transform: uppercase;
@@ -6325,100 +6476,60 @@ body.theme-dark .resolution-hit {
   align-items: center;
   flex-wrap: wrap;
   gap: 10px;
-  min-height: 34px;
 }
 
 #tab-logs .log-chip {
   appearance: none;
+  border: 1px solid rgba(148, 163, 184, .38);
+  border-radius: 999px;
+  background: #fff;
+  color: #0f172a;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  border-radius: 999px;
-  border: 1px solid rgba(148, 163, 184, .36);
-  padding: 8px 12px;
+  min-height: 32px;
+  padding: 6px 12px;
   font-size: 12px;
   font-weight: 800;
   line-height: 1;
-  white-space: nowrap;
-  background: rgba(15, 23, 42, .62);
-  color: var(--text-strong);
-  box-shadow: 0 8px 18px rgba(15, 23, 42, .10);
   cursor: pointer;
-}
-
-#tab-logs .log-chip:hover {
-  transform: translateY(-1px);
-  border-color: rgba(56, 189, 248, .65);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .05);
 }
 
 #tab-logs .log-chip span {
-  font-size: 15px;
-  font-weight: 950;
-  line-height: .8;
-  opacity: .75;
+  font-size: 14px;
+  line-height: 1;
+  opacity: .7;
 }
 
 #tab-logs .log-filter-reset {
   appearance: none;
   border: 0;
   background: transparent;
-  color: var(--accent, #0ea5e9);
+  color: var(--accent, #0284c7);
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  padding: 6px 4px;
   font-size: 12px;
   font-weight: 850;
-  padding: 8px 4px;
   cursor: pointer;
-  margin-left: auto;
-}
-
-#tab-logs .log-filter-reset:hover {
-  text-decoration: underline;
-}
-
-html.theme-light #tab-logs .logs-result-count,
-html[data-theme="light"] #tab-logs .logs-result-count,
-body.theme-light #tab-logs .logs-result-count,
-html.theme-light #tab-logs .logs-sort-status,
-html[data-theme="light"] #tab-logs .logs-sort-status,
-body.theme-light #tab-logs .logs-sort-status,
-html.theme-light #tab-logs .logs-filter-label,
-html[data-theme="light"] #tab-logs .logs-filter-label,
-body.theme-light #tab-logs .logs-filter-label {
-  color: #64748b;
 }
 
 html.theme-light #tab-logs .logs-filter-panel,
 html[data-theme="light"] #tab-logs .logs-filter-panel,
 body.theme-light #tab-logs .logs-filter-panel {
   background: #f8fafc;
-  border-color: #e2e8f0;
-}
-
-html.theme-light #tab-logs .log-chip,
-html[data-theme="light"] #tab-logs .log-chip,
-body.theme-light #tab-logs .log-chip {
-  background: #ffffff;
-  color: #0f172a;
   border-color: #dbe4ee;
-  box-shadow: 0 8px 18px rgba(15, 23, 42, .05);
-}
-
-html.theme-light #tab-logs .log-filter-reset,
-html[data-theme="light"] #tab-logs .log-filter-reset,
-body.theme-light #tab-logs .log-filter-reset {
-  color: #0284c7;
 }
 
 @media (max-width: 900px) {
   #tab-logs .logs-status-row {
-    align-items: flex-start;
+    grid-template-columns: 1fr;
+    gap: 8px;
   }
 
   #tab-logs .logs-sort-status {
-    width: 100%;
-  }
-
-  #tab-logs .log-filter-reset {
-    margin-left: 0;
+    justify-self: start;
   }
 }
-
