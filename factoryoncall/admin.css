@@ -6259,3 +6259,132 @@ body.theme-dark .resolution-hit {
 #tab-logs #logsExportMode {
   font-weight: 700;
 }
+
+
+/* =========================================================
+   Factory On Call — Call Log Export Polish
+   Result count, active filter chips, and export metadata UI.
+   ========================================================= */
+
+#tab-logs .logs-filter-status {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin: 4px 0 14px;
+}
+
+#tab-logs .logs-result-count {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+#tab-logs .logs-filter-chips {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-height: 30px;
+}
+
+#tab-logs .log-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 999px;
+  border: 1px solid rgba(148, 163, 184, .35);
+  padding: 6px 10px;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: .04em;
+  line-height: 1;
+  white-space: nowrap;
+  background: rgba(15, 23, 42, .7);
+  color: var(--text-strong);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .12);
+}
+
+#tab-logs button.log-chip {
+  cursor: pointer;
+}
+
+#tab-logs button.log-chip:hover {
+  transform: translateY(-1px);
+  border-color: rgba(56, 189, 248, .65);
+}
+
+#tab-logs .log-chip-static {
+  background: rgba(37, 99, 235, .12);
+  border-color: rgba(59, 130, 246, .36);
+}
+
+#tab-logs .log-chip-clear {
+  background: rgba(14, 165, 233, .10);
+}
+
+#tab-logs .log-chip-clear span {
+  font-size: 14px;
+  font-weight: 950;
+  line-height: .8;
+}
+
+#tab-logs .log-chip-reset {
+  background: rgba(249, 115, 22, .13);
+  border-color: rgba(249, 115, 22, .38);
+}
+
+html.theme-light #tab-logs .logs-result-count,
+html[data-theme="light"] #tab-logs .logs-result-count,
+body.theme-light #tab-logs .logs-result-count {
+  color: #64748b;
+}
+
+html.theme-light #tab-logs .log-chip,
+html[data-theme="light"] #tab-logs .log-chip,
+body.theme-light #tab-logs .log-chip {
+  background: #ffffff;
+  color: #0f172a;
+  border-color: #dbe4ee;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, .06);
+}
+
+html.theme-light #tab-logs .log-chip-static,
+html[data-theme="light"] #tab-logs .log-chip-static,
+body.theme-light #tab-logs .log-chip-static {
+  background: #eff6ff;
+  border-color: #bfdbfe;
+}
+
+html.theme-light #tab-logs .log-chip-clear,
+html[data-theme="light"] #tab-logs .log-chip-clear,
+body.theme-light #tab-logs .log-chip-clear {
+  background: #f0f9ff;
+  border-color: #bae6fd;
+}
+
+html.theme-light #tab-logs .log-chip-reset,
+html[data-theme="light"] #tab-logs .log-chip-reset,
+body.theme-light #tab-logs .log-chip-reset {
+  background: #fff7ed;
+  border-color: #fed7aa;
+}
+
+@media (max-width: 900px) {
+  #tab-logs .logs-filter-status {
+    align-items: flex-start;
+  }
+
+  #tab-logs .logs-filter-chips {
+    justify-content: flex-start;
+  }
+
+  #tab-logs .logs-result-count {
+    width: 100%;
+  }
+}

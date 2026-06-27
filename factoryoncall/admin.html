@@ -214,7 +214,7 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                 <div class="card-header">
                     <h2>Call Logs</h2>
                     <div class="card-actions">
-                        <button id="exportLogsBtn" class="btn secondary">Export CSV</button>
+                        <button id="exportLogsBtn" class="btn secondary">Download CSV</button>
                         <button id="purgeLogsBtn" class="btn danger">Purge Old Logs</button>
                     </div>
                 </div>
@@ -223,9 +223,9 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                     <input id="logsSearch" type="text" placeholder="Search logs..." />
                     <input id="logsResolutionSearch" type="text" placeholder="Search resolution summary..." />
                     <select id="logsResolutionFilter" aria-label="Resolution summary filter">
-                        <option value="all">All summaries</option>
-                        <option value="with">With summary</option>
-                        <option value="without">No summary</option>
+                        <option value="all">All Resolution Notes</option>
+                        <option value="with">With Resolution Note</option>
+                        <option value="without">No Resolution Note</option>
                     </select>
                     <select id="logsSortBy" aria-label="Sort call logs">
                         <option value="newest">Newest first</option>
@@ -248,6 +248,11 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                     <label class="log-date-field" for="logsDateTo"><span>To</span><input id="logsDateTo" type="date" aria-label="End" /></label>
                     <button id="logsFilterBtn" class="btn small">Apply</button>
                     <button id="logsClearBtn" class="btn small secondary">Clear</button>
+                </div>
+
+                <div class="logs-filter-status">
+                    <div id="logsResultCount" class="logs-result-count">Showing 0 of 0 calls</div>
+                    <div id="logsFilterChips" class="logs-filter-chips" aria-label="Active log filters"></div>
                 </div>
 
                 <div class="table-wrapper">

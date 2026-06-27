@@ -375,6 +375,8 @@ function escapeHtml(value = "") {
   const logsResolutionFilter = document.getElementById("logsResolutionFilter");
   const logsSortBy = document.getElementById("logsSortBy");
   const logsExportMode = document.getElementById("logsExportMode");
+  const logsResultCount = document.getElementById("logsResultCount");
+  const logsFilterChips = document.getElementById("logsFilterChips");
   const logsDateFrom = document.getElementById("logsDateFrom");
   const logsDateTo = document.getElementById("logsDateTo");
   const logsFilterBtn = document.getElementById("logsFilterBtn");
@@ -3554,11 +3556,88 @@ module.exports = QRCode;
   function currentLogFilters() {
     return {
       search: (logsSearch?.value || "").trim().toLowerCase(),
+      rawSearch: (logsSearch?.value || "").trim(),
       resolutionSearch: (logsResolutionSearch?.value || "").trim().toLowerCase(),
+      rawResolutionSearch: (logsResolutionSearch?.value || "").trim(),
       resolutionFilter: logsResolutionFilter?.value || "all",
       from: logsDateFrom?.value || "",
       to: logsDateTo?.value || ""
     };
+  }
+
+  function selectedOptionLabel(selectEl) {
+    if (!selectEl) return "";
+    return (selectEl.options?.[selectEl.selectedIndex]?.textContent || "").trim();
+  }
+
+  function logSortLabel() {
+    return selectedOptionLabel(logsSortBy) || "Newest first";
+  }
+
+  function logExportModeLabel() {
+    return selectedOptionLabel(logsExportMode) || "Export current view";
+  }
+
+  function buildLogFilterMeta() {
+    const filters = currentLogFilters();
+    const active = [];
+
+    if (filters.rawSearch) active.push({ key: "search", label: `Search: ${filters.rawSearch}` });
+    if (filters.rawResolutionSearch) active.push({ key: "resolutionSearch", label: `Resolution note: ${filters.rawResolutionSearch}` });
+    if (filters.resolutionFilter === "with") active.push({ key: "resolutionFilter", label: "With resolution note" });
+    if (filters.resolutionFilter === "without") active.push({ key: "resolutionFilter", label: "No resolution note" });
+    if (filters.from) active.push({ key: "from", label: `From: ${filters.from}` });
+    if (filters.to) active.push({ key: "to", label: `To: ${filters.to}` });
+
+    return {
+      filters,
+      active,
+      sortLabel: logSortLabel(),
+      exportLabel: logExportModeLabel()
+    };
+  }
+
+  function renderLogFilterStatus(totalRows, visibleRows) {
+    if (logsResultCount) {
+      logsResultCount.textContent = `Showing ${visibleRows.toLocaleString()} of ${totalRows.toLocaleString()} calls`;
+    }
+
+    if (!logsFilterChips) return;
+
+    const meta = buildLogFilterMeta();
+    const chips = [
+      `<span class="log-chip log-chip-static">Sort: ${escapeHtml(meta.sortLabel)}</span>`
+    ];
+
+    meta.active.forEach(item => {
+      chips.push(`<button type="button" class="log-chip log-chip-clear" data-clear-log-filter="${escapeHtml(item.key)}">${escapeHtml(item.label)} <span aria-hidden="true">×</span></button>`);
+    });
+
+    if (meta.active.length) {
+      chips.push(`<button type="button" class="log-chip log-chip-reset" data-clear-log-filter="all">Clear all filters</button>`);
+    }
+
+    logsFilterChips.innerHTML = chips.join("");
+  }
+
+  function clearLogFilter(key) {
+    if (key === "all") {
+      if (logsSearch) logsSearch.value = "";
+      if (logsResolutionSearch) logsResolutionSearch.value = "";
+      if (logsResolutionFilter) logsResolutionFilter.value = "all";
+      if (logsDateFrom) logsDateFrom.value = "";
+      if (logsDateTo) logsDateTo.value = "";
+      renderCallLogs();
+      return;
+    }
+
+    if (key === "search" && logsSearch) logsSearch.value = "";
+    if (key === "resolutionSearch" && logsResolutionSearch) logsResolutionSearch.value = "";
+    if (key === "resolutionFilter" && logsResolutionFilter) logsResolutionFilter.value = "all";
+    if (key === "from" && logsDateFrom) logsDateFrom.value = "";
+    if (key === "to" && logsDateTo) logsDateTo.value = "";
+
+    renderCallLogs();
   }
 
   function applyLogFilters(calls) {
@@ -3645,6 +3724,7 @@ module.exports = QRCode;
     if (!logsTableBody) return;
 
     filteredLogCalls = currentSortedLogRows();
+    renderLogFilterStatus(cachedCalls.length, filteredLogCalls.length);
 
     logsTableBody.innerHTML = "";
 
@@ -3687,6 +3767,32 @@ module.exports = QRCode;
     return filteredLogCalls.length ? filteredLogCalls : currentSortedLogRows();
   }
 
+  function csvMetadataLines(exportType, rowCount) {
+    const meta = buildLogFilterMeta();
+    const company = COMPANY_NAME || cachedBranding?.companyName || COMPANY_ID || "Factory On Call";
+    const generated = formatDateTime(Date.now());
+    const filterLabels = meta.active.length ? meta.active.map(item => item.label).join(" | ") : "None";
+
+    return [
+      ["Factory On Call Export"],
+      ["Company", company],
+      ["Company ID", COMPANY_ID],
+      ["Generated", generated],
+      ["Export Type", exportType],
+      ["Rows Exported", rowCount],
+      ["Sort", meta.sortLabel],
+      ["Active Filters", filterLabels],
+      []
+    ].map(row => row.map(csvSafe).join(","));
+  }
+
+  function withCsvMetadata(exportType, rows, bodyLines) {
+    return [
+      ...csvMetadataLines(exportType, rows.length),
+      ...bodyLines
+    ].join("\n");
+  }
+
   function logCurrentViewCsv(rows) {
     const header = [
       "Time",
@@ -3721,7 +3827,7 @@ module.exports = QRCode;
       ].map(csvSafe).join(","))
     ];
 
-    return lines.join("\n");
+    return withCsvMetadata("Current View", rows, lines);
   }
 
   function logRawHistoryCsv(rows) {
@@ -3768,7 +3874,7 @@ module.exports = QRCode;
       ].map(csvSafe).join(","))
     ];
 
-    return lines.join("\n");
+    return withCsvMetadata("Raw History", rows, lines);
   }
 
   function logStationSummaryCsv(rows) {
@@ -3838,7 +3944,7 @@ module.exports = QRCode;
       ].map(csvSafe).join(","))
     ];
 
-    return lines.join("\n");
+    return withCsvMetadata("Station Summary", rows, lines);
   }
 
   function exportCallLogsCsv() {
@@ -4026,20 +4132,19 @@ module.exports = QRCode;
     });
 
     logsFilterBtn?.addEventListener("click", renderCallLogs);
-    logsClearBtn?.addEventListener("click", () => {
-      if (logsSearch) logsSearch.value = "";
-      if (logsResolutionSearch) logsResolutionSearch.value = "";
-      if (logsResolutionFilter) logsResolutionFilter.value = "all";
-      if (logsDateFrom) logsDateFrom.value = "";
-      if (logsDateTo) logsDateTo.value = "";
-      renderCallLogs();
-    });
+    logsClearBtn?.addEventListener("click", () => clearLogFilter("all"));
     logsSearch?.addEventListener("input", renderCallLogs);
     logsResolutionSearch?.addEventListener("input", renderCallLogs);
     logsResolutionFilter?.addEventListener("change", renderCallLogs);
     logsSortBy?.addEventListener("change", renderCallLogs);
+    logsExportMode?.addEventListener("change", renderCallLogs);
     logsDateFrom?.addEventListener("change", renderCallLogs);
     logsDateTo?.addEventListener("change", renderCallLogs);
+    logsFilterChips?.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-clear-log-filter]");
+      if (!btn) return;
+      clearLogFilter(btn.dataset.clearLogFilter || "");
+    });
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);
     purgeLogsBtn?.addEventListener("click", purgeOldLogs);
     analyticsExportBtn?.addEventListener("click", exportAnalyticsCsv);
