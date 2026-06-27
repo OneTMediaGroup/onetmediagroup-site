@@ -570,6 +570,70 @@ const COMPANY_ID = getActiveCompanyId();
     }
   }
 
+
+  let callSoundsReady = false;
+  const callSoundState = new Map();
+
+  function callStatus(call = {}) {
+    return call.status || "waiting";
+  }
+
+  function isEmergencyCallRecord(call = {}) {
+    const value = String(call.type || call.callType || call.priority || call.category || "").toLowerCase();
+    return call.emergency === true || call.isEmergency === true || value.includes("emergency");
+  }
+
+  function playOneShotSound(fileName) {
+    try {
+      const audio = new Audio(fileName);
+      audio.loop = false;
+      audio.play().catch(() => {});
+    } catch (_) {}
+  }
+
+  function rememberCallSoundState(call = {}) {
+    if (!call.id) return;
+    callSoundState.set(call.id, {
+      status: callStatus(call),
+      updatedAt: call.updatedAt || call.timeClosed || call.timeAck || call.acknowledgedAt || call.timeStarted || 0
+    });
+  }
+
+  function handleCallSoundSnapshot(snapshot) {
+    if (!snapshot || typeof snapshot.docChanges !== "function") return;
+
+    snapshot.docChanges().forEach(change => {
+      const call = { id: change.doc.id, ...(change.doc.data() || {}) };
+
+      if (change.type === "removed") {
+        callSoundState.delete(call.id);
+        return;
+      }
+
+      if (!isDisplayableCall(call) || isEmergencyCallRecord(call)) {
+        rememberCallSoundState(call);
+        return;
+      }
+
+      const status = callStatus(call);
+      const previous = callSoundState.get(call.id);
+
+      if (callSoundsReady) {
+        if (change.type === "added") {
+          if (status === "waiting" || !status) playOneShotSound("call-chime.mp3");
+        } else if (previous && previous.status !== status) {
+          if (status === "ack") playOneShotSound("acknowledge.mp3");
+          if (status === "closed") playOneShotSound("call-closed.mp3");
+          if (status === "waiting" && previous.status === "closed") playOneShotSound("call-chime.mp3");
+        }
+      }
+
+      rememberCallSoundState(call);
+    });
+
+    callSoundsReady = true;
+  }
+
   let emergencyAudio = null;
   function ensureEmergencyOverlay() {
     let overlay = document.getElementById("plantEmergencyOverlay");
@@ -756,6 +820,7 @@ const COMPANY_ID = getActiveCompanyId();
     callsRef.onSnapshot(
       async snapshot => {
         setConn(true);
+        handleCallSoundSnapshot(snapshot);
         allCallsCache = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         await loadRolesAndFilters();
         updateStats();
