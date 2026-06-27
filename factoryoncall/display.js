@@ -479,7 +479,7 @@ const COMPANY_ID = getActiveCompanyId();
           </div>
 
           <div class="call-field time-field">
-            <div class="field-label">Waiting</div>
+            <div class="field-label">Wait Time</div>
             <div class="field-value">${fmtMinutesAgo(call.timeStarted)}</div>
           </div>
 
