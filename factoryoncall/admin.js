@@ -373,6 +373,8 @@ function escapeHtml(value = "") {
   const logsSearch = document.getElementById("logsSearch");
   const logsResolutionSearch = document.getElementById("logsResolutionSearch");
   const logsResolutionFilter = document.getElementById("logsResolutionFilter");
+  const logsSortBy = document.getElementById("logsSortBy");
+  const logsExportMode = document.getElementById("logsExportMode");
   const logsDateFrom = document.getElementById("logsDateFrom");
   const logsDateTo = document.getElementById("logsDateTo");
   const logsFilterBtn = document.getElementById("logsFilterBtn");
@@ -3585,12 +3587,64 @@ module.exports = QRCode;
     });
   }
 
+  function compareText(a, b) {
+    return String(a || "").localeCompare(String(b || ""), undefined, { numeric: true, sensitivity: "base" });
+  }
+
+  function callAckMinutes(call) {
+    return minutesBetween(callStartMillis(call), callAckMillis(call));
+  }
+
+  function callClearMinutes(call) {
+    return minutesBetween(callAckMillis(call) || callStartMillis(call), callClosedMillis(call));
+  }
+
+  function callDurationMinutes(call) {
+    return minutesBetween(callStartMillis(call), callClosedMillis(call));
+  }
+
+  function sortLogCalls(calls) {
+    const sortBy = logsSortBy?.value || "newest";
+    const rows = calls.slice();
+    const numberValue = (value) => Number.isFinite(value) ? value : Number.MAX_SAFE_INTEGER;
+
+    rows.sort((a, b) => {
+      switch (sortBy) {
+        case "oldest":
+          return (callStartMillis(a) || 0) - (callStartMillis(b) || 0);
+        case "station":
+          return compareText(callStation(a), callStation(b)) || (callStartMillis(b) || 0) - (callStartMillis(a) || 0);
+        case "area":
+          return compareText(callArea(a), callArea(b)) || compareText(callStation(a), callStation(b));
+        case "operator":
+          return compareText(requestedBy(a), requestedBy(b)) || (callStartMillis(b) || 0) - (callStartMillis(a) || 0);
+        case "ackTime":
+          return numberValue(callAckMinutes(a)) - numberValue(callAckMinutes(b));
+        case "clearTime":
+          return numberValue(callClearMinutes(a)) - numberValue(callClearMinutes(b));
+        case "duration":
+          return numberValue(callDurationMinutes(a)) - numberValue(callDurationMinutes(b));
+        case "acknowledgedBy":
+          return compareText(assignedTo(a), assignedTo(b)) || (callStartMillis(b) || 0) - (callStartMillis(a) || 0);
+        case "status":
+          return compareText(dashboardStatusLabel(a), dashboardStatusLabel(b)) || (callStartMillis(b) || 0) - (callStartMillis(a) || 0);
+        case "newest":
+        default:
+          return (callStartMillis(b) || 0) - (callStartMillis(a) || 0);
+      }
+    });
+
+    return rows;
+  }
+
+  function currentSortedLogRows() {
+    return sortLogCalls(applyLogFilters(cachedCalls));
+  }
+
   function renderCallLogs() {
     if (!logsTableBody) return;
 
-    filteredLogCalls = applyLogFilters(cachedCalls)
-      .slice()
-      .sort((a, b) => (callStartMillis(b) || 0) - (callStartMillis(a) || 0));
+    filteredLogCalls = currentSortedLogRows();
 
     logsTableBody.innerHTML = "";
 
@@ -3629,22 +3683,20 @@ module.exports = QRCode;
     return `"${text.replace(/"/g, '""')}"`;
   }
 
-  function exportCallLogsCsv() {
-    const rows = filteredLogCalls.length ? filteredLogCalls : applyLogFilters(cachedCalls);
+  function logExportRows() {
+    return filteredLogCalls.length ? filteredLogCalls : currentSortedLogRows();
+  }
 
-    if (!rows.length) {
-      alert("No call logs to export.");
-      return;
-    }
-
+  function logCurrentViewCsv(rows) {
     const header = [
       "Time",
       "Station",
+      "Area",
       "Personnel Required",
       "Location",
       "Requested By",
       "Status",
-      "Assigned To",
+      "Acknowledged By",
       "Time to Ack",
       "Time to Clear",
       "Total Duration",
@@ -3656,6 +3708,7 @@ module.exports = QRCode;
       ...rows.map(call => [
         formatDateTime(callStartMillis(call)),
         callStation(call),
+        callArea(call),
         callPersonnel(call),
         callLocation(call),
         requestedBy(call),
@@ -3668,20 +3721,150 @@ module.exports = QRCode;
       ].map(csvSafe).join(","))
     ];
 
-    const blob = new Blob([lines.join("\n")], { type: "text/csv;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
+    return lines.join("\n");
+  }
+
+  function logRawHistoryCsv(rows) {
+    const header = [
+      "Call ID",
+      "Created At",
+      "Started At",
+      "Acknowledged At",
+      "Closed At",
+      "Updated At",
+      "Station",
+      "Area",
+      "Personnel Required",
+      "Location",
+      "Requested By",
+      "Status",
+      "Acknowledged By",
+      "Time to Ack Minutes",
+      "Time to Clear Minutes",
+      "Total Duration Minutes",
+      "Resolution Summary"
+    ];
+
+    const lines = [
+      header.map(csvSafe).join(","),
+      ...rows.map(call => [
+        call.id || call.callId || "",
+        formatDateTime(getMillis(call.createdAt)),
+        formatDateTime(callStartMillis(call)),
+        formatDateTime(callAckMillis(call)),
+        formatDateTime(callClosedMillis(call)),
+        formatDateTime(getMillis(call.updatedAt)),
+        callStation(call),
+        callArea(call),
+        callPersonnel(call),
+        callLocation(call),
+        requestedBy(call),
+        dashboardStatusLabel(call),
+        assignedTo(call),
+        callAckMinutes(call) || "",
+        callClearMinutes(call) || "",
+        callDurationMinutes(call) || "",
+        resolutionSummary(call)
+      ].map(csvSafe).join(","))
+    ];
+
+    return lines.join("\n");
+  }
+
+  function logStationSummaryCsv(rows) {
+    const stationMap = new Map();
+
+    rows.forEach(call => {
+      const station = callStation(call);
+      const key = `${callArea(call)}||${station}`;
+      const item = stationMap.get(key) || {
+        station,
+        area: callArea(call),
+        calls: 0,
+        acknowledged: 0,
+        closed: 0,
+        active: 0,
+        ackMinutes: [],
+        clearMinutes: [],
+        durationMinutes: [],
+        lastCall: 0
+      };
+
+      item.calls += 1;
+      if (isAcknowledgedStatus(call)) item.acknowledged += 1;
+      if (isClosedStatus(call)) item.closed += 1;
+      if (!isClosedStatus(call)) item.active += 1;
+
+      const ack = callAckMinutes(call);
+      const clear = callClearMinutes(call);
+      const duration = callDurationMinutes(call);
+      if (ack !== null) item.ackMinutes.push(ack);
+      if (clear !== null) item.clearMinutes.push(clear);
+      if (duration !== null) item.durationMinutes.push(duration);
+      item.lastCall = Math.max(item.lastCall, callStartMillis(call) || 0);
+
+      stationMap.set(key, item);
+    });
+
+    const summaryRows = Array.from(stationMap.values())
+      .sort((a, b) => b.calls - a.calls || compareText(a.area, b.area) || compareText(a.station, b.station));
+
+    const header = [
+      "Station",
+      "Area",
+      "Calls",
+      "Acknowledged",
+      "Closed",
+      "Still Open",
+      "Avg Ack Time",
+      "Avg Clear Time",
+      "Avg Total Duration",
+      "Last Call"
+    ];
+
+    const lines = [
+      header.map(csvSafe).join(","),
+      ...summaryRows.map(item => [
+        item.station,
+        item.area,
+        item.calls,
+        item.acknowledged,
+        item.closed,
+        item.active,
+        formatDurationMinutes(average(item.ackMinutes)),
+        formatDurationMinutes(average(item.clearMinutes)),
+        formatDurationMinutes(average(item.durationMinutes)),
+        formatDateTime(item.lastCall)
+      ].map(csvSafe).join(","))
+    ];
+
+    return lines.join("\n");
+  }
+
+  function exportCallLogsCsv() {
+    const rows = logExportRows();
+
+    if (!rows.length) {
+      alert("No call logs to export.");
+      return;
+    }
+
+    const mode = logsExportMode?.value || "current";
     const dateStamp = new Date().toISOString().slice(0, 10);
+    let csv = "";
+    let label = "current-view";
 
-    a.href = url;
-    a.download = `factory-on-call-logs-${COMPANY_ID}-${dateStamp}.csv`;
-    document.body.appendChild(a);
-    a.click();
+    if (mode === "summary") {
+      csv = logStationSummaryCsv(rows);
+      label = "station-summary";
+    } else if (mode === "raw") {
+      csv = logRawHistoryCsv(rows);
+      label = "raw-history";
+    } else {
+      csv = logCurrentViewCsv(rows);
+    }
 
-    setTimeout(() => {
-      URL.revokeObjectURL(url);
-      a.remove();
-    }, 0);
+    downloadText(`factory-on-call-logs-${label}-${COMPANY_ID}-${dateStamp}.csv`, csv, "text/csv;charset=utf-8");
   }
 
   async function purgeOldLogs() {
@@ -3854,6 +4037,7 @@ module.exports = QRCode;
     logsSearch?.addEventListener("input", renderCallLogs);
     logsResolutionSearch?.addEventListener("input", renderCallLogs);
     logsResolutionFilter?.addEventListener("change", renderCallLogs);
+    logsSortBy?.addEventListener("change", renderCallLogs);
     logsDateFrom?.addEventListener("change", renderCallLogs);
     logsDateTo?.addEventListener("change", renderCallLogs);
     exportLogsBtn?.addEventListener("click", exportCallLogsCsv);

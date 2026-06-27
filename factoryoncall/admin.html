@@ -227,6 +227,23 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                         <option value="with">With summary</option>
                         <option value="without">No summary</option>
                     </select>
+                    <select id="logsSortBy" aria-label="Sort call logs">
+                        <option value="newest">Newest first</option>
+                        <option value="oldest">Oldest first</option>
+                        <option value="station">Station</option>
+                        <option value="area">Area</option>
+                        <option value="operator">Requested by</option>
+                        <option value="ackTime">Time to Ack</option>
+                        <option value="clearTime">Time to Clear</option>
+                        <option value="duration">Total Duration</option>
+                        <option value="acknowledgedBy">Acknowledged by</option>
+                        <option value="status">Status</option>
+                    </select>
+                    <select id="logsExportMode" aria-label="Export type">
+                        <option value="current">Export current view</option>
+                        <option value="summary">Export station summary</option>
+                        <option value="raw">Export raw history</option>
+                    </select>
                     <label class="log-date-field" for="logsDateFrom"><span>From</span><input id="logsDateFrom" type="date" aria-label="Start" /></label>
                     <label class="log-date-field" for="logsDateTo"><span>To</span><input id="logsDateTo" type="date" aria-label="End" /></label>
                     <button id="logsFilterBtn" class="btn small">Apply</button>

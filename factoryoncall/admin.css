@@ -6249,3 +6249,13 @@ body.theme-dark .resolution-hit {
   background: #facc15;
   color: #020617;
 }
+
+/* Sorted export controls */
+#tab-logs #logsSortBy,
+#tab-logs #logsExportMode {
+  min-width: 170px;
+}
+
+#tab-logs #logsExportMode {
+  font-weight: 700;
+}
