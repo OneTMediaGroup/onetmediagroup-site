@@ -478,11 +478,6 @@ const COMPANY_ID = getActiveCompanyId();
             <div class="field-value">${area}</div>
           </div>
 
-          <div class="call-field caller-field">
-            <div class="field-label">Requested By</div>
-            <div class="field-value">${callerName(call)}</div>
-          </div>
-
           <div class="call-field time-field">
             <div class="field-label">Waiting</div>
             <div class="field-value">${fmtMinutesAgo(call.timeStarted)}</div>
