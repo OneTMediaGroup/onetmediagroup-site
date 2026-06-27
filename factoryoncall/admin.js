@@ -376,6 +376,8 @@ function escapeHtml(value = "") {
   const logsSortBy = document.getElementById("logsSortBy");
   const logsExportMode = document.getElementById("logsExportMode");
   const logsResultCount = document.getElementById("logsResultCount");
+  const logsSortStatus = document.getElementById("logsSortStatus");
+  const logsFilterPanel = document.getElementById("logsFilterPanel");
   const logsFilterChips = document.getElementById("logsFilterChips");
   const logsDateFrom = document.getElementById("logsDateFrom");
   const logsDateTo = document.getElementById("logsDateTo");
@@ -3608,16 +3610,13 @@ module.exports = QRCode;
       logsSortStatus.textContent = `Sorted: ${meta.sortLabel}`;
     }
 
-    const hasActiveFilters = meta.active.length > 0;
-
     if (logsFilterPanel) {
-      logsFilterPanel.hidden = !hasActiveFilters;
-      logsFilterPanel.classList.toggle("is-visible", hasActiveFilters);
+      logsFilterPanel.hidden = !meta.active.length;
     }
 
     if (!logsFilterChips) return;
 
-    if (!hasActiveFilters) {
+    if (!meta.active.length) {
       logsFilterChips.innerHTML = "";
       return;
     }
