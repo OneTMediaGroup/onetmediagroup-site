@@ -47,6 +47,34 @@ const DEFAULT_STATIONS = [
   "Receiving"
 ];
 
+const DEMO_COMPANY_NAME = "Northwind Manufacturing";
+
+const DEMO_AREAS = [
+  { name: "Receiving", description: "Incoming materials and staging" },
+  { name: "Press Shop", description: "Stamping and press operations" },
+  { name: "Machining", description: "CNC machining cells" },
+  { name: "Assembly", description: "Final and sub-assembly cells" },
+  { name: "Paint", description: "Paint booth and finishing" },
+  { name: "Packaging", description: "Pack lines and outbound prep" },
+  { name: "Shipping", description: "Shipping dock and trailers" }
+];
+
+const DEMO_STATIONS = [
+  { name: "Receiving Dock", area: "Receiving", description: "Inbound materials", cells: ["Receiving Dock"] },
+  { name: "Press 100", area: "Press Shop", description: "High-volume press line", cells: ["Press 100"] },
+  { name: "Press 200", area: "Press Shop", description: "Progressive die press", cells: ["Press 200"] },
+  { name: "Press 300", area: "Press Shop", description: "Secondary press line", cells: ["Press 300"] },
+  { name: "CNC 01", area: "Machining", description: "CNC machining center", cells: ["CNC 01"] },
+  { name: "CNC 02", area: "Machining", description: "CNC machining center", cells: ["CNC 02"] },
+  { name: "Cell A", area: "Assembly", description: "Sub-assembly cell", cells: ["Cell A"] },
+  { name: "Cell B", area: "Assembly", description: "Final assembly cell", cells: ["Cell B"] },
+  { name: "Cell C", area: "Assembly", description: "Inspection and rework cell", cells: ["Cell C"] },
+  { name: "Paint Booth", area: "Paint", description: "Paint and curing area", cells: ["Paint Booth"] },
+  { name: "Pack Line 1", area: "Packaging", description: "Primary packaging line", cells: ["Pack Line 1"] },
+  { name: "Pack Line 2", area: "Packaging", description: "Secondary packaging line", cells: ["Pack Line 2"] },
+  { name: "Shipping Dock", area: "Shipping", description: "Outbound dock", cells: ["Shipping Dock"] }
+];
+
 const STRIPE_MONTHLY_URL = "#stripe-monthly-placeholder";
 const STRIPE_ANNUAL_URL = "#stripe-annual-placeholder";
 
@@ -58,7 +86,7 @@ const state = {
   email: "",
   type: "demo",
   plan: "monthly",
-  companyName: "Factory On Call Demo",
+  companyName: DEMO_COMPANY_NAME,
   companyId: "",
   adminPin: "1000",
   checkoutStarted: false,
@@ -139,11 +167,11 @@ function renderWelcomeStep() {
     <div class="form-grid welcome-form">
       <div class="form-field">
         <label>First Name</label>
-        <input id="firstName" value="${escapeHtml(state.firstName)}" placeholder="Scot" autocomplete="given-name" />
+        <input id="firstName" value="${escapeHtml(state.firstName)}" placeholder="First" autocomplete="given-name" />
       </div>
       <div class="form-field">
         <label>Last Name</label>
-        <input id="lastName" value="${escapeHtml(state.lastName)}" placeholder="Anderson" autocomplete="family-name" />
+        <input id="lastName" value="${escapeHtml(state.lastName)}" placeholder="Last" autocomplete="family-name" />
       </div>
       <div class="form-field full">
         <label>Email Address</label>
@@ -186,7 +214,7 @@ function renderChoosePlantStep() {
   stepContent.querySelectorAll(".choice-card").forEach(card => {
     card.addEventListener("click", () => {
       state.type = card.dataset.type;
-      state.companyName = state.type === "demo" ? "Factory On Call Demo" : `${fullName() || "Production"} Plant`;
+      state.companyName = state.type === "demo" ? DEMO_COMPANY_NAME : `${fullName() || "Production"} Plant`;
       render();
     });
   });
@@ -294,7 +322,7 @@ function collectStepData() {
     state.lastName = document.getElementById("lastName")?.value.trim() || "";
     state.email = document.getElementById("email")?.value.trim() || "";
     if (!state.companyName || state.companyName === "Production Plant") {
-      state.companyName = state.type === "demo" ? "Factory On Call Demo" : `${fullName() || "Production"} Plant`;
+      state.companyName = state.type === "demo" ? DEMO_COMPANY_NAME : `${fullName() || "Production"} Plant`;
     }
   }
 
@@ -406,21 +434,40 @@ async function createCompany() {
     }, { merge: true });
   }
 
-  await setDoc(doc(db, "companies", companyId, "users", state.adminPin), {
-    companyId,
-    firstName: state.firstName,
-    lastName: state.lastName,
-    name: fullName(),
-    email: state.email,
-    uid: state.adminPin,
-    employeeNumber: state.adminPin,
-    pin: state.adminPin,
-    role: "Supervisor",
-    dept: "Administration",
-    admin: true,
-    active: true,
-    createdAt: serverTimestamp()
-  }, { merge: true });
+  const adminUserPayload = state.type === "demo"
+    ? {
+        companyId,
+        firstName: "Factory",
+        lastName: "Administrator",
+        name: "Factory Administrator",
+        email: "demo@factoryoncall.local",
+        uid: state.adminPin,
+        employeeNumber: state.adminPin,
+        pin: state.adminPin,
+        role: "Supervisor",
+        dept: "Administration",
+        admin: true,
+        active: true,
+        demoUser: true,
+        createdAt: serverTimestamp()
+      }
+    : {
+        companyId,
+        firstName: state.firstName,
+        lastName: state.lastName,
+        name: fullName(),
+        email: state.email,
+        uid: state.adminPin,
+        employeeNumber: state.adminPin,
+        pin: state.adminPin,
+        role: "Supervisor",
+        dept: "Administration",
+        admin: true,
+        active: true,
+        createdAt: serverTimestamp()
+      };
+
+  await setDoc(doc(db, "companies", companyId, "users", state.adminPin), adminUserPayload, { merge: true });
 
   if (state.type === "demo") {
     await seedDemoCompany(companyId);
@@ -442,12 +489,66 @@ async function createCompany() {
 }
 
 async function seedDemoCompany(companyId) {
+  const now = Date.now();
+
+  await setDoc(doc(db, "companies", companyId), {
+    companyName: DEMO_COMPANY_NAME,
+    displayName: DEMO_COMPANY_NAME,
+    mode: "demo",
+    isDemo: true,
+    adminLocked: true,
+    demoPlantVersion: "v1-full-working-demo",
+    demoResetAvailable: true,
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  await setDoc(doc(db, "companies", companyId, "branding", "main"), {
+    companyName: DEMO_COMPANY_NAME,
+    primaryColor: "#1E90FF",
+    secondaryColor: "#003366",
+    theme: "dark",
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  for (const area of DEMO_AREAS) {
+    await setDoc(doc(db, "companies", companyId, "areas", safeId(area.name)), {
+      companyId,
+      ...area,
+      active: true,
+      demoLocked: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  for (const station of DEMO_STATIONS) {
+    const stationId = safeId(station.name);
+    await setDoc(doc(db, "companies", companyId, "stations", stationId), {
+      companyId,
+      stationId,
+      ...station,
+      active: true,
+      archived: false,
+      demoLocked: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
   const demoUsers = [
-    { id: "1001", pin: "1111", firstName: "Logan", lastName: "Miller", role: "Maintenance", dept: "Maintenance" },
-    { id: "1002", pin: "2222", firstName: "Ava", lastName: "Patel", role: "Quality", dept: "Quality" },
-    { id: "1003", pin: "3333", firstName: "Jordan", lastName: "Smith", role: "Supervisor", dept: "Production" },
-    { id: "1004", pin: "4444", firstName: "Maria", lastName: "Lopez", role: "Material Handler", dept: "Materials" },
-    { id: "1005", pin: "5555", firstName: "Lee", lastName: "Chen", role: "Team Lead", dept: "Production" }
+    { id: "1001", pin: "1111", firstName: "Emma", lastName: "Turner", role: "Production Support", dept: "Assembly" },
+    { id: "1002", pin: "2222", firstName: "Liam", lastName: "Brooks", role: "Production Support", dept: "Press Shop" },
+    { id: "1003", pin: "3333", firstName: "Noah", lastName: "Reed", role: "Production Support", dept: "Machining" },
+    { id: "1004", pin: "4444", firstName: "Olivia", lastName: "Parker", role: "Production Support", dept: "Packaging" },
+    { id: "1005", pin: "5555", firstName: "Ethan", lastName: "Cole", role: "Material Handler", dept: "Materials" },
+    { id: "1006", pin: "6666", firstName: "Ava", lastName: "Patel", role: "Production Support", dept: "Paint" },
+    { id: "1007", pin: "7777", firstName: "Sarah", lastName: "Mitchell", role: "Supervisor", dept: "Production" },
+    { id: "1008", pin: "8888", firstName: "Mike", lastName: "Anderson", role: "Supervisor", dept: "Production" },
+    { id: "1009", pin: "9999", firstName: "Kevin", lastName: "Foster", role: "Maintenance", dept: "Maintenance" },
+    { id: "1010", pin: "1010", firstName: "Chris", lastName: "Morgan", role: "Maintenance", dept: "Maintenance" },
+    { id: "1011", pin: "1212", firstName: "Jessica", lastName: "Nguyen", role: "Quality", dept: "Quality" },
+    { id: "1012", pin: "1313", firstName: "David", lastName: "Kim", role: "Production Support", dept: "Engineering" },
+    { id: "1013", pin: "1414", firstName: "Rachel", lastName: "Green", role: "Supervisor", dept: "Management" }
   ];
 
   for (const user of demoUsers) {
@@ -456,41 +557,176 @@ async function seedDemoCompany(companyId) {
       ...user,
       uid: user.id,
       employeeNumber: user.id,
+      badgeCode: user.id,
       name: `${user.firstName} ${user.lastName}`.trim(),
+      admin: user.role === "Supervisor",
       active: true,
-      createdAt: serverTimestamp()
+      archived: false,
+      demoLocked: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     }, { merge: true });
   }
 
-  const now = Date.now();
-  const sampleCalls = [
+  const roleDocs = [
+    { name: "Maintenance", close: true, any: false },
+    { name: "Quality", close: true, any: false },
+    { name: "Supervisor", close: true, any: true },
+    { name: "Material Handler", close: false, any: false },
+    { name: "Team Lead", close: true, any: true },
+    { name: "Production Support", close: false, any: false }
+  ];
+
+  for (const role of roleDocs) {
+    await setDoc(doc(db, "companies", companyId, "roles", role.name), {
+      name: role.name,
+      active: true,
+      isCallable: true,
+      demoLocked: true,
+      permissions: {
+        makeCall: true,
+        viewCalls: true,
+        acknowledgeCalls: true,
+        closeCalls: role.close,
+        respondAnyCall: role.any,
+        supervisorPortal: role.any,
+        clearEmergency: role.any
+      },
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  const activeCalls = [
     {
-      station: "Press 400",
-      cells: ["Press 400"],
+      id: "demo-active-press-200-maintenance",
+      station: "Press 200",
+      stationName: "Press 200",
+      area: "Press Shop",
+      areaName: "Press Shop",
+      cells: ["Press 200"],
       roles: ["Maintenance"],
       status: "waiting",
-      requestedByName: "Press 400",
-      timeStarted: now - 9 * 60000,
+      requestedByName: "Press 200",
+      callerFirst: "",
+      callerLast: "",
+      timeStarted: now - 11 * 60000,
+      requestedAt: now - 11 * 60000,
       demoCall: true
     },
     {
-      station: "Assembly 1",
-      cells: ["Assembly 1"],
+      id: "demo-active-cnc-01-quality",
+      station: "CNC 01",
+      stationName: "CNC 01",
+      area: "Machining",
+      areaName: "Machining",
+      cells: ["CNC 01"],
       roles: ["Quality"],
       status: "ack",
-      ackBy: "Ava Patel",
-      requestedByName: "Assembly 1",
-      timeStarted: now - 18 * 60000,
-      ackAt: now - 12 * 60000,
+      ackBy: "Jessica Nguyen",
+      acknowledgedByName: "Jessica Nguyen",
+      requestedByName: "CNC 01",
+      callerFirst: "",
+      callerLast: "",
+      timeStarted: now - 23 * 60000,
+      requestedAt: now - 23 * 60000,
+      ackAt: now - 17 * 60000,
+      timeAcknowledged: now - 17 * 60000,
       demoCall: true
     }
   ];
 
-  for (const call of sampleCalls) {
-    await setDoc(doc(db, "companies", companyId, "calls", safeId(`${call.station}-${call.status}`)), {
+  for (const call of activeCalls) {
+    const { id, ...payload } = call;
+    await setDoc(doc(db, "companies", companyId, "calls", id), {
       companyId,
-      ...call,
-      createdAt: serverTimestamp()
+      ...payload,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  const callTypes = [
+    { roles: ["Maintenance"], notes: "Cleared jam and restarted line." },
+    { roles: ["Quality"], notes: "Quality check completed and approved." },
+    { roles: ["Material Handler"], notes: "Material delivered to station." },
+    { roles: ["Supervisor"], notes: "Supervisor review completed." },
+    { roles: ["Team Lead"], notes: "Team lead assisted with setup." },
+    { roles: ["Production Support"], notes: "Production support completed request." }
+  ];
+  const stations = DEMO_STATIONS;
+  const responders = ["Sarah Mitchell", "Mike Anderson", "Kevin Foster", "Chris Morgan", "Jessica Nguyen", "Rachel Green"];
+
+  for (let i = 0; i < 54; i++) {
+    const station = stations[i % stations.length];
+    const type = callTypes[i % callTypes.length];
+    const start = now - ((i + 3) * 2.7 * 60 * 60000) - ((i % 5) * 11 * 60000);
+    const ackDelay = 2 + (i % 9);
+    const clearDelay = 7 + (i % 18);
+    const ack = start + ackDelay * 60000;
+    const closed = ack + clearDelay * 60000;
+    const responder = responders[i % responders.length];
+
+    await setDoc(doc(db, "companies", companyId, "calls", `demo-history-${String(i + 1).padStart(2, "0")}`), {
+      companyId,
+      station: station.name,
+      stationName: station.name,
+      area: station.area,
+      areaName: station.area,
+      cells: station.cells,
+      roles: type.roles,
+      status: "closed",
+      requestedByName: station.name,
+      callerFirst: "",
+      callerLast: "",
+      ackBy: responder,
+      acknowledgedByName: responder,
+      closedBy: responder,
+      closedByName: responder,
+      resolutionSummary: type.notes,
+      notes: type.notes,
+      timeStarted: start,
+      requestedAt: start,
+      ackAt: ack,
+      timeAcknowledged: ack,
+      timeClosed: closed,
+      closedAt: closed,
+      responseMinutes: ackDelay,
+      resolutionMinutes: clearDelay,
+      totalDurationMinutes: ackDelay + clearDelay,
+      demoCall: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    }, { merge: true });
+  }
+
+  const emergencySamples = [
+    { station: "Paint Booth", area: "Paint", agoHours: 16, durationSeconds: 420, clearedBy: "Sarah Mitchell" },
+    { station: "Press 300", area: "Press Shop", agoHours: 52, durationSeconds: 660, clearedBy: "Mike Anderson" },
+    { station: "Shipping Dock", area: "Shipping", agoHours: 106, durationSeconds: 300, clearedBy: "Rachel Green" }
+  ];
+
+  for (let i = 0; i < emergencySamples.length; i++) {
+    const ev = emergencySamples[i];
+    const startedAt = now - ev.agoHours * 60 * 60000;
+    const clearedAt = startedAt + ev.durationSeconds * 1000;
+    await setDoc(doc(db, "companies", companyId, "emergencyEvents", `demo-emergency-${i + 1}`), {
+      companyId,
+      stationName: ev.station,
+      activatedByStation: ev.station,
+      areaName: ev.area,
+      area: ev.area,
+      active: false,
+      activatedAt: startedAt,
+      startedAt,
+      clearedAt,
+      endedAt: clearedAt,
+      clearedByName: ev.clearedBy,
+      clearedBy: ev.clearedBy,
+      durationSeconds: ev.durationSeconds,
+      demoEvent: true,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     }, { merge: true });
   }
 }
