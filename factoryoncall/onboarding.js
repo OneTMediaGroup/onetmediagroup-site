@@ -39,26 +39,30 @@ const DEFAULT_ROLES = [
 ];
 
 const DEFAULT_STATIONS = [
-  "Press 1",
-  "Press 2",
+  "Press 400",
+  "Press 401",
   "Assembly 1",
   "Assembly 2",
   "Packaging",
   "Receiving"
 ];
 
+const STRIPE_MONTHLY_URL = "#stripe-monthly-placeholder";
+const STRIPE_ANNUAL_URL = "#stripe-annual-placeholder";
+
 let step = 0;
+
 const state = {
+  firstName: "",
+  lastName: "",
+  email: "",
   type: "demo",
-  companyName: "",
-  contactName: "",
-  contactEmail: "",
-  adminFirstName: "",
-  adminLastName: "",
-  adminPin: "",
-  selectedRoles: [...DEFAULT_ROLES],
-  selectedStations: [...DEFAULT_STATIONS],
-  companyId: ""
+  plan: "monthly",
+  companyName: "Factory On Call Demo",
+  companyId: "",
+  adminPin: "1000",
+  checkoutStarted: false,
+  checkoutComplete: false
 };
 
 function safeId(value = "") {
@@ -67,6 +71,10 @@ function safeId(value = "") {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "") || "item";
+}
+
+function fullName() {
+  return `${state.firstName} ${state.lastName}`.trim();
 }
 
 function buildLink(page) {
@@ -78,49 +86,98 @@ function setStatus(message = "", good = false) {
   statusText.className = good ? "status-text success" : "status-text";
 }
 
+function stepsForFlow() {
+  if (state.type === "demo") {
+    return ["Welcome", "Choose Plant", "Demo Ready"];
+  }
+  return ["Welcome", "Choose Plant", "Plan", "Activation", "Plant Ready"];
+}
+
 function updateProgress() {
-  const total = 6;
-  stepLabel.textContent = `Step ${Math.min(step + 1, total)} of ${total}`;
-  progressFill.style.width = `${((step + 1) / total) * 100}%`;
-  backBtn.style.visibility = step === 0 ? "hidden" : "visible";
-  nextBtn.textContent = step === 5 ? "Open Admin" : step === 4 ? "Create Company" : "Next";
+  const labels = stepsForFlow();
+  const total = labels.length;
+  const safeStep = Math.min(step, total - 1);
+  stepLabel.textContent = `Step ${safeStep + 1} of ${total} • ${labels[safeStep]}`;
+  progressFill.style.width = `${((safeStep + 1) / total) * 100}%`;
+  backBtn.style.visibility = safeStep === 0 || state.companyId ? "hidden" : "visible";
+
+  if (state.companyId) {
+    nextBtn.textContent = "Open Admin";
+    return;
+  }
+
+  if (state.type === "demo" && safeStep === 1) {
+    nextBtn.textContent = "Create Demo Plant";
+  } else if (state.type === "production" && safeStep === 2) {
+    nextBtn.textContent = "Continue to Secure Checkout";
+  } else if (state.type === "production" && safeStep === 3) {
+    nextBtn.textContent = "Create Production Plant";
+  } else {
+    nextBtn.textContent = "Continue";
+  }
 }
 
 function render() {
   updateProgress();
   setStatus("");
 
-  if (step === 0) renderTypeStep();
-  if (step === 1) renderCompanyStep();
-  if (step === 2) renderAdminStep();
-  if (step === 3) renderSetupStep();
-  if (step === 4) renderReviewStep();
-  if (step === 5) renderCompleteStep();
+  if (step === 0) renderWelcomeStep();
+  if (step === 1) renderChoosePlantStep();
+  if (state.type === "demo" && step === 2) renderCompleteStep();
+  if (state.type === "production" && step === 2) renderPlanStep();
+  if (state.type === "production" && step === 3) renderActivationStep();
+  if (state.type === "production" && step === 4) renderCompleteStep();
 }
 
-function renderTypeStep() {
+function renderWelcomeStep() {
   stepContent.innerHTML = `
-    <h2>Choose how you want to begin.</h2>
-    <p>Start with a locked demo company to test the workflow, or create a production company for live use.</p>
+    <div class="hero-copy">
+      <h2>Never miss another production call.</h2>
+      <p>Factory On Call connects stations, supervisors, maintenance, quality, and support teams in real time.</p>
+    </div>
 
-    <div class="choice-grid">
+    <div class="form-grid welcome-form">
+      <div class="form-field">
+        <label>First Name</label>
+        <input id="firstName" value="${escapeHtml(state.firstName)}" placeholder="Scot" autocomplete="given-name" />
+      </div>
+      <div class="form-field">
+        <label>Last Name</label>
+        <input id="lastName" value="${escapeHtml(state.lastName)}" placeholder="Anderson" autocomplete="family-name" />
+      </div>
+      <div class="form-field full">
+        <label>Email Address</label>
+        <input id="email" type="email" value="${escapeHtml(state.email)}" placeholder="name@company.com" autocomplete="email" />
+      </div>
+    </div>
+  `;
+}
+
+function renderChoosePlantStep() {
+  stepContent.innerHTML = `
+    <h2>Choose your plant.</h2>
+    <p>Start with a working demo, or activate a production plant for real factory use.</p>
+
+    <div class="choice-grid plant-choice-grid">
       <article class="choice-card ${state.type === "demo" ? "active" : ""}" data-type="demo">
-        <h3>Demo Company</h3>
-        <p>Explore Factory On Call with sample stations, users, roles, and live call flow.</p>
+        <div class="choice-topline"><span class="choice-icon">▶</span><strong>Demo Plant</strong></div>
+        <p>Explore Factory On Call with a fully configured sample manufacturing plant.</p>
         <ul>
-          <li>Preloaded sample setup</li>
-          <li>Call, viewer, and display testing</li>
-          <li>Admin editing locked</li>
+          <li>Sample stations and users</li>
+          <li>Live call workflow</li>
+          <li>Analytics and reports</li>
+          <li>Demo editing locked</li>
         </ul>
       </article>
 
       <article class="choice-card ${state.type === "production" ? "active" : ""}" data-type="production">
-        <h3>Production Company</h3>
-        <p>Create a clean company for real factory use.</p>
+        <div class="choice-topline"><span class="choice-icon">✓</span><strong>Production Plant</strong></div>
+        <p>Create your live Factory On Call workspace for your own plant.</p>
         <ul>
-          <li>Your company name</li>
-          <li>Your admin PIN</li>
-          <li>Your starter stations and roles</li>
+          <li>Supervisor queue</li>
+          <li>Production display</li>
+          <li>Station call pages</li>
+          <li>Reports and exports</li>
         </ul>
       </article>
     </div>
@@ -129,121 +186,88 @@ function renderTypeStep() {
   stepContent.querySelectorAll(".choice-card").forEach(card => {
     card.addEventListener("click", () => {
       state.type = card.dataset.type;
-      if (state.type === "demo" && !state.companyName) state.companyName = "Factory On Call Demo";
+      state.companyName = state.type === "demo" ? "Factory On Call Demo" : `${fullName() || "Production"} Plant`;
       render();
     });
   });
 }
 
-function renderCompanyStep() {
+function renderPlanStep() {
   stepContent.innerHTML = `
-    <h2>Company information</h2>
-    <p>This creates the company workspace used by Admin, Call Station, Interactive Viewer, and Production Display pages.</p>
+    <h2>Choose your plan.</h2>
+    <p>Stripe checkout will be connected here once the onboarding flow is approved.</p>
+
+    <div class="choice-grid plan-grid">
+      <article class="choice-card plan-card ${state.plan === "monthly" ? "active" : ""}" data-plan="monthly">
+        <div class="choice-topline"><span class="choice-icon">M</span><strong>Monthly</strong></div>
+        <p>Flexible monthly billing for live plant use.</p>
+        <div class="price-line">Stripe link placeholder</div>
+      </article>
+
+      <article class="choice-card plan-card ${state.plan === "annual" ? "active" : ""}" data-plan="annual">
+        <div class="choice-topline"><span class="choice-icon">A</span><strong>Annual</strong></div>
+        <p>Best value for plants ready to run Factory On Call long term.</p>
+        <div class="price-line">Stripe link placeholder</div>
+      </article>
+    </div>
+
+    <div class="demo-note">
+      <strong>Test mode:</strong> The next button will simulate a successful checkout so we can test the return flow before adding real Stripe links.
+    </div>
+  `;
+
+  stepContent.querySelectorAll(".plan-card").forEach(card => {
+    card.addEventListener("click", () => {
+      state.plan = card.dataset.plan;
+      render();
+    });
+  });
+}
+
+function renderActivationStep() {
+  stepContent.innerHTML = `
+    <h2>Production plant activated.</h2>
+    <p>Confirm the plant name below. Your owner account will use the name and email from the welcome screen.</p>
+
+    <div class="activation-card">
+      <div class="activation-badge">Stripe Return Placeholder</div>
+      <p>Plan selected: <strong>${state.plan === "annual" ? "Annual" : "Monthly"}</strong></p>
+    </div>
 
     <div class="form-grid">
       <div class="form-field full">
-        <label>Company Name</label>
-        <input id="companyName" value="${escapeHtml(state.companyName || (state.type === "demo" ? "Factory On Call Demo" : ""))}" placeholder="ABC Plastics" />
+        <label>Plant Name</label>
+        <input id="companyName" value="${escapeHtml(state.companyName)}" placeholder="ABC Manufacturing" />
       </div>
-
-      <div class="form-field">
-        <label>Contact Name</label>
-        <input id="contactName" value="${escapeHtml(state.contactName)}" placeholder="Scot Anderson" />
-      </div>
-
-      <div class="form-field">
-        <label>Contact Email</label>
-        <input id="contactEmail" type="email" value="${escapeHtml(state.contactEmail)}" placeholder="name@company.com" />
-      </div>
-    </div>
-
-    ${state.type === "demo" ? `<div class="demo-note"><strong>Demo mode:</strong> Admin setup changes will be locked so users can test the system without turning the demo into a free production company.</div>` : ""}
-  `;
-}
-
-function renderAdminStep() {
-  stepContent.innerHTML = `
-    <h2>Create administrator</h2>
-    <p>This account manages company setup, links, users, stations, roles, and branding.</p>
-
-    <div class="form-grid">
-      <div class="form-field">
-        <label>First Name</label>
-        <input id="adminFirstName" value="${escapeHtml(state.adminFirstName)}" placeholder="Admin" />
-      </div>
-
-      <div class="form-field">
-        <label>Last Name</label>
-        <input id="adminLastName" value="${escapeHtml(state.adminLastName)}" placeholder="User" />
-      </div>
-
-      <div class="form-field">
-        <label>Admin PIN / Employee Number</label>
-        <input id="adminPin" value="${escapeHtml(state.adminPin)}" placeholder="1000" />
-      </div>
-    </div>
-  `;
-}
-
-function renderSetupStep() {
-  stepContent.innerHTML = `
-    <h2>Starter roles and stations</h2>
-    <p>Choose the starter setup. You can adjust production companies later from Admin.</p>
-
-    <h3>Roles</h3>
-    <div class="check-grid" id="roleChecks">
-      ${DEFAULT_ROLES.map(role => `
-        <label class="check-pill">
-          <input type="checkbox" value="${escapeHtml(role)}" ${state.selectedRoles.includes(role) ? "checked" : ""} />
-          ${escapeHtml(role)}
-        </label>
-      `).join("")}
-    </div>
-
-    <h3>Stations</h3>
-    <div class="check-grid" id="stationChecks">
-      ${DEFAULT_STATIONS.map(station => `
-        <label class="check-pill">
-          <input type="checkbox" value="${escapeHtml(station)}" ${state.selectedStations.includes(station) ? "checked" : ""} />
-          ${escapeHtml(station)}
-        </label>
-      `).join("")}
-    </div>
-
-    <div class="form-field full" style="margin-top:16px;">
-      <label>Custom Stations (optional, one per line)</label>
-      <textarea id="customStations" placeholder="Line 1\\nTool Room\\nShipping"></textarea>
-    </div>
-  `;
-}
-
-function renderReviewStep() {
-  stepContent.innerHTML = `
-    <h2>Review and create</h2>
-    <p>Factory On Call will create a company workspace and generate the access links.</p>
-
-    <div class="summary-box">
-      <p><strong>Type:</strong> ${state.type === "demo" ? "Demo Company" : "Production Company"}</p>
-      <p><strong>Company:</strong> ${escapeHtml(state.companyName || "Not set")}</p>
-      <p><strong>Admin:</strong> ${escapeHtml(`${state.adminFirstName} ${state.adminLastName}`.trim() || "Not set")}</p>
-      <p><strong>Roles:</strong> ${state.selectedRoles.length}</p>
-      <p><strong>Stations:</strong> ${state.selectedStations.length}</p>
-      ${state.type === "demo" ? `<p><strong>Demo Restrictions:</strong> Admin editing locked, live call testing allowed.</p>` : ""}
     </div>
   `;
 }
 
 function renderCompleteStep() {
+  const isDemo = state.type === "demo";
   stepContent.innerHTML = `
-    <h2>Factory On Call is ready.</h2>
-    <p>Your company workspace has been created. Save these links for quick access.</p>
+    <h2>${isDemo ? "Demo plant ready." : "Production plant ready."}</h2>
+    <p>Save your plant code and links. You can open Admin from here and continue setup.</p>
+
+    <div class="plant-code-card">
+      <span>Plant Code</span>
+      <strong>${escapeHtml(state.companyId || "Creating...")}</strong>
+    </div>
+
+    <div class="summary-box ready-summary">
+      <p><strong>Plant:</strong> ${escapeHtml(state.companyName)}</p>
+      <p><strong>Owner:</strong> ${escapeHtml(fullName())}</p>
+      <p><strong>Email:</strong> ${escapeHtml(state.email)}</p>
+      <p><strong>Admin PIN:</strong> ${escapeHtml(state.adminPin)}</p>
+      ${!isDemo ? `<p><strong>Plan:</strong> ${state.plan === "annual" ? "Annual" : "Monthly"}</p>` : `<p><strong>Mode:</strong> Demo Plant</p>`}
+    </div>
 
     <div class="link-list">
       ${[
         ["Admin", "admin.html"],
         ["Call Station", "call.html"],
-        ["Viewer", "viewer.html"],
-        ["Display", "display.html"]
+        ["Interactive Viewer", "viewer.html"],
+        ["Production Display", "display.html"]
       ].map(([label, page]) => `
         <div class="link-row">
           <strong>${label}</strong>
@@ -253,7 +277,7 @@ function renderCompleteStep() {
       `).join("")}
     </div>
 
-    ${state.type === "demo" ? `<div class="demo-note"><strong>Demo Company:</strong> You can test calls, viewer updates, and display board updates. Admin setup changes are locked.</div>` : ""}
+    ${isDemo ? `<div class="demo-note"><strong>Demo Plant:</strong> Use this to explore Factory On Call. Demo editing controls will be locked in the next demo-plant pass.</div>` : `<div class="demo-note"><strong>Email:</strong> A confirmation email will be connected with Resend after Stripe is wired in.</div>`}
   `;
 
   stepContent.querySelectorAll(".copy-link").forEach(btn => {
@@ -265,58 +289,36 @@ function renderCompleteStep() {
 }
 
 function collectStepData() {
-  if (step === 1) {
+  if (step === 0) {
+    state.firstName = document.getElementById("firstName")?.value.trim() || "";
+    state.lastName = document.getElementById("lastName")?.value.trim() || "";
+    state.email = document.getElementById("email")?.value.trim() || "";
+    if (!state.companyName || state.companyName === "Production Plant") {
+      state.companyName = state.type === "demo" ? "Factory On Call Demo" : `${fullName() || "Production"} Plant`;
+    }
+  }
+
+  if (state.type === "production" && step === 3) {
     state.companyName = document.getElementById("companyName")?.value.trim() || "";
-    state.contactName = document.getElementById("contactName")?.value.trim() || "";
-    state.contactEmail = document.getElementById("contactEmail")?.value.trim() || "";
-  }
-
-  if (step === 2) {
-    state.adminFirstName = document.getElementById("adminFirstName")?.value.trim() || "";
-    state.adminLastName = document.getElementById("adminLastName")?.value.trim() || "";
-    state.adminPin = document.getElementById("adminPin")?.value.trim() || "";
-  }
-
-  if (step === 3) {
-    state.selectedRoles = Array.from(document.querySelectorAll("#roleChecks input:checked")).map(x => x.value);
-    const checkedStations = Array.from(document.querySelectorAll("#stationChecks input:checked")).map(x => x.value);
-    const customStations = (document.getElementById("customStations")?.value || "")
-      .split("\\n")
-      .map(x => x.trim())
-      .filter(Boolean);
-
-    state.selectedStations = Array.from(new Set([...checkedStations, ...customStations]));
   }
 }
 
 function validateStep() {
-  if (step === 1 && !state.companyName) {
-    setStatus("Company name is required.");
+  if (step === 0) {
+    if (!state.firstName || !state.lastName) {
+      setStatus("First and last name are required.");
+      return false;
+    }
+
+    if (!state.email || !state.email.includes("@")) {
+      setStatus("A valid email address is required.");
+      return false;
+    }
+  }
+
+  if (state.type === "production" && step === 3 && !state.companyName) {
+    setStatus("Plant name is required.");
     return false;
-  }
-
-  if (step === 2) {
-    if (!state.adminFirstName || !state.adminLastName) {
-      setStatus("Admin first and last name are required.");
-      return false;
-    }
-
-    if (!state.adminPin) {
-      setStatus("Admin PIN / employee number is required.");
-      return false;
-    }
-  }
-
-  if (step === 3) {
-    if (!state.selectedRoles.length) {
-      setStatus("Select at least one role.");
-      return false;
-    }
-
-    if (!state.selectedStations.length) {
-      setStatus("Select at least one station.");
-      return false;
-    }
   }
 
   return true;
@@ -325,25 +327,31 @@ function validateStep() {
 async function createCompany() {
   if (state.companyId) return;
 
-  setStatus("Creating company...");
+  setStatus(state.type === "demo" ? "Creating demo plant..." : "Creating production plant...");
 
   const companyDocRef = doc(collection(db, "companies"));
   const companyId = companyDocRef.id;
-
   state.companyId = companyId;
 
+  state.adminPin = state.type === "demo" ? "1000" : "1000";
   localStorage.setItem(COMPANY_STORAGE_KEY, companyId);
   localStorage.setItem(COMPANY_NAME_KEY, state.companyName);
 
   const companyPayload = {
     companyId,
     companyName: state.companyName,
-    contactName: state.contactName,
-    contactEmail: state.contactEmail,
+    contactName: fullName(),
+    contactEmail: state.email,
+    ownerFirstName: state.firstName,
+    ownerLastName: state.lastName,
+    ownerEmail: state.email,
     mode: state.type,
+    plan: state.type === "production" ? state.plan : "demo",
+    stripeStatus: state.type === "production" ? "placeholder_active" : "not_required",
     isDemo: state.type === "demo",
     adminLocked: state.type === "demo",
     active: true,
+    onboardingVersion: "v2-floor-flow-style",
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   };
@@ -355,6 +363,10 @@ async function createCompany() {
     allowSharedStations: true,
     autoRefreshMinutes: 60,
     demoRestrictionsEnabled: state.type === "demo",
+    playNewCallSound: true,
+    playAcknowledgeSound: true,
+    playClosedSound: true,
+    playEmergencySound: true,
     createdAt: serverTimestamp(),
     updatedAt: serverTimestamp()
   }, { merge: true });
@@ -367,7 +379,7 @@ async function createCompany() {
     updatedAt: serverTimestamp()
   }, { merge: true });
 
-  for (const role of state.selectedRoles) {
+  for (const role of DEFAULT_ROLES) {
     await setDoc(doc(db, "companies", companyId, "roles", role), {
       name: role,
       active: true,
@@ -382,7 +394,7 @@ async function createCompany() {
     }, { merge: true });
   }
 
-  for (const station of state.selectedStations) {
+  for (const station of DEFAULT_STATIONS) {
     const stationId = safeId(station);
     await setDoc(doc(db, "companies", companyId, "stations", stationId), {
       stationId,
@@ -396,9 +408,10 @@ async function createCompany() {
 
   await setDoc(doc(db, "companies", companyId, "users", state.adminPin), {
     companyId,
-    firstName: state.adminFirstName,
-    lastName: state.adminLastName,
-    name: `${state.adminFirstName} ${state.adminLastName}`.trim(),
+    firstName: state.firstName,
+    lastName: state.lastName,
+    name: fullName(),
+    email: state.email,
     uid: state.adminPin,
     employeeNumber: state.adminPin,
     pin: state.adminPin,
@@ -425,14 +438,14 @@ async function createCompany() {
     note: "Keeps activity collection initialized."
   }, { merge: true });
 
-  setStatus("Company created.", true);
+  setStatus("Plant created.", true);
 }
 
 async function seedDemoCompany(companyId) {
   const demoUsers = [
-    { id: "1001", pin: "1111", firstName: "Jake", lastName: "Miller", role: "Maintenance", dept: "Production" },
-    { id: "1002", pin: "2222", firstName: "A.", lastName: "Patel", role: "Quality", dept: "Quality" },
-    { id: "1003", pin: "3333", firstName: "J.", lastName: "Smith", role: "Supervisor", dept: "Production" },
+    { id: "1001", pin: "1111", firstName: "Logan", lastName: "Miller", role: "Maintenance", dept: "Maintenance" },
+    { id: "1002", pin: "2222", firstName: "Ava", lastName: "Patel", role: "Quality", dept: "Quality" },
+    { id: "1003", pin: "3333", firstName: "Jordan", lastName: "Smith", role: "Supervisor", dept: "Production" },
     { id: "1004", pin: "4444", firstName: "Maria", lastName: "Lopez", role: "Material Handler", dept: "Materials" },
     { id: "1005", pin: "5555", firstName: "Lee", lastName: "Chen", role: "Team Lead", dept: "Production" }
   ];
@@ -449,23 +462,27 @@ async function seedDemoCompany(companyId) {
     }, { merge: true });
   }
 
+  const now = Date.now();
   const sampleCalls = [
     {
-      station: "Press 1",
-      cells: ["Press 1"],
+      station: "Press 400",
+      cells: ["Press 400"],
       roles: ["Maintenance"],
       status: "waiting",
-      requestedByName: "J. Smith",
-      timeStarted: Date.now() - 7 * 60000
+      requestedByName: "Press 400",
+      timeStarted: now - 9 * 60000,
+      demoCall: true
     },
     {
       station: "Assembly 1",
       cells: ["Assembly 1"],
       roles: ["Quality"],
       status: "ack",
-      ackBy: "A. Patel",
-      requestedByName: "Lee Chen",
-      timeStarted: Date.now() - 16 * 60000
+      ackBy: "Ava Patel",
+      requestedByName: "Assembly 1",
+      timeStarted: now - 18 * 60000,
+      ackAt: now - 12 * 60000,
+      demoCall: true
     }
   ];
 
@@ -473,7 +490,6 @@ async function seedDemoCompany(companyId) {
     await setDoc(doc(db, "companies", companyId, "calls", safeId(`${call.station}-${call.status}`)), {
       companyId,
       ...call,
-      demoCall: true,
       createdAt: serverTimestamp()
     }, { merge: true });
   }
@@ -490,30 +506,57 @@ function escapeHtml(value = "") {
 
 backBtn.addEventListener("click", () => {
   collectStepData();
-  if (step > 0) step--;
+  if (step > 0 && !state.companyId) step--;
   render();
 });
 
 nextBtn.addEventListener("click", async () => {
   collectStepData();
 
-  if (step === 5) {
+  if (state.companyId) {
     window.location.href = buildLink("admin.html");
     return;
   }
 
   if (!validateStep()) return;
 
-  if (step === 4) {
+  if (state.type === "demo" && step === 1) {
     nextBtn.disabled = true;
     try {
       await createCompany();
-      step++;
+      step = 2;
       render();
     } catch (error) {
       console.error(error);
       state.companyId = "";
-      setStatus("Could not create company. Check Firestore rules and try again.");
+      setStatus("Could not create demo plant. Check Firestore rules and try again.");
+    } finally {
+      nextBtn.disabled = false;
+    }
+    return;
+  }
+
+  if (state.type === "production" && step === 2) {
+    state.checkoutStarted = true;
+    state.checkoutComplete = true;
+    // Real Stripe URLs will replace this placeholder flow:
+    // window.location.href = state.plan === "annual" ? STRIPE_ANNUAL_URL : STRIPE_MONTHLY_URL;
+    step = 3;
+    render();
+    setStatus("Stripe checkout placeholder complete.", true);
+    return;
+  }
+
+  if (state.type === "production" && step === 3) {
+    nextBtn.disabled = true;
+    try {
+      await createCompany();
+      step = 4;
+      render();
+    } catch (error) {
+      console.error(error);
+      state.companyId = "";
+      setStatus("Could not create production plant. Check Firestore rules and try again.");
     } finally {
       nextBtn.disabled = false;
     }
