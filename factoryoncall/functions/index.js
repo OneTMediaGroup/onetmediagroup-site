@@ -46,23 +46,47 @@ function buildWelcomeEmail(data, companyId) {
   const links = portalLinks(baseUrl, companyId);
   const tutorialsUrl = "https://onetmediagroup.ca/factory-on-call.html";
   const supportEmail = "factoryoncall@onetmediagroup.ca";
+  const isDemo = data.mode === "demo" || data.isDemo === true;
+  const plantLabel = isDemo ? "Demo Plant" : "Production Plant";
+  const createdLine = isDemo
+    ? "Your demo plant has been created so you can explore the system before setting up a production plant."
+    : "Your production plant has been created and is ready to use.";
+  const adminNote = isDemo
+    ? "Please keep this information in a safe place. You'll use your User ID and PIN to access the Factory On Call demo portals. Demo administration is locked, but the call workflow is fully usable."
+    : "Please keep this information in a safe place. You'll use your User ID and PIN to access the Factory On Call management portals.";
+  const nextStepsTitle = isDemo ? "Try these demo workflows" : "Recommended first steps";
+  const nextSteps = isDemo
+    ? [
+        "Open the Admin Portal and review the sample plant.",
+        "Open a Call Station and submit a standard call.",
+        "Acknowledge the call from the Supervisor Portal.",
+        "Test the emergency button.",
+        "Review Analytics, History, and CSV exports."
+      ]
+    : [
+        "Add your production users.",
+        "Configure your work cells and areas.",
+        "Test a standard production call.",
+        "Test an emergency call.",
+        "Open the Production Display on a TV or monitor."
+      ];
 
-  const subject = "Welcome to Factory On Call";
+  const subject = isDemo ? "Your Factory On Call Demo Plant Is Ready" : "Welcome to Factory On Call";
 
   const text = `Hi ${firstName},
 
-Thanks for choosing Factory On Call.
+Thanks for your interest in Factory On Call.
 
-Your production plant has been created and is ready to use.
+${createdLine}
 
-Production Plant: ${plantName}
+${plantLabel}: ${plantName}
 Plant Code: ${companyId}
 
 Administrator Login
 Administrator User ID: ${adminUserId}
 Administrator PIN: ${adminPin}
 
-Please keep this information in a safe place. You'll use your User ID and PIN to access the Factory On Call management portals.
+${adminNote}
 
 Open your Admin Portal here:
 ${links.admin}
@@ -89,12 +113,12 @@ ${links.display}
 Call Station:
 ${links.call}
 
-Recommended first steps:
-1. Add your production users.
-2. Configure your work cells and areas.
-3. Test a standard production call.
-4. Test an emergency call.
-5. Open the Production Display on a TV or monitor.
+${nextStepsTitle}:
+${nextSteps.map((item, index) => `${index + 1}. ${item}`).join("\n")}
+
+${isDemo ? `When you are ready to create a production plant, start here:
+${baseUrl}onboarding.html
+` : ""}
 
 Factory On Call tutorials and updates will be available here:
 ${tutorialsUrl}
@@ -116,12 +140,12 @@ One T Media Group
       </div>
       <div style="padding:28px;">
         <p style="font-size:16px;line-height:1.6;margin-top:0;">Hi ${esc(firstName)},</p>
-        <p style="font-size:16px;line-height:1.6;">Thanks for choosing <strong>Factory On Call</strong>.</p>
-        <p style="font-size:16px;line-height:1.6;">Your production plant has been created and is ready to use.</p>
+        <p style="font-size:16px;line-height:1.6;">Thanks for your interest in <strong>Factory On Call</strong>.</p>
+        <p style="font-size:16px;line-height:1.6;">${esc(createdLine)}</p>
 
         <div style="margin:22px 0;padding:18px;border-radius:14px;background:#f9fafb;border:1px solid #e5e7eb;">
           <h2 style="font-size:18px;margin:0 0 14px;">Your Plant Information</h2>
-          <p style="margin:8px 0;"><strong>Production Plant:</strong><br>${esc(plantName)}</p>
+          <p style="margin:8px 0;"><strong>${esc(plantLabel)}:</strong><br>${esc(plantName)}</p>
           <p style="margin:12px 0 0;"><strong>Plant Code:</strong><br><code style="display:inline-block;margin-top:4px;background:#eef2ff;padding:6px 8px;border-radius:8px;font-size:15px;">${esc(companyId)}</code></p>
         </div>
 
@@ -129,7 +153,7 @@ One T Media Group
           <h2 style="font-size:18px;margin:0 0 14px;">Administrator Login</h2>
           <p style="margin:8px 0;"><strong>Administrator User ID:</strong><br><code style="display:inline-block;margin-top:4px;background:#ffffff;padding:6px 8px;border-radius:8px;font-size:15px;">${esc(adminUserId)}</code></p>
           <p style="margin:12px 0 0;"><strong>Administrator PIN:</strong><br><code style="display:inline-block;margin-top:4px;background:#ffffff;padding:6px 8px;border-radius:8px;font-size:15px;">${esc(adminPin)}</code></p>
-          <p style="font-size:14px;line-height:1.5;color:#374151;margin:14px 0 0;">Please keep this information in a safe place. You'll use your User ID and PIN to access the Factory On Call management portals.</p>
+          <p style="font-size:14px;line-height:1.5;color:#374151;margin:14px 0 0;">${esc(adminNote)}</p>
         </div>
 
         <h2 style="font-size:18px;margin:24px 0 10px;">Open your Admin Portal</h2>
@@ -152,14 +176,11 @@ One T Media Group
         <p style="margin:10px 0;"><strong>Production Display</strong><br><a href="${links.display}" style="color:#2563eb;">${links.display}</a></p>
         <p style="margin:10px 0;"><strong>Call Station</strong><br><a href="${links.call}" style="color:#2563eb;">${links.call}</a></p>
 
-        <h2 style="font-size:18px;margin:24px 0 10px;">Recommended first steps</h2>
+        <h2 style="font-size:18px;margin:24px 0 10px;">${esc(nextStepsTitle)}</h2>
         <ol style="font-size:15px;line-height:1.65;margin-top:8px;padding-left:22px;">
-          <li>Add your production users.</li>
-          <li>Configure your work cells and areas.</li>
-          <li>Test a standard production call.</li>
-          <li>Test an emergency call.</li>
-          <li>Open the Production Display on a TV or monitor.</li>
+          ${nextSteps.map((item) => `<li>${esc(item)}</li>`).join("")}
         </ol>
+        ${isDemo ? `<div style="margin:20px 0;padding:16px;border-radius:14px;background:#fff7ed;border:1px solid #fed7aa;"><strong>Ready for production?</strong><br>When you are ready to create a production plant, start here:<br><a href="${baseUrl}onboarding.html" style="color:#2563eb;">${baseUrl}onboarding.html</a></div>` : ""}
 
         <p style="font-size:15px;line-height:1.6;margin-top:24px;">Factory On Call tutorials and updates will be available here:<br><a href="${tutorialsUrl}" style="color:#2563eb;">${tutorialsUrl}</a></p>
         <p style="font-size:15px;line-height:1.6;">Questions or support:<br><a href="mailto:${supportEmail}" style="color:#2563eb;font-weight:700;">${supportEmail}</a></p>
@@ -183,11 +204,6 @@ exports.sendFactoryOnCallWelcome = onDocumentCreated(
 
     const companyId = event.params.companyId;
     const data = snap.data() || {};
-
-    if (data.mode !== "production") {
-      logger.info("Skipping welcome email for non-production plant", { companyId, mode: data.mode });
-      return;
-    }
 
     if (!data.ownerEmail && !data.contactEmail) {
       logger.warn("Skipping welcome email because no owner email exists", { companyId });

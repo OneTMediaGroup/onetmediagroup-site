@@ -394,7 +394,7 @@ async function createCompany() {
     adminUserId: state.adminPin,
     adminPin: state.adminPin,
     portalBaseUrl: window.location.origin + window.location.pathname.replace(/[^/]+$/, ""),
-    welcomeEmailStatus: state.type === "production" ? "pending" : "not_required",
+    welcomeEmailStatus: "pending",
     isDemo: state.type === "demo",
     adminLocked: state.type === "demo",
     active: true,
