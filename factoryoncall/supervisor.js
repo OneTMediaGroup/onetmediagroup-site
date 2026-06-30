@@ -20,6 +20,321 @@ function getActiveCompanyId() {
 
 const COMPANY_ID = getActiveCompanyId();
 
+
+// ---------- SIMPLE USER ID + PIN PORTAL LOCK ----------
+function focEscapeHtml(value = "") {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+const FOC_AUTH_SESSION_PREFIX = "factory_on_call_auth_session_";
+const FOC_AUTH_SESSION_HOURS = 12;
+
+function focAuthSessionKey(companyId, portalKey) {
+  return `${FOC_AUTH_SESSION_PREFIX}${companyId}_${portalKey}`;
+}
+
+function focNormalizeRole(value = "") {
+  return String(value || "").trim().toLowerCase().replace(/[_-]+/g, " ");
+}
+
+function focUserDisplayName(user = {}) {
+  return user.name || `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.uid || user.employeeNumber || "User";
+}
+
+function focRoleAllowed(user = {}, allowedRoles = [], requireAdmin = false) {
+  const role = focNormalizeRole(user.role || user.roleName || user.dept);
+  const allowed = allowedRoles.map(focNormalizeRole);
+  const isAdmin = user.admin === true || user.isAdmin === true || role === "admin" || role === "administrator";
+  if (requireAdmin) return isAdmin;
+  return isAdmin || allowed.includes(role);
+}
+
+function focReadAuthSession(companyId, portalKey) {
+  try {
+    const raw = sessionStorage.getItem(focAuthSessionKey(companyId, portalKey));
+    if (!raw) return null;
+    const session = JSON.parse(raw);
+    if (!session || !session.expiresAt || Date.now() > Number(session.expiresAt)) {
+      sessionStorage.removeItem(focAuthSessionKey(companyId, portalKey));
+      return null;
+    }
+    return session;
+  } catch (_) {
+    return null;
+  }
+}
+
+function focSaveAuthSession(companyId, portalKey, user) {
+  const session = {
+    companyId,
+    portalKey,
+    uid: user.uid || user.employeeNumber || user.id || "",
+    name: focUserDisplayName(user),
+    role: user.role || "",
+    admin: user.admin === true || user.isAdmin === true,
+    expiresAt: Date.now() + FOC_AUTH_SESSION_HOURS * 60 * 60 * 1000
+  };
+  sessionStorage.setItem(focAuthSessionKey(companyId, portalKey), JSON.stringify(session));
+  return session;
+}
+
+async function focFindUserForLogin(usersRef, userId, pin) {
+  const cleanId = String(userId || "").trim();
+  const cleanPin = String(pin || "").trim();
+  if (!cleanId || !cleanPin) return null;
+
+  async function userFromDoc(docSnap) {
+    if (!docSnap || !docSnap.exists) return null;
+    const data = docSnap.data() || {};
+    const storedPin = String(data.pin ?? data.userPin ?? data.employeePin ?? "").trim();
+    if (storedPin !== cleanPin) return null;
+    if (data.active === false || data.archived === true) return { inactive: true };
+    return { id: docSnap.id, ...data };
+  }
+
+  let direct = await userFromDoc(await usersRef.doc(cleanId).get());
+  if (direct) return direct;
+
+  const fields = ["uid", "employeeNumber", "badgeCode"];
+  for (const field of fields) {
+    const snap = await usersRef.where(field, "==", cleanId).limit(1).get();
+    if (!snap.empty) {
+      const found = await userFromDoc(snap.docs[0]);
+      if (found) return found;
+    }
+  }
+
+  return null;
+}
+
+function focInstallLogoutButton(companyId, portalKey, session) {
+  const target = document.querySelector(".topbar-right, .ph-right, .vh-right, .dh-right") || document.body;
+  if (document.getElementById("focLogoutBtn")) return;
+  const wrap = document.createElement("div");
+  wrap.className = "foc-auth-user-pill";
+  wrap.innerHTML = `
+    <span>${focEscapeHtml(session.name || "Signed in")}</span>
+    <button id="focLogoutBtn" type="button">Logout</button>
+  `;
+  target.appendChild(wrap);
+  const btn = document.getElementById("focLogoutBtn");
+  if (btn) {
+    btn.addEventListener("click", () => {
+      sessionStorage.removeItem(focAuthSessionKey(companyId, portalKey));
+      window.location.reload();
+    });
+  }
+}
+
+function focInstallAuthStyles() {
+  if (document.getElementById("focAuthStyles")) return;
+  const style = document.createElement("style");
+  style.id = "focAuthStyles";
+  style.textContent = `
+    body.foc-auth-locked { overflow: hidden; }
+    body.foc-auth-locked > *:not(.foc-auth-overlay):not(script):not(style) { filter: blur(2px); pointer-events: none; user-select: none; }
+    .foc-auth-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 999999;
+      display: grid;
+      place-items: center;
+      padding: 22px;
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(10px);
+    }
+    .foc-auth-card {
+      width: min(460px, 100%);
+      border-radius: 24px;
+      background: #ffffff;
+      color: #0f172a;
+      box-shadow: 0 28px 80px rgba(15, 23, 42, 0.35);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      padding: 26px;
+    }
+    .foc-auth-kicker {
+      font-size: 0.78rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: #2563eb;
+      font-weight: 900;
+      margin-bottom: 8px;
+    }
+    .foc-auth-card h2 {
+      margin: 0 0 8px;
+      font-size: 1.55rem;
+    }
+    .foc-auth-card p {
+      margin: 0 0 18px;
+      color: #64748b;
+      line-height: 1.45;
+    }
+    .foc-auth-field {
+      display: grid;
+      gap: 7px;
+      margin: 12px 0;
+    }
+    .foc-auth-field label {
+      font-size: 0.78rem;
+      font-weight: 900;
+      color: #475569;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .foc-auth-field input {
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #cbd5e1;
+      border-radius: 14px;
+      padding: 13px 14px;
+      font-size: 1rem;
+      background: #f8fafc;
+      color: #0f172a;
+      outline: none;
+    }
+    .foc-auth-field input:focus {
+      border-color: #2563eb;
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.14);
+      background: #ffffff;
+    }
+    .foc-auth-actions {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+      margin-top: 18px;
+    }
+    .foc-auth-actions button {
+      border: 0;
+      border-radius: 14px;
+      background: #2563eb;
+      color: #ffffff;
+      font-weight: 900;
+      padding: 12px 18px;
+      cursor: pointer;
+    }
+    .foc-auth-actions button:disabled { opacity: 0.65; cursor: wait; }
+    .foc-auth-error {
+      min-height: 20px;
+      color: #b91c1c;
+      font-weight: 800;
+      font-size: 0.9rem;
+      margin-top: 10px;
+    }
+    .foc-auth-user-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 6px 5px 10px;
+      border-radius: 999px;
+      background: rgba(37, 99, 235, 0.10);
+      color: inherit;
+      font-size: 0.82rem;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .foc-auth-user-pill button {
+      border: 0;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.12);
+      color: inherit;
+      font-weight: 900;
+      padding: 5px 9px;
+      cursor: pointer;
+    }
+  `;
+  document.head.appendChild(style);
+}
+
+async function requirePortalAccess({ usersRef, companyId, portalKey, title, subtitle, allowedRoles = [], requireAdmin = false }) {
+  focInstallAuthStyles();
+
+  const existing = focReadAuthSession(companyId, portalKey);
+  if (existing) {
+    focInstallLogoutButton(companyId, portalKey, existing);
+    window.FOC_AUTH_SESSION = existing;
+    return existing;
+  }
+
+  document.body.classList.add("foc-auth-locked");
+
+  return new Promise((resolve) => {
+    const overlay = document.createElement("div");
+    overlay.className = "foc-auth-overlay";
+    overlay.innerHTML = `
+      <form class="foc-auth-card" id="focAuthForm">
+        <div class="foc-auth-kicker">Factory On Call</div>
+        <h2>${focEscapeHtml(title || "Sign in")}</h2>
+        <p>${focEscapeHtml(subtitle || "Enter your User ID and PIN to continue.")}</p>
+
+        <div class="foc-auth-field">
+          <label for="focAuthUserId">User ID</label>
+          <input id="focAuthUserId" autocomplete="username" inputmode="numeric" placeholder="Example: 1007" />
+        </div>
+
+        <div class="foc-auth-field">
+          <label for="focAuthPin">PIN</label>
+          <input id="focAuthPin" autocomplete="current-password" inputmode="numeric" type="password" placeholder="PIN" />
+        </div>
+
+        <div class="foc-auth-error" id="focAuthError"></div>
+
+        <div class="foc-auth-actions">
+          <button id="focAuthSubmit" type="submit">Unlock</button>
+        </div>
+      </form>
+    `;
+    document.body.appendChild(overlay);
+
+    const form = overlay.querySelector("#focAuthForm");
+    const idInput = overlay.querySelector("#focAuthUserId");
+    const pinInput = overlay.querySelector("#focAuthPin");
+    const error = overlay.querySelector("#focAuthError");
+    const submit = overlay.querySelector("#focAuthSubmit");
+    setTimeout(() => idInput?.focus(), 50);
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      error.textContent = "";
+      submit.disabled = true;
+      submit.textContent = "Checking...";
+
+      try {
+        const user = await focFindUserForLogin(usersRef, idInput.value, pinInput.value);
+        if (!user || user.inactive) {
+          error.textContent = user?.inactive ? "This user is inactive." : "User ID or PIN was not found.";
+          return;
+        }
+
+        if (!focRoleAllowed(user, allowedRoles, requireAdmin)) {
+          error.textContent = requireAdmin
+            ? "Admin access is required for this page."
+            : "Supervisor, Manager, or Admin access is required for this page.";
+          return;
+        }
+
+        const session = focSaveAuthSession(companyId, portalKey, user);
+        window.FOC_AUTH_SESSION = session;
+        overlay.remove();
+        document.body.classList.remove("foc-auth-locked");
+        focInstallLogoutButton(companyId, portalKey, session);
+        resolve(session);
+      } catch (err) {
+        console.error(err);
+        error.textContent = "Could not check access. Try again.";
+      } finally {
+        submit.disabled = false;
+        submit.textContent = "Unlock";
+      }
+    });
+  });
+}
+
+
 (async function () {
   async function loadScript(src) {
     return new Promise((resolve, reject) => {
@@ -63,6 +378,16 @@ const COMPANY_ID = getActiveCompanyId();
   const areasRef = companyRef.collection("areas");
   const stationsRef = companyRef.collection("stations");
   const emergencyRef = companyRef.collection("settings").doc("emergency");
+
+  await requirePortalAccess({
+    usersRef,
+    companyId: COMPANY_ID,
+    portalKey: "supervisor",
+    title: "Supervisor Access",
+    subtitle: "Enter a Supervisor, Manager, or Admin User ID and PIN to continue.",
+    allowedRoles: ["Supervisor", "Manager", "Production Manager", "Administrator", "Admin"]
+  });
+
 
   const params = new URLSearchParams(window.location.search);
   const viewerUid = params.get("uid") || params.get("userId") || "";
