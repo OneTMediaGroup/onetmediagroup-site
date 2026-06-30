@@ -136,11 +136,11 @@ One T Media Group
     <div style="max-width:720px;margin:0 auto;background:#ffffff;border-radius:18px;overflow:hidden;border:1px solid #e5e7eb;">
       <div style="padding:26px 28px;background:#0f172a;color:#ffffff;">
         <div style="font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:#93c5fd;font-weight:800;">Factory On Call</div>
-        <h1 style="margin:10px 0 0;font-size:28px;line-height:1.2;">Welcome to Factory On Call</h1>
+        <h1 style="margin:10px 0 0;font-size:28px;line-height:1.2;">${isDemo ? "Your Demo Plant Is Ready" : "Welcome to Factory On Call"}</h1>
       </div>
       <div style="padding:28px;">
         <p style="font-size:16px;line-height:1.6;margin-top:0;">Hi ${esc(firstName)},</p>
-        <p style="font-size:16px;line-height:1.6;">Thanks for your interest in <strong>Factory On Call</strong>.</p>
+        <p style="font-size:16px;line-height:1.6;">${isDemo ? "Thanks for your interest in" : "Thanks for choosing"} <strong>Factory On Call</strong>.</p>
         <p style="font-size:16px;line-height:1.6;">${esc(createdLine)}</p>
 
         <div style="margin:22px 0;padding:18px;border-radius:14px;background:#f9fafb;border:1px solid #e5e7eb;">
@@ -211,6 +211,14 @@ exports.sendFactoryOnCallWelcome = onDocumentCreated(
     }
 
     const to = data.ownerEmail || data.contactEmail;
+    const isDemo = data.mode === "demo" || data.isDemo === true;
+    logger.info("Preparing Factory On Call welcome email", {
+      companyId,
+      to,
+      mode: data.mode || "",
+      isDemo
+    });
+
     const resend = new Resend(RESEND_API_KEY.value());
     const email = buildWelcomeEmail(data, companyId);
 
