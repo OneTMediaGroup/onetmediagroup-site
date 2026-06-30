@@ -9,7 +9,7 @@ admin.initializeApp();
 const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
 
 const FROM_EMAIL = "Factory On Call <factoryoncall@onetmediagroup.ca>";
-const REPLY_TO_EMAIL = "factoryoncall@gmail.com";
+const REPLY_TO_EMAIL = "factoryoncall2025@gmail.com";
 const FALLBACK_BASE_URL = "https://onetmediagroup.ca/factoryoncall/";
 
 function esc(value = "") {

@@ -10,7 +10,7 @@
 - Firestore trigger: `sendFactoryOnCallWelcome`
 - Sends a Resend welcome email when a new production company document is created.
 - Sender: `Factory On Call <factoryoncall@onetmediagroup.ca>`
-- Reply-To: `factoryoncall@gmail.com`
+- Reply-To: `factoryoncall2025@gmail.com`
 
 ## Email includes
 
