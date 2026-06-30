@@ -28,7 +28,7 @@ let ADMIN_LOCKED = false;
 
 (function applySavedThemeEarly(){
   try {
-    const savedTheme = (localStorage.getItem("factory_on_call_theme") || "dark").toLowerCase();
+    const savedTheme = (localStorage.getItem("factory_on_call_theme") || "light").toLowerCase();
     const theme = (savedTheme === "light" || savedTheme === "bright" || savedTheme === "neutral") ? "light" : "dark";
     document.documentElement.dataset.theme = theme;
     document.documentElement.classList.toggle("theme-light", theme === "light");
@@ -226,7 +226,7 @@ function escapeHtml(value = "") {
     if (pageTitle) pageTitle.textContent = tabTitle(tabName);
     if (pageSubtitle) pageSubtitle.textContent = tabSubtitle(tabName);
     resetAdminScrollToTop();
-    setTimeout(() => forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark"), 0);
+    setTimeout(() => forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "light"), 0);
   }
 
   function initTabs() {
@@ -523,14 +523,14 @@ function escapeHtml(value = "") {
       .replace(/^-+|-+$/g, "") || String(Date.now());
   }
 
-  function normalizeTheme(theme = "dark") {
-    const value = String(theme || "dark").toLowerCase();
+  function normalizeTheme(theme = "light") {
+    const value = String(theme || "light").toLowerCase();
     if (value === "bright" || value === "neutral") return "light";
     if (["dark", "light"].includes(value)) return value;
-    return "dark";
+    return "light";
   }
 
-  function themeColors(theme = "dark") {
+  function themeColors(theme = "light") {
     const normalizedTheme = normalizeTheme(theme);
     const map = {
       dark: {
@@ -555,7 +555,7 @@ function escapeHtml(value = "") {
     return map[normalizedTheme] || map.dark;
   }
 
-  function applyTheme(theme = "dark") {
+  function applyTheme(theme = "light") {
     const normalizedTheme = normalizeTheme(theme);
     const colors = themeColors(normalizedTheme);
     const root = document.documentElement;
@@ -580,7 +580,7 @@ function escapeHtml(value = "") {
 
 
 
-  function forceAdminThemePaint(theme = "dark") {
+  function forceAdminThemePaint(theme = "light") {
     const normalizedTheme = normalizeTheme(theme);
     const light = normalizedTheme === "light";
     const root = document.documentElement;
@@ -687,7 +687,7 @@ function escapeHtml(value = "") {
 
   function updateBrandingUI() {
     if (brandCompanyName) brandCompanyName.value = (cachedBranding.companyName ?? COMPANY_NAME ?? "");
-    if (brandTheme) brandTheme.value = normalizeTheme(cachedBranding.theme || "dark");
+    if (brandTheme) brandTheme.value = normalizeTheme(cachedBranding.theme || "light");
     if (brandPreviewCompany) brandPreviewCompany.textContent = (cachedBranding.companyName ?? COMPANY_NAME ?? "");
     if (brandPreviewLogo) { const s = logoSrc(); brandPreviewLogo.src = s; brandPreviewLogo.style.display = s ? "block" : "none"; }
     const topLogo = document.getElementById("companyLogoImg");
@@ -737,7 +737,7 @@ function escapeHtml(value = "") {
 
         const payload = {
           companyName: brandCompanyName ? brandCompanyName.value.trim() : (COMPANY_NAME || ""),
-          theme: normalizeTheme(brandTheme?.value || cachedBranding.theme || "dark"),
+          theme: normalizeTheme(brandTheme?.value || cachedBranding.theme || "light"),
           logoDataUrl: "",
           logoUrl: "",
           logoRemovedAt: Date.now(),
@@ -772,7 +772,7 @@ async function loadCompanyBranding() {
       }
 
       cachedBranding = {
-        theme: "dark",
+        theme: "light",
         ...branding
       };
 
@@ -786,17 +786,17 @@ async function loadCompanyBranding() {
 
       cachedBranding.companyName = COMPANY_NAME;
       localStorage.setItem("factory_on_call_company_name", COMPANY_NAME);
-      localStorage.setItem("factory_on_call_theme", normalizeTheme(cachedBranding.theme || "dark"));
+      localStorage.setItem("factory_on_call_theme", normalizeTheme(cachedBranding.theme || "light"));
       if (cachedBranding.logoDataUrl || cachedBranding.logoUrl) {
         localStorage.setItem("factory_on_call_logo", logoSrc());
       } else {
         localStorage.removeItem("factory_on_call_logo");
       }
-      applyTheme(cachedBranding.theme || "dark");
+      applyTheme(cachedBranding.theme || "light");
       updateBrandingUI();
     } catch (error) {
       console.warn("Could not load company branding:", error);
-      applyTheme("dark");
+      applyTheme("light");
     }
   }
 
@@ -4033,7 +4033,7 @@ module.exports = QRCode;
       if (brandPreviewCompany) brandPreviewCompany.textContent = brandCompanyName.value.trim();
     });
     brandTheme?.addEventListener("change", () => {
-      const nextTheme = normalizeTheme(brandTheme.value || "dark");
+      const nextTheme = normalizeTheme(brandTheme.value || "light");
       localStorage.setItem("factory_on_call_theme", nextTheme);
       applyTheme(nextTheme);
       forceAdminThemePaint(nextTheme);
@@ -4093,7 +4093,7 @@ module.exports = QRCode;
       try {
         const payload = {
           companyName: brandCompanyName ? brandCompanyName.value.trim() : (COMPANY_NAME || ""),
-          theme: normalizeTheme(brandTheme?.value || "dark"),
+          theme: normalizeTheme(brandTheme?.value || "light"),
           logoDataUrl: cachedBranding.logoRemoved ? "" : (cachedBranding.logoDataUrl || cachedBranding.logoUrl || ""),
           updatedAt: Date.now()
         };
@@ -5502,7 +5502,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       repaintQueued = true;
       requestAnimationFrame(() => {
         repaintQueued = false;
-        forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark");
+        forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "light");
       });
     };
     const target = document.getElementById("app-root") || document.body;
@@ -5709,7 +5709,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
     initTabs();
     initMobileAdminDrawer();
     installThemeRepaintObserver();
-    forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "dark");
+    forceAdminThemePaint(cachedBranding?.theme || localStorage.getItem("factory_on_call_theme") || "light");
     initSidebarLinks();
     initPlaceholders();
     initEmergencySettings();

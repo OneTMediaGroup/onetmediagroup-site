@@ -79,7 +79,7 @@ const COMPANY_ID = getActiveCompanyId();
     "Factory On Call";
 
   function normalizeBrandingTheme(value) {
-    const v = String(value || "dark").toLowerCase();
+    const v = String(value || "light").toLowerCase();
     return (v === "light" || v === "bright" || v === "neutral") ? "light" : "dark";
   }
 
@@ -88,7 +88,7 @@ const COMPANY_ID = getActiveCompanyId();
     const rawLogo = branding.logoDataUrl || branding.logoUrl || "";
     const hasCustomLogo = Boolean(rawLogo) && !String(rawLogo).includes("factory_logo.png") && !String(rawLogo).includes("headerLogo.png");
     const logo = hasCustomLogo ? rawLogo : "";
-    const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "dark");
+    const theme = normalizeBrandingTheme(branding.theme || branding.displayMode || localStorage.getItem("factory_on_call_theme") || "light");
 
     if (COMPANY_NAME) localStorage.setItem("factory_on_call_company_name", COMPANY_NAME); else localStorage.removeItem("factory_on_call_company_name");
     localStorage.setItem("factory_on_call_theme", theme);

@@ -399,11 +399,21 @@ async function createCompany() {
     updatedAt: serverTimestamp()
   }, { merge: true });
 
+  await setDoc(doc(db, "companies", companyId, "settings", "emergency"), {
+    enabled: state.type === "demo",
+    active: false,
+    soundEnabled: true,
+    message: "Plant Emergency — follow company emergency procedures.",
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
   await setDoc(doc(db, "companies", companyId, "branding", "main"), {
     companyName: state.companyName,
     primaryColor: "#1E90FF",
     secondaryColor: "#003366",
     logoUrl: "",
+    theme: "light",
     updatedAt: serverTimestamp()
   }, { merge: true });
 
@@ -506,7 +516,16 @@ async function seedDemoCompany(companyId) {
     companyName: DEMO_COMPANY_NAME,
     primaryColor: "#1E90FF",
     secondaryColor: "#003366",
-    theme: "dark",
+    theme: "light",
+    updatedAt: serverTimestamp()
+  }, { merge: true });
+
+  await setDoc(doc(db, "companies", companyId, "settings", "emergency"), {
+    enabled: true,
+    active: false,
+    soundEnabled: true,
+    message: "Plant Emergency — follow company emergency procedures.",
+    demoLocked: true,
     updatedAt: serverTimestamp()
   }, { merge: true });
 
