@@ -1,16 +1,25 @@
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
+const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
 const { logger } = require("firebase-functions");
 const admin = require("firebase-admin");
 const { Resend } = require("resend");
+const Stripe = require("stripe");
 
 admin.initializeApp();
 
 const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
+const STRIPE_SECRET_KEY = defineSecret("STRIPE_SECRET_KEY");
+const STRIPE_WEBHOOK_SECRET = defineSecret("STRIPE_WEBHOOK_SECRET");
 
 const FROM_EMAIL = "Factory On Call <factoryoncall@onetmediagroup.ca>";
 const REPLY_TO_EMAIL = "factoryoncall@onetmediagroup.ca";
 const FALLBACK_BASE_URL = "https://onetmediagroup.ca/factoryoncall/";
+
+const FACTORY_ON_CALL_PRICES = {
+  monthly: "price_1To9yq20LQ2pqINAwk3afElt",
+  annual: "price_1ToA0V20LQ2pqINAhWLzOnih"
+};
 
 function esc(value = "") {
   return String(value)
@@ -191,6 +200,299 @@ One T Media Group
 
   return { subject, text, html };
 }
+
+
+function buildCorsResponse(res) {
+  res.set("Access-Control-Allow-Origin", "*");
+  res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.set("Access-Control-Allow-Headers", "Content-Type");
+}
+
+function adminIdForPlant() {
+  return "1000";
+}
+
+function productionCompanyPayload({ companyId, firstName, lastName, email, plan, baseUrl, stripeCustomerId, stripeSubscriptionId, stripeSessionId }) {
+  const contactName = `${firstName || ""} ${lastName || ""}`.trim() || "Factory On Call Admin";
+  const companyName = `${contactName.split(" ")[0] || "Production"} Plant`;
+  const adminPin = adminIdForPlant();
+  return {
+    companyId,
+    companyName,
+    contactName,
+    contactEmail: email,
+    ownerFirstName: firstName || "",
+    ownerLastName: lastName || "",
+    ownerEmail: email,
+    mode: "production",
+    plan: plan === "annual" ? "annual" : "monthly",
+    stripeStatus: "active",
+    stripeCustomerId: stripeCustomerId || "",
+    stripeSubscriptionId: stripeSubscriptionId || "",
+    stripeCheckoutSessionId: stripeSessionId || "",
+    adminUserId: adminPin,
+    adminPin,
+    portalBaseUrl: normalizeBaseUrl(baseUrl),
+    welcomeEmailStatus: "pending",
+    isDemo: false,
+    adminLocked: false,
+    active: true,
+    onboardingVersion: "v2-stripe-checkout",
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  };
+}
+
+async function seedProductionCompany(companyId, payload) {
+  const db = admin.firestore();
+  const companyRef = db.collection("companies").doc(companyId);
+  const existing = await companyRef.get();
+  if (existing.exists) {
+    logger.info("Production company already exists; skipping duplicate webhook create", { companyId });
+    return;
+  }
+
+  await companyRef.set(payload, { merge: true });
+
+  await db.collection("companies").doc(companyId).collection("settings").doc("main").set({
+    requirePinForCalls: true,
+    allowSharedStations: true,
+    autoRefreshMinutes: 60,
+    demoRestrictionsEnabled: false,
+    playNewCallSound: true,
+    playAcknowledgeSound: true,
+    playClosedSound: true,
+    playEmergencySound: true,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  await db.collection("companies").doc(companyId).collection("settings").doc("emergency").set({
+    enabled: false,
+    active: false,
+    soundEnabled: true,
+    message: "Plant Emergency — follow company emergency procedures.",
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  await db.collection("companies").doc(companyId).collection("branding").doc("main").set({
+    companyName: payload.companyName,
+    primaryColor: "#1E90FF",
+    secondaryColor: "#003366",
+    logoUrl: "",
+    theme: "light",
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  const roles = ["Maintenance", "Quality", "Supervisor", "Material Handler", "Team Lead", "Production Support"];
+  for (const role of roles) {
+    await db.collection("companies").doc(companyId).collection("roles").doc(role).set({
+      name: role,
+      active: true,
+      permissions: {
+        makeCall: true,
+        viewCalls: true,
+        acknowledgeCalls: role !== "Material Handler",
+        closeCalls: role === "Supervisor" || role === "Maintenance" || role === "Quality"
+      },
+      isCallable: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }
+
+  const stations = ["Press 400", "Press 401", "Assembly 1", "Assembly 2", "Packaging", "Receiving"];
+  for (const station of stations) {
+    const stationId = String(station).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "station";
+    await db.collection("companies").doc(companyId).collection("stations").doc(stationId).set({
+      companyId,
+      stationId,
+      name: station,
+      description: "Production",
+      cells: [station],
+      active: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }
+
+  const adminPin = payload.adminPin || "1000";
+  await db.collection("companies").doc(companyId).collection("users").doc(adminPin).set({
+    companyId,
+    firstName: payload.ownerFirstName || "",
+    lastName: payload.ownerLastName || "",
+    name: payload.contactName || "Factory On Call Admin",
+    email: payload.ownerEmail || "",
+    uid: adminPin,
+    employeeNumber: adminPin,
+    pin: adminPin,
+    role: "Supervisor",
+    dept: "Administration",
+    admin: true,
+    active: true,
+    createdAt: admin.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
+  await db.collection("companies").doc(companyId).collection("calls").doc("_seed_marker").set({
+    marker: true,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    note: "Keeps calls collection initialized."
+  }, { merge: true });
+
+  await db.collection("companies").doc(companyId).collection("activity").doc("_seed_marker").set({
+    marker: true,
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    note: "Keeps activity collection initialized."
+  }, { merge: true });
+}
+
+exports.createFactoryOnCallCheckoutSession = onRequest(
+  {
+    region: "us-central1",
+    secrets: [STRIPE_SECRET_KEY]
+  },
+  async (req, res) => {
+    buildCorsResponse(res);
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    try {
+      const body = req.body || {};
+      const plan = body.plan === "annual" ? "annual" : "monthly";
+      const priceId = FACTORY_ON_CALL_PRICES[plan];
+      const firstName = String(body.firstName || "").trim();
+      const lastName = String(body.lastName || "").trim();
+      const email = String(body.email || "").trim();
+      const baseUrl = normalizeBaseUrl(body.baseUrl || FALLBACK_BASE_URL);
+      if (!email || !email.includes("@")) {
+        res.status(400).json({ error: "A valid email is required." });
+        return;
+      }
+
+      const companyId = admin.firestore().collection("companies").doc().id;
+      const stripe = new Stripe(STRIPE_SECRET_KEY.value());
+      const successUrl = `${baseUrl}onboarding.html?checkout=success&companyId=${encodeURIComponent(companyId)}&plan=${encodeURIComponent(plan)}`;
+      const cancelUrl = `${baseUrl}onboarding.html?checkout=cancelled&plan=${encodeURIComponent(plan)}`;
+
+      const session = await stripe.checkout.sessions.create({
+        mode: "subscription",
+        payment_method_types: ["card"],
+        customer_email: email,
+        line_items: [{ price: priceId, quantity: 1 }],
+        success_url: successUrl,
+        cancel_url: cancelUrl,
+        metadata: {
+          product: "factory_on_call",
+          companyId,
+          firstName,
+          lastName,
+          email,
+          plan,
+          baseUrl
+        },
+        subscription_data: {
+          metadata: {
+            product: "factory_on_call",
+            companyId,
+            plan
+          }
+        }
+      });
+
+      logger.info("Created Factory On Call checkout session", { companyId, plan, email });
+      res.status(200).json({ url: session.url, sessionId: session.id, companyId });
+    } catch (error) {
+      logger.error("Failed to create Factory On Call checkout session", { error });
+      res.status(500).json({ error: error?.message || "Could not create checkout session." });
+    }
+  }
+);
+
+exports.stripeWebhook = onRequest(
+  {
+    region: "us-central1",
+    secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET]
+  },
+  async (req, res) => {
+    const stripe = new Stripe(STRIPE_SECRET_KEY.value());
+    const sig = req.headers["stripe-signature"];
+    let event;
+
+    try {
+      event = stripe.webhooks.constructEvent(req.rawBody, sig, STRIPE_WEBHOOK_SECRET.value());
+    } catch (error) {
+      logger.error("Factory On Call Stripe webhook signature failed", { error: error?.message || String(error) });
+      res.status(400).send(`Webhook Error: ${error.message}`);
+      return;
+    }
+
+    try {
+      if (event.type === "checkout.session.completed") {
+        const session = event.data.object;
+        const md = session.metadata || {};
+        if (md.product !== "factory_on_call") {
+          logger.info("Ignoring non Factory On Call checkout session", { sessionId: session.id });
+          res.status(200).send("ignored");
+          return;
+        }
+
+        const companyId = md.companyId;
+        if (!companyId) throw new Error("Missing companyId in Stripe metadata.");
+
+        const payload = productionCompanyPayload({
+          companyId,
+          firstName: md.firstName || "",
+          lastName: md.lastName || "",
+          email: md.email || session.customer_email || "",
+          plan: md.plan || "monthly",
+          baseUrl: md.baseUrl || FALLBACK_BASE_URL,
+          stripeCustomerId: session.customer || "",
+          stripeSubscriptionId: session.subscription || "",
+          stripeSessionId: session.id
+        });
+
+        await seedProductionCompany(companyId, payload);
+        logger.info("Factory On Call production plant activated by Stripe", { companyId, plan: payload.plan });
+      }
+
+      if (event.type === "customer.subscription.deleted") {
+        const subscription = event.data.object;
+        const companyId = subscription?.metadata?.companyId;
+        if (companyId) {
+          await admin.firestore().collection("companies").doc(companyId).set({
+            stripeStatus: "cancelled",
+            active: false,
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+          logger.info("Factory On Call subscription cancelled", { companyId });
+        }
+      }
+
+      if (event.type === "invoice.payment_failed") {
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription || "";
+        logger.warn("Factory On Call invoice payment failed", { subscriptionId });
+      }
+
+      if (event.type === "invoice.payment_succeeded") {
+        const invoice = event.data.object;
+        const subscriptionId = invoice.subscription || "";
+        logger.info("Factory On Call invoice payment succeeded", { subscriptionId });
+      }
+
+      res.status(200).send("ok");
+    } catch (error) {
+      logger.error("Factory On Call Stripe webhook handler failed", { error });
+      res.status(500).send("webhook handler failed");
+    }
+  }
+);
+
 
 exports.sendFactoryOnCallWelcome = onDocumentCreated(
   {

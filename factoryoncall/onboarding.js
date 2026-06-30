@@ -4,7 +4,8 @@ import {
   collection,
   doc,
   setDoc,
-  serverTimestamp
+  serverTimestamp,
+  getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -75,8 +76,9 @@ const DEMO_STATIONS = [
   { name: "Shipping Dock", area: "Shipping", description: "Outbound dock", cells: ["Shipping Dock"] }
 ];
 
-const STRIPE_MONTHLY_URL = "#stripe-monthly-placeholder";
-const STRIPE_ANNUAL_URL = "#stripe-annual-placeholder";
+const CREATE_CHECKOUT_URL = "https://us-central1-factoryoncall.cloudfunctions.net/createFactoryOnCallCheckoutSession";
+const STRIPE_MONTHLY_PRICE_ID = "price_1To9yq20LQ2pqINAwk3afElt";
+const STRIPE_ANNUAL_PRICE_ID = "price_1ToA0V20LQ2pqINAhWLzOnih";
 
 let step = 0;
 
@@ -90,7 +92,8 @@ const state = {
   companyId: "",
   adminPin: "1000",
   checkoutStarted: false,
-  checkoutComplete: false
+  checkoutComplete: false,
+  checkoutPending: false
 };
 
 function safeId(value = "") {
@@ -107,6 +110,10 @@ function fullName() {
 
 function buildLink(page) {
   return `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, page)}?companyId=${encodeURIComponent(state.companyId)}`;
+}
+
+function basePortalUrl() {
+  return `${window.location.origin}${window.location.pathname.replace(/[^/]+$/, "")}`;
 }
 
 function setStatus(message = "", good = false) {
@@ -223,24 +230,24 @@ function renderChoosePlantStep() {
 function renderPlanStep() {
   stepContent.innerHTML = `
     <h2>Choose your plan.</h2>
-    <p>Stripe checkout will be connected here once the onboarding flow is approved.</p>
+    <p>Choose monthly or annual billing. Checkout opens securely through Stripe.</p>
 
     <div class="choice-grid plan-grid">
       <article class="choice-card plan-card ${state.plan === "monthly" ? "active" : ""}" data-plan="monthly">
         <div class="choice-topline"><span class="choice-icon">M</span><strong>Monthly</strong></div>
         <p>Flexible monthly billing for live plant use.</p>
-        <div class="price-line">Stripe link placeholder</div>
+        <div class="price-line">$24.99 CAD / month</div>
       </article>
 
       <article class="choice-card plan-card ${state.plan === "annual" ? "active" : ""}" data-plan="annual">
         <div class="choice-topline"><span class="choice-icon">A</span><strong>Annual</strong></div>
         <p>Best value for plants ready to run Factory On Call long term.</p>
-        <div class="price-line">Stripe link placeholder</div>
+        <div class="price-line">$249.99 CAD / year</div>
       </article>
     </div>
 
     <div class="demo-note">
-      <strong>Test mode:</strong> The next button will simulate a successful checkout so we can test the return flow before adding real Stripe links.
+      <strong>Secure checkout:</strong> Your Production Plant is created after Stripe confirms payment. A welcome email with your Plant Code, User ID, PIN, and portal links will be sent automatically.
     </div>
   `;
 
@@ -254,19 +261,12 @@ function renderPlanStep() {
 
 function renderActivationStep() {
   stepContent.innerHTML = `
-    <h2>Production plant activated.</h2>
-    <p>Confirm the plant name below. Your owner account will use the name and email from the welcome screen.</p>
+    <h2>Returning from Stripe...</h2>
+    <p>Factory On Call is waiting for your secure checkout confirmation.</p>
 
     <div class="activation-card">
-      <div class="activation-badge">Stripe Return Placeholder</div>
+      <div class="activation-badge">Stripe Checkout</div>
       <p>Plan selected: <strong>${state.plan === "annual" ? "Annual" : "Monthly"}</strong></p>
-    </div>
-
-    <div class="form-grid">
-      <div class="form-field full">
-        <label>Plant Name</label>
-        <input id="companyName" value="${escapeHtml(state.companyName)}" placeholder="ABC Manufacturing" />
-      </div>
     </div>
   `;
 }
@@ -341,9 +341,6 @@ function collectStepData() {
     }
   }
 
-  if (state.type === "production" && step === 3) {
-    state.companyName = document.getElementById("companyName")?.value.trim() || "";
-  }
 }
 
 function validateStep() {
@@ -359,12 +356,107 @@ function validateStep() {
     }
   }
 
-  if (state.type === "production" && step === 3 && !state.companyName) {
-    setStatus("Plant name is required.");
-    return false;
+  return true;
+}
+
+
+async function startStripeCheckout() {
+  setStatus("Opening secure Stripe checkout...");
+  nextBtn.disabled = true;
+
+  try {
+    const response = await fetch(CREATE_CHECKOUT_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        firstName: state.firstName,
+        lastName: state.lastName,
+        email: state.email,
+        plan: state.plan,
+        baseUrl: basePortalUrl(),
+        monthlyPriceId: STRIPE_MONTHLY_PRICE_ID,
+        annualPriceId: STRIPE_ANNUAL_PRICE_ID
+      })
+    });
+
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !payload.url) {
+      throw new Error(payload.error || "Could not start Stripe checkout.");
+    }
+
+    sessionStorage.setItem("factory_on_call_pending_checkout", JSON.stringify({
+      firstName: state.firstName,
+      lastName: state.lastName,
+      email: state.email,
+      plan: state.plan,
+      companyId: payload.companyId || "",
+      startedAt: Date.now()
+    }));
+
+    window.location.href = payload.url;
+  } catch (error) {
+    console.error(error);
+    setStatus(error?.message || "Could not start Stripe checkout.");
+    nextBtn.disabled = false;
+  }
+}
+
+async function hydrateCheckoutReturn() {
+  const params = new URLSearchParams(window.location.search);
+  const checkout = params.get("checkout");
+  if (!checkout) return false;
+
+  if (checkout === "cancelled") {
+    const pending = JSON.parse(sessionStorage.getItem("factory_on_call_pending_checkout") || "{}");
+    state.firstName = pending.firstName || state.firstName;
+    state.lastName = pending.lastName || state.lastName;
+    state.email = pending.email || state.email;
+    state.plan = params.get("plan") || pending.plan || "monthly";
+    state.type = "production";
+    step = 2;
+    render();
+    setStatus("Stripe checkout was cancelled. Choose a plan to try again.");
+    return true;
   }
 
-  return true;
+  if (checkout === "success") {
+    const companyId = params.get("companyId") || "";
+    const pending = JSON.parse(sessionStorage.getItem("factory_on_call_pending_checkout") || "{}");
+    state.type = "production";
+    state.plan = params.get("plan") || pending.plan || "monthly";
+    state.companyId = companyId || pending.companyId || "";
+    state.firstName = pending.firstName || state.firstName;
+    state.lastName = pending.lastName || state.lastName;
+    state.email = pending.email || state.email;
+    state.adminPin = "1000";
+    state.companyName = `${state.firstName || "Production"} Plant`;
+
+    if (state.companyId) {
+      localStorage.setItem(COMPANY_STORAGE_KEY, state.companyId);
+      try {
+        const snap = await getDoc(doc(db, "companies", state.companyId));
+        if (snap.exists()) {
+          const data = snap.data() || {};
+          state.companyName = data.companyName || state.companyName;
+          state.firstName = data.ownerFirstName || state.firstName;
+          state.lastName = data.ownerLastName || state.lastName;
+          state.email = data.ownerEmail || state.email;
+          state.adminPin = data.adminPin || "1000";
+          localStorage.setItem(COMPANY_NAME_KEY, state.companyName);
+        }
+      } catch (error) {
+        console.warn("Could not load returned company yet", error);
+      }
+    }
+
+    sessionStorage.removeItem("factory_on_call_pending_checkout");
+    step = 4;
+    render();
+    setStatus("Payment confirmed. Your Production Plant is being activated. If details are still loading, refresh in a moment.", true);
+    return true;
+  }
+
+  return false;
 }
 
 async function createCompany() {
@@ -811,29 +903,7 @@ nextBtn.addEventListener("click", async () => {
   }
 
   if (state.type === "production" && step === 2) {
-    state.checkoutStarted = true;
-    state.checkoutComplete = true;
-    // Real Stripe URLs will replace this placeholder flow:
-    // window.location.href = state.plan === "annual" ? STRIPE_ANNUAL_URL : STRIPE_MONTHLY_URL;
-    step = 3;
-    render();
-    setStatus("Stripe checkout placeholder complete.", true);
-    return;
-  }
-
-  if (state.type === "production" && step === 3) {
-    nextBtn.disabled = true;
-    try {
-      await createCompany();
-      step = 4;
-      render();
-    } catch (error) {
-      console.error(error);
-      state.companyId = "";
-      setStatus("Could not create production plant. Check Firestore rules and try again.");
-    } finally {
-      nextBtn.disabled = false;
-    }
+    await startStripeCheckout();
     return;
   }
 
@@ -841,4 +911,7 @@ nextBtn.addEventListener("click", async () => {
   render();
 });
 
-render();
+(async () => {
+  const handledCheckoutReturn = await hydrateCheckoutReturn();
+  if (!handledCheckoutReturn) render();
+})();
