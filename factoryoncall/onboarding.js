@@ -273,9 +273,14 @@ function renderActivationStep() {
 
 function renderCompleteStep() {
   const isDemo = state.type === "demo";
+  const adminUserId = state.adminPin;
   stepContent.innerHTML = `
     <h2>${isDemo ? "Demo plant ready." : "Production plant ready."}</h2>
-    <p>Save your plant code and links. You can open Admin from here and continue setup.</p>
+    <p class="ready-intro">
+      ${isDemo ? "Your Demo Plant is ready to explore." : "Your Production Plant is ready."}
+      Save your <strong>Plant Code</strong>, <strong>Administrator User ID</strong>, and <strong>Administrator PIN</strong>.
+      You will use your <strong>User ID + PIN</strong> to sign in to the Admin, Supervisor, and Viewer portals.
+    </p>
 
     <div class="plant-code-card">
       <span>Plant Code</span>
@@ -286,14 +291,20 @@ function renderCompleteStep() {
       <p><strong>Plant:</strong> ${escapeHtml(state.companyName)}</p>
       <p><strong>Owner:</strong> ${escapeHtml(fullName())}</p>
       <p><strong>Email:</strong> ${escapeHtml(state.email)}</p>
-      <p><strong>Admin PIN:</strong> ${escapeHtml(state.adminPin)}</p>
+      <p><strong>Administrator User ID:</strong> ${escapeHtml(adminUserId)}</p>
+      <p><strong>Administrator PIN:</strong> ${escapeHtml(state.adminPin)}</p>
       ${!isDemo ? `<p><strong>Plan:</strong> ${state.plan === "annual" ? "Annual" : "Monthly"}</p>` : `<p><strong>Mode:</strong> Demo Plant</p>`}
+    </div>
+
+    <div class="login-note">
+      <strong>Login note:</strong> Use the Administrator User ID and PIN above to access the management portals below.
     </div>
 
     <div class="link-list">
       ${[
-        ["Admin", "admin.html"],
+        ["Admin Portal", "admin.html"],
         ["Call Station", "call.html"],
+        ["Supervisor Portal", "supervisor.html"],
         ["Interactive Viewer", "viewer.html"],
         ["Production Display", "display.html"]
       ].map(([label, page]) => `
@@ -305,7 +316,11 @@ function renderCompleteStep() {
       `).join("")}
     </div>
 
-    ${isDemo ? `<div class="demo-note"><strong>Demo Plant:</strong> Use this to explore Factory On Call. Demo editing controls will be locked in the next demo-plant pass.</div>` : `<div class="demo-note"><strong>Email:</strong> A confirmation email will be connected with Resend after Stripe is wired in.</div>`}
+    <div class="demo-note">
+      ${isDemo
+        ? `<strong>You're all set!</strong> Open the Admin Portal to begin exploring Factory On Call. Demo administrative editing is locked, but live call workflows are fully usable.`
+        : `<strong>You're all set!</strong> Open the Admin Portal to begin using Factory On Call. A confirmation email will be connected with Resend after Stripe is wired in.`}
+    </div>
   `;
 
   stepContent.querySelectorAll(".copy-link").forEach(btn => {
