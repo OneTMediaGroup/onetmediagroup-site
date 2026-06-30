@@ -319,7 +319,7 @@ function renderCompleteStep() {
     <div class="demo-note">
       ${isDemo
         ? `<strong>You're all set!</strong> Open the Admin Portal to begin exploring Factory On Call. Demo administrative editing is locked, but live call workflows are fully usable.`
-        : `<strong>You're all set!</strong> Open the Admin Portal to begin using Factory On Call. A confirmation email will be connected with Resend after Stripe is wired in.`}
+        : `<strong>You're all set!</strong> Open the Admin Portal to begin using Factory On Call. A welcome email will be sent to the address from the welcome screen.`}
     </div>
   `;
 
