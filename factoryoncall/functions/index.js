@@ -375,7 +375,13 @@ exports.createFactoryOnCallCheckoutSession = onRequest(
       }
 
       const companyId = admin.firestore().collection("companies").doc().id;
-      const stripe = new Stripe(STRIPE_SECRET_KEY.value());
+      const stripeSecretKey = STRIPE_SECRET_KEY.value();
+      if (!stripeSecretKey || !stripeSecretKey.startsWith("sk_")) {
+        logger.error("Factory On Call Stripe secret key is missing or invalid. Use a Stripe secret key that starts with sk_test_ or sk_live_.");
+        res.status(500).json({ error: "Stripe is not configured correctly. STRIPE_SECRET_KEY must be a secret key, not a publishable key." });
+        return;
+      }
+      const stripe = new Stripe(stripeSecretKey);
       const successUrl = `${baseUrl}onboarding.html?checkout=success&companyId=${encodeURIComponent(companyId)}&plan=${encodeURIComponent(plan)}`;
       const cancelUrl = `${baseUrl}onboarding.html?checkout=cancelled&plan=${encodeURIComponent(plan)}`;
 
@@ -419,7 +425,13 @@ exports.stripeWebhook = onRequest(
     secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET]
   },
   async (req, res) => {
-    const stripe = new Stripe(STRIPE_SECRET_KEY.value());
+    const stripeSecretKey = STRIPE_SECRET_KEY.value();
+    if (!stripeSecretKey || !stripeSecretKey.startsWith("sk_")) {
+      logger.error("Factory On Call Stripe webhook secret key is missing or invalid. Use a Stripe secret key that starts with sk_test_ or sk_live_.");
+      res.status(500).send("Stripe secret key is not configured correctly.");
+      return;
+    }
+    const stripe = new Stripe(stripeSecretKey);
     const sig = req.headers["stripe-signature"];
     let event;
 
