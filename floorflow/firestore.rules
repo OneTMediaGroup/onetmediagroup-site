@@ -1,0 +1,173 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isString(value) {
+      return value is string;
+    }
+
+    function validEmail(value) {
+      return value is string && value.size() <= 254 && value.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$');
+    }
+
+    function validRole(value) {
+      return value in ['operator', 'supervisor', 'manager', 'admin'];
+    }
+
+    function validStatus(value) {
+      return value in ['active', 'inactive', 'disabled'];
+    }
+
+    function requestPlantIdMatches(plantId) {
+      return request.resource.data.plantId == plantId ||
+        request.resource.data.id == plantId ||
+        !('plantId' in request.resource.data);
+    }
+
+    function resourcePlantIdMatches(plantId) {
+      return resource.data.plantId == plantId ||
+        resource.data.id == plantId ||
+        !('plantId' in resource.data);
+    }
+
+    function isSafePlantCreate(plantId) {
+      return request.resource.data.id == plantId &&
+        request.resource.data.plantId == plantId &&
+        !(request.resource.data.productionUnlocked == true) &&
+        !(request.resource.data.paid == true) &&
+        !(request.resource.data.subscriptionStatus == 'active') &&
+        !(request.resource.data.billingStatus == 'active');
+    }
+
+    function doesNotChangeBillingFields() {
+      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([
+        'productionUnlocked',
+        'paid',
+        'subscriptionStatus',
+        'billingStatus',
+        'stripeCustomerId',
+        'stripeSubscriptionId',
+        'billingEmail',
+        'billingUpdatedAt'
+      ]);
+    }
+
+    function safePlantUpdate(plantId) {
+      return requestPlantIdMatches(plantId) &&
+        resourcePlantIdMatches(plantId) &&
+        doesNotChangeBillingFields();
+    }
+
+    function safeUserWrite(plantId) {
+      return requestPlantIdMatches(plantId) &&
+        (!('role' in request.resource.data) || validRole(request.resource.data.role)) &&
+        (!('status' in request.resource.data) || validStatus(request.resource.data.status));
+    }
+
+    function safeSubcollectionWrite(plantId) {
+      return requestPlantIdMatches(plantId);
+    }
+
+    // Floor Flow plant-scoped data.
+    // Stage 1 lockdown: public access is limited to plant-scoped paths only.
+    // The app still uses plant links/PINs instead of Firebase Auth, so anyone with a plantId
+    // can access that plant. Server-only billing/contact/email collections are blocked below.
+    match /plants/{plantId} {
+      allow get: if true;
+      allow list: if false;
+
+      allow create: if isSafePlantCreate(plantId);
+      allow update: if safePlantUpdate(plantId);
+      allow delete: if false;
+
+      match /settings/{settingId} {
+        allow read: if true;
+        allow create, update: if safeSubcollectionWrite(plantId);
+        allow delete: if false;
+      }
+
+      match /areas/{areaId} {
+        allow read: if true;
+        allow create, update, delete: if safeSubcollectionWrite(plantId);
+      }
+
+      match /workCells/{workCellId} {
+        allow read: if true;
+        allow create, update, delete: if safeSubcollectionWrite(plantId);
+      }
+
+      // Legacy compatibility for older screens.
+      match /presses/{pressId} {
+        allow read: if true;
+        allow create, update, delete: if safeSubcollectionWrite(plantId);
+      }
+
+      match /users/{userId} {
+        allow read: if true;
+        allow create, update, delete: if safeUserWrite(plantId);
+      }
+
+      match /partLibrary/{partId} {
+        allow read: if true;
+        allow create, update, delete: if safeSubcollectionWrite(plantId);
+      }
+
+      match /queue/{queueId} {
+        allow read: if true;
+        allow create, update, delete: if safeSubcollectionWrite(plantId);
+      }
+
+      match /reports/{reportId} {
+        allow read: if true;
+        allow create, update: if safeSubcollectionWrite(plantId);
+        allow delete: if false;
+      }
+
+      match /activityLogs/{logId} {
+        allow read: if true;
+        allow create: if safeSubcollectionWrite(plantId);
+        allow update, delete: if false;
+      }
+
+      match /{document=**} {
+        allow read: if true;
+        allow create, update: if safeSubcollectionWrite(plantId);
+        allow delete: if false;
+      }
+    }
+
+    // Server-only collections. Cloud Functions Admin SDK bypasses rules.
+    match /mail/{docId} {
+      allow read, write: if false;
+    }
+
+    match /billingCustomers/{docId} {
+      allow read, write: if false;
+    }
+
+    match /floorFlowContacts/{docId} {
+      allow read, write: if false;
+    }
+
+    match /floorFlowCommunications/{docId} {
+      allow read, write: if false;
+    }
+
+    // Old/global data should not be used by the production Floor Flow app.
+    match /users/{userId} {
+      allow read, write: if false;
+    }
+
+    match /presses/{pressId} {
+      allow read, write: if false;
+    }
+
+    match /test/{docId} {
+      allow read, write: if false;
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

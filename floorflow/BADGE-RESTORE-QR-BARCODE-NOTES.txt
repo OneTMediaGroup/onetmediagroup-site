@@ -1,0 +1,1 @@
+Badge restored: QR on left, barcode on right, full badge card preserved.
