@@ -419,67 +419,6 @@ exports.createFactoryOnCallCheckoutSession = onRequest(
   }
 );
 
-exports.createFactoryOnCallCustomerPortalSession = onRequest(
-  {
-    region: "us-central1",
-    secrets: [STRIPE_SECRET_KEY]
-  },
-  async (req, res) => {
-    buildCorsResponse(res);
-    if (req.method === "OPTIONS") {
-      res.status(204).send("");
-      return;
-    }
-    if (req.method !== "POST") {
-      res.status(405).json({ error: "Method not allowed" });
-      return;
-    }
-
-    try {
-      const body = req.body || {};
-      const companyId = String(body.companyId || "").trim();
-      const returnUrl = String(body.returnUrl || `${FALLBACK_BASE_URL}admin.html`).trim();
-
-      if (!companyId) {
-        res.status(400).json({ error: "Missing companyId." });
-        return;
-      }
-
-      const snap = await admin.firestore().collection("companies").doc(companyId).get();
-      if (!snap.exists) {
-        res.status(404).json({ error: "Company not found." });
-        return;
-      }
-
-      const company = snap.data() || {};
-      const stripeCustomerId = company.stripeCustomerId || company.customerId || "";
-      if (!stripeCustomerId) {
-        res.status(400).json({ error: "No Stripe customer is attached to this plant yet." });
-        return;
-      }
-
-      const stripeSecretKey = STRIPE_SECRET_KEY.value();
-      if (!stripeSecretKey || !stripeSecretKey.startsWith("sk_")) {
-        logger.error("Factory On Call Stripe secret key is missing or invalid for customer portal.");
-        res.status(500).json({ error: "Stripe is not configured correctly." });
-        return;
-      }
-
-      const stripe = new Stripe(stripeSecretKey);
-      const session = await stripe.billingPortal.sessions.create({
-        customer: stripeCustomerId,
-        return_url: returnUrl
-      });
-
-      logger.info("Created Factory On Call customer portal session", { companyId });
-      res.status(200).json({ url: session.url });
-    } catch (error) {
-      logger.error("Failed to create Factory On Call customer portal session", { error });
-      res.status(500).json({ error: error?.message || "Could not open subscription portal." });
-    }
-  }
-);
-
 exports.stripeWebhook = onRequest(
   {
     region: "us-central1",
@@ -535,13 +474,11 @@ exports.stripeWebhook = onRequest(
 
       if (event.type === "customer.subscription.deleted") {
         const subscription = event.data.object;
-        const companyId = subscription?.metadata?.companyId || "";
+        const companyId = subscription?.metadata?.companyId;
         if (companyId) {
           await admin.firestore().collection("companies").doc(companyId).set({
-            subscriptionStatus: "canceled",
-            stripeStatus: "canceled",
+            stripeStatus: "cancelled",
             active: false,
-            subscriptionCanceledAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
           }, { merge: true });
           logger.info("Factory On Call subscription cancelled", { companyId });
@@ -550,55 +487,85 @@ exports.stripeWebhook = onRequest(
 
       if (event.type === "invoice.payment_failed") {
         const invoice = event.data.object;
-        const subscriptionId = typeof invoice.subscription === "string" ? invoice.subscription : (invoice.subscription?.id || "");
-        let companyId = "";
-        if (subscriptionId) {
-          try {
-            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-            companyId = subscription?.metadata?.companyId || "";
-          } catch (lookupError) {
-            logger.warn("Could not look up failed invoice subscription", { subscriptionId, lookupError: lookupError?.message || String(lookupError) });
-          }
-        }
-        if (companyId) {
-          await admin.firestore().collection("companies").doc(companyId).set({
-            subscriptionStatus: "past_due",
-            stripeStatus: "past_due",
-            paymentIssueAt: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-        }
-        logger.warn("Factory On Call invoice payment failed", { subscriptionId, companyId });
+        const subscriptionId = invoice.subscription || "";
+        logger.warn("Factory On Call invoice payment failed", { subscriptionId });
       }
 
       if (event.type === "invoice.payment_succeeded") {
         const invoice = event.data.object;
-        const subscriptionId = typeof invoice.subscription === "string" ? invoice.subscription : (invoice.subscription?.id || "");
-        let companyId = "";
-        if (subscriptionId) {
-          try {
-            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
-            companyId = subscription?.metadata?.companyId || "";
-          } catch (lookupError) {
-            logger.warn("Could not look up succeeded invoice subscription", { subscriptionId, lookupError: lookupError?.message || String(lookupError) });
-          }
-        }
-        if (companyId) {
-          await admin.firestore().collection("companies").doc(companyId).set({
-            subscriptionStatus: "active",
-            stripeStatus: "active",
-            active: true,
-            lastPaymentSucceededAt: admin.firestore.FieldValue.serverTimestamp(),
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-        }
-        logger.info("Factory On Call invoice payment succeeded", { subscriptionId, companyId });
+        const subscriptionId = invoice.subscription || "";
+        logger.info("Factory On Call invoice payment succeeded", { subscriptionId });
       }
 
       res.status(200).send("ok");
     } catch (error) {
       logger.error("Factory On Call Stripe webhook handler failed", { error });
       res.status(500).send("webhook handler failed");
+    }
+  }
+);
+
+
+exports.createCustomerPortalSession = onRequest(
+  {
+    region: "us-central1",
+    secrets: [STRIPE_SECRET_KEY]
+  },
+  async (req, res) => {
+    buildCorsResponse(res);
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    try {
+      const body = req.body || {};
+      const companyId = String(body.companyId || "").trim();
+      const stripeCustomerIdFromBody = String(body.stripeCustomerId || "").trim();
+      const baseUrl = normalizeBaseUrl(body.baseUrl || FALLBACK_BASE_URL);
+      const returnUrl = String(body.returnUrl || `${baseUrl}admin.html?companyId=${encodeURIComponent(companyId)}#billing`).trim();
+
+      if (!companyId) {
+        res.status(400).json({ error: "Missing companyId." });
+        return;
+      }
+
+      const companyRef = admin.firestore().collection("companies").doc(companyId);
+      const companySnap = await companyRef.get();
+      if (!companySnap.exists) {
+        res.status(404).json({ error: "Plant was not found." });
+        return;
+      }
+
+      const company = companySnap.data() || {};
+      const stripeCustomerId = String(company.stripeCustomerId || stripeCustomerIdFromBody || "").trim();
+      if (!stripeCustomerId) {
+        res.status(400).json({ error: "This plant does not have a Stripe customer yet." });
+        return;
+      }
+
+      const stripeSecretKey = STRIPE_SECRET_KEY.value();
+      if (!stripeSecretKey || !stripeSecretKey.startsWith("sk_")) {
+        logger.error("Factory On Call customer portal secret key is missing or invalid. Use a Stripe secret key that starts with sk_test_ or sk_live_.");
+        res.status(500).json({ error: "Stripe is not configured correctly. STRIPE_SECRET_KEY must be a secret key, not a publishable key." });
+        return;
+      }
+
+      const stripe = new Stripe(stripeSecretKey);
+      const session = await stripe.billingPortal.sessions.create({
+        customer: stripeCustomerId,
+        return_url: returnUrl
+      });
+
+      logger.info("Created Factory On Call customer portal session", { companyId, stripeCustomerId });
+      res.status(200).json({ url: session.url });
+    } catch (error) {
+      logger.error("Failed to create Factory On Call customer portal session", { error: error?.message || String(error) });
+      res.status(500).json({ error: error?.message || "Could not open billing portal." });
     }
   }
 );

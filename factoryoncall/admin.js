@@ -25,8 +25,6 @@ const COMPANY_ID = getActiveCompanyId();
 let COMPANY_NAME = "Factory On Call";
 let COMPANY_MODE = "production";
 let ADMIN_LOCKED = false;
-let COMPANY_BILLING = {};
-const STRIPE_PORTAL_FUNCTION_URL = "https://us-central1-factoryoncall.cloudfunctions.net/createFactoryOnCallCustomerPortalSession";
 
 (function applySavedThemeEarly(){
   try {
@@ -475,11 +473,11 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
       users: "Users",
       stations: "Stations",
       roles: "Roles",
-      billing: "Billing",
       branding: "Branding",
       settings: "Plant Access",
       emergency: "Emergency Alerts",
-      analytics: "Analytics"
+      analytics: "Analytics",
+      billing: "Billing"
     };
     return map[tabName] || tabName;
   }
@@ -492,11 +490,11 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
       users: "Manage users and login credentials.",
       stations: "Manage factory call stations.",
       roles: "Manage roles and permissions.",
-      billing: "Manage subscription status, invoices, payment methods, and cancellations.",
       branding: "Customize plant name, logo, and theme.",
       settings: "Copy plant code and live screen links.",
       emergency: "Optional plant-wide emergency notification controls.",
-      analytics: "Analyze performance and usage trends."
+      analytics: "Analyze performance and usage trends.",
+      billing: "Manage subscription status, invoices, payment methods, and cancellations."
     };
     return map[tabName] || "";
   }
@@ -765,6 +763,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
   const emergencyRef = companyRef.collection("settings").doc("emergency");
 
   let cachedBranding = {};
+  let cachedCompanyData = {};
 
   let cachedAreas = [];
   let cachedStations = [];
@@ -1087,104 +1086,6 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
     });
   }
 
-
-  function normalizeSubscriptionStatus(value) {
-    return String(value || "").toLowerCase().trim();
-  }
-
-  function billingStatusLabel(status, mode) {
-    if (mode === "demo") return "Demo Plant";
-    if (!status) return "Not connected";
-    if (status === "active") return "Active";
-    if (status === "past_due") return "Payment Issue";
-    if (status === "canceled" || status === "cancelled") return "Canceled";
-    if (status === "trialing") return "Trialing";
-    return status.replaceAll("_", " ");
-  }
-
-  function renderBillingStatus() {
-    const panel = document.getElementById("billingStatusPanel");
-    const manageBtn = document.getElementById("manageSubscriptionBtn");
-    if (!panel) return;
-
-    const mode = COMPANY_MODE;
-    const status = normalizeSubscriptionStatus(COMPANY_BILLING.subscriptionStatus || COMPANY_BILLING.stripeStatus);
-    const plan = COMPANY_BILLING.plan || COMPANY_BILLING.subscriptionPlan || "—";
-    const customerId = COMPANY_BILLING.stripeCustomerId || "";
-    const subscriptionId = COMPANY_BILLING.stripeSubscriptionId || "";
-
-    let badgeClass = "status-badge";
-    if (mode === "demo") badgeClass += " badge-neutral";
-    else if (status === "active") badgeClass += " badge-success";
-    else if (status === "past_due") badgeClass += " badge-warning";
-    else if (status === "canceled" || status === "cancelled") badgeClass += " badge-danger";
-
-    const warning = status === "past_due"
-      ? `<div class="billing-warning">Payment failed or needs attention. Open the customer portal to update the payment method.</div>`
-      : ((status === "canceled" || status === "cancelled")
-        ? `<div class="billing-warning danger">This subscription has been canceled. The plant is inactive until billing is restored.</div>`
-        : "");
-
-    panel.innerHTML = `
-      <div class="billing-grid">
-        <div>
-          <div class="small-label">Status</div>
-          <span class="${badgeClass}">${billingStatusLabel(status, mode)}</span>
-        </div>
-        <div>
-          <div class="small-label">Plan</div>
-          <strong>${escapeHtml(String(plan || "—"))}</strong>
-        </div>
-        <div>
-          <div class="small-label">Stripe Customer</div>
-          <span class="mono">${escapeHtml(customerId || "Not connected")}</span>
-        </div>
-        <div>
-          <div class="small-label">Subscription</div>
-          <span class="mono">${escapeHtml(subscriptionId || "Not connected")}</span>
-        </div>
-      </div>
-      ${warning}
-    `;
-
-    if (manageBtn) {
-      manageBtn.disabled = mode === "demo" || !customerId;
-      manageBtn.textContent = mode === "demo" ? "Demo Billing Locked" : "Manage Subscription";
-      manageBtn.title = mode === "demo"
-        ? "Billing is available for Production Plants."
-        : (!customerId ? "No Stripe customer is connected to this plant yet." : "Open the secure Stripe customer portal.");
-    }
-  }
-
-  function setupBillingControls() {
-    const manageBtn = document.getElementById("manageSubscriptionBtn");
-    if (!manageBtn) return;
-    manageBtn.addEventListener("click", async () => {
-      try {
-        manageBtn.disabled = true;
-        manageBtn.textContent = "Opening...";
-        const response = await fetch(STRIPE_PORTAL_FUNCTION_URL, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            companyId: COMPANY_ID,
-            returnUrl: window.location.href
-          })
-        });
-        const data = await response.json().catch(() => ({}));
-        if (!response.ok || !data.url) {
-          throw new Error(data.error || "Could not open the subscription portal.");
-        }
-        window.location.href = data.url;
-      } catch (error) {
-        console.error(error);
-        alert(error.message || "Could not open the subscription portal.");
-        renderBillingStatus();
-      }
-    });
-  }
-
-
 async function loadCompanyBranding() {
     try {
       const rootSnap = await companyRef.get();
@@ -1204,15 +1105,7 @@ async function loadCompanyBranding() {
       };
 
       COMPANY_MODE = rootData.mode || "production";
-      COMPANY_BILLING = {
-        plan: rootData.plan || rootData.subscriptionPlan || "",
-        subscriptionStatus: rootData.subscriptionStatus || rootData.stripeStatus || "",
-        stripeStatus: rootData.stripeStatus || "",
-        stripeCustomerId: rootData.stripeCustomerId || "",
-        stripeSubscriptionId: rootData.stripeSubscriptionId || ""
-      };
       ADMIN_LOCKED = rootData.adminLocked === true || rootData.isDemo === true || COMPANY_MODE === "demo";
-      renderBillingStatus();
 
       COMPANY_NAME =
         (cachedBranding.companyName !== undefined ? cachedBranding.companyName :
@@ -4463,6 +4356,188 @@ module.exports = QRCode;
 
 
 
+
+  // ---------- BILLING ----------
+  const CUSTOMER_PORTAL_FUNCTION_URL = "https://us-central1-factoryoncall.cloudfunctions.net/createCustomerPortalSession";
+
+  function subscriptionStatusLabel(value = "") {
+    const raw = String(value || "").toLowerCase();
+    if (raw === "active") return "Active";
+    if (raw === "past_due") return "Past due";
+    if (raw === "cancelled" || raw === "canceled") return "Cancelled";
+    if (raw === "trialing") return "Trialing";
+    if (raw === "incomplete") return "Incomplete";
+    return value ? String(value) : "Not active";
+  }
+
+  function subscriptionStatusClass(value = "") {
+    const raw = String(value || "").toLowerCase();
+    if (raw === "active" || raw === "trialing") return "ok";
+    if (raw === "past_due" || raw === "incomplete") return "warn";
+    if (raw === "cancelled" || raw === "canceled" || raw === "unpaid") return "danger";
+    return "neutral";
+  }
+
+  function renderBilling() {
+    const panel = document.getElementById("billingStatusPanel");
+    const btn = document.getElementById("manageSubscriptionBtn");
+    if (!panel) return;
+
+    const data = cachedCompanyData || {};
+    const plan = data.plan || data.subscriptionPlan || "—";
+    const status = data.stripeStatus || data.subscriptionStatus || (data.active === true && data.mode === "production" ? "active" : "");
+    const customerId = data.stripeCustomerId || "";
+    const subscriptionId = data.stripeSubscriptionId || "";
+    const mode = data.mode || (data.isDemo ? "demo" : "");
+    const isDemo = mode === "demo" || data.isDemo === true;
+
+    if (isDemo) {
+      panel.innerHTML = `
+        <div class="billing-card">
+          <div class="billing-kicker">STATUS</div>
+          <div class="billing-pill neutral">Demo Plant</div>
+          <p class="muted" style="margin-top:12px;">Demo plants are free and do not have billing attached. Create a Production Plant when you are ready to subscribe.</p>
+        </div>
+      `;
+      if (btn) {
+        btn.disabled = true;
+        btn.textContent = "Demo Plant";
+      }
+      return;
+    }
+
+    const statusText = subscriptionStatusLabel(status);
+    const statusClass = subscriptionStatusClass(status);
+
+    panel.innerHTML = `
+      <div class="billing-card">
+        <div class="billing-grid">
+          <div>
+            <div class="billing-kicker">STATUS</div>
+            <div class="billing-pill ${statusClass}">${escapeHtml(statusText)}</div>
+          </div>
+          <div>
+            <div class="billing-kicker">PLAN</div>
+            <div class="billing-value">${escapeHtml(String(plan || "—"))}</div>
+          </div>
+          <div>
+            <div class="billing-kicker">STRIPE CUSTOMER</div>
+            <div class="billing-value mono">${escapeHtml(customerId || "—")}</div>
+          </div>
+          <div>
+            <div class="billing-kicker">SUBSCRIPTION</div>
+            <div class="billing-value mono">${escapeHtml(subscriptionId || "—")}</div>
+          </div>
+        </div>
+        ${statusClass === "warn" ? `<div class="billing-warning">Payment attention required. Please update billing through the Stripe customer portal.</div>` : ""}
+        ${statusClass === "danger" ? `<div class="billing-danger">This subscription is not active. Some production access may be limited until billing is resolved.</div>` : ""}
+      </div>
+    `;
+
+    if (btn) {
+      btn.disabled = !customerId;
+      btn.textContent = customerId ? "Manage Subscription" : "No Stripe Customer";
+    }
+  }
+
+  async function openCustomerPortal() {
+    const btn = document.getElementById("manageSubscriptionBtn");
+    const data = cachedCompanyData || {};
+    const customerId = data.stripeCustomerId || "";
+    if (!customerId) {
+      alert("No Stripe customer is attached to this plant yet.");
+      return;
+    }
+
+    const original = btn ? btn.textContent : "";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "Opening…";
+    }
+
+    try {
+      const response = await fetch(CUSTOMER_PORTAL_FUNCTION_URL, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          companyId: COMPANY_ID,
+          stripeCustomerId: customerId,
+          baseUrl: "https://onetmediagroup.ca/factoryoncall/",
+          returnUrl: `${window.location.origin}${window.location.pathname}?companyId=${encodeURIComponent(COMPANY_ID)}`
+        })
+      });
+
+      const result = await response.json().catch(() => ({}));
+      if (!response.ok || !result.url) {
+        throw new Error(result.error || "Could not open Stripe customer portal.");
+      }
+
+      window.location.href = result.url;
+    } catch (err) {
+      console.error(err);
+      alert(err?.message || "Could not open billing portal.");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = original || "Manage Subscription";
+      }
+    }
+  }
+
+  function ensureBillingStyles() {
+    if (document.getElementById("factoryBillingStyles")) return;
+    const style = document.createElement("style");
+    style.id = "factoryBillingStyles";
+    style.textContent = `
+      .billing-status-panel { margin-top: 18px; }
+      .billing-card {
+        border: 1px solid rgba(148, 163, 184, 0.28);
+        border-radius: 18px;
+        padding: 20px;
+        background: rgba(248, 250, 252, 0.72);
+      }
+      .billing-grid {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 18px;
+      }
+      .billing-kicker {
+        color: #64748b;
+        font-size: 0.78rem;
+        font-weight: 900;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+      .billing-value { font-weight: 900; color: #0f172a; word-break: break-word; }
+      .billing-value.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-weight: 800; }
+      .billing-pill {
+        display: inline-flex;
+        align-items: center;
+        border-radius: 999px;
+        padding: 8px 14px;
+        font-weight: 900;
+      }
+      .billing-pill.ok { background: #dcfce7; color: #166534; border: 1px solid #86efac; }
+      .billing-pill.warn { background: #fef3c7; color: #92400e; border: 1px solid #fcd34d; }
+      .billing-pill.danger { background: #fee2e2; color: #991b1b; border: 1px solid #fca5a5; }
+      .billing-pill.neutral { background: #e0f2fe; color: #075985; border: 1px solid #7dd3fc; }
+      .billing-warning, .billing-danger {
+        margin-top: 16px;
+        padding: 12px 14px;
+        border-radius: 14px;
+        font-weight: 800;
+      }
+      .billing-warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+      .billing-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+      @media (max-width: 900px) {
+        .billing-grid { grid-template-columns: 1fr; }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+
+
   function bindBrandingPreview() {
     brandCompanyName?.addEventListener("input", () => {
       if (brandPreviewCompany) brandPreviewCompany.textContent = brandCompanyName.value.trim();
@@ -4491,6 +4566,8 @@ module.exports = QRCode;
 
   // ---------- EVENT WIRING ----------
   function wireEvents() {
+    document.getElementById("manageSubscriptionBtn")?.addEventListener("click", openCustomerPortal);
+
     document.addEventListener("click", event => {
       const singleBadgeBtn = event.target.closest?.(".print-user-badge-btn");
       const selectedBadgeBtn = event.target.closest?.("#btnPrintSelectedBadges");
@@ -5806,6 +5883,16 @@ stationFormReset?.addEventListener("click", resetStationForm);
   // ---------- FIRESTORE LISTENERS ----------
   function initListeners() {
     try {
+      companyRef.onSnapshot(
+        snap => {
+          cachedCompanyData = snap.exists ? (snap.data() || {}) : {};
+          renderBilling();
+        },
+        err => {
+          console.warn("Company billing listener unavailable:", err);
+        }
+      );
+
       areasRef.orderBy("name").onSnapshot(
         snapshot => {
           cachedAreas = snapshot.docs.map(doc => ({
@@ -6138,6 +6225,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
   async function boot() {
     ensureDashboardTableStyles();
+    ensureBillingStyles();
     setConn(false);
     await loadCompanyBranding();
     renderDemoNoticeIfNeeded();
@@ -6148,7 +6236,6 @@ stationFormReset?.addEventListener("click", resetStationForm);
     initSidebarLinks();
     initPlaceholders();
     initEmergencySettings();
-    setupBillingControls();
     wireEvents();
     initListeners();
   }

@@ -539,30 +539,28 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
             </div>
         </section>
 
-
+        <!-- BRANDING TAB -->
+        
         <!-- BILLING TAB -->
         <section id="tab-billing" class="tab">
             <div class="card">
-                <div class="card-header">
+                <div class="section-title-row">
                     <div>
                         <h2>Subscription</h2>
                         <p class="muted">Review billing status and manage your Factory On Call subscription.</p>
                     </div>
-                    <button id="manageSubscriptionBtn" class="btn" type="button">Manage Subscription</button>
+                    <button id="manageSubscriptionBtn" class="btn primary" type="button">Manage Subscription</button>
                 </div>
 
                 <div id="billingStatusPanel" class="billing-status-panel">
-                    <div class="muted">Loading billing status...</div>
+                    <div class="table-empty">Loading billing details…</div>
                 </div>
 
-                <p class="muted">
-                    Billing is handled securely by Stripe. You can update payment methods, review invoices, and manage cancellation from the customer portal.
-                </p>
+                <p class="muted" style="margin-top:16px;">Billing is handled securely by Stripe. You can update payment methods, review invoices, and manage cancellation from the customer portal.</p>
             </div>
         </section>
 
-        <!-- BRANDING TAB -->
-        <section id="tab-branding" class="tab">
+<section id="tab-branding" class="tab">
             <div class="card branding-card-single">
                 <h2>Company Branding</h2>
                 <p class="muted">
@@ -918,6 +916,6 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 </div>
 
 <script src="firebase.js"></script>
-<script src="admin.js?v=20260626-user-pin-security-lock"></script>
+<script src="admin.js?v=20260630-billing-portal-function-fix"></script>
 </body>
 </html>
