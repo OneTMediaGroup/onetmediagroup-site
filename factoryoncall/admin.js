@@ -25,6 +25,8 @@ const COMPANY_ID = getActiveCompanyId();
 let COMPANY_NAME = "Factory On Call";
 let COMPANY_MODE = "production";
 let ADMIN_LOCKED = false;
+let COMPANY_BILLING = {};
+const STRIPE_PORTAL_FUNCTION_URL = "https://us-central1-factoryoncall.cloudfunctions.net/createFactoryOnCallCustomerPortalSession";
 
 (function applySavedThemeEarly(){
   try {
@@ -473,6 +475,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
       users: "Users",
       stations: "Stations",
       roles: "Roles",
+      billing: "Billing",
       branding: "Branding",
       settings: "Plant Access",
       emergency: "Emergency Alerts",
@@ -489,6 +492,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
       users: "Manage users and login credentials.",
       stations: "Manage factory call stations.",
       roles: "Manage roles and permissions.",
+      billing: "Manage subscription status, invoices, payment methods, and cancellations.",
       branding: "Customize plant name, logo, and theme.",
       settings: "Copy plant code and live screen links.",
       emergency: "Optional plant-wide emergency notification controls.",
@@ -1083,6 +1087,104 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
     });
   }
 
+
+  function normalizeSubscriptionStatus(value) {
+    return String(value || "").toLowerCase().trim();
+  }
+
+  function billingStatusLabel(status, mode) {
+    if (mode === "demo") return "Demo Plant";
+    if (!status) return "Not connected";
+    if (status === "active") return "Active";
+    if (status === "past_due") return "Payment Issue";
+    if (status === "canceled" || status === "cancelled") return "Canceled";
+    if (status === "trialing") return "Trialing";
+    return status.replaceAll("_", " ");
+  }
+
+  function renderBillingStatus() {
+    const panel = document.getElementById("billingStatusPanel");
+    const manageBtn = document.getElementById("manageSubscriptionBtn");
+    if (!panel) return;
+
+    const mode = COMPANY_MODE;
+    const status = normalizeSubscriptionStatus(COMPANY_BILLING.subscriptionStatus || COMPANY_BILLING.stripeStatus);
+    const plan = COMPANY_BILLING.plan || COMPANY_BILLING.subscriptionPlan || "—";
+    const customerId = COMPANY_BILLING.stripeCustomerId || "";
+    const subscriptionId = COMPANY_BILLING.stripeSubscriptionId || "";
+
+    let badgeClass = "status-badge";
+    if (mode === "demo") badgeClass += " badge-neutral";
+    else if (status === "active") badgeClass += " badge-success";
+    else if (status === "past_due") badgeClass += " badge-warning";
+    else if (status === "canceled" || status === "cancelled") badgeClass += " badge-danger";
+
+    const warning = status === "past_due"
+      ? `<div class="billing-warning">Payment failed or needs attention. Open the customer portal to update the payment method.</div>`
+      : ((status === "canceled" || status === "cancelled")
+        ? `<div class="billing-warning danger">This subscription has been canceled. The plant is inactive until billing is restored.</div>`
+        : "");
+
+    panel.innerHTML = `
+      <div class="billing-grid">
+        <div>
+          <div class="small-label">Status</div>
+          <span class="${badgeClass}">${billingStatusLabel(status, mode)}</span>
+        </div>
+        <div>
+          <div class="small-label">Plan</div>
+          <strong>${escapeHtml(String(plan || "—"))}</strong>
+        </div>
+        <div>
+          <div class="small-label">Stripe Customer</div>
+          <span class="mono">${escapeHtml(customerId || "Not connected")}</span>
+        </div>
+        <div>
+          <div class="small-label">Subscription</div>
+          <span class="mono">${escapeHtml(subscriptionId || "Not connected")}</span>
+        </div>
+      </div>
+      ${warning}
+    `;
+
+    if (manageBtn) {
+      manageBtn.disabled = mode === "demo" || !customerId;
+      manageBtn.textContent = mode === "demo" ? "Demo Billing Locked" : "Manage Subscription";
+      manageBtn.title = mode === "demo"
+        ? "Billing is available for Production Plants."
+        : (!customerId ? "No Stripe customer is connected to this plant yet." : "Open the secure Stripe customer portal.");
+    }
+  }
+
+  function setupBillingControls() {
+    const manageBtn = document.getElementById("manageSubscriptionBtn");
+    if (!manageBtn) return;
+    manageBtn.addEventListener("click", async () => {
+      try {
+        manageBtn.disabled = true;
+        manageBtn.textContent = "Opening...";
+        const response = await fetch(STRIPE_PORTAL_FUNCTION_URL, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            companyId: COMPANY_ID,
+            returnUrl: window.location.href
+          })
+        });
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok || !data.url) {
+          throw new Error(data.error || "Could not open the subscription portal.");
+        }
+        window.location.href = data.url;
+      } catch (error) {
+        console.error(error);
+        alert(error.message || "Could not open the subscription portal.");
+        renderBillingStatus();
+      }
+    });
+  }
+
+
 async function loadCompanyBranding() {
     try {
       const rootSnap = await companyRef.get();
@@ -1102,7 +1204,15 @@ async function loadCompanyBranding() {
       };
 
       COMPANY_MODE = rootData.mode || "production";
+      COMPANY_BILLING = {
+        plan: rootData.plan || rootData.subscriptionPlan || "",
+        subscriptionStatus: rootData.subscriptionStatus || rootData.stripeStatus || "",
+        stripeStatus: rootData.stripeStatus || "",
+        stripeCustomerId: rootData.stripeCustomerId || "",
+        stripeSubscriptionId: rootData.stripeSubscriptionId || ""
+      };
       ADMIN_LOCKED = rootData.adminLocked === true || rootData.isDemo === true || COMPANY_MODE === "demo";
+      renderBillingStatus();
 
       COMPANY_NAME =
         (cachedBranding.companyName !== undefined ? cachedBranding.companyName :
@@ -6038,6 +6148,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
     initSidebarLinks();
     initPlaceholders();
     initEmergencySettings();
+    setupBillingControls();
     wireEvents();
     initListeners();
   }

@@ -419,6 +419,67 @@ exports.createFactoryOnCallCheckoutSession = onRequest(
   }
 );
 
+exports.createFactoryOnCallCustomerPortalSession = onRequest(
+  {
+    region: "us-central1",
+    secrets: [STRIPE_SECRET_KEY]
+  },
+  async (req, res) => {
+    buildCorsResponse(res);
+    if (req.method === "OPTIONS") {
+      res.status(204).send("");
+      return;
+    }
+    if (req.method !== "POST") {
+      res.status(405).json({ error: "Method not allowed" });
+      return;
+    }
+
+    try {
+      const body = req.body || {};
+      const companyId = String(body.companyId || "").trim();
+      const returnUrl = String(body.returnUrl || `${FALLBACK_BASE_URL}admin.html`).trim();
+
+      if (!companyId) {
+        res.status(400).json({ error: "Missing companyId." });
+        return;
+      }
+
+      const snap = await admin.firestore().collection("companies").doc(companyId).get();
+      if (!snap.exists) {
+        res.status(404).json({ error: "Company not found." });
+        return;
+      }
+
+      const company = snap.data() || {};
+      const stripeCustomerId = company.stripeCustomerId || company.customerId || "";
+      if (!stripeCustomerId) {
+        res.status(400).json({ error: "No Stripe customer is attached to this plant yet." });
+        return;
+      }
+
+      const stripeSecretKey = STRIPE_SECRET_KEY.value();
+      if (!stripeSecretKey || !stripeSecretKey.startsWith("sk_")) {
+        logger.error("Factory On Call Stripe secret key is missing or invalid for customer portal.");
+        res.status(500).json({ error: "Stripe is not configured correctly." });
+        return;
+      }
+
+      const stripe = new Stripe(stripeSecretKey);
+      const session = await stripe.billingPortal.sessions.create({
+        customer: stripeCustomerId,
+        return_url: returnUrl
+      });
+
+      logger.info("Created Factory On Call customer portal session", { companyId });
+      res.status(200).json({ url: session.url });
+    } catch (error) {
+      logger.error("Failed to create Factory On Call customer portal session", { error });
+      res.status(500).json({ error: error?.message || "Could not open subscription portal." });
+    }
+  }
+);
+
 exports.stripeWebhook = onRequest(
   {
     region: "us-central1",
@@ -474,11 +535,13 @@ exports.stripeWebhook = onRequest(
 
       if (event.type === "customer.subscription.deleted") {
         const subscription = event.data.object;
-        const companyId = subscription?.metadata?.companyId;
+        const companyId = subscription?.metadata?.companyId || "";
         if (companyId) {
           await admin.firestore().collection("companies").doc(companyId).set({
-            stripeStatus: "cancelled",
+            subscriptionStatus: "canceled",
+            stripeStatus: "canceled",
             active: false,
+            subscriptionCanceledAt: admin.firestore.FieldValue.serverTimestamp(),
             updatedAt: admin.firestore.FieldValue.serverTimestamp()
           }, { merge: true });
           logger.info("Factory On Call subscription cancelled", { companyId });
@@ -487,14 +550,49 @@ exports.stripeWebhook = onRequest(
 
       if (event.type === "invoice.payment_failed") {
         const invoice = event.data.object;
-        const subscriptionId = invoice.subscription || "";
-        logger.warn("Factory On Call invoice payment failed", { subscriptionId });
+        const subscriptionId = typeof invoice.subscription === "string" ? invoice.subscription : (invoice.subscription?.id || "");
+        let companyId = "";
+        if (subscriptionId) {
+          try {
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+            companyId = subscription?.metadata?.companyId || "";
+          } catch (lookupError) {
+            logger.warn("Could not look up failed invoice subscription", { subscriptionId, lookupError: lookupError?.message || String(lookupError) });
+          }
+        }
+        if (companyId) {
+          await admin.firestore().collection("companies").doc(companyId).set({
+            subscriptionStatus: "past_due",
+            stripeStatus: "past_due",
+            paymentIssueAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        }
+        logger.warn("Factory On Call invoice payment failed", { subscriptionId, companyId });
       }
 
       if (event.type === "invoice.payment_succeeded") {
         const invoice = event.data.object;
-        const subscriptionId = invoice.subscription || "";
-        logger.info("Factory On Call invoice payment succeeded", { subscriptionId });
+        const subscriptionId = typeof invoice.subscription === "string" ? invoice.subscription : (invoice.subscription?.id || "");
+        let companyId = "";
+        if (subscriptionId) {
+          try {
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+            companyId = subscription?.metadata?.companyId || "";
+          } catch (lookupError) {
+            logger.warn("Could not look up succeeded invoice subscription", { subscriptionId, lookupError: lookupError?.message || String(lookupError) });
+          }
+        }
+        if (companyId) {
+          await admin.firestore().collection("companies").doc(companyId).set({
+            subscriptionStatus: "active",
+            stripeStatus: "active",
+            active: true,
+            lastPaymentSucceededAt: admin.firestore.FieldValue.serverTimestamp(),
+            updatedAt: admin.firestore.FieldValue.serverTimestamp()
+          }, { merge: true });
+        }
+        logger.info("Factory On Call invoice payment succeeded", { subscriptionId, companyId });
       }
 
       res.status(200).send("ok");

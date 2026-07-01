@@ -53,6 +53,7 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 
             <div class="nav-section">
                 <div class="sidebar-section-label">System</div>
+                <button class="nav-item" data-tab="billing">Billing</button>
                 <button class="nav-item" data-tab="branding">Branding</button>
                 <button class="nav-item" data-tab="settings">Plant Access</button>
                 <button class="nav-item" data-tab="emergency">Emergency Alerts</button>
@@ -535,6 +536,28 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                         </div>
                     </form>
                 </div>
+            </div>
+        </section>
+
+
+        <!-- BILLING TAB -->
+        <section id="tab-billing" class="tab">
+            <div class="card">
+                <div class="card-header">
+                    <div>
+                        <h2>Subscription</h2>
+                        <p class="muted">Review billing status and manage your Factory On Call subscription.</p>
+                    </div>
+                    <button id="manageSubscriptionBtn" class="btn" type="button">Manage Subscription</button>
+                </div>
+
+                <div id="billingStatusPanel" class="billing-status-panel">
+                    <div class="muted">Loading billing status...</div>
+                </div>
+
+                <p class="muted">
+                    Billing is handled securely by Stripe. You can update payment methods, review invoices, and manage cancellation from the customer portal.
+                </p>
             </div>
         </section>
 
