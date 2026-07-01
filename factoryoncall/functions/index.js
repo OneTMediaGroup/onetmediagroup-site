@@ -345,6 +345,124 @@ async function seedProductionCompany(companyId, payload) {
   }, { merge: true });
 }
 
+function normalizeStripeStatus(status) {
+  const raw = String(status || "").toLowerCase();
+  if (raw === "canceled") return "canceled";
+  if (raw === "cancelled") return "canceled";
+  if (raw === "past_due") return "past_due";
+  if (raw === "unpaid") return "unpaid";
+  if (raw === "incomplete") return "incomplete";
+  if (raw === "trialing") return "trialing";
+  if (raw === "active") return "active";
+  return raw || "unknown";
+}
+
+function timestampFromStripeSeconds(value) {
+  const n = Number(value || 0);
+  return n > 0 ? admin.firestore.Timestamp.fromMillis(n * 1000) : null;
+}
+
+function cleanObject(obj) {
+  return Object.fromEntries(Object.entries(obj).filter(([, value]) => value !== undefined && value !== null && value !== ""));
+}
+
+function subscriptionIdFromInvoice(invoice = {}) {
+  if (typeof invoice.subscription === "string") return invoice.subscription;
+  if (invoice.subscription && typeof invoice.subscription.id === "string") return invoice.subscription.id;
+  if (typeof invoice.parent?.subscription_details?.subscription === "string") return invoice.parent.subscription_details.subscription;
+  if (typeof invoice.subscription_details?.subscription === "string") return invoice.subscription_details.subscription;
+  const line = Array.isArray(invoice.lines?.data) ? invoice.lines.data.find((item) => item.subscription) : null;
+  if (typeof line?.subscription === "string") return line.subscription;
+  if (line?.subscription?.id) return line.subscription.id;
+  return "";
+}
+
+async function findCompanyRefForStripe({ companyId = "", subscriptionId = "", customerId = "" } = {}) {
+  const db = admin.firestore();
+
+  if (companyId) {
+    const ref = db.collection("companies").doc(companyId);
+    const snap = await ref.get();
+    if (snap.exists) return ref;
+  }
+
+  if (subscriptionId) {
+    const snap = await db.collection("companies").where("stripeSubscriptionId", "==", subscriptionId).limit(1).get();
+    if (!snap.empty) return snap.docs[0].ref;
+  }
+
+  if (customerId) {
+    const snap = await db.collection("companies").where("stripeCustomerId", "==", customerId).limit(1).get();
+    if (!snap.empty) return snap.docs[0].ref;
+  }
+
+  return null;
+}
+
+async function writeSubscriptionStatus({ companyId = "", subscriptionId = "", customerId = "", status = "", plan = "", reason = "", invoiceId = "", hostedInvoiceUrl = "", amountDue = null, amountPaid = null, subscription = null } = {}) {
+  const companyRef = await findCompanyRefForStripe({ companyId, subscriptionId, customerId });
+  if (!companyRef) {
+    logger.warn("Factory On Call could not match Stripe subscription event to a plant", { companyId, subscriptionId, customerId, status, reason });
+    return false;
+  }
+
+  const normalizedStatus = normalizeStripeStatus(status);
+  const isActive = normalizedStatus === "active" || normalizedStatus === "trialing";
+  const isPastDue = normalizedStatus === "past_due" || normalizedStatus === "unpaid" || normalizedStatus === "incomplete";
+  const isCanceled = normalizedStatus === "canceled";
+  const update = {
+    stripeStatus: normalizedStatus,
+    subscriptionStatus: normalizedStatus,
+    billingStatus: normalizedStatus,
+    active: isCanceled ? false : true,
+    billingLastEventReason: reason || "stripe_event",
+    billingLastEventAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  };
+
+  if (plan) {
+    update.plan = plan === "annual" ? "annual" : plan === "yearly" ? "annual" : "monthly";
+    update.subscriptionPlan = update.plan;
+  }
+  if (customerId) update.stripeCustomerId = customerId;
+  if (subscriptionId) update.stripeSubscriptionId = subscriptionId;
+  if (invoiceId) update.stripeLatestInvoiceId = invoiceId;
+  if (hostedInvoiceUrl) update.stripeLatestInvoiceUrl = hostedInvoiceUrl;
+  if (amountDue !== null && amountDue !== undefined) update.stripeAmountDue = amountDue;
+  if (amountPaid !== null && amountPaid !== undefined) update.stripeAmountPaid = amountPaid;
+
+  if (subscription) {
+    update.stripeCancelAtPeriodEnd = Boolean(subscription.cancel_at_period_end);
+    const currentPeriodStart = timestampFromStripeSeconds(subscription.current_period_start);
+    const currentPeriodEnd = timestampFromStripeSeconds(subscription.current_period_end);
+    const canceledAt = timestampFromStripeSeconds(subscription.canceled_at);
+    const cancelAt = timestampFromStripeSeconds(subscription.cancel_at);
+    if (currentPeriodStart) update.stripeCurrentPeriodStart = currentPeriodStart;
+    if (currentPeriodEnd) {
+      update.stripeCurrentPeriodEnd = currentPeriodEnd;
+      update.nextBillingAt = currentPeriodEnd;
+    }
+    if (canceledAt) update.stripeCanceledAt = canceledAt;
+    if (cancelAt) update.stripeCancelAt = cancelAt;
+  }
+
+  if (isPastDue) {
+    update.billingWarning = "Payment attention required. Please update payment method in Stripe.";
+  } else {
+    update.billingWarning = admin.firestore.FieldValue.delete();
+  }
+
+  if (isCanceled) {
+    update.billingLockReason = "Subscription canceled";
+  } else if (isActive) {
+    update.billingLockReason = admin.firestore.FieldValue.delete();
+  }
+
+  await companyRef.set(cleanObject(update), { merge: true });
+  logger.info("Factory On Call subscription status updated", { companyId: companyRef.id, subscriptionId, customerId, status: normalizedStatus, reason });
+  return true;
+}
+
 exports.createFactoryOnCallCheckoutSession = onRequest(
   {
     region: "us-central1",
@@ -456,6 +574,11 @@ exports.stripeWebhook = onRequest(
         const companyId = md.companyId;
         if (!companyId) throw new Error("Missing companyId in Stripe metadata.");
 
+        let subscription = null;
+        if (session.subscription) {
+          subscription = await stripe.subscriptions.retrieve(String(session.subscription));
+        }
+
         const payload = productionCompanyPayload({
           companyId,
           firstName: md.firstName || "",
@@ -468,38 +591,110 @@ exports.stripeWebhook = onRequest(
           stripeSessionId: session.id
         });
 
+        if (subscription) {
+          payload.stripeStatus = normalizeStripeStatus(subscription.status || "active");
+          payload.subscriptionStatus = payload.stripeStatus;
+          payload.billingStatus = payload.stripeStatus;
+          payload.stripeCancelAtPeriodEnd = Boolean(subscription.cancel_at_period_end);
+          const periodEnd = timestampFromStripeSeconds(subscription.current_period_end);
+          const periodStart = timestampFromStripeSeconds(subscription.current_period_start);
+          if (periodEnd) {
+            payload.stripeCurrentPeriodEnd = periodEnd;
+            payload.nextBillingAt = periodEnd;
+          }
+          if (periodStart) payload.stripeCurrentPeriodStart = periodStart;
+        }
+
         await seedProductionCompany(companyId, payload);
+        await writeSubscriptionStatus({
+          companyId,
+          subscriptionId: String(session.subscription || ""),
+          customerId: String(session.customer || ""),
+          status: subscription?.status || "active",
+          plan: md.plan || "monthly",
+          reason: "checkout.session.completed",
+          subscription
+        });
         logger.info("Factory On Call production plant activated by Stripe", { companyId, plan: payload.plan });
       }
 
       if (event.type === "customer.subscription.deleted") {
         const subscription = event.data.object;
-        const companyId = subscription?.metadata?.companyId;
-        if (companyId) {
-          await admin.firestore().collection("companies").doc(companyId).set({
-            stripeStatus: "cancelled",
-            active: false,
-            updatedAt: admin.firestore.FieldValue.serverTimestamp()
-          }, { merge: true });
-          logger.info("Factory On Call subscription cancelled", { companyId });
-        }
+        const companyId = subscription?.metadata?.companyId || "";
+        await writeSubscriptionStatus({
+          companyId,
+          subscriptionId: subscription?.id || "",
+          customerId: subscription?.customer || "",
+          status: "canceled",
+          plan: subscription?.metadata?.plan || "",
+          reason: "customer.subscription.deleted",
+          subscription
+        });
+      }
+
+      if (event.type === "customer.subscription.updated") {
+        const subscription = event.data.object;
+        const companyId = subscription?.metadata?.companyId || "";
+        await writeSubscriptionStatus({
+          companyId,
+          subscriptionId: subscription?.id || "",
+          customerId: subscription?.customer || "",
+          status: subscription?.status || "",
+          plan: subscription?.metadata?.plan || "",
+          reason: "customer.subscription.updated",
+          subscription
+        });
       }
 
       if (event.type === "invoice.payment_failed") {
         const invoice = event.data.object;
-        const subscriptionId = invoice.subscription || "";
-        logger.warn("Factory On Call invoice payment failed", { subscriptionId });
+        const subscriptionId = subscriptionIdFromInvoice(invoice);
+        let subscription = null;
+        if (subscriptionId) {
+          subscription = await stripe.subscriptions.retrieve(subscriptionId).catch(() => null);
+        }
+        const companyId = subscription?.metadata?.companyId || "";
+        await writeSubscriptionStatus({
+          companyId,
+          subscriptionId,
+          customerId: invoice.customer || subscription?.customer || "",
+          status: "past_due",
+          plan: subscription?.metadata?.plan || "",
+          reason: "invoice.payment_failed",
+          invoiceId: invoice.id || "",
+          hostedInvoiceUrl: invoice.hosted_invoice_url || "",
+          amountDue: invoice.amount_due,
+          amountPaid: invoice.amount_paid,
+          subscription
+        });
       }
 
-      if (event.type === "invoice.payment_succeeded") {
+      if (event.type === "invoice.payment_succeeded" || event.type === "invoice.paid") {
         const invoice = event.data.object;
-        const subscriptionId = invoice.subscription || "";
-        logger.info("Factory On Call invoice payment succeeded", { subscriptionId });
+        const subscriptionId = subscriptionIdFromInvoice(invoice);
+        let subscription = null;
+        if (subscriptionId) {
+          subscription = await stripe.subscriptions.retrieve(subscriptionId).catch(() => null);
+        }
+        const companyId = subscription?.metadata?.companyId || "";
+        await writeSubscriptionStatus({
+          companyId,
+          subscriptionId,
+          customerId: invoice.customer || subscription?.customer || "",
+          status: subscription?.status || "active",
+          plan: subscription?.metadata?.plan || "",
+          reason: event.type,
+          invoiceId: invoice.id || "",
+          hostedInvoiceUrl: invoice.hosted_invoice_url || "",
+          amountDue: invoice.amount_due,
+          amountPaid: invoice.amount_paid,
+          subscription
+        });
       }
 
       res.status(200).send("ok");
     } catch (error) {
-      logger.error("Factory On Call Stripe webhook handler failed", { error });
+      logger.error("Factory On Call Stripe webhook handler failed", { error: error?.message || String(error), stack: error?.stack || "" });
       res.status(500).send("webhook handler failed");
     }
   }
