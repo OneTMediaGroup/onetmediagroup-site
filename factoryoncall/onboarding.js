@@ -528,31 +528,33 @@ async function createCompany() {
     updatedAt: serverTimestamp()
   }, { merge: true });
 
-  for (const role of DEFAULT_ROLES) {
-    await setDoc(doc(db, "companies", companyId, "roles", role), {
-      name: role,
-      active: true,
-      permissions: {
-        makeCall: true,
-        viewCalls: true,
-        acknowledgeCalls: role !== "Material Handler",
-        closeCalls: role === "Supervisor" || role === "Maintenance" || role === "Quality"
-      },
-      isCallable: true,
-      createdAt: serverTimestamp()
-    }, { merge: true });
-  }
+  if (state.type === "demo") {
+    for (const role of DEFAULT_ROLES) {
+      await setDoc(doc(db, "companies", companyId, "roles", role), {
+        name: role,
+        active: true,
+        permissions: {
+          makeCall: true,
+          viewCalls: true,
+          acknowledgeCalls: role !== "Material Handler",
+          closeCalls: role === "Supervisor" || role === "Maintenance" || role === "Quality"
+        },
+        isCallable: true,
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    }
 
-  for (const station of DEFAULT_STATIONS) {
-    const stationId = safeId(station);
-    await setDoc(doc(db, "companies", companyId, "stations", stationId), {
-      stationId,
-      name: station,
-      description: "Production",
-      cells: [station],
-      active: true,
-      createdAt: serverTimestamp()
-    }, { merge: true });
+    for (const station of DEFAULT_STATIONS) {
+      const stationId = safeId(station);
+      await setDoc(doc(db, "companies", companyId, "stations", stationId), {
+        stationId,
+        name: station,
+        description: "Production",
+        cells: [station],
+        active: true,
+        createdAt: serverTimestamp()
+      }, { merge: true });
+    }
   }
 
   const adminUserPayload = state.type === "demo"
@@ -581,7 +583,7 @@ async function createCompany() {
         uid: state.adminPin,
         employeeNumber: state.adminPin,
         pin: state.adminPin,
-        role: "Supervisor",
+        role: "Admin",
         dept: "Administration",
         admin: true,
         active: true,

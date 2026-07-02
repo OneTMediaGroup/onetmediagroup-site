@@ -252,7 +252,17 @@ async function seedProductionCompany(companyId, payload) {
     return;
   }
 
-  await companyRef.set(payload, { merge: true });
+  await companyRef.set({
+    ...payload,
+    mode: "production",
+    isDemo: false,
+    adminLocked: false,
+    active: true,
+    demoRestrictionsEnabled: false,
+    productionSetupStatus: "clean",
+    productionSeedVersion: "v1-clean-production",
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
 
   await db.collection("companies").doc(companyId).collection("settings").doc("main").set({
     requirePinForCalls: true,
@@ -285,36 +295,6 @@ async function seedProductionCompany(companyId, payload) {
     updatedAt: admin.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
-  const roles = ["Maintenance", "Quality", "Supervisor", "Material Handler", "Team Lead", "Production Support"];
-  for (const role of roles) {
-    await db.collection("companies").doc(companyId).collection("roles").doc(role).set({
-      name: role,
-      active: true,
-      permissions: {
-        makeCall: true,
-        viewCalls: true,
-        acknowledgeCalls: role !== "Material Handler",
-        closeCalls: role === "Supervisor" || role === "Maintenance" || role === "Quality"
-      },
-      isCallable: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-  }
-
-  const stations = ["Press 400", "Press 401", "Assembly 1", "Assembly 2", "Packaging", "Receiving"];
-  for (const station of stations) {
-    const stationId = String(station).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "") || "station";
-    await db.collection("companies").doc(companyId).collection("stations").doc(stationId).set({
-      companyId,
-      stationId,
-      name: station,
-      description: "Production",
-      cells: [station],
-      active: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-  }
-
   const adminPin = payload.adminPin || "1000";
   await db.collection("companies").doc(companyId).collection("users").doc(adminPin).set({
     companyId,
@@ -325,13 +305,15 @@ async function seedProductionCompany(companyId, payload) {
     uid: adminPin,
     employeeNumber: adminPin,
     pin: adminPin,
-    role: "Supervisor",
+    role: "Admin",
     dept: "Administration",
     admin: true,
     active: true,
     createdAt: admin.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
+  // Clean production plants intentionally do not seed demo roles, stations,
+  // users, calls, or areas. The customer configures their real plant from Admin.
   await db.collection("companies").doc(companyId).collection("calls").doc("_seed_marker").set({
     marker: true,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
