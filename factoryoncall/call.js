@@ -74,6 +74,97 @@ const COMPANY_ID = getActiveCompanyId();
   const callsRef = companyRef.collection("calls");
   const emergencyRef = companyRef.collection("settings").doc("emergency");
 
+
+  // Subscription enforcement: keeps plant data visible while locking live actions for inactive production subscriptions.
+  let billingStatus = "active";
+  let billingMode = "demo";
+  let billingLocked = false;
+
+  function normalizedBillingStatus(data = {}) {
+    const mode = String(data.mode || data.plantMode || (data.demoPlant ? "demo" : "production") || "production").toLowerCase();
+    const status = String(data.stripeStatus || data.subscriptionStatus || data.billingStatus || (data.active === false ? "canceled" : "active") || "active").toLowerCase();
+    if (mode === "demo" || data.demoPlant === true) return { mode: "demo", status: "active", locked: false, warning: false };
+    const locked = ["canceled", "unpaid", "incomplete", "incomplete_expired", "paused"].includes(status) || data.active === false;
+    const warning = ["past_due", "payment_failed"].includes(status);
+    return { mode, status, locked, warning };
+  }
+
+  function billingStatusText(status) {
+    const map = {
+      active: "Subscription active",
+      trialing: "Subscription trialing",
+      past_due: "Payment issue detected. Please update your payment method in Billing.",
+      payment_failed: "Payment issue detected. Please update your payment method in Billing.",
+      unpaid: "Subscription unpaid. Live Factory On Call actions are paused.",
+      canceled: "Subscription canceled. Live Factory On Call actions are paused.",
+      incomplete: "Subscription incomplete. Live Factory On Call actions are paused.",
+      incomplete_expired: "Subscription expired. Live Factory On Call actions are paused.",
+      paused: "Subscription paused. Live Factory On Call actions are paused."
+    };
+    return map[status] || `Subscription status: ${status || "unknown"}`;
+  }
+
+  function ensureBillingBanner() {
+    let banner = document.getElementById("subscriptionStatusBanner");
+    if (banner) return banner;
+    banner = document.createElement("div");
+    banner.id = "subscriptionStatusBanner";
+    banner.className = "subscription-status-banner hidden";
+    banner.innerHTML = `<strong></strong><span></span>`;
+    const style = document.createElement("style");
+    style.textContent = `
+      .subscription-status-banner{margin:12px 18px;padding:12px 14px;border-radius:14px;border:1px solid #fde68a;background:#fffbeb;color:#92400e;font-weight:800;display:flex;gap:8px;align-items:center;box-shadow:0 10px 24px rgba(15,23,42,.08);}
+      .subscription-status-banner strong{white-space:nowrap;}
+      .subscription-status-banner.hidden{display:none!important;}
+      .subscription-status-banner.locked{border-color:#fecaca;background:#fef2f2;color:#991b1b;}
+      body.subscription-locked .requires-active-subscription{opacity:.55;pointer-events:none;}
+    `;
+    document.head.appendChild(style);
+    const header = document.querySelector(".topbar, .app-header, .admin-topbar, header, .page-header");
+    if (header && header.parentNode) header.insertAdjacentElement("afterend", banner);
+    else document.body.prepend(banner);
+    return banner;
+  }
+
+  function renderBillingBanner(state) {
+    const banner = ensureBillingBanner();
+    const locked = !!state.locked;
+    const warning = !!state.warning;
+    document.body.classList.toggle("subscription-locked", locked);
+    if (!locked && !warning) {
+      banner.classList.add("hidden");
+      return;
+    }
+    banner.classList.remove("hidden");
+    banner.classList.toggle("locked", locked);
+    const strong = banner.querySelector("strong");
+    const span = banner.querySelector("span");
+    if (strong) strong.textContent = locked ? "Subscription inactive:" : "Billing notice:";
+    if (span) span.textContent = billingStatusText(state.status);
+  }
+
+  function applyBillingState(data = {}) {
+    const state = normalizedBillingStatus(data);
+    billingMode = state.mode;
+    billingStatus = state.status;
+    billingLocked = state.locked;
+    renderBillingBanner(state);
+    if (typeof updateSendButton === "function") updateSendButton();
+  }
+
+  function guardBillingAction(actionLabel = "This action") {
+    if (!billingLocked) return false;
+    alert(`${actionLabel} is paused because this Production Plant subscription is inactive. Open Admin > Billing to manage or reactivate the subscription.`);
+    return true;
+  }
+
+  function listenForBillingStatus() {
+    companyRef.onSnapshot(
+      snap => applyBillingState(snap.exists ? (snap.data() || {}) : {}),
+      err => console.warn("Subscription status listener failed:", err)
+    );
+  }
+
   let COMPANY_NAME = new URLSearchParams(window.location.search).get("companyName") ||
     localStorage.getItem("factory_on_call_company_name") ||
     "Factory On Call";
@@ -148,6 +239,7 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   await loadCompanyBranding();
+  listenForBillingStatus();
   listenForBrandingUpdates();
 
   const params = new URLSearchParams(window.location.search);
@@ -253,6 +345,7 @@ const COMPANY_ID = getActiveCompanyId();
     if (!emergencyBtn || emergencyBtn.dataset.bound === "true") return;
     emergencyBtn.dataset.bound = "true";
     emergencyBtn.addEventListener("click", async () => {
+      if (guardBillingAction("Emergency alerts")) return;
       if (!emergencySettings.enabled) return;
       if (!confirm("Trigger plant emergency alert? This will notify all Factory On Call screens.")) return;
       try {
@@ -431,7 +524,7 @@ const COMPANY_ID = getActiveCompanyId();
 
   function updateSendButton() {
     if (!sendCallBtn) return;
-    const canSend = !(emergencySettings.enabled && emergencySettings.active) && !isLocked && selectedRoles.length > 0 && callState === "idle";
+    const canSend = !billingLocked && !(emergencySettings.enabled && emergencySettings.active) && !isLocked && selectedRoles.length > 0 && callState === "idle";
     sendCallBtn.disabled = !canSend;
   }
 
@@ -666,6 +759,7 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   sendCallBtn?.addEventListener("click", async () => {
+    if (guardBillingAction("Creating calls")) return;
     if (sendCallBtn.disabled) return;
 
     const existing = await findActiveCallForStation();
@@ -810,6 +904,7 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   unlockBtn?.addEventListener("click", async () => {
+      if (guardBillingAction("Closing calls")) return;
     const uid = lockUserId?.value.trim() || "";
     const pin = lockPin?.value.trim() || "";
     const resolutionSummary = (lockResolutionSummary?.value || "").trim();
