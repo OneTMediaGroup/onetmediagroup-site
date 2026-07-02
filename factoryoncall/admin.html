@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <title>Factory On Call – Admin Panel</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="admin.css?v=emergency-history-align-v169" />
+    <link rel="stylesheet" href="admin.css?v=analytics-polish-v220" />
     <link rel="stylesheet" href="admin-theme-solid.css?v=emergency-history-align-v169" />
 <script>
 if('scrollRestoration' in history){history.scrollRestoration='manual';}
@@ -721,77 +721,61 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                     </div>
                 </div>
 
-                <div class="analytics-summary-grid">
+                <div class="analytics-summary-grid analytics-plant-summary">
                     <div class="analytics-summary-card">
-                        <span>Total Calls</span>
-                        <strong id="analyticsTotalCalls">0</strong>
-                    </div>
-                    <div class="analytics-summary-card">
-                        <span>Avg Wait Time</span>
-                        <strong id="analyticsAvgWait">—</strong>
+                        <span>Calls Today</span>
+                        <strong id="analyticsCallsToday">0</strong>
                     </div>
                     <div class="analytics-summary-card">
-                        <span>Avg Resolution</span>
-                        <strong id="analyticsAvgResolution">—</strong>
+                        <span>Open Calls</span>
+                        <strong id="analyticsOpenCalls">0</strong>
                     </div>
                     <div class="analytics-summary-card">
-                        <span>Peak Hour</span>
-                        <strong id="analyticsPeakHour">—</strong>
+                        <span>Emergency Calls</span>
+                        <strong id="analyticsEmergencyCalls">0</strong>
                     </div>
-                </div>
-                <div class="analytics-grid-two">
-                    <div class="analytics-card">
-                        <h3>Calls by Station</h3>
-                        <div id="analyticsStationList" class="analytics-rank-list"></div>
-                    </div>
-                    <div class="analytics-card">
-                        <h3>Calls by Area</h3>
-                        <div id="analyticsAreaList" class="analytics-rank-list"></div>
-                    </div>
-                    <div class="analytics-card">
-                        <h3>Calls by Personnel Required</h3>
-                        <div id="analyticsRoleList" class="analytics-rank-list"></div>
-                    </div>
-                    <div class="analytics-card">
-                        <h3>Calls Closed by User</h3>
-                        <div id="analyticsUserList" class="analytics-rank-list"></div>
+                    <div id="analyticsAvgCloseCard" class="analytics-summary-card">
+                        <span>Avg Close Time</span>
+                        <strong id="analyticsAvgCloseTime">—</strong>
                     </div>
                 </div>
 
                 <div class="analytics-grid-two analytics-manager-grid">
                     <div class="analytics-card">
-                        <h3>Response SLA</h3>
-                        <p class="analytics-note">Acknowledged calls grouped by response time.</p>
-                        <div id="analyticsSlaList" class="analytics-rank-list compact"></div>
+                        <h3>Busiest Work Cells</h3>
+                        <p class="analytics-note">Stations with the highest call volume in the selected range.</p>
+                        <div id="analyticsStationList" class="analytics-rank-list"></div>
                     </div>
                     <div class="analytics-card">
-                        <h3>Repeat Call Stations</h3>
-                        <p class="analytics-note">Stations with multiple calls in the selected history.</p>
-                        <div id="analyticsRepeatStationList" class="analytics-rank-list compact"></div>
+                        <h3>Calls by Area</h3>
+                        <p class="analytics-note">Where support demand is coming from across the plant.</p>
+                        <div id="analyticsAreaList" class="analytics-rank-list"></div>
+                    </div>
+                </div>
+
+                <div class="analytics-grid-two analytics-manager-grid">
+                    <div class="analytics-card">
+                        <h3>Longest Open Calls</h3>
+                        <p class="analytics-note">Current live calls that have been waiting the longest.</p>
+                        <div id="analyticsLongestOpenList" class="analytics-detail-list"></div>
+                    </div>
+                    <div class="analytics-card">
+                        <h3>Most Active Users</h3>
+                        <p class="analytics-note">Users acknowledging or closing the most calls.</p>
+                        <div id="analyticsUserList" class="analytics-rank-list"></div>
                     </div>
                 </div>
 
                 <div class="analytics-grid-two analytics-trend-grid">
                     <div class="analytics-card">
-                        <h3>Calls by Day</h3>
+                        <h3>Weekly Trend</h3>
+                        <p class="analytics-note">Call volume by day for the selected range.</p>
                         <div id="analyticsDayList" class="analytics-rank-list compact"></div>
                     </div>
                     <div class="analytics-card">
-                        <h3>Calls by Hour</h3>
+                        <h3>Peak Hours</h3>
+                        <p class="analytics-note">Times of day with the most support demand.</p>
                         <div id="analyticsHourList" class="analytics-rank-list compact"></div>
-                    </div>
-                </div>
-
-                <div class="analytics-full-width-section">
-                    <div class="analytics-card analytics-wide-card">
-                        <h3>Longest Wait Calls</h3>
-                        <p class="analytics-note">Top 5 calls that waited longest before acknowledgement.</p>
-                        <div id="analyticsLongestWaitList" class="analytics-detail-list"></div>
-                    </div>
-                    <div class="analytics-card analytics-wide-card">
-                        <h3>Longest Resolution Calls</h3>
-                        <p class="analytics-note">Top 5 closed calls with the longest total resolution time.</p>
-                        <div id="analyticsLongestResolutionList" class="analytics-detail-list"></div>
                     </div>
                 </div>
 
@@ -916,6 +900,6 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 </div>
 
 <script src="firebase.js"></script>
-<script src="admin.js?v=20260630-billing-portal-function-fix"></script>
+<script src="admin.js?v=analytics-polish-v220"></script>
 </body>
 </html>

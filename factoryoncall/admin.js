@@ -810,20 +810,17 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
   const analyticsStartDate = document.getElementById("analyticsStartDate");
   const analyticsEndDate = document.getElementById("analyticsEndDate");
   const analyticsApplyRangeBtn = document.getElementById("analyticsApplyRangeBtn");
-  const analyticsTotalCalls = document.getElementById("analyticsTotalCalls");
-  const analyticsAvgWait = document.getElementById("analyticsAvgWait");
-  const analyticsAvgResolution = document.getElementById("analyticsAvgResolution");
-  const analyticsPeakHour = document.getElementById("analyticsPeakHour");
+  const analyticsCallsToday = document.getElementById("analyticsCallsToday");
+  const analyticsOpenCalls = document.getElementById("analyticsOpenCalls");
+  const analyticsEmergencyCalls = document.getElementById("analyticsEmergencyCalls");
+  const analyticsAvgCloseTime = document.getElementById("analyticsAvgCloseTime");
+  const analyticsAvgCloseCard = document.getElementById("analyticsAvgCloseCard");
   const analyticsStationList = document.getElementById("analyticsStationList");
   const analyticsAreaList = document.getElementById("analyticsAreaList");
-  const analyticsRoleList = document.getElementById("analyticsRoleList");
   const analyticsUserList = document.getElementById("analyticsUserList");
   const analyticsDayList = document.getElementById("analyticsDayList");
   const analyticsHourList = document.getElementById("analyticsHourList");
-  const analyticsSlaList = document.getElementById("analyticsSlaList");
-  const analyticsRepeatStationList = document.getElementById("analyticsRepeatStationList");
-  const analyticsLongestWaitList = document.getElementById("analyticsLongestWaitList");
-  const analyticsLongestResolutionList = document.getElementById("analyticsLongestResolutionList");
+  const analyticsLongestOpenList = document.getElementById("analyticsLongestOpenList");
   const analyticsEmergencyCount = document.getElementById("analyticsEmergencyCount");
   const analyticsEmergencyAvgDuration = document.getElementById("analyticsEmergencyAvgDuration");
   const analyticsEmergencyLongest = document.getElementById("analyticsEmergencyLongest");
@@ -5466,6 +5463,32 @@ stationFormReset?.addEventListener("click", resetStationForm);
     `;
   }
 
+  function todayBoundsLocal() {
+    const now = new Date();
+    const start = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0).getTime();
+    const end = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 999).getTime();
+    return { start, end };
+  }
+
+  function callLooksEmergency(call = {}) {
+    const text = [call.type, call.callType, call.priority, call.severity, call.role, call.personnelRequired, call.message, call.notes]
+      .map(value => String(value || "").toLowerCase())
+      .join(" ");
+    return call.emergency === true || call.isEmergency === true || text.includes("emergency");
+  }
+
+  function analyticsCloseSeverityClass(minutes) {
+    const value = Number(minutes) || 0;
+    if (!value) return "";
+    if (value > 10) return "metric-danger";
+    if (value >= 5) return "metric-warning";
+    return "metric-good";
+  }
+
+  function activeUserNameFromCall(call = {}) {
+    return call.ackBy || call.acknowledgedBy || call.closedBy || call.assignedTo || call.updatedBy || "—";
+  }
+
   function renderEmergencyAnalytics() {
     const events = emergencyHistoryRowsInRange();
     const durations = events.map(emergencyDurationMinutes).filter(v => Number.isFinite(v) && v > 0);
@@ -5521,90 +5544,76 @@ stationFormReset?.addEventListener("click", resetStationForm);
       .filter(callInAnalyticsRange)
       .sort((a, b) => (callStartMillis(a) || 0) - (callStartMillis(b) || 0));
     const closedCalls = calls.filter(isClosedStatus);
+    const openCalls = calls.filter(call => !isClosedStatus(call));
     const acknowledgedCalls = calls.filter(isAcknowledgedStatus);
-
-    const waitMinutes = acknowledgedCalls
-      .map(call => minutesBetween(callStartMillis(call), callAckMillis(call)))
-      .filter(v => v !== null);
 
     const resolutionMinutes = closedCalls
       .map(call => minutesBetween(callStartMillis(call), callClosedMillis(call)))
       .filter(v => v !== null);
 
-    if (analyticsTotalCalls) analyticsTotalCalls.textContent = String(calls.length);
-    if (analyticsAvgWait) analyticsAvgWait.textContent = formatDurationMinutes(average(waitMinutes));
-    if (analyticsAvgResolution) analyticsAvgResolution.textContent = formatDurationMinutes(average(resolutionMinutes));
+    const today = todayBoundsLocal();
+    const callsToday = cachedCalls.filter(call => {
+      const start = callStartMillis(call);
+      return start && start >= today.start && start <= today.end;
+    });
+
+    const emergencyEventsInRange = cachedEmergencyEvents.filter(emergencyInAnalyticsRange);
+    const emergencyCallCount = emergencyEventsInRange.length || calls.filter(callLooksEmergency).length;
+    const avgClose = average(resolutionMinutes);
+
+    if (analyticsCallsToday) analyticsCallsToday.textContent = String(callsToday.length);
+    if (analyticsOpenCalls) analyticsOpenCalls.textContent = String(openCalls.length);
+    if (analyticsEmergencyCalls) analyticsEmergencyCalls.textContent = String(emergencyCallCount);
+    if (analyticsAvgCloseTime) analyticsAvgCloseTime.textContent = formatDurationMinutes(avgClose);
+    if (analyticsAvgCloseCard) {
+      analyticsAvgCloseCard.classList.remove("metric-good", "metric-warning", "metric-danger");
+      const cls = analyticsCloseSeverityClass(avgClose);
+      if (cls) analyticsAvgCloseCard.classList.add(cls);
+    }
 
     const byStation = new Map();
     const byArea = new Map();
-    const byRole = new Map();
     const byUser = new Map();
     const byDay = new Map();
     const byHour = new Map();
-    const bySla = new Map();
-
-    const longestWait = [];
-    const longestResolution = [];
+    const longestOpen = [];
+    const now = Date.now();
 
     calls.forEach(call => {
       incrementMap(byStation, callStation(call));
       incrementMap(byArea, callArea(call));
 
-      const roles = Array.isArray(call.roles) && call.roles.length
-        ? call.roles
-        : String(callPersonnel(call)).split(",").map(x => x.trim()).filter(Boolean);
-      roles.forEach(role => incrementMap(byRole, role));
-
       const start = callStartMillis(call);
-      const ack = callAckMillis(call);
-      const closed = callClosedMillis(call);
-      const wait = minutesBetween(start, ack);
-      const resolution = isClosedStatus(call) ? minutesBetween(start, closed) : null;
-
-      const bucket = slaBucket(wait);
-      if (bucket) incrementMap(bySla, bucket);
-
-      if (wait) {
-        longestWait.push({
-          minutes: wait,
-          title: callStation(call),
-          subtitle: `${callPersonnel(call)} • ${callArea(call)}`,
-          value: formatDurationMinutes(wait)
-        });
-      }
-
-      if (resolution) {
-        longestResolution.push({
-          minutes: resolution,
-          title: callStation(call),
-          subtitle: `${callPersonnel(call)} • ${callArea(call)}`,
-          value: formatDurationMinutes(resolution)
-        });
-      }
-
       if (start) {
         const d = new Date(start);
-        incrementMap(byDay, d.toLocaleDateString([], { weekday: "short" }));
+        incrementMap(byDay, d.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" }));
         incrementMap(byHour, d.toLocaleTimeString([], { hour: "numeric" }));
       }
     });
 
-    closedCalls.forEach(call => incrementMap(byUser, assignedTo(call)));
+    acknowledgedCalls.forEach(call => {
+      const name = activeUserNameFromCall(call);
+      if (name && name !== "—") incrementMap(byUser, name);
+    });
 
-    const hourEntries = sortedMapEntries(byHour);
-    const peak = hourEntries[0];
-    if (analyticsPeakHour) analyticsPeakHour.textContent = peak ? `${peak[0]} · ${peak[1]} calls` : "—";
+    openCalls.forEach(call => {
+      const start = callStartMillis(call);
+      const openMinutes = minutesBetween(start, now);
+      if (!openMinutes) return;
+      longestOpen.push({
+        minutes: openMinutes,
+        title: callStation(call),
+        subtitle: `${callPersonnel(call)} • ${callArea(call)}`,
+        value: formatDurationMinutes(openMinutes)
+      });
+    });
 
-    renderRankList(analyticsStationList, sortedMapEntries(byStation), { suffix: "calls", max: maxMapValue(byStation) });
-    renderRankList(analyticsAreaList, sortedMapEntries(byArea), { suffix: "calls", max: maxMapValue(byArea) });
-    renderRankList(analyticsRoleList, sortedMapEntries(byRole), { suffix: "calls", max: maxMapValue(byRole) });
-    renderRankList(analyticsUserList, sortedMapEntries(byUser).filter(([name]) => name !== "—"), { suffix: "closed", max: maxMapValue(byUser), empty: "No closed calls yet." });
-    renderRankList(analyticsSlaList, sortedMapEntries(bySla), { suffix: "calls", max: maxMapValue(bySla), empty: "No acknowledged calls yet." });
-    renderRankList(analyticsRepeatStationList, sortedMapEntries(byStation).filter(([, count]) => count > 1), { suffix: "calls", max: maxMapValue(byStation), empty: "No repeat stations yet." });
-    renderDetailList(analyticsLongestWaitList, longestWait.sort((a, b) => b.minutes - a.minutes), "No acknowledged calls yet.");
-    renderDetailList(analyticsLongestResolutionList, longestResolution.sort((a, b) => b.minutes - a.minutes), "No closed calls yet.");
-    renderRankList(analyticsDayList, sortedMapEntries(byDay), { suffix: "calls", max: maxMapValue(byDay), limit: 7 });
-    renderRankList(analyticsHourList, hourEntries, { suffix: "calls", max: maxMapValue(byHour), limit: 12 });
+    renderRankList(analyticsStationList, sortedMapEntries(byStation), { suffix: "calls", max: maxMapValue(byStation), empty: "No station calls yet." });
+    renderRankList(analyticsAreaList, sortedMapEntries(byArea), { suffix: "calls", max: maxMapValue(byArea), empty: "No area calls yet." });
+    renderDetailList(analyticsLongestOpenList, longestOpen.sort((a, b) => b.minutes - a.minutes), "No open calls right now.");
+    renderRankList(analyticsUserList, sortedMapEntries(byUser), { suffix: "actions", max: maxMapValue(byUser), empty: "No acknowledged or closed calls yet." });
+    renderRankList(analyticsDayList, sortedMapEntries(byDay).reverse(), { suffix: "calls", max: maxMapValue(byDay), limit: 7 });
+    renderRankList(analyticsHourList, sortedMapEntries(byHour), { suffix: "calls", max: maxMapValue(byHour), limit: 12 });
     renderEmergencyAnalytics();
   }
 

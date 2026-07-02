@@ -4044,6 +4044,30 @@ html[data-theme="dark"] .plant-id-label { color: #60a5fa; }
   font-weight: 900;
 }
 
+
+.analytics-summary-card.metric-good {
+  border-color: rgba(22, 163, 74, 0.45);
+  background: linear-gradient(180deg, rgba(22, 163, 74, 0.12), var(--panel-soft));
+}
+
+.analytics-summary-card.metric-warning {
+  border-color: rgba(245, 158, 11, 0.55);
+  background: linear-gradient(180deg, rgba(245, 158, 11, 0.14), var(--panel-soft));
+}
+
+.analytics-summary-card.metric-danger {
+  border-color: rgba(220, 38, 38, 0.55);
+  background: linear-gradient(180deg, rgba(220, 38, 38, 0.14), var(--panel-soft));
+}
+
+.analytics-summary-card.metric-good strong { color: #16a34a; }
+.analytics-summary-card.metric-warning strong { color: #d97706; }
+.analytics-summary-card.metric-danger strong { color: #dc2626; }
+
+.analytics-plant-summary .analytics-summary-card {
+  min-height: 112px;
+}
+
 .analytics-grid-two {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
