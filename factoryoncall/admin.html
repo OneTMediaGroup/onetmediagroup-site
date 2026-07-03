@@ -787,13 +787,28 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
                         </div>
                         <button id="analyticsEmergencyExportBtn" class="btn secondary" type="button">Export Emergency CSV</button>
                     </div>
-                    <div id="analyticsEmergencyHistoryList" class="analytics-detail-list emergency-history-wrap"></div>
-                    <div class="analytics-emergency-grid analytics-emergency-summary-row">
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Total Emergencies</span><strong id="analyticsEmergencyCount">0</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Active Emergency</span><strong id="analyticsEmergencyActive">No</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Average Duration</span><strong id="analyticsEmergencyAvgDuration">—</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">Longest Duration</span><strong id="analyticsEmergencyLongest">—</strong></div>
-                        <div class="analytics-summary-card"><span class="analytics-summary-label">This Month</span><strong id="analyticsEmergencyThisMonth">0</strong></div>
+                    <div class="analytics-emergency-compact">
+                        <div class="analytics-emergency-metrics">
+                            <div class="analytics-emergency-metric">
+                                <span>Total Emergencies</span>
+                                <strong id="analyticsEmergencyCount">0</strong>
+                            </div>
+                            <div class="analytics-emergency-metric">
+                                <span>Open Emergencies</span>
+                                <strong id="analyticsEmergencyActive">0</strong>
+                            </div>
+                            <div class="analytics-emergency-metric">
+                                <span>Average Duration</span>
+                                <strong id="analyticsEmergencyAvgDuration">—</strong>
+                            </div>
+                            <div class="analytics-emergency-metric">
+                                <span>Last Emergency</span>
+                                <strong id="analyticsEmergencyLongest">None</strong>
+                            </div>
+                            <span id="analyticsEmergencyThisMonth" class="hidden">0</span>
+                        </div>
+                        <div class="analytics-emergency-recent-head">Recent Emergency Alerts</div>
+                        <div id="analyticsEmergencyHistoryList" class="analytics-detail-list emergency-history-wrap"></div>
                     </div>
                 </div>
             </div>

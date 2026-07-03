@@ -5567,19 +5567,25 @@ stationFormReset?.addEventListener("click", resetStationForm);
   function renderEmergencyAnalytics() {
     const events = emergencyHistoryRowsInRange();
     const durations = events.map(emergencyDurationMinutes).filter(v => Number.isFinite(v) && v > 0);
-    const activeCount = events.some(event => emergencyEventIsActive(event)) ? 1 : 0;
+    const activeCount = events.filter(event => emergencyEventIsActive(event)).length;
     const month = monthBoundsNow();
     const thisMonthCount = cachedEmergencyEvents.filter(event => {
       const start = emergencyEventStartMillis(event);
       return !start || (start >= month.start && start <= month.end);
     }).length;
+    const latestEvent = events
+      .slice()
+      .sort((a, b) => (emergencyEventStartMillis(b) || 0) - (emergencyEventStartMillis(a) || 0))[0];
 
     if (analyticsEmergencyCount) analyticsEmergencyCount.textContent = String(events.length);
-    if (analyticsEmergencyActive) analyticsEmergencyActive.textContent = activeCount ? "Yes" : "No";
+    if (analyticsEmergencyActive) analyticsEmergencyActive.textContent = String(activeCount);
     if (analyticsEmergencyAvgDuration) analyticsEmergencyAvgDuration.textContent = formatDurationMinutes(average(durations));
-    if (analyticsEmergencyLongest) analyticsEmergencyLongest.textContent = formatDurationMinutes(durations.length ? Math.max(...durations) : null);
+    if (analyticsEmergencyLongest) {
+      const lastStart = latestEvent ? emergencyEventStartMillis(latestEvent) : 0;
+      analyticsEmergencyLongest.textContent = lastStart ? formatDateTime(lastStart) : "None";
+    }
     if (analyticsEmergencyThisMonth) analyticsEmergencyThisMonth.textContent = String(thisMonthCount);
-    renderEmergencyHistoryTable(analyticsEmergencyHistoryList, events);
+    renderEmergencyHistoryTable(analyticsEmergencyHistoryList, events.slice(0, 8));
   }
 
   function exportEmergencyHistoryCsv() {
