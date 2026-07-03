@@ -1520,3 +1520,99 @@ body.emergency-active .admin-emergency-header-badge {
 .emergency-history-table {
   display: none !important;
 }
+
+/* PATCH 226 — Emergency History card grid cleanup */
+.analytics-card.analytics-emergency-card {
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  background: var(--panel-soft) !important;
+  box-shadow: var(--shadow-soft) !important;
+  padding: 20px 22px !important;
+  min-height: 0 !important;
+}
+.analytics-emergency-card .analytics-card-head {
+  display: flex !important;
+  align-items: flex-start !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  margin-bottom: 14px !important;
+}
+.analytics-emergency-card .analytics-card-head h3 {
+  margin: 0 0 8px !important;
+}
+.analytics-emergency-card .analytics-emergency-compact {
+  display: grid !important;
+  gap: 16px !important;
+  margin-top: 0 !important;
+}
+.analytics-emergency-card .analytics-emergency-metrics {
+  display: grid !important;
+  grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+  margin: 0 !important;
+}
+.analytics-emergency-card .analytics-emergency-metric {
+  display: block !important;
+  min-height: 92px !important;
+  padding: 17px 18px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 18px !important;
+  background: rgba(255,255,255,.78) !important;
+  box-shadow: 0 10px 24px rgba(15,23,42,.045) !important;
+}
+.analytics-emergency-card .analytics-emergency-metric span {
+  display: block !important;
+  margin: 0 0 9px !important;
+  color: var(--text-muted) !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: .13em !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+}
+.analytics-emergency-card .analytics-emergency-metric strong {
+  display: block !important;
+  margin: 0 !important;
+  color: var(--text-main) !important;
+  font-size: 28px !important;
+  font-weight: 950 !important;
+  line-height: 1.05 !important;
+  overflow-wrap: anywhere !important;
+}
+.analytics-emergency-card #analyticsEmergencyThisMonth,
+.analytics-emergency-card .hidden {
+  display: none !important;
+}
+.analytics-emergency-card .analytics-emergency-recent-head {
+  margin: 4px 0 0 !important;
+  color: var(--text-main) !important;
+  font-size: 16px !important;
+  font-weight: 900 !important;
+}
+.analytics-emergency-card .emergency-history-wrap {
+  margin: 0 !important;
+  width: 100% !important;
+  overflow-x: auto !important;
+}
+.analytics-emergency-card .analytics-empty {
+  margin: 0 !important;
+  padding: 18px 20px !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px !important;
+  background: rgba(255,255,255,.66) !important;
+  color: var(--text-muted) !important;
+  font-weight: 700 !important;
+}
+@media (max-width: 1050px) {
+  .analytics-emergency-card .analytics-emergency-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+@media (max-width: 680px) {
+  .analytics-emergency-card .analytics-card-head {
+    flex-direction: column !important;
+  }
+  .analytics-emergency-card .analytics-emergency-metrics {
+    grid-template-columns: 1fr !important;
+  }
+}
