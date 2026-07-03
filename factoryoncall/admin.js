@@ -524,6 +524,53 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
     requireAdmin: true
   });
 
+  async function ensureProtectedAdminRole() {
+    try {
+      const companySnap = await companyRef.get();
+      const companyData = companySnap.exists ? (companySnap.data() || {}) : {};
+      const isDemoCompany = companyData.demo === true || companyData.demoPlant === true || companyData.mode === "demo" || companyData.type === "demo";
+      if (isDemoCompany) return;
+
+      await rolesRef.doc("Admin").set({
+        companyId: COMPANY_ID,
+        name: "Admin",
+        active: true,
+        archived: false,
+        systemRole: true,
+        protected: true,
+        locked: true,
+        canMakeCalls: false,
+        isCallable: false,
+        respondMatching: false,
+        respondAny: true,
+        supervisorPortal: true,
+        clearEmergency: true,
+        canClearEmergency: true,
+        permissions: {
+          canMakeCalls: false,
+          makeCall: false,
+          viewCalls: true,
+          callable: false,
+          isCallable: false,
+          respondMatching: false,
+          respondAny: true,
+          acknowledgeAllCalls: true,
+          closeAllCalls: true,
+          viewAllCalls: true,
+          supervisorPortal: true,
+          clearEmergency: true,
+          canClearEmergency: true,
+          manageAdmin: true
+        },
+        updatedAt: Date.now()
+      }, { merge: true });
+    } catch (err) {
+      console.warn("Could not ensure protected Admin role:", err);
+    }
+  }
+
+  await ensureProtectedAdminRole();
+
 
   if ("scrollRestoration" in history) {
     try { history.scrollRestoration = "manual"; } catch (_) {}
@@ -1759,6 +1806,11 @@ async function loadCompanyBranding() {
     return role.active !== false && role.archived !== true;
   }
 
+  function roleIsSystemProtected(role = {}) {
+    const name = String(role.name || "").trim().toLowerCase();
+    return role.systemRole === true || role.protected === true || role.locked === true || name === "admin";
+  }
+
   function roleCanMakeCalls(role = {}) {
     const permissions = rolePermissions(role);
     if (typeof role.canMakeCalls === "boolean") return role.canMakeCalls;
@@ -1870,18 +1922,24 @@ async function loadCompanyBranding() {
         ? responseBadges.join("")
         : `<span class="muted">No response access</span>`;
 
+      const protectedRole = roleIsSystemProtected(r);
+      const roleNameHtml = protectedRole
+        ? `<strong>${r.name || ""}</strong> <span class="status-pill active">System</span>`
+        : `<strong>${r.name || ""}</strong>`;
+      const actionHtml = protectedRole
+        ? `<span class="muted">Protected role</span>`
+        : `<button class="btn small secondary edit-role-btn" data-id="${row.id}">Edit</button>
+          <button class="btn small ${isActive ? "danger" : "secondary"} archive-role-btn" data-id="${row.id}" data-action="${isActive ? "archive" : "restore"}">${isActive ? "Archive" : "Restore"}</button>`;
+
       const tr = document.createElement("tr");
       tr.className = isActive ? "" : "archived-row";
       tr.innerHTML = `
-        <td><strong>${r.name || ""}</strong></td>
+        <td>${roleNameHtml}</td>
         <td><span class="status-pill ${roleCanMakeCalls(r) ? "active" : "waiting"}">${roleCanMakeCalls(r) ? "Yes" : "No"}</span></td>
         <td><span class="status-pill ${roleIsCallable(r) ? "active" : "waiting"}">${roleIsCallable(r) ? "Yes" : "No"}</span></td>
         <td><div class="permission-pill-wrap">${responseHtml}</div></td>
         <td><span class="status-pill ${isActive ? "active" : "archived"}">${isActive ? "Active" : "Archived"}</span></td>
-        <td class="role-actions">
-          <button class="btn small secondary edit-role-btn" data-id="${row.id}">Edit</button>
-          <button class="btn small ${isActive ? "danger" : "secondary"} archive-role-btn" data-id="${row.id}" data-action="${isActive ? "archive" : "restore"}">${isActive ? "Archive" : "Restore"}</button>
-        </td>
+        <td class="role-actions">${actionHtml}</td>
       `;
       rolesTableBody.appendChild(tr);
     });
@@ -1898,6 +1956,10 @@ async function loadCompanyBranding() {
         if (!found) return;
 
         const r = found.data || {};
+        if (roleIsSystemProtected(r)) {
+          alert("The Admin role is a protected system role. You can assign users to it, but it cannot be edited or archived.");
+          return;
+        }
         if (roleId) roleId.value = found.id;
         if (roleName) roleName.value = r.name || "";
         if (roleFormTitle) roleFormTitle.textContent = "Edit Role";
@@ -1933,6 +1995,11 @@ async function loadCompanyBranding() {
         const action = btn.dataset.action || "archive";
         const found = cachedRoles.find(x => x.id === id);
         if (!found) return;
+
+        if (roleIsSystemProtected(found.data || {})) {
+          alert("The Admin role is a protected system role and cannot be archived.");
+          return;
+        }
 
         const roleNameValue = found.data?.name || "";
         const goingArchive = action === "archive";
@@ -4962,6 +5029,14 @@ stationFormReset?.addEventListener("click", resetStationForm);
 
       const name = roleName?.value.trim() || "";
       const currentId = roleId?.value || "";
+
+      if (currentId) {
+        const foundRole = cachedRoles.find(x => x.id === currentId);
+        if (foundRole && roleIsSystemProtected(foundRole.data || {})) {
+          alert("The Admin role is a protected system role and cannot be edited.");
+          return;
+        }
+      }
 
       if (!name) {
         alert("Role name is required.");

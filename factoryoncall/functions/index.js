@@ -295,6 +295,41 @@ async function seedProductionCompany(companyId, payload) {
     updatedAt: admin.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
+  await db.collection("companies").doc(companyId).collection("roles").doc("Admin").set({
+    companyId,
+    name: "Admin",
+    active: true,
+    archived: false,
+    systemRole: true,
+    protected: true,
+    locked: true,
+    isCallable: false,
+    canMakeCalls: false,
+    respondMatching: false,
+    respondAny: true,
+    supervisorPortal: true,
+    clearEmergency: true,
+    canClearEmergency: true,
+    permissions: {
+      canMakeCalls: false,
+      makeCall: false,
+      viewCalls: true,
+      callable: false,
+      isCallable: false,
+      respondMatching: false,
+      respondAny: true,
+      acknowledgeAllCalls: true,
+      closeAllCalls: true,
+      viewAllCalls: true,
+      supervisorPortal: true,
+      clearEmergency: true,
+      canClearEmergency: true,
+      manageAdmin: true
+    },
+    createdAt: admin.firestore.FieldValue.serverTimestamp(),
+    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+  }, { merge: true });
+
   const adminPin = payload.adminPin || "1000";
   await db.collection("companies").doc(companyId).collection("users").doc(adminPin).set({
     companyId,
@@ -312,8 +347,8 @@ async function seedProductionCompany(companyId, payload) {
     createdAt: admin.firestore.FieldValue.serverTimestamp()
   }, { merge: true });
 
-  // Clean production plants intentionally do not seed demo roles, stations,
-  // users, calls, or areas. The customer configures their real plant from Admin.
+  // Clean production plants intentionally seed only the protected Admin role.
+  // No demo operational roles, stations, users, calls, or areas are created.
   await db.collection("companies").doc(companyId).collection("calls").doc("_seed_marker").set({
     marker: true,
     createdAt: admin.firestore.FieldValue.serverTimestamp(),
