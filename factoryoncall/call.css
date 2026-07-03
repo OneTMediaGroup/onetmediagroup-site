@@ -1736,3 +1736,15 @@ body.station-state-ack .circle-outer { border-color: rgba(59,130,246,.48) !impor
   .station-state-pending .circle-label-sub,
   .station-state-ack .circle-label-sub { font-size: 10px !important; }
 }
+
+
+.roles-empty-state {
+  grid-column: 1 / -1;
+  padding: 18px 20px;
+  border: 1px dashed rgba(148, 163, 184, 0.75);
+  border-radius: 18px;
+  color: #64748b;
+  background: #f8fafc;
+  font-weight: 800;
+  text-align: center;
+}

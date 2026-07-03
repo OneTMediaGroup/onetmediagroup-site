@@ -329,7 +329,7 @@ const COMPANY_ID = getActiveCompanyId();
   let stationTimerId = null;
   let activeLockField = "user";
   let currentCaller = { firstName: "", lastName: "", uid: "" };
-  let roleDefinitions = [...FALLBACK_ROLE_DEFINITIONS];
+  let roleDefinitions = [];
   let emergencySettings = { enabled: false, active: false, soundEnabled: true, message: "Plant Emergency — follow company emergency procedures." };
   let emergencyBtn = document.getElementById("emergencyStationBtn");
 
@@ -470,11 +470,13 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   async function loadCallableRoles() {
+    roleDefinitions = [];
+
     try {
       const snap = await rolesRef.get();
 
       if (!snap.empty) {
-        const roles = snap.docs
+        roleDefinitions = snap.docs
           .map(doc => doc.data() || {})
           .filter(role => {
             const permissions = role.permissions || {};
@@ -485,11 +487,10 @@ const COMPANY_ID = getActiveCompanyId();
           .map(role => role.name)
           .filter(Boolean)
           .sort((a, b) => a.localeCompare(b));
-
-        if (roles.length) roleDefinitions = roles;
       }
     } catch (err) {
-      console.warn("Could not load callable roles, using fallback list.", err);
+      console.warn("Could not load callable roles.", err);
+      roleDefinitions = [];
     }
   }
 
@@ -497,6 +498,16 @@ const COMPANY_ID = getActiveCompanyId();
     if (!rolesGrid) return;
 
     rolesGrid.innerHTML = "";
+    selectedRoles = [];
+
+    if (!roleDefinitions.length) {
+      const empty = document.createElement("div");
+      empty.className = "roles-empty-state";
+      empty.textContent = "No callable roles have been created yet. Add roles in Admin > Roles before using this station.";
+      rolesGrid.appendChild(empty);
+      updateSendButton();
+      return;
+    }
 
     roleDefinitions.forEach(label => {
       const pill = document.createElement("button");
