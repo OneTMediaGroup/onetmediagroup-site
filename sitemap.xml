@@ -11,4 +11,7 @@
   <url><loc>https://onetmediagroup.ca/one-t-industrial.html</loc><priority>0.7</priority></url>
   <url><loc>https://onetmediagroup.ca/clothing.html</loc><priority>0.6</priority></url>
   <url><loc>https://onetmediagroup.ca/contact.html</loc><priority>0.5</priority></url>
+  <url>
+    <loc>https://onetmediagroup.ca/factory-on-call.html</loc>
+  </url>
 </urlset>
