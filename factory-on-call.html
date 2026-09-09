@@ -27,12 +27,25 @@ body{background:var(--foc-bg);color:var(--foc-text)}
 .foc-cta{margin:62px 0 46px;background:white;border:1px solid var(--foc-line);border-radius:28px;text-align:center;padding:42px 24px;box-shadow:0 14px 34px rgba(15,23,42,.09)}.foc-cta p{color:var(--foc-muted);max-width:720px;margin:0 auto 22px}.foc-footer{color:var(--foc-muted);text-align:center;padding:24px 0 42px}
 .foc-hero .btn,.pricing-card .btn,.foc-cta .btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 18px;border-radius:14px;text-decoration:none;font-weight:900;border:1px solid #cbd5e1;background:#fff;color:#111827}.foc-hero .btn{background:rgba(255,255,255,.10);border-color:rgba(255,255,255,.24);color:white}.foc-hero .btn.primary,.pricing-card .btn.primary,.foc-cta .btn.primary{background:var(--foc-blue);border-color:var(--foc-blue);color:white}
 @media(max-width:920px){.foc-hero-grid,.preview-grid,.scribe-grid,.pricing-grid,.flow-strip{grid-template-columns:1fr}.foc-hero{padding:34px 20px}.preview-placeholder{height:220px}.scribe-card iframe{min-height:420px}}
+
+.foc-promo-frame{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--foc-line);border-radius:22px;background:var(--foc-navy);box-shadow:0 14px 34px rgba(15,23,42,.12)}
+.foc-promo-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+.foc-promo-link{margin:14px 0 0;font-size:.95rem}.foc-promo-link a{color:var(--foc-blue);text-underline-offset:3px}
 </style>
 </head>
 <body>
 <div class="nav foc-nav"><div class="container"><div class="nav-inner"><a class="brand" href="index.html"><div class="brand-badge">1T</div><div>One T Industrial</div></a><nav class="nav-links"><a href="index.html">Home</a><a href="one-t-industrial.html">Industrial</a><a href="apps.html">Apps</a><a href="contact.html">Contact</a></nav></div></div></div>
 <main class="container">
 <section class="foc-hero"><div class="foc-hero-grid"><div><div class="foc-kicker">Factory On Call • One T Industrial</div><h1>Get the right help moving faster.</h1><p>Factory On Call gives production teams a clear way to call for support, acknowledge requests, track response, escalate emergencies, and keep everyone looking at the same live information.</p><div class="hero-actions"><a class="btn primary" href="#onboarding">View Onboarding</a><a class="btn" href="#pricing">View Pricing</a><a class="btn" href="mailto:factoryoncall@onetmediagroup.ca?subject=Factory%20On%20Call%20Inquiry">Contact</a></div></div><div class="foc-logo-panel"><img src="assets/images/FOC/foc_logo_dark.png" alt="Factory On Call logo"></div></div></section>
+
+<section class="foc-section" id="promo" aria-labelledby="foc-promo-title">
+<h2 id="foc-promo-title">See Factory On Call in action.</h2>
+<p class="foc-sub">One system. Across your entire plant. Watch the full overview to see how FOC connects operators, support teams, and live production displays.</p>
+<div class="foc-promo-frame">
+<iframe src="https://www.youtube-nocookie.com/embed/gC0hvxXUMG0" title="Factory On Call — Full Product Overview" loading="lazy" referrerpolicy="strict-origin-when-cross-origin" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+</div>
+<p class="foc-promo-link"><a href="https://youtu.be/gC0hvxXUMG0" target="_blank" rel="noopener noreferrer">Watch on YouTube</a></p>
+</section>
 
 <section class="foc-section"><h2>From call to response.</h2><p class="foc-sub">A focused workflow that makes support requests visible from the moment they are raised until the call is closed.</p><div class="flow-strip"><div class="flow-step"><div class="flow-arrow">01</div><strong>Call Made</strong><span>A station requests support.</span></div><div class="flow-step"><div class="flow-arrow">02</div><strong>Acknowledged</strong><span>The response is visible immediately.</span></div><div class="flow-step"><div class="flow-arrow">03</div><strong>Response Tracked</strong><span>Supervisors and displays stay aligned.</span></div><div class="flow-step"><div class="flow-arrow">04</div><strong>Call Closed</strong><span>The event remains in activity history.</span></div></div></section>
 
