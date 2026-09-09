@@ -1,25 +1,4 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import {
-  getFirestore,
-  collection,
-  doc,
-  setDoc,
-  serverTimestamp,
-  getDoc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyD5n-Ykf5LoYE_2u0pbRKfektav75GZIZE",
-  authDomain: "factoryoncall.firebaseapp.com",
-  projectId: "factoryoncall",
-  storageBucket: "factoryoncall.firebasestorage.app",
-  messagingSenderId: "586355508568",
-  appId: "1:586355508568:web:40c4803ef1fd749811512d"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
-
+const DEMO_COMPANY_NAME = "Northwind Manufacturing";
 const COMPANY_STORAGE_KEY = "factory_on_call_active_company_id";
 const COMPANY_NAME_KEY = "factory_on_call_company_name";
 
@@ -29,52 +8,6 @@ const progressFill = document.getElementById("progressFill");
 const backBtn = document.getElementById("backBtn");
 const nextBtn = document.getElementById("nextBtn");
 const statusText = document.getElementById("statusText");
-
-const DEFAULT_ROLES = [
-  "Maintenance",
-  "Quality",
-  "Supervisor",
-  "Material Handler",
-  "Team Lead",
-  "Production Support"
-];
-
-const DEFAULT_STATIONS = [
-  "Press 400",
-  "Press 401",
-  "Assembly 1",
-  "Assembly 2",
-  "Packaging",
-  "Receiving"
-];
-
-const DEMO_COMPANY_NAME = "Northwind Manufacturing";
-
-const DEMO_AREAS = [
-  { name: "Receiving", description: "Incoming materials and staging" },
-  { name: "Press Shop", description: "Stamping and press operations" },
-  { name: "Machining", description: "CNC machining cells" },
-  { name: "Assembly", description: "Final and sub-assembly cells" },
-  { name: "Paint", description: "Paint booth and finishing" },
-  { name: "Packaging", description: "Pack lines and outbound prep" },
-  { name: "Shipping", description: "Shipping dock and trailers" }
-];
-
-const DEMO_STATIONS = [
-  { name: "Receiving Dock", area: "Receiving", description: "Inbound materials", cells: ["Receiving Dock"] },
-  { name: "Press 100", area: "Press Shop", description: "High-volume press line", cells: ["Press 100"] },
-  { name: "Press 200", area: "Press Shop", description: "Progressive die press", cells: ["Press 200"] },
-  { name: "Press 300", area: "Press Shop", description: "Secondary press line", cells: ["Press 300"] },
-  { name: "CNC 01", area: "Machining", description: "CNC machining center", cells: ["CNC 01"] },
-  { name: "CNC 02", area: "Machining", description: "CNC machining center", cells: ["CNC 02"] },
-  { name: "Cell A", area: "Assembly", description: "Sub-assembly cell", cells: ["Cell A"] },
-  { name: "Cell B", area: "Assembly", description: "Final assembly cell", cells: ["Cell B"] },
-  { name: "Cell C", area: "Assembly", description: "Inspection and rework cell", cells: ["Cell C"] },
-  { name: "Paint Booth", area: "Paint", description: "Paint and curing area", cells: ["Paint Booth"] },
-  { name: "Pack Line 1", area: "Packaging", description: "Primary packaging line", cells: ["Pack Line 1"] },
-  { name: "Pack Line 2", area: "Packaging", description: "Secondary packaging line", cells: ["Pack Line 2"] },
-  { name: "Shipping Dock", area: "Shipping", description: "Outbound dock", cells: ["Shipping Dock"] }
-];
 
 const CREATE_CHECKOUT_URL = "https://us-central1-factoryoncall.cloudfunctions.net/createFactoryOnCallCheckoutSession";
 const STRIPE_MONTHLY_PRICE_ID = "price_1To9yq20LQ2pqINAwk3afElt";
@@ -91,6 +24,7 @@ const state = {
   companyName: DEMO_COMPANY_NAME,
   companyId: "",
   adminPin: "1000",
+  adminUserId: "1000",
   checkoutStarted: false,
   checkoutComplete: false,
   checkoutPending: false
@@ -273,7 +207,7 @@ function renderActivationStep() {
 
 function renderCompleteStep() {
   const isDemo = state.type === "demo";
-  const adminUserId = state.adminPin;
+  const adminUserId = state.adminUserId;
   stepContent.innerHTML = `
     <h2>${isDemo ? "Demo plant ready." : "Production plant ready."}</h2>
     <p class="ready-intro">
@@ -390,6 +324,7 @@ async function startStripeCheckout() {
       email: state.email,
       plan: state.plan,
       companyId: payload.companyId || "",
+      onboardingToken: payload.onboardingToken,
       startedAt: Date.now()
     }));
 
@@ -428,28 +363,27 @@ async function hydrateCheckoutReturn() {
     state.firstName = pending.firstName || state.firstName;
     state.lastName = pending.lastName || state.lastName;
     state.email = pending.email || state.email;
-    state.adminPin = "1000";
+    state.adminPin = "";
     state.companyName = `${state.firstName || "Production"} Plant`;
 
     if (state.companyId) {
       localStorage.setItem(COMPANY_STORAGE_KEY, state.companyId);
       try {
-        const snap = await getDoc(doc(db, "companies", state.companyId));
-        if (snap.exists()) {
-          const data = snap.data() || {};
-          state.companyName = data.companyName || state.companyName;
-          state.firstName = data.ownerFirstName || state.firstName;
-          state.lastName = data.ownerLastName || state.lastName;
-          state.email = data.ownerEmail || state.email;
-          state.adminPin = data.adminPin || "1000";
-          localStorage.setItem(COMPANY_NAME_KEY, state.companyName);
-        }
+        const response = await fetch("https://us-central1-factoryoncall.cloudfunctions.net/finishPlantOnboarding", {
+          method:"POST",headers:{"Content-Type":"application/json"},
+          body:JSON.stringify({companyId:state.companyId,onboardingToken:pending.onboardingToken})
+        });
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error || "Plant activation is still pending.");
+        state.companyName=data.companyName;state.adminPin=data.adminPin;state.adminUserId=data.adminUserId;
+        localStorage.setItem(COMPANY_NAME_KEY,state.companyName);
       } catch (error) {
-        console.warn("Could not load returned company yet", error);
+        step = 2; render(); nextBtn.disabled = true;
+        setStatus(error.message || "Plant activation is pending. Refresh in a moment."); return true;
       }
     }
 
-    sessionStorage.removeItem("factory_on_call_pending_checkout");
+    // Keep the short-lived onboarding proof in this tab so refresh can recover the activation details.
     step = 4;
     render();
     setStatus("Payment confirmed. Your Production Plant is being activated. If details are still loading, refresh in a moment.", true);
@@ -461,406 +395,19 @@ async function hydrateCheckoutReturn() {
 
 async function createCompany() {
   if (state.companyId) return;
-
-  setStatus(state.type === "demo" ? "Creating demo plant..." : "Creating production plant...");
-
-  const companyDocRef = doc(collection(db, "companies"));
-  const companyId = companyDocRef.id;
-  state.companyId = companyId;
-
-  state.adminPin = state.type === "demo" ? "1000" : "1000";
-  localStorage.setItem(COMPANY_STORAGE_KEY, companyId);
-  localStorage.setItem(COMPANY_NAME_KEY, state.companyName);
-
-  const companyPayload = {
-    companyId,
-    companyName: state.companyName,
-    contactName: fullName(),
-    contactEmail: state.email,
-    ownerFirstName: state.firstName,
-    ownerLastName: state.lastName,
-    ownerEmail: state.email,
-    mode: state.type,
-    plan: state.type === "production" ? state.plan : "demo",
-    stripeStatus: state.type === "production" ? "placeholder_active" : "not_required",
-    adminUserId: state.adminPin,
-    adminPin: state.adminPin,
-    portalBaseUrl: window.location.origin + window.location.pathname.replace(/[^/]+$/, ""),
-    welcomeEmailStatus: "pending",
-    isDemo: state.type === "demo",
-    adminLocked: state.type === "demo",
-    active: true,
-    onboardingVersion: "v2-floor-flow-style",
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
-  };
-
-  await setDoc(companyDocRef, companyPayload, { merge: true });
-
-  await setDoc(doc(db, "companies", companyId, "settings", "main"), {
-    requirePinForCalls: true,
-    allowSharedStations: true,
-    autoRefreshMinutes: 60,
-    demoRestrictionsEnabled: state.type === "demo",
-    playNewCallSound: true,
-    playAcknowledgeSound: true,
-    playClosedSound: true,
-    playEmergencySound: true,
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
-  await setDoc(doc(db, "companies", companyId, "settings", "emergency"), {
-    enabled: state.type === "demo",
-    active: false,
-    soundEnabled: true,
-    message: "Plant Emergency — follow company emergency procedures.",
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
-  await setDoc(doc(db, "companies", companyId, "branding", "main"), {
-    companyName: state.companyName,
-    primaryColor: "#1E90FF",
-    secondaryColor: "#003366",
-    logoUrl: "",
-    theme: "light",
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
-  if (state.type === "demo") {
-    for (const role of DEFAULT_ROLES) {
-      await setDoc(doc(db, "companies", companyId, "roles", role), {
-        name: role,
-        active: true,
-        permissions: {
-          makeCall: true,
-          viewCalls: true,
-          acknowledgeCalls: role !== "Material Handler",
-          closeCalls: role === "Supervisor" || role === "Maintenance" || role === "Quality"
-        },
-        isCallable: true,
-        createdAt: serverTimestamp()
-      }, { merge: true });
-    }
-
-    for (const station of DEFAULT_STATIONS) {
-      const stationId = safeId(station);
-      await setDoc(doc(db, "companies", companyId, "stations", stationId), {
-        stationId,
-        name: station,
-        description: "Production",
-        cells: [station],
-        active: true,
-        createdAt: serverTimestamp()
-      }, { merge: true });
-    }
-  }
-
-  const adminUserPayload = state.type === "demo"
-    ? {
-        companyId,
-        firstName: "Factory",
-        lastName: "Administrator",
-        name: "Factory Administrator",
-        email: "demo@factoryoncall.local",
-        uid: state.adminPin,
-        employeeNumber: state.adminPin,
-        pin: state.adminPin,
-        role: "Supervisor",
-        dept: "Administration",
-        admin: true,
-        active: true,
-        demoUser: true,
-        createdAt: serverTimestamp()
-      }
-    : {
-        companyId,
-        firstName: state.firstName,
-        lastName: state.lastName,
-        name: fullName(),
-        email: state.email,
-        uid: state.adminPin,
-        employeeNumber: state.adminPin,
-        pin: state.adminPin,
-        role: "Admin",
-        dept: "Administration",
-        admin: true,
-        active: true,
-        createdAt: serverTimestamp()
-      };
-
-  await setDoc(doc(db, "companies", companyId, "users", state.adminPin), adminUserPayload, { merge: true });
-
-  if (state.type === "demo") {
-    await seedDemoCompany(companyId);
-  }
-
-  await setDoc(doc(db, "companies", companyId, "calls", "_seed_marker"), {
-    marker: true,
-    createdAt: serverTimestamp(),
-    note: "Keeps calls collection initialized."
-  }, { merge: true });
-
-  await setDoc(doc(db, "companies", companyId, "activity", "_seed_marker"), {
-    marker: true,
-    createdAt: serverTimestamp(),
-    note: "Keeps activity collection initialized."
-  }, { merge: true });
-
-  setStatus("Plant created.", true);
-}
-
-async function seedDemoCompany(companyId) {
-  const now = Date.now();
-
-  await setDoc(doc(db, "companies", companyId), {
-    companyName: DEMO_COMPANY_NAME,
-    displayName: DEMO_COMPANY_NAME,
-    mode: "demo",
-    isDemo: true,
-    adminLocked: true,
-    demoPlantVersion: "v1-full-working-demo",
-    demoResetAvailable: true,
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
-  await setDoc(doc(db, "companies", companyId, "branding", "main"), {
-    companyName: DEMO_COMPANY_NAME,
-    primaryColor: "#1E90FF",
-    secondaryColor: "#003366",
-    theme: "light",
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
-  await setDoc(doc(db, "companies", companyId, "settings", "emergency"), {
-    enabled: true,
-    active: false,
-    soundEnabled: true,
-    message: "Plant Emergency — follow company emergency procedures.",
-    demoLocked: true,
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
-  for (const area of DEMO_AREAS) {
-    await setDoc(doc(db, "companies", companyId, "areas", safeId(area.name)), {
-      companyId,
-      ...area,
-      active: true,
-      demoLocked: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  }
-
-  for (const station of DEMO_STATIONS) {
-    const stationId = safeId(station.name);
-    await setDoc(doc(db, "companies", companyId, "stations", stationId), {
-      companyId,
-      stationId,
-      ...station,
-      active: true,
-      archived: false,
-      demoLocked: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  }
-
-  const demoUsers = [
-    { id: "1001", pin: "1111", firstName: "Emma", lastName: "Turner", role: "Production Support", dept: "Assembly" },
-    { id: "1002", pin: "2222", firstName: "Liam", lastName: "Brooks", role: "Production Support", dept: "Press Shop" },
-    { id: "1003", pin: "3333", firstName: "Noah", lastName: "Reed", role: "Production Support", dept: "Machining" },
-    { id: "1004", pin: "4444", firstName: "Olivia", lastName: "Parker", role: "Production Support", dept: "Packaging" },
-    { id: "1005", pin: "5555", firstName: "Ethan", lastName: "Cole", role: "Material Handler", dept: "Materials" },
-    { id: "1006", pin: "6666", firstName: "Ava", lastName: "Patel", role: "Production Support", dept: "Paint" },
-    { id: "1007", pin: "7777", firstName: "Sarah", lastName: "Mitchell", role: "Supervisor", dept: "Production" },
-    { id: "1008", pin: "8888", firstName: "Mike", lastName: "Anderson", role: "Supervisor", dept: "Production" },
-    { id: "1009", pin: "9999", firstName: "Kevin", lastName: "Foster", role: "Maintenance", dept: "Maintenance" },
-    { id: "1010", pin: "1010", firstName: "Chris", lastName: "Morgan", role: "Maintenance", dept: "Maintenance" },
-    { id: "1011", pin: "1212", firstName: "Jessica", lastName: "Nguyen", role: "Quality", dept: "Quality" },
-    { id: "1012", pin: "1313", firstName: "David", lastName: "Kim", role: "Production Support", dept: "Engineering" },
-    { id: "1013", pin: "1414", firstName: "Rachel", lastName: "Green", role: "Supervisor", dept: "Management" }
-  ];
-
-  for (const user of demoUsers) {
-    await setDoc(doc(db, "companies", companyId, "users", user.id), {
-      companyId,
-      ...user,
-      uid: user.id,
-      employeeNumber: user.id,
-      badgeCode: user.id,
-      name: `${user.firstName} ${user.lastName}`.trim(),
-      admin: user.role === "Supervisor",
-      active: true,
-      archived: false,
-      demoLocked: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  }
-
-  const roleDocs = [
-    { name: "Maintenance", close: true, any: false },
-    { name: "Quality", close: true, any: false },
-    { name: "Supervisor", close: true, any: true },
-    { name: "Material Handler", close: false, any: false },
-    { name: "Team Lead", close: true, any: true },
-    { name: "Production Support", close: false, any: false }
-  ];
-
-  for (const role of roleDocs) {
-    await setDoc(doc(db, "companies", companyId, "roles", role.name), {
-      name: role.name,
-      active: true,
-      isCallable: true,
-      demoLocked: true,
-      permissions: {
-        makeCall: true,
-        viewCalls: true,
-        acknowledgeCalls: true,
-        closeCalls: role.close,
-        respondAnyCall: role.any,
-        supervisorPortal: role.any,
-        clearEmergency: role.any
-      },
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  }
-
-  const activeCalls = [
-    {
-      id: "demo-active-press-200-maintenance",
-      station: "Press 200",
-      stationName: "Press 200",
-      area: "Press Shop",
-      areaName: "Press Shop",
-      cells: ["Press 200"],
-      roles: ["Maintenance"],
-      status: "waiting",
-      requestedByName: "Press 200",
-      callerFirst: "",
-      callerLast: "",
-      timeStarted: now - 11 * 60000,
-      requestedAt: now - 11 * 60000,
-      demoCall: true
-    },
-    {
-      id: "demo-active-cnc-01-quality",
-      station: "CNC 01",
-      stationName: "CNC 01",
-      area: "Machining",
-      areaName: "Machining",
-      cells: ["CNC 01"],
-      roles: ["Quality"],
-      status: "ack",
-      ackBy: "Jessica Nguyen",
-      acknowledgedByName: "Jessica Nguyen",
-      requestedByName: "CNC 01",
-      callerFirst: "",
-      callerLast: "",
-      timeStarted: now - 23 * 60000,
-      requestedAt: now - 23 * 60000,
-      ackAt: now - 17 * 60000,
-      timeAcknowledged: now - 17 * 60000,
-      demoCall: true
-    }
-  ];
-
-  for (const call of activeCalls) {
-    const { id, ...payload } = call;
-    await setDoc(doc(db, "companies", companyId, "calls", id), {
-      companyId,
-      ...payload,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  }
-
-  const callTypes = [
-    { roles: ["Maintenance"], notes: "Cleared jam and restarted line." },
-    { roles: ["Quality"], notes: "Quality check completed and approved." },
-    { roles: ["Material Handler"], notes: "Material delivered to station." },
-    { roles: ["Supervisor"], notes: "Supervisor review completed." },
-    { roles: ["Team Lead"], notes: "Team lead assisted with setup." },
-    { roles: ["Production Support"], notes: "Production support completed request." }
-  ];
-  const stations = DEMO_STATIONS;
-  const responders = ["Sarah Mitchell", "Mike Anderson", "Kevin Foster", "Chris Morgan", "Jessica Nguyen", "Rachel Green"];
-
-  for (let i = 0; i < 54; i++) {
-    const station = stations[i % stations.length];
-    const type = callTypes[i % callTypes.length];
-    const start = now - ((i + 3) * 2.7 * 60 * 60000) - ((i % 5) * 11 * 60000);
-    const ackDelay = 2 + (i % 9);
-    const clearDelay = 7 + (i % 18);
-    const ack = start + ackDelay * 60000;
-    const closed = ack + clearDelay * 60000;
-    const responder = responders[i % responders.length];
-
-    await setDoc(doc(db, "companies", companyId, "calls", `demo-history-${String(i + 1).padStart(2, "0")}`), {
-      companyId,
-      station: station.name,
-      stationName: station.name,
-      area: station.area,
-      areaName: station.area,
-      cells: station.cells,
-      roles: type.roles,
-      status: "closed",
-      requestedByName: station.name,
-      callerFirst: "",
-      callerLast: "",
-      ackBy: responder,
-      acknowledgedByName: responder,
-      closedBy: responder,
-      closedByName: responder,
-      resolutionSummary: type.notes,
-      notes: type.notes,
-      timeStarted: start,
-      requestedAt: start,
-      ackAt: ack,
-      timeAcknowledged: ack,
-      timeClosed: closed,
-      closedAt: closed,
-      responseMinutes: ackDelay,
-      resolutionMinutes: clearDelay,
-      totalDurationMinutes: ackDelay + clearDelay,
-      demoCall: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  }
-
-  const emergencySamples = [
-    { station: "Paint Booth", area: "Paint", agoHours: 16, durationSeconds: 420, clearedBy: "Sarah Mitchell" },
-    { station: "Press 300", area: "Press Shop", agoHours: 52, durationSeconds: 660, clearedBy: "Mike Anderson" },
-    { station: "Shipping Dock", area: "Shipping", agoHours: 106, durationSeconds: 300, clearedBy: "Rachel Green" }
-  ];
-
-  for (let i = 0; i < emergencySamples.length; i++) {
-    const ev = emergencySamples[i];
-    const startedAt = now - ev.agoHours * 60 * 60000;
-    const clearedAt = startedAt + ev.durationSeconds * 1000;
-    await setDoc(doc(db, "companies", companyId, "emergencyEvents", `demo-emergency-${i + 1}`), {
-      companyId,
-      stationName: ev.station,
-      activatedByStation: ev.station,
-      areaName: ev.area,
-      area: ev.area,
-      active: false,
-      activatedAt: startedAt,
-      startedAt,
-      clearedAt,
-      endedAt: clearedAt,
-      clearedByName: ev.clearedBy,
-      clearedBy: ev.clearedBy,
-      durationSeconds: ev.durationSeconds,
-      demoEvent: true,
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-  }
+  setStatus("Creating demo plant...");
+  let requestId = sessionStorage.getItem("foc_demo_request");
+  if (!requestId) { requestId = Array.from(crypto.getRandomValues(new Uint8Array(16)), b => b.toString(16).padStart(2,"0")).join(""); sessionStorage.setItem("foc_demo_request", requestId); }
+  const response = await fetch("https://us-central1-factoryoncall.cloudfunctions.net/createDemoPlant", {
+    method:"POST", headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({firstName:state.firstName,lastName:state.lastName,email:state.email,requestId})
+  });
+  const result = await response.json();
+  if (!response.ok) throw new Error(result.error || "Could not create demo plant.");
+  state.companyId=result.companyId;state.companyName=result.companyName;state.adminPin=result.adminPin;
+  localStorage.setItem(COMPANY_STORAGE_KEY,state.companyId);localStorage.setItem(COMPANY_NAME_KEY,state.companyName);
+  sessionStorage.removeItem("foc_demo_request");
+  setStatus("Plant created.",true);
 }
 
 function escapeHtml(value = "") {
@@ -897,7 +444,7 @@ nextBtn.addEventListener("click", async () => {
     } catch (error) {
       console.error(error);
       state.companyId = "";
-      setStatus("Could not create demo plant. Check Firestore rules and try again.");
+      setStatus(error.message || "Could not create demo plant. Please try again.");
     } finally {
       nextBtn.disabled = false;
     }

@@ -1,0 +1,95 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function user(c) { return get(/databases/$(database)/documents/companies/$(c)/users/$(request.auth.token.userDocId)).data; }
+  function member(c) {
+   return request.auth != null && request.auth.token.companyId == c && request.time.toMillis() < request.auth.token.sessionExpiresAt
+    && activeUser(c);
+  }
+  function activeUser(c) { let u = user(c); return request.auth.token.get('authVersion',0) == u.get('authVersion',0) && u.get('active',true) != false && u.get('archived',false) != true; }
+  function adminUser(c) { return member(c) && adminFlag(c); }
+  function adminFlag(c) {
+   let u = user(c); return u.get('admin',false) == true || u.get('isAdmin',false) == true || u.get('role','').lower() in ['admin','administrator'];
+  }
+  function role(c) { return get(/databases/$(database)/documents/companies/$(c)/roles/$(request.auth.token.roleId)).data; }
+  function validRole(c) { let r = role(c); return r.get('active',true) != false && r.get('archived',false) != true && r.get('name','') == user(c).get('role',''); }
+  function permission(c,key) { let r = role(c); return r.get(key,false) == true || r.get('permissions',{}).get(key,false) == true; }
+  function company(c) { return get(/databases/$(database)/documents/companies/$(c)).data; }
+  function setup(c) { return adminUser(c) && company(c).get('mode','production') != 'demo'; }
+  function billingActive(c) {
+   return company(c).get('mode','production') == 'demo' || (company(c).get('active',true) == true
+    && !(company(c).get('stripeStatus','active') in ['canceled','unpaid','incomplete','incomplete_expired','paused']));
+  }
+  function makeCall(c) { return adminFlag(c) || (validRole(c) && (permission(c,'canMakeCalls') || permission(c,'makeCall'))); }
+  function clearEmergency(c) { return adminFlag(c) || (validRole(c) && (permission(c,'clearEmergency') || permission(c,'canClearEmergency'))); }
+  function roleResponse(c,d,closing) {
+   let r = role(c);
+   let u = user(c);
+   let p = r.get('permissions',{});
+   return r.get('active',true) != false && r.get('archived',false) != true && r.get('name','') == u.get('role','')
+    && (flag(r,p,'respondAny') || flag(r,p,'respondAnyCall') || flag(r,p,'supervisorPortal')
+     || ((u.get('role','') in d.get('roles',[]) || u.get('role','') == d.get('role',''))
+      && (flag(r,p,'respondMatching') || (closing ? flag(r,p,'closeCalls') : flag(r,p,'acknowledgeCalls')))));
+  }
+  function flag(r,p,key) { return r.get(key,false) == true || p.get(key,false) == true; }
+  function respond(c,d,closing) { return adminFlag(c) || roleResponse(c,d,closing); }
+  function actor(c,id) { let u = user(c); return id == u.get('uid',u.get('employeeNumber',request.auth.token.userDocId)); }
+  function emergencyEnabled(c) { return get(/databases/$(database)/documents/companies/$(c)/settings/emergency).data.get('enabled',false) == true; }
+  match /companies/{c} {
+   allow get: if adminUser(c);
+   allow list, create, delete: if false;
+   allow update: if setup(c) && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['companyName','updatedAt']);
+   match /public/{id} { allow read: if member(c); allow write: if false; }
+   match /directory/{id} { allow read: if member(c); allow write: if false; }
+   match /users/{id} {
+    allow read: if adminUser(c);
+    allow create, delete: if setup(c);
+    allow update: if setup(c) && (request.resource.data.get('pin','') == resource.data.get('pin','')
+     || request.resource.data.get('authVersion',0) > resource.data.get('authVersion',0));
+   }
+   match /authorized_pins/{id} { allow read: if adminUser(c); allow write: if false; }
+   match /roles/{id} {
+    allow read: if member(c);
+    allow create: if setup(c);
+    allow update: if setup(c) && (!resource.data.get('protected',false) || request.resource.data == resource.data);
+    allow delete: if setup(c) && !resource.data.get('protected',false);
+   }
+   match /areas/{id} { allow read: if member(c); allow write: if setup(c); }
+   match /stations/{id} { allow read: if member(c); allow write: if setup(c); }
+   match /branding/{id} { allow read: if member(c); allow write: if setup(c); }
+   match /settings/{id} {
+    allow read: if member(c);
+    allow write: if setup(c) && id != 'emergency';
+    allow create: if setup(c) && id == 'emergency';
+    allow update: if id == 'emergency' && member(c) && (
+     setup(c) || (request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active','activatedAt','activatedBy','activatedByUid','activatedByStation','station','stationName','area','areaName','eventId','startedAt','createdAt','updatedAt','clearedBy','clearedByUid','clearedAt'])
+      && ((request.resource.data.active == true && makeCall(c) && resource.data.enabled == true)
+       || (request.resource.data.active == false && clearEmergency(c)))));
+   }
+   match /calls/{id} {
+    allow read: if member(c);
+    allow create: if member(c) && billingActive(c) && makeCall(c)
+     && request.resource.data.companyId == c && request.resource.data.status == 'waiting'
+     && actor(c,request.resource.data.callerUid) && request.resource.data.roles is list
+     && request.resource.data.roles.size() > 0 && request.resource.data.roles.size() <= 10
+     && request.resource.data.get('marker',false) == false;
+    allow update: if member(c) && resource.data.get('marker',false) == false
+     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','ackBy','assignedTo','ackByUid','timeAck','acknowledgedAt','timeToAcknowledgeMinutes','updatedAt','closedBy','closedByUid','timeClosed','closedAt','duration','clearMinutesAfterAck','timeToClearMinutes','resolutionSummary','emergencyClearedStationReset'])
+     && ((billingActive(c) && resource.data.status == 'waiting' && request.resource.data.status in ['ack','acknowledged'] && respond(c,resource.data,false) && actor(c,request.resource.data.ackByUid))
+      || (resource.data.status in ['waiting','ack','acknowledged'] && request.resource.data.status == 'closed'
+       && actor(c,request.resource.data.closedByUid)
+       && ((billingActive(c) && (respond(c,resource.data,true) || actor(c,resource.data.get('callerUid','')))) || clearEmergency(c))));
+    allow delete: if setup(c) && resource.data.get('marker',false) == false;
+   }
+   match /emergencyEvents/{id} {
+    allow read: if member(c);
+    allow create: if member(c) && makeCall(c) && emergencyEnabled(c) && request.resource.data.active == true;
+    allow update: if member(c) && clearEmergency(c) && request.resource.data.active == false
+     && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['active','clearedBy','clearedByUid','clearedAt','updatedAt','durationSeconds','durationMinutes']);
+    allow delete: if false;
+   }
+   match /activity/{id} { allow read: if member(c); allow write: if false; }
+  }
+  match /{document=**} { allow read,write: if false; }
+ }
+}

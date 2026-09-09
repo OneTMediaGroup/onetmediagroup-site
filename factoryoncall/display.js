@@ -54,7 +54,7 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   const firebaseConfig = {
-    apiKey: "AIzaSyD5n-Ykf5LoYE_2u0pbRKfektav75GZIZE",
+    apiKey: "AIzaSyA1iTBcOZpMAF2IoClg68LrbPMURpD4hUY",
     authDomain: "factoryoncall.firebaseapp.com",
     projectId: "factoryoncall",
     storageBucket: "factoryoncall.firebasestorage.app",
@@ -67,8 +67,11 @@ const COMPANY_ID = getActiveCompanyId();
     : firebase.initializeApp(firebaseConfig);
 
   const db = app.firestore();
+  await window.FOCAccess.boot(app, COMPANY_ID);
+  await window.FOCAccess.requireAccess({portalKey:"display", title:"Display Access"});
 
   const companyRef = db.collection("companies").doc(COMPANY_ID);
+  const publicCompanyRef = companyRef.collection("public").doc("main");
   const callsRef = companyRef.collection("calls");
   const areasRef = companyRef.collection("areas");
   const stationsRef = companyRef.collection("stations");
@@ -159,7 +162,7 @@ const COMPANY_ID = getActiveCompanyId();
   }
 
   function listenForBillingStatus() {
-    companyRef.onSnapshot(
+    publicCompanyRef.onSnapshot(
       snap => applyBillingState(snap.exists ? (snap.data() || {}) : {}),
       err => console.warn("Subscription status listener failed:", err)
     );
@@ -461,7 +464,7 @@ const COMPANY_ID = getActiveCompanyId();
 
   async function loadBranding() {
     try {
-      const rootSnap = await companyRef.get();
+      const rootSnap = await publicCompanyRef.get();
       const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
       const brandingSnap = await companyRef.collection("branding").doc("main").get().catch(() => null);
       const branding = brandingSnap && brandingSnap.exists ? brandingSnap.data() || {} : {};

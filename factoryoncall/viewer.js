@@ -86,32 +86,7 @@ function focSaveAuthSession(companyId, portalKey, user) {
 }
 
 async function focFindUserForLogin(usersRef, userId, pin) {
-  const cleanId = String(userId || "").trim();
-  const cleanPin = String(pin || "").trim();
-  if (!cleanId || !cleanPin) return null;
-
-  async function userFromDoc(docSnap) {
-    if (!docSnap || !docSnap.exists) return null;
-    const data = docSnap.data() || {};
-    const storedPin = String(data.pin ?? data.userPin ?? data.employeePin ?? "").trim();
-    if (storedPin !== cleanPin) return null;
-    if (data.active === false || data.archived === true) return { inactive: true };
-    return { id: docSnap.id, ...data };
-  }
-
-  let direct = await userFromDoc(await usersRef.doc(cleanId).get());
-  if (direct) return direct;
-
-  const fields = ["uid", "employeeNumber", "badgeCode"];
-  for (const field of fields) {
-    const snap = await usersRef.where(field, "==", cleanId).limit(1).get();
-    if (!snap.empty) {
-      const found = await userFromDoc(snap.docs[0]);
-      if (found) return found;
-    }
-  }
-
-  return null;
+  return window.FOCAccess.login(userId, pin, "viewer");
 }
 
 function focInstallLogoutButton(companyId, portalKey, session) {
@@ -128,7 +103,7 @@ function focInstallLogoutButton(companyId, portalKey, session) {
   if (btn) {
     btn.addEventListener("click", () => {
       sessionStorage.removeItem(focAuthSessionKey(companyId, portalKey));
-      window.location.reload();
+      void window.FOCAccess.logout();
     });
   }
 }
@@ -252,90 +227,14 @@ function focInstallAuthStyles() {
   document.head.appendChild(style);
 }
 
-async function requirePortalAccess({ usersRef, companyId, portalKey, title, subtitle, allowedRoles = [], requireAdmin = false }) {
+async function requirePortalAccess(options) {
   focInstallAuthStyles();
-
-  const existing = focReadAuthSession(companyId, portalKey);
-  if (existing) {
-    focInstallLogoutButton(companyId, portalKey, existing);
-    window.FOC_AUTH_SESSION = existing;
-    return existing;
-  }
-
-  document.body.classList.add("foc-auth-locked");
-
-  return new Promise((resolve) => {
-    const overlay = document.createElement("div");
-    overlay.className = "foc-auth-overlay";
-    overlay.innerHTML = `
-      <form class="foc-auth-card" id="focAuthForm">
-        <div class="foc-auth-kicker">Factory On Call</div>
-        <h2>${focEscapeHtml(title || "Sign in")}</h2>
-        <p>${focEscapeHtml(subtitle || "Enter your User ID and PIN to continue.")}</p>
-
-        <div class="foc-auth-field">
-          <label for="focAuthUserId">User ID</label>
-          <input id="focAuthUserId" autocomplete="username" inputmode="numeric" placeholder="Example: 1007" />
-        </div>
-
-        <div class="foc-auth-field">
-          <label for="focAuthPin">PIN</label>
-          <input id="focAuthPin" autocomplete="current-password" inputmode="numeric" type="password" placeholder="PIN" />
-        </div>
-
-        <div class="foc-auth-error" id="focAuthError"></div>
-
-        <div class="foc-auth-actions">
-          <button id="focAuthSubmit" type="submit">Unlock</button>
-        </div>
-      </form>
-    `;
-    document.body.appendChild(overlay);
-
-    const form = overlay.querySelector("#focAuthForm");
-    const idInput = overlay.querySelector("#focAuthUserId");
-    const pinInput = overlay.querySelector("#focAuthPin");
-    const error = overlay.querySelector("#focAuthError");
-    const submit = overlay.querySelector("#focAuthSubmit");
-    setTimeout(() => idInput?.focus(), 50);
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      error.textContent = "";
-      submit.disabled = true;
-      submit.textContent = "Checking...";
-
-      try {
-        const user = await focFindUserForLogin(usersRef, idInput.value, pinInput.value);
-        if (!user || user.inactive) {
-          error.textContent = user?.inactive ? "This user is inactive." : "User ID or PIN was not found.";
-          return;
-        }
-
-        if (!focRoleAllowed(user, allowedRoles, requireAdmin)) {
-          error.textContent = requireAdmin
-            ? "Admin access is required for this page."
-            : "Supervisor, Manager, or Admin access is required for this page.";
-          return;
-        }
-
-        const session = focSaveAuthSession(companyId, portalKey, user);
-        window.FOC_AUTH_SESSION = session;
-        overlay.remove();
-        document.body.classList.remove("foc-auth-locked");
-        focInstallLogoutButton(companyId, portalKey, session);
-        resolve(session);
-      } catch (err) {
-        console.error(err);
-        error.textContent = "Could not check access. Try again.";
-      } finally {
-        submit.disabled = false;
-        submit.textContent = "Unlock";
-      }
-    });
-  });
+  const user = await window.FOCAccess.requireAccess(options);
+  const session = focSaveAuthSession(options.companyId, options.portalKey, user);
+  window.FOC_AUTH_SESSION = session;
+  focInstallLogoutButton(options.companyId, options.portalKey, session);
+  return session;
 }
-
 
 (async function () {
   async function loadScript(src) {
@@ -369,7 +268,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
   }
 
   const firebaseConfig = {
-    apiKey: "AIzaSyD5n-Ykf5LoYE_2u0pbRKfektav75GZIZE",
+    apiKey: "AIzaSyA1iTBcOZpMAF2IoClg68LrbPMURpD4hUY",
     authDomain: "factoryoncall.firebaseapp.com",
     projectId: "factoryoncall",
     storageBucket: "factoryoncall.firebasestorage.app",
@@ -382,10 +281,12 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
     : firebase.initializeApp(firebaseConfig);
 
   const db = app.firestore();
+  await window.FOCAccess.boot(app, COMPANY_ID);
 
   const companyRef = db.collection("companies").doc(COMPANY_ID);
+  const publicCompanyRef = companyRef.collection("public").doc("main");
   const callsRef = companyRef.collection("calls");
-  const usersRef = companyRef.collection("users");
+  const usersRef = companyRef.collection("directory");
   const rolesRef = companyRef.collection("roles");
   const areasRef = companyRef.collection("areas");
   const stationsRef = companyRef.collection("stations");
@@ -476,7 +377,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
   }
 
   function listenForBillingStatus() {
-    companyRef.onSnapshot(
+    publicCompanyRef.onSnapshot(
       snap => applyBillingState(snap.exists ? (snap.data() || {}) : {}),
       err => console.warn("Subscription status listener failed:", err)
     );
@@ -671,11 +572,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
     const userId = String(authUserId?.value || "").trim();
     const pin = String(authPin?.value || "").trim();
     if (!userId || !pin) throw new Error("Enter both User ID and PIN.");
-    const snap = await usersRef.get();
-    const users = snap.docs.map(d => normalizeUser(d.data() || {}, d.id));
-    const user = users.find(u => [u.uid, u.userId, u.employeeNumber, u.employeeId, u.badgeCode, u.id].map(v => String(v || "").trim()).includes(userId));
-    if (!user || user.active === false || user.archived === true) throw new Error("User not found or inactive.");
-    if (String(user.pin || "") !== pin) throw new Error("Invalid PIN.");
+    const user = await window.FOCAccess.login(userId, pin, "call");
     const role = roleForUser(user);
     if (!role || !boolPerm(role, ["clearEmergency", "canClearEmergency"])) throw new Error("This role cannot clear plant emergency alerts.");
     return { user, role, userName: userDisplayName(user) };
@@ -689,22 +586,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
       throw new Error("Enter both User ID and PIN.");
     }
 
-    const snap = await usersRef.get();
-    const users = snap.docs.map(d => normalizeUser(d.data() || {}, d.id));
-    const user = users.find(u =>
-      [u.uid, u.userId, u.employeeNumber, u.employeeId, u.badgeCode, u.id]
-        .map(v => String(v || "").trim())
-        .includes(userId)
-    );
-
-    if (!user || user.active === false || user.archived === true) {
-      throw new Error("User not found or inactive.");
-    }
-
-    if (String(user.pin || "") !== pin) {
-      throw new Error("Invalid PIN.");
-    }
-
+    const user = await window.FOCAccess.login(userId, pin, "call");
     const role = roleForUser(user);
     if (!canUserRespondToCall(user, role, call)) {
       throw new Error("This user does not have permission for this call.");
@@ -762,7 +644,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
 
   async function loadCompanyBranding() {
     try {
-      const rootSnap = await companyRef.get();
+      const rootSnap = await publicCompanyRef.get();
       const rootData = rootSnap.exists ? rootSnap.data() || {} : {};
       const brandingSnap = await companyRef.collection("branding").doc("main").get().catch(() => null);
       const branding = brandingSnap && brandingSnap.exists ? brandingSnap.data() || {} : {};
@@ -858,6 +740,24 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
 
 
 
+
+  async function resetEmergencyStationCalls(auth, emergencyData = {}) {
+    const station = emergencyData.activatedByStation || emergencyData.station || emergencyData.stationName;
+    if (!station) return;
+    const snapshot = await callsRef.where("station", "==", station).get();
+    const now = Date.now();
+    const active = snapshot.docs.filter(doc => ["waiting", "ack", "acknowledged"].includes(String(doc.data().status || "").toLowerCase()));
+    for (let offset = 0; offset < active.length; offset += 400) {
+      const batch = db.batch();
+      active.slice(offset, offset + 400).forEach(doc => batch.update(doc.ref, {
+        status: "closed", closedAt: now, timeClosed: now,
+        closedBy: auth.userName,
+        closedByUid: auth.user.uid || auth.user.employeeNumber || auth.user.id || "",
+        emergencyClearedStationReset: true, updatedAt: now
+      }));
+      await batch.commit();
+    }
+  }
 
   async function updateEmergencyEventClear(emergencyData = {}, clearedBy = "", clearedByUid = "", clearedAt = Date.now()) {
     try {

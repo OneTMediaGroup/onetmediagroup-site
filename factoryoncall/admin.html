@@ -13,6 +13,8 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 </script>
     <link rel="stylesheet" href="context-help.css?v=20260908" />
     <script defer src="context-help.js?v=20260908"></script>
+<link rel="stylesheet" href="security-session.css?v=20260909" />
+<script src="security-session.js?v=20260909"></script>
 </head>
 <body>
 <div id="app-root">
@@ -345,7 +347,7 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 
                 <div class="card user-form-card">
                     <h2 id="userFormTitle">Add User</h2>
-                    <p class="muted">User ID is required. Default PIN is the User ID in reverse. Badges scan the User ID, then the user enters their PIN.</p>
+                    <p class="muted">User ID is required. A random PIN is suggested for new users. Badges scan the User ID, then the user enters their PIN.</p>
                     <form id="userForm" class="form">
                         <input type="hidden" id="userId" />
 
@@ -917,6 +919,6 @@ window.addEventListener('load',()=>window.scrollTo(0,0));
 </div>
 
 <script src="firebase.js"></script>
-<script src="admin.js?v=analytics-polish-v220"></script>
+<script src="admin.js?v=20260909-secure-access"></script>
 </body>
 </html>

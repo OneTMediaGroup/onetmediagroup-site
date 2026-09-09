@@ -1,0 +1,3 @@
+The security release requires the matching screens, security-session.js, server sign-in, and Firestore rules. Deploy functions first, backfill public/main and directory projections, publish the screens, verify live sign-in, then deploy Firestore rules. Existing company setup, user PINs and billing records are private to plant administrators. Shared screens use verified plant sessions. Never publish .secret.local or emulator configuration.
+
+Validation: 36 rule checks, 18 HTTP/Auth emulator checks, atomic production provisioning tests, browser call acknowledgement/closure, emergency reset, Demo analytics, and 375/768/1440 help layouts. See launch report for remaining live verification.

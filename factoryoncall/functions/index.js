@@ -1,3 +1,4 @@
+const { FieldValue, Timestamp } = require('firebase-admin/firestore');
 const { onDocumentCreated } = require("firebase-functions/v2/firestore");
 const { onRequest } = require("firebase-functions/v2/https");
 const { defineSecret } = require("firebase-functions/params");
@@ -7,6 +8,13 @@ const { Resend } = require("resend");
 const Stripe = require("stripe");
 
 admin.initializeApp();
+const access = require("./access");
+const crypto = require("crypto");
+exports.createDemoPlant = require("./demo-onboarding").createDemoPlant;
+exports.plantSignIn = access.plantSignIn;
+exports.plantSession = access.plantSession;
+exports.syncPublicUser = access.syncPublicUser;
+exports.syncPublicCompany = access.syncPublicCompany;
 
 const RESEND_API_KEY = defineSecret("RESEND_API_KEY");
 const STRIPE_SECRET_KEY = defineSecret("STRIPE_SECRET_KEY");
@@ -205,11 +213,11 @@ One T Media Group
 function buildCorsResponse(res) {
   res.set("Access-Control-Allow-Origin", "*");
   res.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-  res.set("Access-Control-Allow-Headers", "Content-Type");
+  res.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
 }
 
 function adminIdForPlant() {
-  return "1000";
+  return String(crypto.randomInt(100000, 1000000));
 }
 
 function productionCompanyPayload({ companyId, firstName, lastName, email, plan, baseUrl, stripeCustomerId, stripeSubscriptionId, stripeSessionId }) {
@@ -230,7 +238,7 @@ function productionCompanyPayload({ companyId, firstName, lastName, email, plan,
     stripeCustomerId: stripeCustomerId || "",
     stripeSubscriptionId: stripeSubscriptionId || "",
     stripeCheckoutSessionId: stripeSessionId || "",
-    adminUserId: adminPin,
+    adminUserId: "1000",
     adminPin,
     portalBaseUrl: normalizeBaseUrl(baseUrl),
     welcomeEmailStatus: "pending",
@@ -238,8 +246,8 @@ function productionCompanyPayload({ companyId, firstName, lastName, email, plan,
     adminLocked: false,
     active: true,
     onboardingVersion: "v2-stripe-checkout",
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    createdAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
   };
 }
 
@@ -263,7 +271,7 @@ async function seedProductionCompany(companyId, payload) {
       demoRestrictionsEnabled: false,
       productionSetupStatus: "clean",
       productionSeedVersion: "v1-clean-production",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      updatedAt: FieldValue.serverTimestamp()
     }, { merge: true });
 
     transaction.set(db.collection("companies").doc(companyId).collection("settings").doc("main"), {
@@ -275,8 +283,8 @@ async function seedProductionCompany(companyId, payload) {
       playAcknowledgeSound: true,
       playClosedSound: true,
       playEmergencySound: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp()
     }, { merge: true });
 
     transaction.set(db.collection("companies").doc(companyId).collection("settings").doc("emergency"), {
@@ -284,8 +292,8 @@ async function seedProductionCompany(companyId, payload) {
       active: false,
       soundEnabled: true,
       message: "Plant Emergency — follow company emergency procedures.",
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp()
     }, { merge: true });
 
     transaction.set(db.collection("companies").doc(companyId).collection("branding").doc("main"), {
@@ -294,7 +302,7 @@ async function seedProductionCompany(companyId, payload) {
       secondaryColor: "#003366",
       logoUrl: "",
       theme: "light",
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      updatedAt: FieldValue.serverTimestamp()
     }, { merge: true });
 
     transaction.set(db.collection("companies").doc(companyId).collection("roles").doc("Admin"), {
@@ -328,38 +336,39 @@ async function seedProductionCompany(companyId, payload) {
         canClearEmergency: true,
         manageAdmin: true
       },
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp(),
+      updatedAt: FieldValue.serverTimestamp()
     }, { merge: true });
 
-    const adminPin = payload.adminPin || "1000";
-    transaction.set(db.collection("companies").doc(companyId).collection("users").doc(adminPin), {
+    const adminPin = payload.adminPin;
+    const adminUserId = payload.adminUserId || "1000";
+    transaction.set(db.collection("companies").doc(companyId).collection("users").doc(adminUserId), {
       companyId,
       firstName: payload.ownerFirstName || "",
       lastName: payload.ownerLastName || "",
       name: payload.contactName || "Factory On Call Admin",
       email: payload.ownerEmail || "",
-      uid: adminPin,
-      employeeNumber: adminPin,
+      uid: adminUserId,
+      employeeNumber: adminUserId,
       pin: adminPin,
       role: "Admin",
       dept: "Administration",
       admin: true,
       active: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp()
+      createdAt: FieldValue.serverTimestamp()
     }, { merge: true });
 
     // Clean production plants intentionally seed only the protected Admin role.
     // No demo operational roles, stations, users, calls, or areas are created.
     transaction.set(db.collection("companies").doc(companyId).collection("calls").doc("_seed_marker"), {
       marker: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
       note: "Keeps calls collection initialized."
     }, { merge: true });
 
     transaction.set(db.collection("companies").doc(companyId).collection("activity").doc("_seed_marker"), {
       marker: true,
-      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      createdAt: FieldValue.serverTimestamp(),
       note: "Keeps activity collection initialized."
     }, { merge: true });
   });
@@ -379,7 +388,7 @@ function normalizeStripeStatus(status) {
 
 function timestampFromStripeSeconds(value) {
   const n = Number(value || 0);
-  return n > 0 ? admin.firestore.Timestamp.fromMillis(n * 1000) : null;
+  return n > 0 ? Timestamp.fromMillis(n * 1000) : null;
 }
 
 function cleanObject(obj) {
@@ -436,8 +445,8 @@ async function writeSubscriptionStatus({ companyId = "", subscriptionId = "", cu
     billingStatus: normalizedStatus,
     active: isCanceled ? false : true,
     billingLastEventReason: reason || "stripe_event",
-    billingLastEventAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    billingLastEventAt: FieldValue.serverTimestamp(),
+    updatedAt: FieldValue.serverTimestamp()
   };
 
   if (plan) {
@@ -469,13 +478,13 @@ async function writeSubscriptionStatus({ companyId = "", subscriptionId = "", cu
   if (isPastDue) {
     update.billingWarning = "Payment attention required. Please update payment method in Stripe.";
   } else {
-    update.billingWarning = admin.firestore.FieldValue.delete();
+    update.billingWarning = FieldValue.delete();
   }
 
   if (isCanceled) {
     update.billingLockReason = "Subscription canceled";
   } else if (isActive) {
-    update.billingLockReason = admin.firestore.FieldValue.delete();
+    update.billingLockReason = FieldValue.delete();
   }
 
   await companyRef.set(cleanObject(update), { merge: true });
@@ -506,13 +515,16 @@ exports.createFactoryOnCallCheckoutSession = onRequest(
       const firstName = String(body.firstName || "").trim();
       const lastName = String(body.lastName || "").trim();
       const email = String(body.email || "").trim();
-      const baseUrl = normalizeBaseUrl(body.baseUrl || FALLBACK_BASE_URL);
+      const baseUrl = FALLBACK_BASE_URL;
       if (!email || !email.includes("@")) {
         res.status(400).json({ error: "A valid email is required." });
         return;
       }
 
+      await access.throttle("checkout:" + String(req.ip || "unknown"), 20);
       const companyId = admin.firestore().collection("companies").doc().id;
+      const onboardingToken = crypto.randomBytes(32).toString("hex");
+      await admin.firestore().collection("_onboardingRequests").doc(companyId).set({tokenHash:crypto.createHash("sha256").update(onboardingToken).digest("hex"),expiresAt:Date.now()+86400000});
       const stripeSecretKey = STRIPE_SECRET_KEY.value();
       if (!stripeSecretKey || !stripeSecretKey.startsWith("sk_")) {
         logger.error("Factory On Call Stripe secret key is missing or invalid. Use a Stripe secret key that starts with sk_test_ or sk_live_.");
@@ -549,7 +561,7 @@ exports.createFactoryOnCallCheckoutSession = onRequest(
       });
 
       logger.info("Created Factory On Call checkout session", { companyId, plan, email });
-      res.status(200).json({ url: session.url, sessionId: session.id, companyId });
+      res.status(200).json({ url: session.url, sessionId: session.id, companyId, onboardingToken });
     } catch (error) {
       logger.error("Failed to create Factory On Call checkout session", { error });
       res.status(500).json({ error: error?.message || "Could not create checkout session." });
@@ -740,9 +752,9 @@ exports.createCustomerPortalSession = onRequest(
     try {
       const body = req.body || {};
       const companyId = String(body.companyId || "").trim();
-      const stripeCustomerIdFromBody = String(body.stripeCustomerId || "").trim();
-      const baseUrl = normalizeBaseUrl(body.baseUrl || FALLBACK_BASE_URL);
-      const returnUrl = String(body.returnUrl || `${baseUrl}admin.html?companyId=${encodeURIComponent(companyId)}#billing`).trim();
+      await access.authenticatedAdmin(req, companyId);
+      const baseUrl = FALLBACK_BASE_URL;
+      const returnUrl = `${FALLBACK_BASE_URL}admin.html?companyId=${encodeURIComponent(companyId)}#billing`;
 
       if (!companyId) {
         res.status(400).json({ error: "Missing companyId." });
@@ -757,7 +769,7 @@ exports.createCustomerPortalSession = onRequest(
       }
 
       const company = companySnap.data() || {};
-      const stripeCustomerId = String(company.stripeCustomerId || stripeCustomerIdFromBody || "").trim();
+      const stripeCustomerId = String(company.stripeCustomerId || "").trim();
       if (!stripeCustomerId) {
         res.status(400).json({ error: "This plant does not have a Stripe customer yet." });
         return;
@@ -780,7 +792,7 @@ exports.createCustomerPortalSession = onRequest(
       res.status(200).json({ url: session.url });
     } catch (error) {
       logger.error("Failed to create Factory On Call customer portal session", { error: error?.message || String(error) });
-      res.status(500).json({ error: error?.message || "Could not open billing portal." });
+      res.status(error.status || 500).json({ error: error.status ? error.message : "Could not open billing portal." });
     }
   }
 );
@@ -793,6 +805,7 @@ exports.sendFactoryOnCallWelcome = onDocumentCreated(
     secrets: [RESEND_API_KEY]
   },
   async (event) => {
+    if (process.env.FUNCTIONS_EMULATOR === "true") return;
     const snap = event.data;
     if (!snap) return;
 
@@ -828,9 +841,9 @@ exports.sendFactoryOnCallWelcome = onDocumentCreated(
 
       await snap.ref.set({
         welcomeEmailStatus: "sent",
-        welcomeEmailSentAt: admin.firestore.FieldValue.serverTimestamp(),
+        welcomeEmailSentAt: FieldValue.serverTimestamp(),
         welcomeEmailId: result?.data?.id || result?.id || "",
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: FieldValue.serverTimestamp()
       }, { merge: true });
 
       logger.info("Factory On Call welcome email sent", { companyId, to });
@@ -839,9 +852,20 @@ exports.sendFactoryOnCallWelcome = onDocumentCreated(
       await snap.ref.set({
         welcomeEmailStatus: "failed",
         welcomeEmailError: error?.message || String(error),
-        updatedAt: admin.firestore.FieldValue.serverTimestamp()
+        updatedAt: FieldValue.serverTimestamp()
       }, { merge: true });
       throw error;
     }
   }
 );
+
+exports.finishPlantOnboarding = access.route(async(req,res)=>{
+ const {companyId,onboardingToken}=req.body || {};
+ if(typeof companyId!=="string"||! /^[a-zA-Z0-9_-]{1,128}$/.test(companyId)||typeof onboardingToken!=="string"||! /^[a-f0-9]{64}$/.test(onboardingToken))access.fail(400,"Invalid onboarding request.");
+ const stored=(await admin.firestore().doc(`_onboardingRequests/${companyId}`).get()).data();
+ const hash=crypto.createHash("sha256").update(onboardingToken).digest("hex");
+ if(!stored||stored.expiresAt<Date.now()||stored.tokenHash!==hash)access.fail(403,"Use the original checkout browser or your welcome email to finish setup.");
+ const company=(await admin.firestore().doc(`companies/${companyId}`).get()).data();
+ if(!company||company.mode!=="production")access.fail(409,"Plant activation is still pending. Refresh in a moment.");
+ res.json({companyId,companyName:company.companyName,adminUserId:company.adminUserId,adminPin:company.adminPin});
+});

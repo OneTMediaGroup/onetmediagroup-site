@@ -115,32 +115,7 @@ function focSaveAuthSession(companyId, portalKey, user) {
 }
 
 async function focFindUserForLogin(usersRef, userId, pin) {
-  const cleanId = String(userId || "").trim();
-  const cleanPin = String(pin || "").trim();
-  if (!cleanId || !cleanPin) return null;
-
-  async function userFromDoc(docSnap) {
-    if (!docSnap || !docSnap.exists) return null;
-    const data = docSnap.data() || {};
-    const storedPin = String(data.pin ?? data.userPin ?? data.employeePin ?? "").trim();
-    if (storedPin !== cleanPin) return null;
-    if (data.active === false || data.archived === true) return { inactive: true };
-    return { id: docSnap.id, ...data };
-  }
-
-  let direct = await userFromDoc(await usersRef.doc(cleanId).get());
-  if (direct) return direct;
-
-  const fields = ["uid", "employeeNumber", "badgeCode"];
-  for (const field of fields) {
-    const snap = await usersRef.where(field, "==", cleanId).limit(1).get();
-    if (!snap.empty) {
-      const found = await userFromDoc(snap.docs[0]);
-      if (found) return found;
-    }
-  }
-
-  return null;
+  return window.FOCAccess.login(userId, pin, "admin");
 }
 
 function focInstallLogoutButton(companyId, portalKey, session) {
@@ -157,7 +132,7 @@ function focInstallLogoutButton(companyId, portalKey, session) {
   if (btn) {
     btn.addEventListener("click", () => {
       sessionStorage.removeItem(focAuthSessionKey(companyId, portalKey));
-      window.location.reload();
+      void window.FOCAccess.logout();
     });
   }
 }
@@ -281,90 +256,14 @@ function focInstallAuthStyles() {
   document.head.appendChild(style);
 }
 
-async function requirePortalAccess({ usersRef, companyId, portalKey, title, subtitle, allowedRoles = [], requireAdmin = false }) {
+async function requirePortalAccess(options) {
   focInstallAuthStyles();
-
-  const existing = focReadAuthSession(companyId, portalKey);
-  if (existing) {
-    focInstallLogoutButton(companyId, portalKey, existing);
-    window.FOC_AUTH_SESSION = existing;
-    return existing;
-  }
-
-  document.body.classList.add("foc-auth-locked");
-
-  return new Promise((resolve) => {
-    const overlay = document.createElement("div");
-    overlay.className = "foc-auth-overlay";
-    overlay.innerHTML = `
-      <form class="foc-auth-card" id="focAuthForm">
-        <div class="foc-auth-kicker">Factory On Call</div>
-        <h2>${focEscapeHtml(title || "Sign in")}</h2>
-        <p>${focEscapeHtml(subtitle || "Enter your User ID and PIN to continue.")}</p>
-
-        <div class="foc-auth-field">
-          <label for="focAuthUserId">User ID</label>
-          <input id="focAuthUserId" autocomplete="username" inputmode="numeric" placeholder="Example: 1007" />
-        </div>
-
-        <div class="foc-auth-field">
-          <label for="focAuthPin">PIN</label>
-          <input id="focAuthPin" autocomplete="current-password" inputmode="numeric" type="password" placeholder="PIN" />
-        </div>
-
-        <div class="foc-auth-error" id="focAuthError"></div>
-
-        <div class="foc-auth-actions">
-          <button id="focAuthSubmit" type="submit">Unlock</button>
-        </div>
-      </form>
-    `;
-    document.body.appendChild(overlay);
-
-    const form = overlay.querySelector("#focAuthForm");
-    const idInput = overlay.querySelector("#focAuthUserId");
-    const pinInput = overlay.querySelector("#focAuthPin");
-    const error = overlay.querySelector("#focAuthError");
-    const submit = overlay.querySelector("#focAuthSubmit");
-    setTimeout(() => idInput?.focus(), 50);
-
-    form.addEventListener("submit", async (event) => {
-      event.preventDefault();
-      error.textContent = "";
-      submit.disabled = true;
-      submit.textContent = "Checking...";
-
-      try {
-        const user = await focFindUserForLogin(usersRef, idInput.value, pinInput.value);
-        if (!user || user.inactive) {
-          error.textContent = user?.inactive ? "This user is inactive." : "User ID or PIN was not found.";
-          return;
-        }
-
-        if (!focRoleAllowed(user, allowedRoles, requireAdmin)) {
-          error.textContent = requireAdmin
-            ? "Admin access is required for this page."
-            : "Supervisor, Manager, or Admin access is required for this page.";
-          return;
-        }
-
-        const session = focSaveAuthSession(companyId, portalKey, user);
-        window.FOC_AUTH_SESSION = session;
-        overlay.remove();
-        document.body.classList.remove("foc-auth-locked");
-        focInstallLogoutButton(companyId, portalKey, session);
-        resolve(session);
-      } catch (err) {
-        console.error(err);
-        error.textContent = "Could not check access. Try again.";
-      } finally {
-        submit.disabled = false;
-        submit.textContent = "Unlock";
-      }
-    });
-  });
+  const user = await window.FOCAccess.requireAccess(options);
+  const session = focSaveAuthSession(options.companyId, options.portalKey, user);
+  window.FOC_AUTH_SESSION = session;
+  focInstallLogoutButton(options.companyId, options.portalKey, session);
+  return session;
 }
-
 
 (async function () {
   // ---------- LOAD FIREBASE COMPAT IF NEEDED ----------
@@ -400,7 +299,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
 
   // ---------- FIREBASE INIT ----------
   const firebaseConfig = {
-    apiKey: "AIzaSyD5n-Ykf5LoYE_2u0pbRKfektav75GZIZE",
+    apiKey: "AIzaSyA1iTBcOZpMAF2IoClg68LrbPMURpD4hUY",
     authDomain: "factoryoncall.firebaseapp.com",
     projectId: "factoryoncall",
     storageBucket: "factoryoncall.firebasestorage.app",
@@ -413,6 +312,8 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
     : firebase.initializeApp(firebaseConfig);
 
   const db = app.firestore();
+  await window.FOCAccess.boot(app, COMPANY_ID);
+  document.getElementById("logoutBtn")?.addEventListener("click", () => window.FOCAccess.logout());
 
   const companyRef = db.collection("companies").doc(COMPANY_ID);
   const areasRef = companyRef.collection("areas");
@@ -531,6 +432,7 @@ async function requirePortalAccess({ usersRef, companyId, portalKey, title, subt
       const isDemoCompany = companyData.demo === true || companyData.demoPlant === true || companyData.mode === "demo" || companyData.type === "demo";
       if (isDemoCompany) return;
 
+      if ((await rolesRef.doc("Admin").get()).exists) return;
       await rolesRef.doc("Admin").set({
         companyId: COMPANY_ID,
         name: "Admin",
@@ -2083,6 +1985,11 @@ async function loadCompanyBranding() {
 
   function fullUserName(user = {}) {
     return `${user.firstName || ""} ${user.lastName || ""}`.trim() || user.name || user.uid || "User";
+  }
+
+  function randomUserPin() {
+    const values = new Uint32Array(1); crypto.getRandomValues(values);
+    return String(100000 + (values[0] % 900000));
   }
 
   function reverseId(value = "") {
@@ -3863,7 +3770,7 @@ module.exports = QRCode;
       const role = row.role || "";
       const uid = row.userid || row.user_id || row.employeeid || row.employee_id || row.uid || "";
       const badgeCode = uid;
-      const pin = row.pin || reverseId(uid);
+      const pin = row.pin || randomUserPin();
       const status = String(row.status || "active").toLowerCase() === "archived" ? "archived" : "active";
       if (!firstName || !lastName || !role || !uid) return;
       if (!roleNames.has(role.toLowerCase())) missingRoles.add(role);
@@ -3898,7 +3805,8 @@ module.exports = QRCode;
         uid: row.uid,
         employeeNumber: row.uid,
         badgeCode: row.badgeCode || row.uid,
-        pin: row.pin || reverseId(row.uid),
+        pin: row.pin || randomUserPin(),
+        authVersion: firebase.firestore.FieldValue.increment(1),
         email: "",
         dept: "",
         status: row.status,
@@ -4613,7 +4521,7 @@ module.exports = QRCode;
     try {
       const response = await fetch(CUSTOMER_PORTAL_FUNCTION_URL, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + await app.auth().currentUser.getIdToken() },
         body: JSON.stringify({
           companyId: COMPANY_ID,
           stripeCustomerId: customerId,
@@ -5128,7 +5036,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       }
       if (userPin) {
         const previousAutoPin = userPin.dataset.autoValue || "";
-        const nextAutoPin = reverseId(uid);
+        const nextAutoPin = previousAutoPin || randomUserPin();
         if (!userPin.value.trim() || userPin.value.trim() === previousAutoPin) {
           userPin.value = nextAutoPin;
           userPin.dataset.autoValue = nextAutoPin;
@@ -5145,7 +5053,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
       const lastName = userLastName?.value.trim() || "";
       const uid = userUID?.value.trim() || "";
       const badgeCode = uid;
-      const pin = userPin?.value.trim() || reverseId(uid);
+      const pin = userPin?.value.trim() || randomUserPin();
       const role = userRole?.value || "";
       const status = userStatus?.value || "active";
       const archived = status === "archived";
@@ -5162,6 +5070,7 @@ stationFormReset?.addEventListener("click", resetStationForm);
         employeeNumber: uid,
         badgeCode,
         pin,
+        authVersion: firebase.firestore.FieldValue.increment(1),
         status,
         archived,
         active: !archived,
