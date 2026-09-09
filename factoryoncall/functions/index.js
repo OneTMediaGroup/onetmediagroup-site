@@ -246,120 +246,123 @@ function productionCompanyPayload({ companyId, firstName, lastName, email, plan,
 async function seedProductionCompany(companyId, payload) {
   const db = admin.firestore();
   const companyRef = db.collection("companies").doc(companyId);
-  const existing = await companyRef.get();
-  if (existing.exists) {
-    logger.info("Production company already exists; skipping duplicate webhook create", { companyId });
-    return;
-  }
+  // Commit the complete plant together so webhook retries cannot skip partial setup.
+  return db.runTransaction(async transaction => {
+    const existing = await transaction.get(companyRef);
+    if (existing.exists) {
+      logger.info("Production company already exists; skipping duplicate webhook create", { companyId });
+      return;
+    }
 
-  await companyRef.set({
-    ...payload,
-    mode: "production",
-    isDemo: false,
-    adminLocked: false,
-    active: true,
-    demoRestrictionsEnabled: false,
-    productionSetupStatus: "clean",
-    productionSeedVersion: "v1-clean-production",
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    transaction.set(companyRef, {
+      ...payload,
+      mode: "production",
+      isDemo: false,
+      adminLocked: false,
+      active: true,
+      demoRestrictionsEnabled: false,
+      productionSetupStatus: "clean",
+      productionSeedVersion: "v1-clean-production",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-  await db.collection("companies").doc(companyId).collection("settings").doc("main").set({
-    requirePinForCalls: true,
-    allowSharedStations: true,
-    autoRefreshMinutes: 60,
-    demoRestrictionsEnabled: false,
-    playNewCallSound: true,
-    playAcknowledgeSound: true,
-    playClosedSound: true,
-    playEmergencySound: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    transaction.set(db.collection("companies").doc(companyId).collection("settings").doc("main"), {
+      requirePinForCalls: true,
+      allowSharedStations: true,
+      autoRefreshMinutes: 60,
+      demoRestrictionsEnabled: false,
+      playNewCallSound: true,
+      playAcknowledgeSound: true,
+      playClosedSound: true,
+      playEmergencySound: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-  await db.collection("companies").doc(companyId).collection("settings").doc("emergency").set({
-    enabled: false,
-    active: false,
-    soundEnabled: true,
-    message: "Plant Emergency — follow company emergency procedures.",
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    transaction.set(db.collection("companies").doc(companyId).collection("settings").doc("emergency"), {
+      enabled: false,
+      active: false,
+      soundEnabled: true,
+      message: "Plant Emergency — follow company emergency procedures.",
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-  await db.collection("companies").doc(companyId).collection("branding").doc("main").set({
-    companyName: payload.companyName,
-    primaryColor: "#1E90FF",
-    secondaryColor: "#003366",
-    logoUrl: "",
-    theme: "light",
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    transaction.set(db.collection("companies").doc(companyId).collection("branding").doc("main"), {
+      companyName: payload.companyName,
+      primaryColor: "#1E90FF",
+      secondaryColor: "#003366",
+      logoUrl: "",
+      theme: "light",
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-  await db.collection("companies").doc(companyId).collection("roles").doc("Admin").set({
-    companyId,
-    name: "Admin",
-    active: true,
-    archived: false,
-    systemRole: true,
-    protected: true,
-    locked: true,
-    isCallable: false,
-    canMakeCalls: false,
-    respondMatching: false,
-    respondAny: true,
-    supervisorPortal: true,
-    clearEmergency: true,
-    canClearEmergency: true,
-    permissions: {
-      canMakeCalls: false,
-      makeCall: false,
-      viewCalls: true,
-      callable: false,
+    transaction.set(db.collection("companies").doc(companyId).collection("roles").doc("Admin"), {
+      companyId,
+      name: "Admin",
+      active: true,
+      archived: false,
+      systemRole: true,
+      protected: true,
+      locked: true,
       isCallable: false,
+      canMakeCalls: false,
       respondMatching: false,
       respondAny: true,
-      acknowledgeAllCalls: true,
-      closeAllCalls: true,
-      viewAllCalls: true,
       supervisorPortal: true,
       clearEmergency: true,
       canClearEmergency: true,
-      manageAdmin: true
-    },
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    updatedAt: admin.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+      permissions: {
+        canMakeCalls: false,
+        makeCall: false,
+        viewCalls: true,
+        callable: false,
+        isCallable: false,
+        respondMatching: false,
+        respondAny: true,
+        acknowledgeAllCalls: true,
+        closeAllCalls: true,
+        viewAllCalls: true,
+        supervisorPortal: true,
+        clearEmergency: true,
+        canClearEmergency: true,
+        manageAdmin: true
+      },
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-  const adminPin = payload.adminPin || "1000";
-  await db.collection("companies").doc(companyId).collection("users").doc(adminPin).set({
-    companyId,
-    firstName: payload.ownerFirstName || "",
-    lastName: payload.ownerLastName || "",
-    name: payload.contactName || "Factory On Call Admin",
-    email: payload.ownerEmail || "",
-    uid: adminPin,
-    employeeNumber: adminPin,
-    pin: adminPin,
-    role: "Admin",
-    dept: "Administration",
-    admin: true,
-    active: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp()
-  }, { merge: true });
+    const adminPin = payload.adminPin || "1000";
+    transaction.set(db.collection("companies").doc(companyId).collection("users").doc(adminPin), {
+      companyId,
+      firstName: payload.ownerFirstName || "",
+      lastName: payload.ownerLastName || "",
+      name: payload.contactName || "Factory On Call Admin",
+      email: payload.ownerEmail || "",
+      uid: adminPin,
+      employeeNumber: adminPin,
+      pin: adminPin,
+      role: "Admin",
+      dept: "Administration",
+      admin: true,
+      active: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
 
-  // Clean production plants intentionally seed only the protected Admin role.
-  // No demo operational roles, stations, users, calls, or areas are created.
-  await db.collection("companies").doc(companyId).collection("calls").doc("_seed_marker").set({
-    marker: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    note: "Keeps calls collection initialized."
-  }, { merge: true });
+    // Clean production plants intentionally seed only the protected Admin role.
+    // No demo operational roles, stations, users, calls, or areas are created.
+    transaction.set(db.collection("companies").doc(companyId).collection("calls").doc("_seed_marker"), {
+      marker: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      note: "Keeps calls collection initialized."
+    }, { merge: true });
 
-  await db.collection("companies").doc(companyId).collection("activity").doc("_seed_marker").set({
-    marker: true,
-    createdAt: admin.firestore.FieldValue.serverTimestamp(),
-    note: "Keeps activity collection initialized."
-  }, { merge: true });
+    transaction.set(db.collection("companies").doc(companyId).collection("activity").doc("_seed_marker"), {
+      marker: true,
+      createdAt: admin.firestore.FieldValue.serverTimestamp(),
+      note: "Keeps activity collection initialized."
+    }, { merge: true });
+  });
 }
 
 function normalizeStripeStatus(status) {

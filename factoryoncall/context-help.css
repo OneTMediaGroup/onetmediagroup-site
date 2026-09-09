@@ -1,0 +1,24 @@
+.foc-help-heading { display: inline !important; }
+button.foc-help-button {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; min-width: 44px; padding: 0; margin: 0 0 0 6px;
+  vertical-align: middle; border: 1px solid currentColor; border-radius: 50%;
+  background: transparent; color: inherit; font: 22px/1 system-ui, sans-serif;
+  cursor: pointer; box-shadow: none; flex-shrink: 0;
+}
+button.foc-help-button:focus-visible, .foc-help-dialog button:focus-visible { outline: 3px solid #2586e8; outline-offset: 3px; }
+dialog.foc-help-dialog {
+  box-sizing: border-box; width: min(520px, calc(100vw - 32px));
+  max-width: calc(100vw - 32px); max-height: calc(100dvh - 32px); overflow: auto;
+  margin: auto; padding: 24px; border: 1px solid #becada; border-radius: 16px;
+  background: #fff; color: #172538; box-shadow: 0 20px 70px #0005;
+  font: 16px/1.55 system-ui, sans-serif; text-align: left;
+}
+dialog.foc-help-dialog::backdrop { background: #0b152a99; }
+dialog.foc-help-dialog h2 { margin: 0 0 16px; font: 600 22px/1.3 system-ui, sans-serif; color: inherit; }
+dialog.foc-help-dialog p { margin: 0 0 16px; color: inherit; }
+dialog.foc-help-dialog .foc-help-close { min-height: 44px; padding: 10px 20px; border: 0; border-radius: 8px; background: #184c86; color: #fff; font: 600 16px/1.4 system-ui, sans-serif; cursor: pointer; }
+html[data-theme="dark"] dialog.foc-help-dialog { background: #172538; color: #f1f5fb; border-color: #526176; }
+@media (max-width: 480px) { dialog.foc-help-dialog { padding: 20px; } }
+
+body.emergency-active .foc-help-button { visibility: hidden; }
