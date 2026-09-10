@@ -1,173 +1,42 @@
 rules_version = '2';
-
 service cloud.firestore {
-  match /databases/{database}/documents {
-    function isString(value) {
-      return value is string;
-    }
-
-    function validEmail(value) {
-      return value is string && value.size() <= 254 && value.matches('^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$');
-    }
-
-    function validRole(value) {
-      return value in ['operator', 'supervisor', 'manager', 'admin'];
-    }
-
-    function validStatus(value) {
-      return value in ['active', 'inactive', 'disabled'];
-    }
-
-    function requestPlantIdMatches(plantId) {
-      return request.resource.data.plantId == plantId ||
-        request.resource.data.id == plantId ||
-        !('plantId' in request.resource.data);
-    }
-
-    function resourcePlantIdMatches(plantId) {
-      return resource.data.plantId == plantId ||
-        resource.data.id == plantId ||
-        !('plantId' in resource.data);
-    }
-
-    function isSafePlantCreate(plantId) {
-      return request.resource.data.id == plantId &&
-        request.resource.data.plantId == plantId &&
-        !(request.resource.data.productionUnlocked == true) &&
-        !(request.resource.data.paid == true) &&
-        !(request.resource.data.subscriptionStatus == 'active') &&
-        !(request.resource.data.billingStatus == 'active');
-    }
-
-    function doesNotChangeBillingFields() {
-      return !request.resource.data.diff(resource.data).affectedKeys().hasAny([
-        'productionUnlocked',
-        'paid',
-        'subscriptionStatus',
-        'billingStatus',
-        'stripeCustomerId',
-        'stripeSubscriptionId',
-        'billingEmail',
-        'billingUpdatedAt'
-      ]);
-    }
-
-    function safePlantUpdate(plantId) {
-      return requestPlantIdMatches(plantId) &&
-        resourcePlantIdMatches(plantId) &&
-        doesNotChangeBillingFields();
-    }
-
-    function safeUserWrite(plantId) {
-      return requestPlantIdMatches(plantId) &&
-        (!('role' in request.resource.data) || validRole(request.resource.data.role)) &&
-        (!('status' in request.resource.data) || validStatus(request.resource.data.status));
-    }
-
-    function safeSubcollectionWrite(plantId) {
-      return requestPlantIdMatches(plantId);
-    }
-
-    // Floor Flow plant-scoped data.
-    // Stage 1 lockdown: public access is limited to plant-scoped paths only.
-    // The app still uses plant links/PINs instead of Firebase Auth, so anyone with a plantId
-    // can access that plant. Server-only billing/contact/email collections are blocked below.
-    match /plants/{plantId} {
-      allow get: if true;
-      allow list: if false;
-
-      allow create: if isSafePlantCreate(plantId);
-      allow update: if safePlantUpdate(plantId);
-      allow delete: if false;
-
-      match /settings/{settingId} {
-        allow read: if true;
-        allow create, update: if safeSubcollectionWrite(plantId);
-        allow delete: if false;
-      }
-
-      match /areas/{areaId} {
-        allow read: if true;
-        allow create, update, delete: if safeSubcollectionWrite(plantId);
-      }
-
-      match /workCells/{workCellId} {
-        allow read: if true;
-        allow create, update, delete: if safeSubcollectionWrite(plantId);
-      }
-
-      // Legacy compatibility for older screens.
-      match /presses/{pressId} {
-        allow read: if true;
-        allow create, update, delete: if safeSubcollectionWrite(plantId);
-      }
-
-      match /users/{userId} {
-        allow read: if true;
-        allow create, update, delete: if safeUserWrite(plantId);
-      }
-
-      match /partLibrary/{partId} {
-        allow read: if true;
-        allow create, update, delete: if safeSubcollectionWrite(plantId);
-      }
-
-      match /queue/{queueId} {
-        allow read: if true;
-        allow create, update, delete: if safeSubcollectionWrite(plantId);
-      }
-
-      match /reports/{reportId} {
-        allow read: if true;
-        allow create, update: if safeSubcollectionWrite(plantId);
-        allow delete: if false;
-      }
-
-      match /activityLogs/{logId} {
-        allow read: if true;
-        allow create: if safeSubcollectionWrite(plantId);
-        allow update, delete: if false;
-      }
-
-      match /{document=**} {
-        allow read: if true;
-        allow create, update: if safeSubcollectionWrite(plantId);
-        allow delete: if false;
-      }
-    }
-
-    // Server-only collections. Cloud Functions Admin SDK bypasses rules.
-    match /mail/{docId} {
-      allow read, write: if false;
-    }
-
-    match /billingCustomers/{docId} {
-      allow read, write: if false;
-    }
-
-    match /floorFlowContacts/{docId} {
-      allow read, write: if false;
-    }
-
-    match /floorFlowCommunications/{docId} {
-      allow read, write: if false;
-    }
-
-    // Old/global data should not be used by the production Floor Flow app.
-    match /users/{userId} {
-      allow read, write: if false;
-    }
-
-    match /presses/{pressId} {
-      allow read, write: if false;
-    }
-
-    match /test/{docId} {
-      allow read, write: if false;
-    }
-
-    match /{document=**} {
-      allow read, write: if false;
-    }
+ match /databases/{database}/documents {
+  function signed() { return request.auth != null; }
+  function user(p) { return get(/databases/$(database)/documents/plants/$(p)/users/$(request.auth.token.userId)).data; }
+  function member(p) {
+   return signed() && request.auth.token.get('plantId','') == p
+    && request.auth.token.get('sessionExpiresAt',0) > request.time.toMillis()
+    && !(user(p).get('status','active') in ['inactive','disabled']) && user(p).get('isActive',true)
+    && user(p).get('authVersion',0) == request.auth.token.get('authVersion',-1);
   }
+  function role(p, roles) { return member(p) && user(p).role in roles; }
+  function plant(p) { return get(/databases/$(database)/documents/plants/$(p)).data; }
+  function owner(p) { return signed() && plant(p).get('ownerUid','') == request.auth.uid && !plant(p).get('setupComplete',false); }
+  function billing(p) { return plant(p).get('isDemo',false) || (plant(p).get('paid',false) && plant(p).get('productionUnlocked',false) && plant(p).get('subscriptionStatus','') in ['active','trialing']); }
+  function setup(p) { return role(p,['admin']) && billing(p) && !plant(p).get('isDemo',false); }
+  function samePlant(p) { return request.resource.data.get('plantId',p) == p; }
+  function actor(p) { return role(p,['operator','dieSetter','supervisor','admin']) && billing(p); }
+  match /plants/{p} {
+   allow get: if member(p) || owner(p);
+   allow list, write: if false;
+   match /users/{u} { allow read: if member(p); allow write: if false; }
+   match /credentials/{u} { allow read, write: if false; }
+   match /settings/{s} { allow read: if member(p); allow create,update: if setup(p) && samePlant(p); }
+   match /areas/{a} { allow read: if member(p) && billing(p); allow create,update: if setup(p) && samePlant(p); allow delete: if setup(p); }
+   match /workCells/{c} {
+    allow read: if member(p) && billing(p);
+    allow create: if setup(p) && samePlant(p);
+    allow delete: if setup(p);
+    allow update: if samePlant(p) && (setup(p) || (actor(p) && !resource.data.get('isLocked',false)
+      && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['slots','updatedAt','lastUpdatedBy'])
+      && request.resource.data.slots is list && request.resource.data.slots.size() == 4
+      && request.resource.data.lastUpdatedBy == user(p).name));
+   }
+   match /partLibrary/{part} { allow read: if member(p) && billing(p); allow create,update: if role(p,['supervisor','admin']) && billing(p) && samePlant(p) && !plant(p).get('isDemo',false); allow delete: if setup(p); }
+   match /activityLogs/{l} { allow read: if member(p) && billing(p); allow create: if actor(p) && samePlant(p); allow update,delete: if false; }
+   match /archives/{a} { allow read: if role(p,['supervisor','admin']) && billing(p); allow create: if setup(p) && samePlant(p); }
+   match /reports/{r} { allow read: if role(p,['supervisor','admin']) && billing(p); allow create: if role(p,['supervisor','admin']) && billing(p) && samePlant(p); }
+  }
+  match /{document=**} { allow read,write: if false; }
+ }
 }

@@ -11,10 +11,11 @@ import {
 
 import { requirePlantId } from './plant-session.js';
 
-export async function addLogToFirestore({ user, message }) {
+export async function addLogToFirestore({ user, message, ...details }) {
   const plantId = requirePlantId();
 
   await addDoc(activityLogsCollection(), {
+    ...details,
     plantId,
     user,
     message,

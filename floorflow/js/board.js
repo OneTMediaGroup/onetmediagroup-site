@@ -1,3 +1,6 @@
+import { authenticateUser } from './server-access.js';
+import { requireRoleAccess } from './auth-lock.js';
+import { sanitizeColor } from './security-guard.js';
 import { isAdmin } from './roles.js';
 import { initStore, getSession, setSession } from './store.js';
 import { formatTime, formatDateTime, statusLabel, normalizedSlotStatus } from './utils.js';
@@ -37,7 +40,7 @@ function boardStatusLabelFromSlot(slot = {}) {
 
 function getLiveSlotStatus(setup = {}) {
   const raw = String(setup.status || '').toLowerCase();
-  if (raw === 'running' || raw === 'running') return 'running';
+  if (raw === 'running' || raw === 'current') return 'running';
   if (raw === 'paused' || raw === 'pause' || raw === 'hold' || raw === 'blocked') return 'paused';
   if (String(setup.partNumber || '').trim()) return 'queued';
   return 'empty';
@@ -57,6 +60,7 @@ function getLiveSlotClass(setup = {}) {
 
 initStore();
 await requireActiveBillingAccess();
+await requireRoleAccess(['operator','dieSetter','supervisor','admin']);
 requirePlantId();
 const pressGrid = document.getElementById('pressGrid');
 const syncTimeBoard = document.getElementById('syncTimeBoard');
@@ -125,9 +129,7 @@ function renderDieSetterOptions() {
     return;
   }
 
-  select.innerHTML = dieSetters
-    .map((user) => `<option value="${user.id}">${user.name}</option>`)
-    .join('');
+  select.replaceChildren(...dieSetters.map(user => new Option(user.name, user.id)));
 }
 
 function ensureLoginModal() {
@@ -219,20 +221,13 @@ async function confirmDieSetterLogin() {
     return;
   }
 
-  if (!matchesUserCode(user, pin)) {
-    showLoginError('Invalid PIN.');
-    pinInput?.focus();
-    return;
-  }
-
   try {
     if (confirmBtn) {
       confirmBtn.disabled = true;
       confirmBtn.textContent = 'Completing...';
     }
 
-    setSession(user);
-    setStoredSessionUser(user);
+    await authenticateUser(user.id, pin);
 
     await completeAndShiftSetupInFirestore({
       pressId: pendingComplete.pressId,
@@ -267,9 +262,9 @@ function ensureReadyModal() {
     <div id="readyLoginModal" class="modal hidden">
       <div class="modal-content">
         <h3>Ready for Next Job</h3>
-        <p class="muted" style="margin-bottom:14px;">Enter Employee ID.</p>
+        <p class="muted" style="margin-bottom:14px;">Enter your PIN to confirm.</p>
 
-        <input id="readyEmployeeId" type="text" placeholder="Scan badge or enter PIN" autocomplete="off" style="width:100%;" />
+        <input id="readyEmployeeId" type="text" placeholder="Enter your PIN" autocomplete="off" style="width:100%;" />
         <div id="readyEmployeeName" class="muted" style="margin-top:8px;"></div>
 
         <div class="modal-actions">
@@ -295,30 +290,7 @@ function ensureReadyModal() {
 
 
 
-async function bootstrapSession() {
-  const storedUser = getStoredSessionUser();
-
-  if (storedUser) {
-    setSession(storedUser);
-    return;
-  }
-
-  try {
-    const users = await fetchUsersFromFirestore();
-    const defaultUser =
-      users.find((user) => user.role === 'dieSetter') ||
-      users.find((user) => user.role === 'admin') ||
-      users.find((user) => user.role === 'supervisor') ||
-      users[0];
-
-    if (defaultUser) {
-      setStoredSessionUser(defaultUser);
-      setSession(defaultUser);
-    }
-  } catch (error) {
-    console.error('❌ Failed to bootstrap board session:', error);
-  }
-}
+async function bootstrapSession() { await requireRoleAccess(['operator','dieSetter','supervisor','admin']); }
 
 function getActionUserName() {
   return 'Operator Station';
@@ -462,8 +434,8 @@ function renderBoard() {
 
     return `
       <section class="area-block">
-        <h2 style="margin-bottom:12px; border-left:8px solid ${areaColor}; padding-left:12px;">
-          ${label}
+        <h2 style="margin-bottom:12px; border-left:8px solid ${sanitizeColor(areaColor)}; padding-left:12px;">
+          ${escapeHtml(label)}
         </h2>
 
         ${sortedPresses.map(renderPressCard).join('')}
@@ -481,11 +453,11 @@ function renderPressCard(press) {
 
   return `
     <article class="press-row">
-      <button class="press-row-header die-board-press-toggle" data-toggle-press="${press.id}" type="button">
+      <button class="press-row-header die-board-press-toggle" data-toggle-press="${escapeHtml(press.id)}" type="button">
         <div>
-          <h3>${isExpanded ? '⌄' : '›'} ${press.equipmentName || `Press ${press.pressNumber}`}</h3>
+          <h3>${isExpanded ? '⌄' : '›'} ${escapeHtml(press.equipmentName || `Press ${press.pressNumber}`)}</h3>
           <div class="muted">
-            ${press.areaName || press.area || 'No work cell'}${press.isLocked ? ` · Locked by ${press.lockedBy || 'Admin'}` : ''}
+            ${escapeHtml(press.areaName || press.area || 'No work cell')}${press.isLocked ? ` · Locked by ${escapeHtml(press.lockedBy || 'Admin')}` : ''}
           </div>
         </div>
         <div class="muted">${activeCount} active setup${activeCount === 1 ? '' : 's'}</div>
@@ -536,7 +508,7 @@ function wireBoardActions() {
 }
 
 function renderSlot(press, slot, slotIndex) {
-  const areaColor = press.areaColor || '#444';
+  const areaColor = sanitizeColor(press.areaColor, '#444444');
   const empty = !slot.partNumber;
   const displayStatus =
   empty ? 'no_setup' :
@@ -553,32 +525,32 @@ function renderSlot(press, slot, slotIndex) {
     <section class="slot-card${emptyClass}${readyClass}" style="border-left:6px solid ${displayStatus === 'ready' ? '#22c55e' : areaColor};">
       <div class="slot-header">
         <h4>Slot ${slotIndex + 1}</h4>
-        <span class="status-pill ${displayStatus}">${empty ? 'No Setup' : statusLabel(displayStatus)}</span>
+        <span class="status-pill ${escapeHtml(displayStatus)}">${escapeHtml(empty ? 'No Setup' : statusLabel(displayStatus))}</span>
       </div>
 
       <div class="slot-meta">
-        <div class="meta-box"><span>Part</span><strong>${slot.partNumber || '—'}</strong></div>
-        <div class="meta-box"><span>Qty</span><strong>${slot.partNumber ? slot.qtyRemaining : '—'}</strong></div>
+        <div class="meta-box"><span>Part</span><strong>${escapeHtml(slot.partNumber || '—')}</strong></div>
+        <div class="meta-box"><span>Qty</span><strong>${escapeHtml(slot.partNumber ? slot.qtyRemaining : '—')}</strong></div>
       </div>
 
-      <div class="slot-note">${slot.notes || 'No notes added.'}</div>
-      <div class="muted">Last updated by ${slot.lastUpdatedBy || press.lastUpdatedBy || '—'}</div>
+      <div class="slot-note">${escapeHtml(slot.notes || 'No notes added.')}</div>
+      <div class="muted">Last updated by ${escapeHtml(slot.lastUpdatedBy || press.lastUpdatedBy || '—')}</div>
       ${lockedBadge}
 
       <div class="slot-actions">
         ${
           canMarkReady
-            ? `<button class="button full" data-ready data-press-id="${press.id}" data-slot-index="${slotIndex}">Ready for Next Job</button>`
+            ? `<button class="button full" data-ready data-press-id="${escapeHtml(press.id)}" data-slot-index="${slotIndex}">Ready for Next Job</button>`
             : ''
         }
         ${
           showCompleteShift
-            ? `<button class="button success full" data-complete-shift data-press-id="${press.id}" data-slot-index="${slotIndex}">Complete + Shift</button>`
+            ? `<button class="button success full" data-complete-shift data-press-id="${escapeHtml(press.id)}" data-slot-index="${slotIndex}">Complete + Shift</button>`
             : ''
         }
         ${
           empty
-            ? `<button class="button primary full" data-open-setup data-press-id="${press.id}" data-slot-index="${slotIndex}">View Notes</button>`
+            ? `<button class="button primary full" data-open-setup data-press-id="${escapeHtml(press.id)}" data-slot-index="${slotIndex}">View Notes</button>`
             : ''
         }
       </div>
@@ -612,14 +584,16 @@ async function handleReadyForChangeover(pressId, slotIndex) {
   modal.classList.remove('hidden');
 
   input.value = '';
-  nameLabel.textContent = '';
+  input.type = 'password';
+  input.placeholder = 'Enter your PIN';
+  nameLabel.textContent = `Confirm: ${getSession()?.name || ''}`;
   confirmBtn.disabled = false;
   confirmBtn.textContent = 'Confirm Ready';
 
   setTimeout(() => input.focus(), 100);
 
   const updateNamePreview = () => {
-    const user = findUserByScan(input.value);
+    const user = getSession();
     nameLabel.textContent = user ? `Confirm: ${user.name}` : '';
     return user;
   };
@@ -639,10 +613,10 @@ async function handleReadyForChangeover(pressId, slotIndex) {
 
   async function processReadyScan() {
     const entered = input.value.trim();
-    const user = findUserByScan(entered);
+    const user = getSession();
 
     if (!user) {
-      alert('Invalid employee ID, PIN, or badge code.');
+      alert('Your session expired. Sign in again.');
       input.value = '';
       nameLabel.textContent = '';
       input.focus();
@@ -662,10 +636,8 @@ async function handleReadyForChangeover(pressId, slotIndex) {
       confirmBtn.disabled = true;
       confirmBtn.textContent = 'Saving...';
 
-      // The write guard checks the active session. Set the verified operator
-      // from the code scan before saving Ready for Next Job.
-      setSession(user);
-      setStoredSessionUser(user);
+      // Reauthenticate the current user before confirming the queue change.
+      await authenticateUser(user.id, entered);
 
       await updateSetupInFirestore({
         pressId,
@@ -726,9 +698,9 @@ function refreshOpenDialog() {
 function fillDialog(press, slot, slotIndex) {
   const empty = !slot.partNumber;
 
-  document.getElementById('dialogTitle').textContent = `${press.equipmentName || `Press ${press.pressNumber}`} · Slot ${slotIndex + 1}`;
+  document.getElementById('dialogTitle').textContent = `${escapeHtml(press.equipmentName || `Press ${press.pressNumber}`)} · Slot ${slotIndex + 1}`;
   document.getElementById('dialogSubtitle').textContent =
-    `${press.areaName || press.area || 'No work cell'}${press.isLocked ? ' · LOCKED' : ''}`;
+    `${escapeHtml(press.areaName || press.area || 'No work cell')}${press.isLocked ? ' · LOCKED' : ''}`;
   document.getElementById('dialogPart').textContent = slot.partNumber || '—';
   document.getElementById('dialogQty').textContent = slot.partNumber ? String(slot.qtyRemaining) : '—';
   document.getElementById('dialogStatus').textContent = slot.partNumber ? statusLabel(normalizedSlotStatus(slot.status, slotIndex, true)) : 'No setup';
@@ -919,7 +891,7 @@ function syncAreaFilterOptions() {
   areaFilterBoard.innerHTML = `
     <option value="all">All</option>
     <option value="unassigned">Unassigned</option>
-    ${areaNames.map((name) => `<option value="${name}">${name}</option>`).join('')}
+    ${areaNames.map((name) => `<option value="${escapeHtml(name)}">${escapeHtml(name)}</option>`).join('')}
   `;
 
   areaFilterBoard.value =
@@ -942,3 +914,6 @@ function filteredPresses() {
 window.addEventListener('beforeunload', () => {
   if (typeof unsubscribePresses === 'function') unsubscribePresses();
 });
+function escapeHtml(value = '') {
+ return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+}

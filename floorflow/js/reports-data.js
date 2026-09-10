@@ -56,9 +56,7 @@ export async function loadActivityLogsForReports() {
 
   const sources = [
     ['plants', plantId, 'activityLogs'],
-    ['plants', plantId, 'logs'],
-    ['activityLogs'],
-    ['logs']
+    ['plants', plantId, 'logs']
   ];
 
   for (const path of sources) {
@@ -280,7 +278,8 @@ function formatDateTime(value) {
 }
 
 function csvEscape(value = '') {
-  const text = String(value ?? '');
+  const raw = String(value ?? '');
+  const text = /^[\s]*[=+@-]/.test(raw) ? "'" + raw : raw;
   if (/[",\n\r]/.test(text)) return `"${text.replaceAll('"', '""')}"`;
   return text;
 }

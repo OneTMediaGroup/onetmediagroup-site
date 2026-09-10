@@ -29,7 +29,7 @@ export async function loadPartLibrary(options = {}) {
     const snap = await getDocs(query(collection(db, 'plants', plantId, 'partLibrary'), limit(options.limit || 1000)));
     const remote = snap.docs.map((item) => item.data()).filter((item) => item?.partNumber);
 
-    const merged = mergeParts(remote, local);
+    const merged = mergeParts(remote);
     saveLocalParts(merged);
 
     return merged;
@@ -41,7 +41,7 @@ export async function loadPartLibrary(options = {}) {
 
 export function loadRecentParts() {
   try {
-    return JSON.parse(localStorage.getItem() || '[]');
+    return JSON.parse(localStorage.getItem(recentKey()) || '[]');
   } catch {
     return [];
   }
@@ -53,17 +53,16 @@ export async function savePart(part) {
     throw new Error('Part number is required.');
   }
 
-  savePartLocal(cleanPart);
-  saveRecentPartLocal(cleanPart);
-
   const plantId = activePlantId();
-  if (!plantId) return cleanPart;
+  if (!plantId) throw new Error('Open the parts library from a plant link.');
 
   await setDoc(doc(db, 'plants', plantId, 'partLibrary', safePartId(cleanPart.partNumber)), {
     plantId,
     ...cleanPart
   }, { merge: true });
 
+  savePartLocal(cleanPart);
+  saveRecentPartLocal(cleanPart);
   return cleanPart;
 }
 
@@ -71,39 +70,20 @@ export async function deletePart(partNumber) {
   const clean = cleanPartNumber(partNumber);
   if (!clean) return;
 
-  const current = loadLocalParts().filter((item) => item.partNumber !== clean);
-  saveLocalParts(current);
-
-  const recent = loadRecentParts().filter((item) => item.partNumber !== clean);
-  localStorage.setItem(recentKey(), JSON.stringify(recent));
-
-  try {
-    const plantId = activePlantId();
-    if (!plantId) return;
-    await deleteDoc(doc(db, 'plants', plantId, 'partLibrary', safePartId(clean)));
-  } catch (error) {
-    console.warn('Part remote delete skipped:', error);
-  }
+  const plantId = activePlantId();
+  if (!plantId) throw new Error('Open the parts library from a plant link.');
+  await deleteDoc(doc(db, 'plants', plantId, 'partLibrary', safePartId(clean)));
+  saveLocalParts(loadLocalParts().filter(item => item.partNumber !== clean));
+  localStorage.setItem(recentKey(), JSON.stringify(loadRecentParts().filter(item => item.partNumber !== clean)));
 }
 
 export async function rememberPart({ partNumber, unit = 'Pcs', description = '' }) {
   const cleanPart = normalizePart({ partNumber, unit, description });
   if (!cleanPart.partNumber) return;
 
-  saveRecentPartLocal(cleanPart);
-  savePartLocal(cleanPart);
+  const known = loadLocalParts().find(part => part.partNumber === cleanPart.partNumber);
+  saveRecentPartLocal(known || cleanPart);
 
-  try {
-    const plantId = activePlantId();
-    if (!plantId) return;
-
-    await setDoc(doc(db, 'plants', plantId, 'partLibrary', safePartId(cleanPart.partNumber)), {
-      plantId,
-      ...cleanPart
-    }, { merge: true });
-  } catch (error) {
-    console.warn('Part library remote save skipped:', error);
-  }
 }
 
 export function findPartMatches(queryText, maxResults = 8) {
@@ -380,7 +360,8 @@ function findHeaderIndex(header, options) {
 }
 
 function csvEscape(value = '') {
-  const text = String(value ?? '');
+  const raw = String(value ?? '');
+  const text = /^[\s]*[=+@-]/.test(raw) ? "'" + raw : raw;
   if (/[",\n\r]/.test(text)) return `"${text.replaceAll('"', '""')}"`;
   return text;
 }

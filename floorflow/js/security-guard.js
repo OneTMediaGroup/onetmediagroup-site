@@ -1,7 +1,7 @@
 import { getSession } from './store.js';
 import { requirePlantId } from './plant-session.js';
 
-export const ROLES = Object.freeze(['operator', 'dieSetter', 'supervisor', 'admin']);
+export const ROLES = Object.freeze(['operator', 'dieSetter', 'supervisor', 'admin', 'display']);
 export const SETUP_WRITE_ROLES = Object.freeze(['operator', 'dieSetter', 'supervisor', 'admin']);
 export const SUPERVISOR_WRITE_ROLES = Object.freeze(['supervisor', 'admin']);
 export const ADMIN_WRITE_ROLES = Object.freeze(['admin']);
@@ -27,7 +27,7 @@ export function assertRoleSession(allowedRoles = [], message = 'You do not have 
     throw makeAccessError('Login required before this action.');
   }
 
-  if (session.status === 'inactive' || session.isActive === false) {
+  if (['inactive', 'disabled'].includes(session.status) || session.isActive === false) {
     throw makeAccessError('This user is inactive.');
   }
 

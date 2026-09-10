@@ -1,37 +1,48 @@
+import { assertSupervisorSession, assertPlantMatch } from './security-guard.js';
 import { db } from './firebase-config.js';
 import {
   doc,
   collection,
   getDoc,
-  updateDoc,
-  addDoc
+  runTransaction
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 import { rememberPart } from './part-library.js';
 export async function saveSupervisorSlot({ workCellId, slotIndex, userName, setup }) {
-  const access = supervisorAccess();
+  const access = assertSupervisorSession();
 
   if (!workCellId) {
     throw new Error('Missing work cell ID.');
   }
 
   const ref = await resolveWorkCellRef(access.plantId, workCellId);
-  const snap = await getDoc(ref);
+  const safeIndex = Number(slotIndex);
+  if (!Number.isInteger(safeIndex) || safeIndex < 0 || safeIndex > 3) throw new Error('Invalid queue slot.');
+  const qty = Number(setup?.qtyRemaining || 0);
+  if (!Number.isFinite(qty) || qty < 0) throw new Error('Quantity must be a non-negative number.');
+  const logRef = doc(collection(db, 'plants', access.plantId, 'activityLogs'));
+  let savedSlot;
+  await runTransaction(db, async transaction => {
+  const snap = await transaction.get(ref);
 
   if (!snap.exists()) {
     throw new Error('Work cell not found.');
   }
 
   const now = new Date().toISOString();
-  const safeIndex = Math.max(0, Math.min(Number(slotIndex || 0), 3));
-  const cleanUser = cleanText(userName || access.userName || 'Supervisor', 80);
+  assertPlantMatch(snap.data(), access.plantId);
+  if (snap.data().isLocked) throw new Error('This work cell is locked. Ask an administrator to unlock it.');
+  if (setup?.expectedUpdatedAt !== undefined && (snap.data().slots?.[safeIndex]?.updatedAt || '') !== setup.expectedUpdatedAt) {
+    throw new Error('This slot changed on another screen. Refresh and review before saving.');
+  }
+  const cleanUser = cleanText(access.userName || 'Supervisor', 80);
   const requestedStatus = normalizeStatus(setup?.status || 'next');
   const slots = normalizeSlots(snap.data().slots);
 
   slots[safeIndex] = {
     ...slots[safeIndex],
     partNumber: cleanText(setup?.partNumber || '', 80),
-    qtyRemaining: Number(setup?.qtyRemaining || 0),
+    qtyRemaining: qty,
     status: requestedStatus,
     notes: cleanText(setup?.notes || '', 500),
     unit: cleanUnit(setup?.unit || slots[safeIndex]?.unit || 'Pcs'),
@@ -46,23 +57,20 @@ export async function saveSupervisorSlot({ workCellId, slotIndex, userName, setu
       }))
     : slots;
 
-  await updateDoc(ref, {
+  transaction.update(ref, {
     slots: finalSlots,
     updatedAt: now,
     lastUpdatedBy: cleanUser
   });
 
-  if (slots[safeIndex].partNumber) {
-    await rememberPart({
-      partNumber: slots[safeIndex].partNumber,
-      unit: slots[safeIndex].unit || 'Pcs'
-    });
-  }
-
-  await safeLog(access.plantId, {
+  transaction.set(logRef, {
     plantId: access.plantId,
     workCellId,
     pressId: workCellId,
+    workCellName: snap.data().workCellName || snap.data().equipmentName || workCellId,
+    partNumber: slots[safeIndex].partNumber,
+    qty: slots[safeIndex].qtyRemaining,
+    unit: slots[safeIndex].unit,
     slotIndex: safeIndex,
     action: requestedStatus === 'current' ? 'slot_running' : requestedStatus === 'paused' ? 'slot_paused' : 'slot_updated',
     message: requestedStatus === 'current'
@@ -74,13 +82,18 @@ export async function saveSupervisorSlot({ workCellId, slotIndex, userName, setu
     createdAt: now,
     updatedAt: now
   });
+  savedSlot = slots[safeIndex];
+  });
+  if (savedSlot.partNumber) {
+    try { await rememberPart(savedSlot); }
+    catch (error) { console.warn('Queue saved; recent parts could not be updated:', error); }
+  }
 }
 
 async function resolveWorkCellRef(plantId, workCellId) {
   const candidates = [
     doc(db, 'plants', plantId, 'workCells', workCellId),
-    doc(db, 'plants', plantId, 'presses', workCellId),
-    doc(db, 'presses', workCellId)
+    doc(db, 'plants', plantId, 'presses', workCellId)
   ];
 
   for (const ref of candidates) {
@@ -91,44 +104,6 @@ async function resolveWorkCellRef(plantId, workCellId) {
   return candidates[0];
 }
 
-async function safeLog(plantId, payload) {
-  try {
-    await addDoc(collection(db, 'plants', plantId, 'activityLogs'), payload);
-  } catch (error) {
-    console.warn('Supervisor activity log skipped:', error);
-  }
-}
-
-function supervisorAccess() {
-  const params = new URLSearchParams(window.location.search);
-
-  const plantId =
-    params.get('plant') ||
-    params.get('plantId') ||
-    localStorage.getItem('floor_flow_active_plant_id') ||
-    localStorage.getItem('floorFlowActivePlantId') ||
-    localStorage.getItem('activePlantId') ||
-    '';
-
-  let userName = 'Supervisor';
-
-  for (const key of ['floor_flow_session_user','floorflow_supervisor_session','floor_flow_supervisor_session','floorFlowUser','currentUser']) {
-    try {
-      const raw = localStorage.getItem(key);
-      if (!raw) continue;
-      const parsed = JSON.parse(raw);
-      userName = parsed.name || parsed.userName || parsed.displayName || parsed.employeeName || userName;
-      break;
-    } catch {}
-  }
-
-  if (!plantId) {
-    throw new Error('Active plant missing. Open Supervisor from a plant access link.');
-  }
-
-  return { plantId, userName };
-}
-
 function cleanText(value = '', maxLength = 500) {
   return String(value ?? '').trim().slice(0, maxLength);
 }
@@ -137,6 +112,7 @@ function normalizeStatus(value = 'next') {
   const status = String(value || 'next').toLowerCase();
   if (status === 'current' || status === 'running') return 'current';
   if (status === 'paused' || status === 'pause' || status === 'hold' || status === 'blocked') return 'paused';
+  if (status === 'ready' || status === 'ready_for_changeover') return 'ready';
   return 'next';
 }
 

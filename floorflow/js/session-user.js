@@ -1,8 +1,10 @@
+import { getActivePlantId } from './plant-session.js';
 const SESSION_USER_KEY = 'die_set_up_session_user';
 
 export function getStoredSessionUser() {
   try {
-    return JSON.parse(sessionStorage.getItem(SESSION_USER_KEY) || 'null');
+    const user = JSON.parse(sessionStorage.getItem(SESSION_USER_KEY) || 'null');
+    return user?.plantId === getActivePlantId() ? user : null;
   } catch {
     return null;
   }
@@ -14,7 +16,7 @@ export function setStoredSessionUser(user) {
     return;
   }
 
-  sessionStorage.setItem(SESSION_USER_KEY, JSON.stringify(user));
+  sessionStorage.setItem(SESSION_USER_KEY, JSON.stringify({ ...user, pin: undefined, plantId: getActivePlantId() }));
 }
 
 export function clearStoredSessionUser() {

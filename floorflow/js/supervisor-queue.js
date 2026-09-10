@@ -98,7 +98,7 @@ function renderSlot(cell, slot, index) {
   const label = status === 'running' ? 'Running' : status === 'paused' ? 'Paused' : status === 'queued' ? 'Saved' : 'No Setup';
 
   return `
-    <form class="compact-slot status-${status}" data-slot-row data-cell-id="${escapeAttr(cellId(cell))}" data-slot-index="${index}">
+    <form class="compact-slot status-${status}" data-slot-row data-cell-id="${escapeAttr(cellId(cell))}" data-slot-index="${index}" data-updated-at="${escapeAttr(slot.updatedAt || '')}">
       <div class="compact-slot__slot"><strong>Slot ${index + 1}</strong><small>${index === 0 ? 'Running position' : `Next ${index}`}</small></div>
       <div><span class="compact-status compact-status--${status}">${label}</span></div>
       <div class="part-field-wrap"><input name="partNumber" value="${escapeAttr(slot.partNumber || '')}" placeholder="Part number" autocomplete="off" data-part-input /><div class="part-suggest-box" data-part-suggestions></div></div>
@@ -206,6 +206,7 @@ async function saveSlot(button, status) {
     slotIndex: Number(row.dataset.slotIndex || 0),
     userName: currentUserName(),
     setup: {
+      expectedUpdatedAt: row.dataset.updatedAt || '',
       partNumber: row.elements.partNumber.value.trim(),
       qtyRemaining: Number(row.elements.qtyRemaining.value || 0),
       unit: row.elements.unit?.value || 'Pcs',
@@ -223,7 +224,7 @@ async function clearSlot(button) {
     workCellId: row.dataset.cellId,
     slotIndex: Number(row.dataset.slotIndex || 0),
     userName: currentUserName(),
-    setup: { partNumber: '', qtyRemaining: 0, unit: 'Pcs', notes: '', status: 'next' }
+    setup: { expectedUpdatedAt: row.dataset.updatedAt || '', partNumber: '', qtyRemaining: 0, unit: 'Pcs', notes: '', status: 'next' }
   }));
 }
 

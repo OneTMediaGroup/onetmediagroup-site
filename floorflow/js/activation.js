@@ -1,3 +1,24 @@
+import { serverRequest } from './server-access.js';
+import { db } from './firebase-config.js';
+import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
+
+let verifiedPlantId = '';
+
+export async function refreshProductionPaymentStatus() {
+  verifiedPlantId = '';
+  const plantId = getPendingProductionPlantId();
+  if (!plantId) return false;
+  const snap = await getDoc(doc(db, 'plants', plantId));
+  const plant = snap.exists() ? snap.data() : {};
+  if (plant.productionUnlocked === true && plant.paid === true &&
+      ['active', 'trialing'].includes(plant.billingStatus) &&
+      ['active', 'trialing'].includes(plant.subscriptionStatus)) {
+    verifiedPlantId = plantId;
+    markProductionPaymentComplete(plant.billingPlan);
+  }
+  return isProductionPaymentComplete();
+}
+
 // Floor Flow production paywall helpers.
 // Production flow now uses a Firebase Cloud Function to create Stripe Checkout Sessions
 // so each Stripe subscription is tied to exactly one plantId.
@@ -10,8 +31,8 @@ export const FLOORFLOW_PLAN_LABELS = {
 };
 
 export const FLOORFLOW_PLAN_PRICES = {
-  monthly: '$99 CAD / month',
-  yearly: '$999 CAD / year'
+  monthly: '$24.99 CAD / month',
+  yearly: '$249.99 CAD / year'
 };
 
 export function normalizeStripePlan(plan = 'monthly') {
@@ -52,42 +73,20 @@ export async function createStripeCheckoutSession({
     throw new Error('Stripe checkout function is not configured.');
   }
 
-  const url = new URL(window.location.href);
+  const url = new URL('onboarding.html', window.location.href);
   url.searchParams.set('mode', 'production');
   url.searchParams.set('payment', 'success');
   url.searchParams.set('plan', cleanPlan);
   url.searchParams.set('plantId', plantId);
 
-  const cancelUrl = new URL(window.location.href);
+  const cancelUrl = new URL('onboarding.html', window.location.href);
   cancelUrl.searchParams.set('mode', 'production');
   cancelUrl.searchParams.set('checkout', 'cancelled');
   cancelUrl.searchParams.set('plan', cleanPlan);
   cancelUrl.searchParams.set('plantId', plantId);
 
-  const response = await fetch(FLOORFLOW_CHECKOUT_SESSION_ENDPOINT, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      plantId,
-      plantName,
-      customerEmail,
-      plan: cleanPlan,
-      origin: window.location.origin,
-      successUrl: url.toString(),
-      cancelUrl: cancelUrl.toString()
-    })
-  });
-
-  let payload = {};
-  try {
-    payload = await response.json();
-  } catch (error) {
-    payload = {};
-  }
-
-  if (!response.ok || !payload.url) {
-    throw new Error(payload.error || 'Stripe checkout could not be started.');
-  }
+  const payload = await serverRequest('createCheckoutSession', { plantId, plan: cleanPlan });
+  if (!payload.url) throw new Error('Checkout is unavailable.');
 
   return payload.url;
 }
@@ -121,21 +120,11 @@ export function markProductionPaymentComplete(plan = '') {
 }
 
 export function isProductionPaymentComplete() {
-  // Do not trust old browser localStorage by itself.
-  // A production plant is considered paid during onboarding only when Stripe
-  // redirects back with a success flag for the current checkout session.
-  // This prevents local VS Code / localhost testing from staying unlocked
-  // because of stale localStorage from a previous paid test.
-  if (hasStripeSuccessReturn()) {
-    const params = new URLSearchParams(window.location.search);
-    markProductionPaymentComplete(params.get('plan') || params.get('floorflow_plan') || '');
-    return true;
-  }
-
-  return false;
+  return Boolean(verifiedPlantId && verifiedPlantId === getPendingProductionPlantId());
 }
 
 export function clearProductionPaymentState() {
+  verifiedPlantId = '';
   localStorage.removeItem('floor_flow_payment_status');
   localStorage.removeItem('floor_flow_activation_status');
   localStorage.removeItem('floor_flow_activation_key');

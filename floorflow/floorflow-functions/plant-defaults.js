@@ -1,10 +1,3 @@
-import {
-  doc,
-  runTransaction
-} from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-
-import { db } from './firebase-config.js';
-
 function nowIso() {
   return new Date().toISOString();
 }
@@ -45,7 +38,7 @@ function makeSlots(slots) {
   return normalized.slice(0, 4);
 }
 
-export function buildDemoAreas() {
+function buildDemoAreas() {
   return [
     { id: 'area-stamping', name: 'Stamping', color: '#2563eb' },
     { id: 'area-cnc', name: 'CNC', color: '#7c3aed' },
@@ -56,13 +49,13 @@ export function buildDemoAreas() {
   ];
 }
 
-export function buildProductionAreas(areaName = 'Main Floor') {
+function buildProductionAreas(areaName = 'Main Floor') {
   return [
     { id: 'area-main-floor', name: areaName || 'Main Floor', color: '#2563eb' }
   ];
 }
 
-export function buildDemoUsers(adminName = 'Plant Admin', adminPin = '1000', adminFirstName = '', adminLastName = '', adminEmail = '') {
+function buildDemoUsers(adminName = 'Plant Admin', adminPin = '1000', adminFirstName = '', adminLastName = '', adminEmail = '') {
   const cleanAdminPin = String(adminPin || '1000').trim() || '1000';
 
   return [
@@ -126,7 +119,7 @@ export function buildDemoUsers(adminName = 'Plant Admin', adminPin = '1000', adm
   ];
 }
 
-export function buildProductionUsers(adminName = 'Plant Admin', adminPin = '1000', badgeCode = '', adminFirstName = '', adminLastName = '', adminEmail = '') {
+function buildProductionUsers(adminName = 'Plant Admin', adminPin = '1000', badgeCode = '', adminFirstName = '', adminLastName = '', adminEmail = '') {
   const cleanAdminPin = String(adminPin || '1000').trim() || '1000';
 
   return [
@@ -145,7 +138,7 @@ export function buildProductionUsers(adminName = 'Plant Admin', adminPin = '1000
   ];
 }
 
-export function buildDemoWorkCells() {
+function buildDemoWorkCells() {
   const now = nowIso();
 
   return [
@@ -243,7 +236,7 @@ export function buildDemoWorkCells() {
   ];
 }
 
-export function buildProductionWorkCells(equipmentName = 'First Work Cell', areaName = 'Main Floor') {
+function buildProductionWorkCells(equipmentName = 'First Work Cell', areaName = 'Main Floor') {
   const now = nowIso();
 
   return [
@@ -264,144 +257,5 @@ export function buildProductionWorkCells(equipmentName = 'First Work Cell', area
   ];
 }
 
-export async function seedOnboardingPlant({
-  plantId,
-  plantName = 'Floor Flow Plant',
-  companyName = 'Floor Flow',
-  adminName = 'Plant Admin',
-  adminFirstName = '',
-  adminLastName = '',
-  adminEmail = '',
-  adminPin = '1000',
-  adminBadgeCode = '',
-  mode = 'demo',
-  timezone = 'America/Toronto',
-  areaName = 'Main Floor',
-  equipmentName = 'First Work Cell',
-  brandText = 'Floor Flow',
-  logoUrl = '',
-  brandingMode = 'text'
-}) {
-  if (!plantId) throw new Error('Missing plantId.');
 
-  const normalizedMode = normalizeMode(mode);
-  const isDemo = normalizedMode === 'demo';
-  const now = nowIso();
-
-  const areas = isDemo ? buildDemoAreas() : buildProductionAreas(areaName);
-  const users = isDemo
-    ? buildDemoUsers(adminName, adminPin, adminFirstName, adminLastName, adminEmail)
-    : buildProductionUsers(adminName, adminPin, adminBadgeCode, adminFirstName, adminLastName, adminEmail);
-  const workCells = isDemo ? buildDemoWorkCells() : buildProductionWorkCells(equipmentName, areaName);
-
-  const plantRef = doc(db, 'plants', plantId);
-  await runTransaction(db, async transaction => {
-    const existing = await transaction.get(plantRef);
-    const plant = existing.exists() ? existing.data() : {};
-    if (plant.setupComplete === true) {
-      throw new Error('This plant is already set up. Open its Admin Console instead.');
-    }
-    if (!isDemo && !(plant.productionUnlocked === true && plant.paid === true &&
-      ['active', 'trialing'].includes(plant.billingStatus) &&
-      ['active', 'trialing'].includes(plant.subscriptionStatus))) {
-      throw new Error('Payment is not confirmed yet. Wait a moment and try again.');
-    }
-    if (existing.exists() && (plant.isDemo === true || plant.mode === 'demo') !== isDemo) {
-      throw new Error('Plant mode does not match this setup.');
-    }
-  transaction.set(plantRef, {
-    id: plantId,
-    plantId,
-    plantName,
-    name: plantName,
-    companyName,
-    onboardingContact: {
-      firstName: adminFirstName || '',
-      lastName: adminLastName || '',
-      fullName: adminName || '',
-      email: adminEmail || ''
-    },
-    demoContactEmail: isDemo ? adminEmail || '' : '',
-    demoCreatedAt: isDemo ? now : '',
-    mode: normalizedMode,
-    environment: normalizedMode,
-    isDemo,
-    timezone,
-    setupComplete: true,
-    pendingOnboarding: false,
-    onboardingCompletedAt: now,
-    limits: {
-      users: users.length,
-      areas: areas.length,
-      workCells: workCells.length,
-      equipment: workCells.length
-    },
-    createdAt: now,
-    updatedAt: now
-  }, { merge: true });
-
-  transaction.set(doc(db, 'plants', plantId, 'settings', 'main'), {
-    plantId,
-    plantName,
-    companyName,
-    onboardingContact: {
-      firstName: adminFirstName || '',
-      lastName: adminLastName || '',
-      fullName: adminName || '',
-      email: adminEmail || ''
-    },
-    demoContactEmail: isDemo ? adminEmail || '' : '',
-    demoCreatedAt: isDemo ? now : '',
-    mode: normalizedMode,
-    environment: normalizedMode,
-    isDemo,
-    timezone,
-
-    // Branding is stored both top-level and nested for compatibility.
-    // The live screens and System Controls read the top-level fields.
-    brandingMode,
-    brandText,
-    logoUrl,
-    branding: {
-      mode: brandingMode,
-      brandingMode,
-      companyName,
-      plantName,
-      brandText,
-      logoUrl,
-      accentColor: '#2563eb'
-    },
-    createdAt: now,
-    updatedAt: now
-  }, { merge: true });
-
-  for (const area of areas) {
-    transaction.set(doc(db, 'plants', plantId, 'areas', area.id), withPlant(area, plantId), { merge: true });
-  }
-
-  for (const user of users) {
-    transaction.set(doc(db, 'plants', plantId, 'users', user.id), withPlant(user, plantId), { merge: true });
-  }
-
-  for (const workCell of workCells) {
-    transaction.set(doc(db, 'plants', plantId, 'workCells', workCell.id), withPlant(workCell, plantId), { merge: true });
-  }
-
-  transaction.set(doc(db, 'plants', plantId, 'activityLogs', 'plant-onboarded'), {
-    plantId,
-    severity: 'info',
-    action: 'plant_onboarded',
-    message: `${plantName} onboarded in ${normalizedMode} mode.`,
-    createdAt: now,
-    updatedAt: now
-  });
-
-  });
-
-  return {
-    plantId,
-    users,
-    areas,
-    workCells
-  };
-}
+module.exports={buildDemoAreas,buildDemoUsers,buildDemoWorkCells,buildProductionAreas,buildProductionUsers,buildProductionWorkCells};

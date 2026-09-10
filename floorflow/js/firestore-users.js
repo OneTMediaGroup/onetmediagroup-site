@@ -1,3 +1,4 @@
+import { saveServerUser } from './server-access.js';
 import { db } from './firebase-config.js';
 import { usersCollection, userDoc } from './firestore-paths.js';
 import {
@@ -48,15 +49,6 @@ export async function updateUserInFirestore(userId, updates) {
   if (!snap.exists()) throw new Error('User not found.');
   assertPlantMatch(snap.data(), access.plantId, 'This user does not belong to the active plant.');
 
-  await updateDoc(ref, {
-    firstName: sanitizeText(updates.firstName, 40),
-    lastName: sanitizeText(updates.lastName, 40),
-    name: sanitizeText(updates.name, 80),
-    employeeId: sanitizeText(updates.employeeId, 40),
-    pin: sanitizeText(updates.pin, 40),
-    badgeCode: sanitizeText(updates.badgeCode, 120),
-    role: sanitizeRole(updates.role),
-    status: sanitizeUserStatus(updates.status),
-    updatedAt: new Date().toISOString()
-  });
+  const result = await saveServerUser(updates, userId);
+  if (result.reauthenticate) { location.reload(); }
 }

@@ -1,3 +1,4 @@
+import { getActivePlantId } from './plant-session.js';
 import { demoPresses, demoUsers, demoStatuses, demoAuditLog } from './demo-data.js';
 
 const KEYS = {
@@ -24,7 +25,10 @@ export function initStore() {
 }
 
 export function getSession() {
-  return JSON.parse(sessionStorage.getItem(KEYS.session) || 'null');
+  try {
+    const session = JSON.parse(sessionStorage.getItem(KEYS.session) || 'null');
+    return session?.plantId === getActivePlantId() ? session : null;
+  } catch { return null; }
 }
 
 export function setSession(session) {
@@ -34,7 +38,7 @@ export function setSession(session) {
     return;
   }
 
-  sessionStorage.setItem(KEYS.session, JSON.stringify(session));
+  sessionStorage.setItem(KEYS.session, JSON.stringify({ ...session, pin: undefined, plantId: getActivePlantId() }));
   localStorage.removeItem(KEYS.session);
 }
 

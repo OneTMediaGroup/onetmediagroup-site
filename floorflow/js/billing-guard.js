@@ -1,3 +1,5 @@
+import {serverRequest} from './server-access.js';
+import { requireRoleAccess } from './auth-lock.js';
 import { db } from './firebase-config.js';
 import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { requirePlantId, buildRelativePlantLink } from './plant-session.js';
@@ -94,10 +96,11 @@ function renderBillingLockedScreen(plantId, plant = {}) {
         </div>
 
         <p style="margin: 0 0 24px; color: #475569; line-height: 1.55;">
-          Reactivate the subscription through Floor Flow onboarding or contact support.
+          An administrator can manage payment details or reactivate the subscription.
         </p>
 
         <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+          <button id="lockedManageBilling" class="button primary" type="button">Manage Billing</button>
           <a href="${onboardingLink}" style="
             display: inline-flex;
             align-items: center;
@@ -128,6 +131,7 @@ function renderBillingLockedScreen(plantId, plant = {}) {
       </section>
     </main>
   `;
+  document.getElementById('lockedManageBilling').onclick=async()=>{try{await requireRoleAccess(['admin']);const result=await serverRequest('createFloorFlowPortal',{plantId});location.href=result.url;}catch(error){alert(error.message);}};
 }
 
 function escapeHtml(value = '') {
@@ -141,6 +145,7 @@ function escapeHtml(value = '') {
 
 export async function requireActiveBillingAccess() {
   const plantId = requirePlantId();
+  await requireRoleAccess();
   const snap = await getDoc(doc(db, 'plants', plantId));
 
   if (!snap.exists()) {

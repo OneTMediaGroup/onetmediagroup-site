@@ -1,3 +1,4 @@
+import { serverRequest, logout } from './server-access.js';
 import { requireRoleAccess } from './auth-lock.js';
 import { requireActiveBillingAccess } from './billing-guard.js';
 import { getActivePlantInfo, demoNoticeHtml } from './demo-restrictions.js';
@@ -28,7 +29,8 @@ let cleanupCurrentTool = null;
 init();
 
 
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+  await logout();
   clearStoredSessionUser();
   setSession(null);
   location.reload();
@@ -129,7 +131,7 @@ function renderAdminPlantAccessLinks() {
 
       <div class="plant-id-box">
         <span>Plant ID</span>
-        <strong>${plantId}</strong>
+        <strong>${escapeHtml(plantId)}</strong>
         <button type="button" class="button secondary" data-copy-admin-plant-id>Copy Plant ID</button>
       </div>
 
@@ -274,3 +276,12 @@ function ensurePlantAccessSidebarButton() {
     sidebar.appendChild(button);
   }
 }
+
+function escapeHtml(value = '') {
+ return String(value).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'",'&#039;');
+}
+
+const billingButton=document.createElement('button');
+billingButton.className='button';billingButton.textContent='Manage Billing';
+billingButton.onclick=async()=>{try{const result=await serverRequest('createFloorFlowPortal',{plantId:getActivePlantId()});location.href=result.url;}catch(error){alert(error.message);}};
+(document.querySelector('.admin-sidebar, aside')||document.body).appendChild(billingButton);

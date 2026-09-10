@@ -7,6 +7,7 @@ import {
   downloadPartsCsv,
   downloadPartsTemplate
 } from './part-library.js';
+import { requireRoleAccess } from './auth-lock.js';
 import { requireActiveBillingAccess } from './billing-guard.js';
 import { blockDemoProductionAction } from './demo-restrictions.js';
 
@@ -23,6 +24,7 @@ const state = {
 const root = document.getElementById('partsLibraryApp');
 
 await requireActiveBillingAccess();
+await requireRoleAccess(['admin', 'supervisor']);
 init();
 
 async function init() {

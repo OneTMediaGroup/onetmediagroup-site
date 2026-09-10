@@ -1,3 +1,4 @@
+import { logout } from './server-access.js';
 import { initStore, getSession } from './store.js';
 import { requireRoleAccess } from './auth-lock.js';
 import { requireActiveBillingAccess } from './billing-guard.js';
@@ -23,7 +24,8 @@ let cleanupCurrentTool = null;
 
 init();
 
-document.getElementById('logoutBtn')?.addEventListener('click', () => {
+document.getElementById('logoutBtn')?.addEventListener('click', async () => {
+  await logout();
   clearStoredSessionUser();
   setSession(null);
   location.reload();

@@ -21,7 +21,7 @@ Floor Flow includes:
 • Touch Screen Floor Views
 • Parts Library Support
 • Production Reporting
-• Secure Plant-Specific Access Controls
+• Plant-Specific Access Links
 
 The goal has always been simple: provide production teams with a clear, organized view of what is happening across the plant while reducing confusion and improving communication.
 
@@ -40,7 +40,7 @@ Floor Flow
 https://onetmediagroup.ca`
   },
   {
-    id: "launch-live",
+    id: "launch-announcement",
     name: "Launch Announcement",
     subject: "Floor Flow Pro is now available",
     message: `Hello,
@@ -279,7 +279,9 @@ async function sendEmail(testOnly) {
       throw new Error(result.error || "Email send failed.");
     }
 
-    setStatus(`Sent successfully to ${result.sent || to.length} recipient(s).`);
+    const sent = Number(result.sent ?? 0);
+    const failed = Number(result.failed ?? (to.length - sent));
+    setStatus(failed ? `Sent to ${sent} recipient(s); ${failed} failed. Review the results before retrying.` : `Sent successfully to ${sent} recipient(s).`, failed > 0);
   } catch (error) {
     console.error(error);
     setStatus(error.message || "Email send failed.", true);

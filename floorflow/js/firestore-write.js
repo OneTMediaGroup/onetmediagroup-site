@@ -4,7 +4,6 @@ import {
   doc,
   runTransaction
 } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
-import { addLogToFirestore } from './firestore-logs.js';
 import { normalizedSlotStatus, statusLabel } from './utils.js';
 import { assertSetupWriteSession, assertPlantMatch, sanitizeSetupPayload, sessionDisplayName, makeAccessError } from './security-guard.js';
 
@@ -88,7 +87,7 @@ function normalizeQueueOrder(slots, now, userName) {
     }
 
     if (index === firstActiveIndex) {
-      slot.status = slot.status === 'ready' ? 'ready' : 'current';
+      slot.status = ['ready', 'blocked', 'paused', 'hold', 'pause'].includes(slot.status) ? slot.status : 'current';
     } else if (slot.status !== 'blocked') {
       slot.status = 'next';
     }
@@ -132,8 +131,10 @@ export async function completeAndShiftSetupInFirestore({ pressId, slotIndex = 0,
 
   const ref = workCellDoc(pressId);
   const now = new Date().toISOString();
+  if (!Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex > 3) throw new Error('Invalid queue slot.');
   const expectedUpdatedAt = setup.expectedUpdatedAt || null;
 
+  const logRef = doc(activityLogsCollection());
   let completedSlot = null;
   let equipmentLabel = 'Equipment';
 
@@ -142,6 +143,7 @@ export async function completeAndShiftSetupInFirestore({ pressId, slotIndex = 0,
     if (!snap.exists()) throw new Error('Equipment not found');
 
     const pressData = snap.data();
+    if (pressData.isLocked) throw new Error('This work cell is locked. Ask an administrator to unlock it.');
     assertPressBelongsToActivePlant(pressData, access.plantId);
     equipmentLabel = pressData.equipmentName || `Press ${pressData.pressNumber || ''}`.trim() || 'Equipment';
 
@@ -177,9 +179,9 @@ export async function completeAndShiftSetupInFirestore({ pressId, slotIndex = 0,
       updatedAt: now,
       lastUpdatedBy: userName
     });
-  });
-
-  await addLogToFirestore({
+  transaction.set(logRef, {
+  plantId: access.plantId,
+  createdAt: now,
   user: userName,
   createdBy: userName,
   action: 'complete_and_shift',
@@ -190,6 +192,7 @@ export async function completeAndShiftSetupInFirestore({ pressId, slotIndex = 0,
   unit: completedSlot?.unit || 'Pcs',
   message: `Completed ${equipmentLabel} Slot ${slotIndex + 1} · ${completedSlot?.partNumber || '—'} · shifted queue forward`
 });
+  });
 
   return { ok: true, shifted: true };
 }
@@ -200,10 +203,12 @@ export async function updateSetupInFirestore({ pressId, slotIndex, setup, userNa
 
   const ref = workCellDoc(pressId);
   const now = new Date().toISOString();
+  if (!Number.isInteger(slotIndex) || slotIndex < 0 || slotIndex > 3) throw new Error('Invalid queue slot.');
   setup = sanitizeSetupPayload(setup);
   const previousSetup = setup.previousSetup || null;
   const expectedUpdatedAt = setup.expectedUpdatedAt || null;
 
+  const logRef = doc(activityLogsCollection());
   let conflictMeta = null;
   let equipmentLabel = '';
 
@@ -212,6 +217,7 @@ export async function updateSetupInFirestore({ pressId, slotIndex, setup, userNa
     if (!snap.exists()) throw new Error('Equipment not found');
 
     const pressData = snap.data();
+    if (pressData.isLocked) throw new Error('This work cell is locked. Ask an administrator to unlock it.');
     assertPressBelongsToActivePlant(pressData, access.plantId);
     equipmentLabel = pressData.equipmentName || `Press ${pressData.pressNumber || ''}`.trim() || 'Equipment';
     const slots = normalizeSlots(pressData.slots || [], now, userName);
@@ -254,9 +260,9 @@ export async function updateSetupInFirestore({ pressId, slotIndex, setup, userNa
       updatedAt: now,
       lastUpdatedBy: userName
     });
-  });
-
-  await addLogToFirestore({
+  transaction.set(logRef, {
+  plantId: access.plantId,
+  createdAt: now,
   user: userName,
   createdBy: userName,
   action: normalizedSlotStatus(setup.status, slotIndex, Boolean(setup.partNumber)),
@@ -272,6 +278,7 @@ export async function updateSetupInFirestore({ pressId, slotIndex, setup, userNa
     previousSetup
   })
 });
+  });
 
   return { ok: true, conflict: false, conflictMeta };
 }

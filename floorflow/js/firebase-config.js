@@ -16,3 +16,7 @@ const firebaseConfig = {
 export const app = initializeApp(firebaseConfig);
 export const db = getFirestore(app);
 
+
+import { initializeAuth, browserSessionPersistence, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
+export const auth = initializeAuth(app, { persistence: browserSessionPersistence });
+export const authReady = new Promise(resolve => { const stop = onAuthStateChanged(auth, () => { stop(); resolve(); }); });

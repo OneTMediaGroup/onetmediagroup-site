@@ -1,3 +1,4 @@
+import { saveServerUser, deleteServerUser } from './server-access.js';
 import { db } from './firebase-config.js';
 import { usersCollection, userDoc, settingsDocRef } from './firestore-paths.js';
 import {
@@ -23,6 +24,7 @@ let searchText = '';
 let roleFilter = 'all';
 
 const ROLES = [
+  { value: 'display', label: 'Display only' },
   { value: 'operator', label: 'Operator' },
   { value: 'dieSetter', label: 'Authorized Staff' },
   { value: 'supervisor', label: 'Supervisor' },
@@ -168,6 +170,7 @@ function render() {
         <label>
           <span>Employee ID *</span>
           <input id="newUserEmployeeId" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="Required (e.g. 331)" />
+          <span>Private PIN (4–12 digits)</span><input id="newUserPrivatePin" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="12" />
         </label>
 
         <label>
@@ -191,13 +194,13 @@ function render() {
       <div class="section-header">
         <div>
           <h2>Import Users</h2>
-          <div class="muted">Upload CSV: firstName, lastName, role, employeeId, badgeCode, status.</div>
+          <div class="muted">Upload CSV: firstName, lastName, role, employeeId, pin (4–12 digits), badgeCode, status.</div>
         </div>
       </div>
 
       <div class="user-add-grid">
         <label class="full-span">
-          <span>CSV File</span>
+          <span>CSV File (include a private pin column)</span>
           <input id="userImportFile" type="file" accept=".csv,text/csv" />
         </label>
 
@@ -209,7 +212,7 @@ function render() {
 
       <div class="muted" style="margin-top:12px;">
         Example: <code>firstName,lastName,role,employeeId,badgeCode,status</code><br />
-        <code>Sally,Smith,operator,331,,active</code>
+        <code>Sally,Smith,operator,331,REPLACE_WITH_PRIVATE_PIN,,active</code>
       </div>
 
       <div id="importUsersResult" class="muted" style="margin-top:12px;"></div>
@@ -291,7 +294,7 @@ function renderUserRow(user) {
         </div>
       </div>
 
-      <div class="user-edit-grid">
+      <div class="user-edit-grid"><label><span>New PIN (leave blank to keep current PIN)</span><input data-private-pin type="password" inputmode="numeric" autocomplete="new-password" /></label>
         <label>
           <span>First Name</span>
           <input data-user-first-name="${user.id}" value="${escapeAttr(firstNameFor(user))}" />
@@ -478,16 +481,12 @@ async function handleAddUser() {
     return;
   }
 
-  if (!/^[0-9]+$/.test(employeeId)) {
-    alert('Employee ID must contain numbers only.');
-    employeeIdInput?.focus();
-    return;
-  }
 
   const badgeCode = sanitizeText(badgeCodeInput?.value, 120) || employeeId;
   const role = sanitizeRole(roleInput?.value || 'operator');
   const status = sanitizeUserStatus(statusInput?.value || 'active');
-  const pin = employeeId;
+  const pin = root.querySelector('#newUserPrivatePin')?.value.trim();
+  if (!pin || !/^\d{4,12}$/.test(pin)) { alert('A PIN with 4 to 12 digits is required.'); return; }
 
   if (!firstName || !lastName) {
     alert('First name and last name are required.');
@@ -508,7 +507,7 @@ async function handleAddUser() {
   }
 
   try {
-    await addDoc(usersCollection(), {
+    await saveServerUser({
       plantId,
       firstName,
       lastName,
@@ -586,6 +585,7 @@ async function handleImportUsers() {
         continue;
       }
 
+      if (!/^\d{4,12}$/.test(String(row.pin || row.PIN || ''))) { skipped += 1; errors.push(`Skipped ${user.name}: a private PIN with 4 to 12 digits is required.`); continue; }
       if (!user.badgeCode) user.badgeCode = user.employeeId;
 
       if (user.employeeId && (existingEmployeeIds.has(user.employeeId) || incomingEmployeeIds.has(user.employeeId))) {
@@ -603,13 +603,13 @@ async function handleImportUsers() {
       if (user.employeeId) incomingEmployeeIds.add(user.employeeId);
       if (user.badgeCode) incomingBadges.add(user.badgeCode);
 
-      await addDoc(usersCollection(), {
+      await saveServerUser({
         plantId,
         firstName: user.firstName,
         lastName: user.lastName,
         name: user.name,
         employeeId: user.employeeId,
-        pin: user.employeeId,
+        pin: String(row.pin || row.PIN || ''),
         badgeCode: user.badgeCode,
         role: user.role,
         status: user.status,
@@ -657,13 +657,9 @@ async function handleSaveUser(userId) {
     return;
   }
 
-  if (!/^[0-9]+$/.test(employeeId)) {
-    alert('Employee ID must contain numbers only.');
-    pinInput?.focus();
-    return;
-  }
 
-  const pin = employeeId;
+  const pin = root.querySelector('[data-private-pin]')?.value.trim() || '';
+  if (pin && !/^\d{4,12}$/.test(pin)) { alert('Use a PIN with 4 to 12 digits.'); return; }
   const badgeCode = sanitizeText(badgeCodeInput?.value, 120) || employeeId;
   const role = sanitizeRole(roleInput?.value || 'operator');
   const status = sanitizeUserStatus(statusInput?.value || 'active');
@@ -706,7 +702,7 @@ async function handleSaveUser(userId) {
       status
     });
 
-    handleLiveSessionUpdate(userId, { firstName, lastName, name, employeeId, pin, badgeCode, role, status });
+    handleLiveSessionUpdate(userId, { firstName, lastName, name, employeeId, badgeCode, role, status });
     await addAdminLog(`Updated user ${name}`);
     editingUserId = null;
     await loadAndRender();
@@ -732,7 +728,7 @@ async function handleDeleteUser(userId) {
   if (!confirm(`Delete user "${name}"?\n\nThis cannot be undone.`)) return;
 
   try {
-    await deleteDoc(userDoc(userId));
+    await deleteServerUser(userId);
     await addAdminLog(`Deleted user ${name}`);
     editingUserId = null;
     await loadAndRender();
@@ -756,8 +752,6 @@ function normalizeImportRow(row) {
     row.ClockNumber ||
     row.clock ||
     row.Clock ||
-    row.pin ||
-    row.PIN ||
     ''
   ).trim();
 
@@ -865,11 +859,11 @@ function readFileAsText(file) {
 
 function downloadUserTemplateCsv() {
   const csv = [
-    'firstName,lastName,role,employeeId,badgeCode,status',
-    'Sally,Smith,operator,331,,active',
-    'Bob,Jones,Authorized Staff,442,A123-567B-6754,active',
-    'Mike,Carter,supervisor,553,,active',
-    'Lisa,Brown,admin,664,,active'
+    'firstName,lastName,role,employeeId,pin,badgeCode,status',
+    'Sally,Smith,operator,331,REPLACE_WITH_PRIVATE_PIN,,active',
+    'Bob,Jones,Authorized Staff,442,REPLACE_WITH_PRIVATE_PIN,A123-567B-6754,active',
+    'Mike,Carter,supervisor,553,REPLACE_WITH_PRIVATE_PIN,,active',
+    'Lisa,Brown,admin,664,REPLACE_WITH_PRIVATE_PIN,,active'
   ].join('\n');
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
@@ -913,7 +907,7 @@ function exportUsersCSV() {
 
   const csvContent = [
     headers.join(','),
-    ...rows.map(row => row.map(val => `"${String(val).replaceAll('"', '""')}"`).join(','))
+    ...rows.map(row => row.map(val => `"${( /^[\s]*[=+@-]/.test(String(val)) ? "'" + String(val) : String(val)).replaceAll('"', '""')}"`).join(','))
   ].join('\n');
 
   const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1017,7 +1011,7 @@ async function printBadgeSheet(activeUsers) {
     const id = escapeHtml(user.employeeId || user.pin || '');
     const role = escapeHtml(roleLabel(user.role));
     const brandHtml = logoUrl
-      ? `<img class="plant-logo" src="${escapeAttr(logoUrl)}" alt="${escapeAttr(brandText)}" onerror="this.style.display='none'; this.parentElement.textContent='${escapeAttr(brandText)}';" />`
+      ? `<img class="plant-logo" src="${escapeAttr(logoUrl)}" alt="${escapeAttr(brandText)}" onerror="this.style.display='none'; this.parentElement.textContent=this.alt;" />`
       : escapeHtml(brandText);
 
     return `

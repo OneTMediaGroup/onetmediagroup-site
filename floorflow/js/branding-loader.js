@@ -1,3 +1,5 @@
+import { auth } from './firebase-config.js';
+import { onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js';
 import { getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 import { settingsDocRef } from './firestore-paths.js';
 
@@ -100,7 +102,7 @@ function escapeAttr(value) {
   return escapeHtml(value);
 }
 
-applyBranding();
+onAuthStateChanged(auth, user => { if (user && !user.isAnonymous) applyBranding(); });
 
 window.addEventListener('branding-updated', (event) => {
   applyBranding(event.detail || null);

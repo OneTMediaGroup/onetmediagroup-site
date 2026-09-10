@@ -1,7 +1,7 @@
+import { serverRequest, authenticateUser } from './server-access.js';
 import { db } from './firebase-config.js';
 import { setActivePlantId, buildPlantLink, buildRelativePlantLink, plantAccessPages } from './plant-session.js';
-import { seedOnboardingPlant } from './onboarding-nested-seed.js';
-import { buildStripeCheckoutUrl, clearProductionPaymentState, createStripeCheckoutSession, FLOORFLOW_PLAN_PRICES, getPendingProductionPlantId, getSelectedStripePlan, isProductionPaymentComplete, isStripePaymentLinkConfigured, normalizeStripePlan, saveActivationState } from './activation.js';
+import { refreshProductionPaymentStatus, hasStripeSuccessReturn, buildStripeCheckoutUrl, clearProductionPaymentState, createStripeCheckoutSession, FLOORFLOW_PLAN_PRICES, getPendingProductionPlantId, getSelectedStripePlan, isProductionPaymentComplete, isStripePaymentLinkConfigured, normalizeStripePlan, saveActivationState } from './activation.js';
 import {
   collection,
   doc,
@@ -49,6 +49,7 @@ const state = {
   adminName: '',
   adminEmail: '',
   adminEmployeeId: '',
+  adminPin: '',
   adminBadgeCode: '',
   selectedPlan: getSelectedStripePlan(),
   pendingPlantId: getPendingProductionPlantId(),
@@ -58,7 +59,7 @@ const state = {
 
 const startupParams = new URLSearchParams(window.location.search);
 const isReactivateMode = startupParams.get('reactivate') === 'true';
-const returnedFromStripeCheckout = isProductionPaymentComplete();
+const returnedFromStripeCheckout = hasStripeSuccessReturn();
 
 if (startupParams.get('mode') === 'production' || returnedFromStripeCheckout || isReactivateMode) {
   state.mode = 'production';
@@ -110,6 +111,7 @@ async function initOnboarding() {
 }
 
 async function detectProductionRecovery() {
+  try { await refreshProductionPaymentStatus(); } catch (error) { console.warn('Payment confirmation unavailable:', error); }
   const plantId = startupParams.get('plantId') || state.pendingPlantId || getPendingProductionPlantId() || localStorage.getItem('floor_flow_active_plant_id') || '';
 
   if (!plantId) return;
@@ -120,7 +122,7 @@ async function detectProductionRecovery() {
 
     const plant = snap.data() || {};
     const isProduction = plant.mode === 'production' || plant.environment === 'production' || plant.isDemo === false;
-    const isUnlocked = plant.productionUnlocked === true || plant.paid === true || plant.subscriptionStatus === 'active' || plant.billingStatus === 'active';
+    const isUnlocked = isProductionPaymentComplete();
 
     if (!isProduction) return;
     if (!isUnlocked && !isReactivateMode) return;
@@ -132,10 +134,6 @@ async function detectProductionRecovery() {
     state.companyName = plant.companyName || state.plantName;
     state.brandText = plant.brandText || plant.branding?.brandText || state.brandText || state.plantName;
     state.timezone = plant.timezone || state.timezone;
-    if (state.mode === 'demo') {
-      await sendDemoWelcomeEmail(plantId);
-    }
-
     setActivePlantId(plantId);
     localStorage.setItem('floor_flow_pending_plant_id', plantId);
 
@@ -173,6 +171,12 @@ nextBtn.addEventListener('click', async () => {
 
   saveCurrentStep();
 
+  if (state.mode === 'production' && step >= 3) {
+    try { await refreshProductionPaymentStatus(); } catch {
+      showPaymentNotice('Could not verify payment. Check your connection and try again.');
+      return;
+    }
+  }
   if (!validateStep()) return;
 
   if (step < getOnboardingSteps().length - 1) {
@@ -477,7 +481,7 @@ function renderProductionActivation() {
           <button type="button" class="button ghost" data-select-mode="demo">Use Free Demo Instead</button>
         </div>
       ` : `
-        <div class="notice visible">Stripe checkout is not configured yet. Check js/activation.js and Firebase Functions secrets.</div>
+        <div class="notice visible">Stripe checkout is not configured yet. Please contact floorflow@onetmediagroup.ca for help.</div>
         <div class="activation-actions-inline">
           <button type="button" class="button ghost" data-select-mode="demo">Use Free Demo Instead</button>
         </div>
@@ -571,12 +575,12 @@ function renderAdmin() {
       </label>
 
       <label class="full">
-        <span>Email Address ${isDemo ? '*' : ''}</span>
+        <span>Email Address *</span>
         <input id="adminEmail" type="email" value="${escapeAttr(state.adminEmail)}" placeholder="name@company.com" autocomplete="email" />
       </label>
 
       <label class="full">
-        <span>Admin PIN / Employee ID *</span>
+        <span>Employee ID *</span>
         <input
           id="adminEmployeeId"
           type="tel"
@@ -587,6 +591,7 @@ function renderAdmin() {
           placeholder="Example: 1001"
         />
       </label>
+      <label class="full"><span>Private PIN (4–12 digits) *</span><input id="adminPin" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="12" value="${escapeAttr(state.adminPin)}" /></label>
     </div>
 
     <div id="stepNotice" class="notice"></div>
@@ -677,6 +682,7 @@ function saveCurrentStep() {
   if (document.getElementById('adminFirstName') || document.getElementById('adminLastName')) {
     state.adminName = `${state.adminFirstName || ''} ${state.adminLastName || ''}`.trim();
   }
+  if (document.getElementById('adminPin')) state.adminPin = value('adminPin') || '';
   if (document.getElementById('adminEmployeeId')) state.adminEmployeeId = value('adminEmployeeId') || '';
   state.adminBadgeCode = '';
 
@@ -699,7 +705,7 @@ function validateStep() {
   const activeStep = getOnboardingSteps()[step];
 
   if (activeStep === renderProductionActivation && !isProductionPaymentComplete()) {
-    return fail('Complete Stripe checkout or go back and choose Demo Plant.');
+    return fail('Payment is not confirmed yet. If you have paid, wait a moment and select Next again. Otherwise complete checkout or choose Demo Plant.');
   }
 
   if (activeStep === renderPlantSetup && !state.plantName) {
@@ -707,19 +713,19 @@ function validateStep() {
   }
 
   if (activeStep === renderAdmin && (!state.adminFirstName || !state.adminLastName || !state.adminEmployeeId)) {
-    return fail('First name, last name, and PIN / Employee ID are required.');
+    return fail('First name, last name, and Employee ID are required.');
   }
 
-  if (activeStep === renderAdmin && state.mode === 'demo' && !state.adminEmail) {
-    return fail('Email address is required for demo access.');
+  if (activeStep === renderAdmin && !state.adminEmail) {
+    return fail('Email address is required.');
   }
 
   if (activeStep === renderAdmin && state.adminEmail && !isValidEmailAddress(state.adminEmail)) {
     return fail('Enter a valid email address.');
   }
 
-  if (activeStep === renderAdmin && !/^[0-9]+$/.test(state.adminEmployeeId)) {
-    return fail('PIN / Employee ID must contain numbers only.');
+  if (activeStep === renderAdmin && !/^\d{4,12}$/.test(state.adminPin)) {
+    return fail('PIN must contain 4 to 12 digits.');
   }
 
   if (activeStep === renderArea && !state.areaName) {
@@ -744,35 +750,9 @@ async function ensurePendingProductionPlantId(plan = 'monthly') {
     return existingPlantId;
   }
 
-  const plantRef = doc(collection(db, 'plants'));
-  const plantId = plantRef.id;
-  const plantName = state.plantName || state.companyName || 'Production Plant';
-
-  await setDoc(plantRef, {
-    id: plantId,
-    plantId,
-    plantName,
-    name: plantName,
-    companyName: state.companyName || plantName,
-    mode: 'production',
-    environment: 'production',
-    isDemo: false,
-    setupComplete: false,
-    billingPlan: normalizeStripePlan(plan),
-    billingStatus: 'checkout_pending',
-    subscriptionStatus: 'pending_checkout',
-    productionUnlocked: false,
-    pendingOnboarding: true,
-    onboardingContact: {
-      firstName: state.adminFirstName || '',
-      lastName: state.adminLastName || '',
-      fullName: state.adminName || '',
-      email: state.adminEmail || ''
-    },
-    createdAt: serverTimestamp(),
-    updatedAt: serverTimestamp()
-  }, { merge: true });
-
+  const requestId = sessionStorage.getItem('ff_reserve_production') || crypto.randomUUID();
+  sessionStorage.setItem('ff_reserve_production', requestId);
+  const {plantId} = await serverRequest('reserveFloorFlowPlant', {requestId, mode:'production', plantName:state.plantName || state.companyName}, true);
   state.pendingPlantId = plantId;
   localStorage.setItem('floor_flow_pending_plant_id', plantId);
   return plantId;
@@ -820,8 +800,8 @@ function wirePaymentActions() {
       } catch (error) {
         console.error(error);
         checkoutCreateInProgress = false;
-        showPaymentNotice(error.message || 'Stripe checkout could not be started.');
         render();
+        showPaymentNotice(error.message || 'Stripe checkout could not be started.');
       }
     });
   });
@@ -830,7 +810,9 @@ function wirePaymentActions() {
 function wirePlantTypeCards() {
   document.querySelectorAll('[data-select-mode]').forEach((card) => {
     card.addEventListener('click', () => {
-      state.mode = card.dataset.selectMode === 'production' ? 'production' : 'demo';
+      const nextMode = card.dataset.selectMode === 'production' ? 'production' : 'demo';
+      if (state.mode !== nextMode) state.pendingPlantId = '';
+      state.mode = nextMode;
 
       if (state.mode === 'demo') {
         clearProductionPaymentState();
@@ -864,7 +846,7 @@ function wireLivePreview() {
 }
 
 function getOnboardingAdminPin() {
-  return String(state.adminEmployeeId || '1000').trim() || '1000';
+  return String(state.adminPin || '').trim();
 }
 
 
@@ -872,14 +854,7 @@ async function sendDemoWelcomeEmail(plantId) {
   if (state.mode !== 'demo' || !state.adminEmail || !plantId) return;
 
   try {
-    await fetch(FLOORFLOW_DEMO_WELCOME_ENDPOINT, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        plantId,
-        email: state.adminEmail
-      })
-    });
+    await serverRequest('sendFloorFlowDemoWelcome', {plantId,email:state.adminEmail});
   } catch (error) {
     console.warn('Demo welcome email skipped:', error);
   }
@@ -895,12 +870,14 @@ async function finishOnboarding() {
     nextBtn.disabled = true;
     nextBtn.textContent = 'Creating...';
 
-    const existingProductionPlantId = state.mode === 'production' ? getPendingProductionPlantId() : '';
-    const plantRef = existingProductionPlantId ? doc(db, 'plants', existingProductionPlantId) : doc(collection(db, 'plants'));
-    const plantId = plantRef.id;
+    let plantId = state.pendingPlantId;
+    if (!plantId) {
+      const requestId = sessionStorage.getItem('ff_reserve_demo') || crypto.randomUUID();
+      sessionStorage.setItem('ff_reserve_demo', requestId);
+      ({plantId} = await serverRequest('reserveFloorFlowPlant', {requestId,mode:state.mode,plantName:state.plantName}, true));
+    }
     state.pendingPlantId = plantId;
-
-    await seedOnboardingPlant({
+    await serverRequest('finishFloorFlowPlant', {
       plantId,
       plantName: state.plantName || 'Demo Plant',
       companyName: state.companyName || state.plantName || 'Demo Plant',
@@ -909,6 +886,7 @@ async function finishOnboarding() {
       adminLastName: state.adminLastName || '',
       adminEmail: state.adminEmail || '',
       adminPin: getOnboardingAdminPin(),
+      adminEmployeeId: state.adminEmployeeId,
       adminBadgeCode: '',
       mode: state.mode || 'demo',
       timezone: state.timezone || 'America/Toronto',
@@ -919,26 +897,10 @@ async function finishOnboarding() {
       brandingMode: 'text'
     });
 
-    await setDoc(doc(db, 'plants', plantId), {
-      setupComplete: true,
-      pendingOnboarding: false,
-      onboardingContact: {
-        firstName: state.adminFirstName || '',
-        lastName: state.adminLastName || '',
-        fullName: state.adminName || '',
-        email: state.adminEmail || ''
-      },
-      demoContactEmail: state.mode === 'demo' ? state.adminEmail || '' : '',
-      demoCreatedAt: state.mode === 'demo' ? serverTimestamp() : null,
-      onboardingCompletedAt: serverTimestamp(),
-      updatedAt: serverTimestamp()
-    }, { merge: true });
-
-    if (state.mode === 'demo') {
-      await sendDemoWelcomeEmail(plantId);
-    }
-
     setActivePlantId(plantId);
+    await authenticateUser(state.adminEmployeeId, getOnboardingAdminPin(), plantId);
+    sessionStorage.removeItem(`ff_reserve_${state.mode}`);
+    if (state.mode === 'demo') await sendDemoWelcomeEmail(plantId);
     saveActivationState({
       plantId,
       mode: state.mode || 'demo',
