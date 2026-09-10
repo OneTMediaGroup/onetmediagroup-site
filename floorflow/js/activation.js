@@ -1,10 +1,11 @@
 import { serverRequest } from './server-access.js';
-import { db } from './firebase-config.js';
+import { db, authReady } from './firebase-config.js';
 import { doc, getDoc } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
 let verifiedPlantId = '';
 
 export async function refreshProductionPaymentStatus() {
+  await authReady;
   verifiedPlantId = '';
   const plantId = getPendingProductionPlantId();
   if (!plantId) return false;

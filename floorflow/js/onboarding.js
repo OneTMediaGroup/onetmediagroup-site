@@ -1,5 +1,5 @@
 import { serverRequest, authenticateUser } from './server-access.js';
-import { db } from './firebase-config.js';
+import { db, authReady } from './firebase-config.js';
 import { setActivePlantId, buildPlantLink, buildRelativePlantLink, plantAccessPages } from './plant-session.js';
 import { refreshProductionPaymentStatus, hasStripeSuccessReturn, buildStripeCheckoutUrl, clearProductionPaymentState, createStripeCheckoutSession, FLOORFLOW_PLAN_PRICES, getPendingProductionPlantId, getSelectedStripePlan, isProductionPaymentComplete, isStripePaymentLinkConfigured, normalizeStripePlan, saveActivationState } from './activation.js';
 import {
@@ -111,6 +111,7 @@ async function initOnboarding() {
 }
 
 async function detectProductionRecovery() {
+  await authReady;
   try { await refreshProductionPaymentStatus(); } catch (error) { console.warn('Payment confirmation unavailable:', error); }
   const plantId = startupParams.get('plantId') || state.pendingPlantId || getPendingProductionPlantId() || localStorage.getItem('floor_flow_active_plant_id') || '';
 
