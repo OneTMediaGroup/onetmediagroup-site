@@ -7,6 +7,7 @@ const KEY=defineSecret('RESEND_API_KEY');
 async function deliver(ref,send){
  const db=admin.firestore();let payload;
  await db.runTransaction(async tx=>{
+  payload=undefined;
   const snap=await tx.get(ref),row=snap.data();if(!row||row.state==='sent'||row.state==='needs_review')return;
   const now=Date.now();if(row.leaseUntil>now)return;
   if(row.firstAttemptAt&&now-row.firstAttemptAt>23*3600000){tx.update(ref,{state:'needs_review'});return;}

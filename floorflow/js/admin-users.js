@@ -169,7 +169,9 @@ function render() {
 
         <label>
           <span>Employee ID *</span>
-          <input id="newUserEmployeeId" type="tel" inputmode="numeric" pattern="[0-9]*" maxlength="10" placeholder="Required (e.g. 331)" />
+          <input id="newUserEmployeeId" type="text" maxlength="40" placeholder="Required (e.g. 331)" />
+        </label>
+        <label>
           <span>Private PIN (4–12 digits)</span><input id="newUserPrivatePin" type="password" inputmode="numeric" autocomplete="new-password" minlength="4" maxlength="12" />
         </label>
 
@@ -211,7 +213,7 @@ function render() {
       </div>
 
       <div class="muted" style="margin-top:12px;">
-        Example: <code>firstName,lastName,role,employeeId,badgeCode,status</code><br />
+        Example: <code>firstName,lastName,role,employeeId,pin,badgeCode,status</code><br />
         <code>Sally,Smith,operator,331,REPLACE_WITH_PRIVATE_PIN,,active</code>
       </div>
 
