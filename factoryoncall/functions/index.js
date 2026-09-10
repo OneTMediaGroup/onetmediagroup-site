@@ -25,8 +25,8 @@ const REPLY_TO_EMAIL = "factoryoncall@onetmediagroup.ca";
 const FALLBACK_BASE_URL = "https://onetmediagroup.ca/factoryoncall/";
 
 const FACTORY_ON_CALL_PRICES = {
-  monthly: "price_1To9yq20LQ2pqINAwk3afElt",
-  annual: "price_1ToA0V20LQ2pqINAhWLzOnih"
+  monthly: "price_1UDuTT1uRlTVrdir49DljgIa",
+  annual: "price_1UDuVH1uRlTVrdirJPOWtldy"
 };
 
 function esc(value = "") {
@@ -785,6 +785,7 @@ exports.createCustomerPortalSession = onRequest(
       const stripe = new Stripe(stripeSecretKey);
       const session = await stripe.billingPortal.sessions.create({
         customer: stripeCustomerId,
+        configuration: "bpc_1UDzLo1uRlTVrdirujVKpVFN",
         return_url: returnUrl
       });
 

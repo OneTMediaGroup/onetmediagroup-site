@@ -10,8 +10,8 @@ const nextBtn = document.getElementById("nextBtn");
 const statusText = document.getElementById("statusText");
 
 const CREATE_CHECKOUT_URL = "https://us-central1-factoryoncall.cloudfunctions.net/createFactoryOnCallCheckoutSession";
-const STRIPE_MONTHLY_PRICE_ID = "price_1To9yq20LQ2pqINAwk3afElt";
-const STRIPE_ANNUAL_PRICE_ID = "price_1ToA0V20LQ2pqINAhWLzOnih";
+const STRIPE_MONTHLY_PRICE_ID = "price_1UDuTT1uRlTVrdir49DljgIa";
+const STRIPE_ANNUAL_PRICE_ID = "price_1UDuVH1uRlTVrdirJPOWtldy";
 
 let step = 0;
 
