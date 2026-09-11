@@ -7,6 +7,11 @@
   <url><loc>https://onetmediagroup.ca/echo-records.html</loc><priority>0.7</priority></url>
   <url><loc>https://onetmediagroup.ca/raw-cuts.html</loc><priority>0.8</priority></url>
   <url><loc>https://onetmediagroup.ca/apps.html</loc><priority>0.8</priority></url>
+  <url><loc>https://onetmediagroup.ca/chomp-champs.html</loc><priority>0.9</priority></url>
+  <url><loc>https://onetmediagroup.ca/chomp-champs-support.html</loc><priority>0.5</priority></url>
+  <url><loc>https://onetmediagroup.ca/chomp-champs-privacy.html</loc><priority>0.4</priority></url>
+  <url><loc>https://onetmediagroup.ca/grid-wars.html</loc><priority>0.8</priority></url>
+  <url><loc>https://onetmediagroup.ca/grid-wars-privacy.html</loc><priority>0.4</priority></url>
   <url><loc>https://onetmediagroup.ca/guru-crew.html</loc><priority>0.8</priority></url>
   <url><loc>https://onetmediagroup.ca/one-t-industrial.html</loc><priority>0.7</priority></url>
   <url><loc>https://onetmediagroup.ca/clothing.html</loc><priority>0.6</priority></url>
