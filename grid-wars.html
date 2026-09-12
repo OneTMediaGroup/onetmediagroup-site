@@ -6,8 +6,8 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 
-<title>Grid Wars | One T Media Group</title>
-<meta name="description" content="Grid Wars by One T Media Group. Connect. Claim. Control. Fast strategy, local battles, online PvP, achievements, crew selection, and chaos boards." />
+<title>Grid Wars: Battle Lines 1.2 | One T Media Group</title>
+<meta name="description" content="Grid Wars: Battle Lines 1.2 is live on iOS with Offset boards, online Arena rankings, Friends & Rivals, AI crews, chaos modes, and 93 achievements." />
 <meta name="theme-color" content="#05070d" />
 
 <link rel="stylesheet" href="assets/css/styles.css" />
@@ -35,7 +35,7 @@ body{
 
 .feature-grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:18px;
 }
 
@@ -50,6 +50,16 @@ body{
 .feature-card{
   border-radius:22px;
   padding:22px;
+}
+
+.feature-kicker{
+  display:block;
+  color:#24c8ff;
+  font-size:.78rem;
+  font-weight:950;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  margin-bottom:9px;
 }
 
 .feature-card h3{margin:0 0 8px}
@@ -73,6 +83,18 @@ body{
 }
 
 .gallery-card img{border-radius:18px}
+
+.gallery-card--feature{
+  border-color:rgba(36,200,255,.35);
+  background:linear-gradient(180deg,rgba(15,49,70,.75),rgba(20,20,28,.82));
+}
+
+.gallery-caption{
+  margin:12px 4px 2px;
+  color:var(--muted);
+  font-size:.9rem;
+  line-height:1.45;
+}
 
 .wide-showcase{
   border-radius:26px;
@@ -101,23 +123,90 @@ body{
 }
 
 .hero-top{
-  display:flex;
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(280px,430px);
   align-items:center;
-  justify-content:center;
-  gap:32px;
-  flex-wrap:wrap;
+  gap:52px;
   text-align:left;
 }
 
+.hero-lockup{
+  display:flex;
+  align-items:center;
+  gap:24px;
+  margin-bottom:22px;
+}
+
 .hero-icon{
-  width:140px;
-  height:auto;
+  width:126px;
+  height:126px;
   border-radius:32px;
   box-shadow:0 24px 60px rgba(0,0,0,.45);
+  object-fit:cover;
   flex-shrink:0;
 }
 
-.hero-content{max-width:620px}
+.hero-content{max-width:700px}
+
+.version-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  margin-bottom:18px;
+  padding:8px 12px;
+  border:1px solid rgba(36,200,255,.45);
+  border-radius:999px;
+  color:#aeeeff;
+  background:rgba(36,200,255,.1);
+  font-size:.82rem;
+  font-weight:900;
+  letter-spacing:.06em;
+  text-transform:uppercase;
+}
+
+.version-badge::before{
+  content:"";
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:#30d67b;
+  box-shadow:0 0 14px rgba(48,214,123,.75);
+}
+
+.hero-preview{
+  position:relative;
+  max-width:430px;
+  margin:0 auto;
+  padding:12px;
+  border:1px solid rgba(36,200,255,.42);
+  border-radius:34px;
+  background:rgba(12,20,30,.72);
+  box-shadow:0 35px 90px rgba(0,0,0,.5),0 0 60px rgba(36,200,255,.08);
+}
+
+.hero-preview img{
+  display:block;
+  width:100%;
+  border-radius:24px;
+}
+
+.stat-strip{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:14px;
+  margin-top:34px;
+}
+
+.stat{
+  padding:18px 16px;
+  text-align:center;
+  border:1px solid rgba(35,35,54,.95);
+  border-radius:18px;
+  background:rgba(20,20,28,.72);
+}
+
+.stat strong{display:block;font-size:1.35rem;color:#fff}
+.stat span{display:block;margin-top:3px;color:var(--muted);font-size:.82rem}
 
 .tagline{
   margin-top:12px;
@@ -153,16 +242,34 @@ body{
   }
 
   .hero-top{
+    grid-template-columns:1fr;
     text-align:center;
   }
 
+  .hero-lockup{justify-content:center}
+
   .hero-icon{
-    width:130px;
+    width:112px;
+    height:112px;
   }
+
+  .stat-strip{grid-template-columns:repeat(2,1fr)}
+}
+
+@media(max-width:560px){
+  .hero-lockup{display:block}
+  .hero-icon{margin-bottom:22px}
+  .gridwars-title{font-size:clamp(2.8rem,16vw,4.6rem)}
+  .stat-strip{grid-template-columns:1fr 1fr;gap:10px}
+  .stat{padding:14px 8px}
 }
 </style>
-  <meta name="twitter:image" content="https://onetmediagroup.ca/assets/images/General/onet-social-card.png" />
-<meta property="og:image" content="https://onetmediagroup.ca/assets/images/General/onet-social-card.png" />
+  <meta property="og:title" content="Grid Wars: Battle Lines 1.2" />
+  <meta property="og:description" content="Offset boards, Arena rankings, Friends & Rivals, AI crews, and 93 achievements — now live on iOS." />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://onetmediagroup.ca/grid-wars.html" />
+  <meta name="twitter:image" content="https://onetmediagroup.ca/assets/images/GridWars/gridwarsIcon.png" />
+<meta property="og:image" content="https://onetmediagroup.ca/assets/images/GridWars/gridwarsIcon.png" />
   <link rel="icon" type="image/png" href="/assets/images/General/onet-favicon.png" />
   <link rel="apple-touch-icon" href="/assets/images/General/onet-apple-touch-icon.png" />
 </head>
@@ -188,24 +295,26 @@ body{
 
   <section class="gridwars-hero">
     <div class="hero-top">
-
-      <img src="assets/images/GridWars/gridicon.jpeg" alt="Grid Wars Icon" class="hero-icon">
-
       <div class="hero-content">
-        <h1 class="gridwars-title">GRID WARS</h1>
+        <div class="version-badge">Version 1.2 is live</div>
 
-        <p class="tagline">Connect. Claim. Control.</p>
+        <div class="hero-lockup">
+          <img src="assets/images/GridWars/gridwarsIcon.png" alt="Grid Wars: Battle Lines app icon" class="hero-icon">
+          <h1 class="gridwars-title">GRID<br>WARS</h1>
+        </div>
+
+        <p class="tagline">Connect lines. Claim shapes. Control the board.</p>
 
         <p class="hero-copy">
-          Battle friends locally or online. Claim squares, outsmart opponents,
-          unlock achievements, choose your Guru, and master special Chaos Boards.
+          A quick-to-learn strategy battle with far more than squares. Challenge an AI crew,
+          pass and play with friends, or face a live rival online across Classic and Offset boards.
         </p>
 
         <div class="pillrow">
-          <span class="pill">Fast Strategy</span>
-          <span class="pill">Online PvP</span>
-          <span class="pill">Achievements</span>
-          <span class="pill">Chaos Boards</span>
+          <span class="pill">Triangle</span>
+          <span class="pill">Diamond</span>
+          <span class="pill">Hex</span>
+          <span class="pill">Online Arena</span>
         </div>
 
         <a class="app-store-link"
@@ -216,70 +325,111 @@ body{
         </a>
       </div>
 
+      <div class="hero-preview">
+        <img src="assets/images/GridWars/v12-connect-claim-conquer.webp" alt="Grid Wars Triangle Classic battle in version 1.2">
+      </div>
+    </div>
+
+    <div class="stat-strip" aria-label="Grid Wars version 1.2 highlights">
+      <div class="stat"><strong>2</strong><span>board families</span></div>
+      <div class="stat"><strong>3</strong><span>new Offset shapes</span></div>
+      <div class="stat"><strong>93</strong><span>achievements</span></div>
+      <div class="stat"><strong>3</strong><span>ways to battle</span></div>
     </div>
   </section>
 
   <section class="section-tight" id="features">
-    <h2>Fast Strategy. Real Battles.</h2>
-    <p class="sub">Connect lines, claim squares, control the board, and outsmart your opponent.</p>
+    <h2>What’s New in Version 1.2</h2>
+    <p class="sub">A bigger battlefield, a stronger online arena, and more reasons to keep playing.</p>
 
     <div class="feature-grid">
       <div class="feature-card">
-        <h3>Online Battles</h3>
-        <p>Find a live opponent and compete in real-time strategy matches.</p>
+        <span class="feature-kicker">New board family</span>
+        <h3>Meet Offset</h3>
+        <p>Go beyond the square with Triangle, Diamond, and Hex boards—each with Classic, Rush, and special layouts.</p>
       </div>
 
       <div class="feature-card">
-        <h3>Local VS</h3>
-        <p>Pass and play battles for quick strategy sessions with friends.</p>
+        <span class="feature-kicker">Online arena</span>
+        <h3>Rankings & Rivals</h3>
+        <p>See Arena rank during online play, follow the leaderboard, add players, and invite worthy rivals back for another match.</p>
       </div>
 
       <div class="feature-card">
+        <span class="feature-kicker">A bigger collection</span>
         <h3>Achievements</h3>
-        <p>Unlock wins, streaks, online victories, chaos wins, and more.</p>
+        <p>Chase 93 achievements across streaks, online victories, every board family, AI battles, and a distinctly Canadian collection.</p>
       </div>
 
       <div class="feature-card">
-        <h3>Build Your Crew</h3>
-        <p>Choose your Guru, customize your profile, and play your way.</p>
+        <span class="feature-kicker">Play your way</span>
+        <h3>Three Ways to Battle</h3>
+        <p>Take on personality-packed AI opponents, share one device in Local VS, or find a live Game Center opponent online.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-kicker">Hidden mechanics</span>
+        <h3>Chaos Boards</h3>
+        <p>Choose Mystery Grid for a few concealed surprises or Full Chaos when every claimed shape can change the match.</p>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-kicker">Crafted in the North</span>
+        <h3>Unlock Canuck Chuck</h3>
+        <p>Complete the Canadian achievement collection to unlock a special homegrown AI challenger.</p>
       </div>
     </div>
   </section>
 
   <section class="section-tight">
-    <h2>In Action</h2>
-    <p class="sub">Classic boards, local battles, online PvP, achievements, avatars, and chaos modes.</p>
+    <h2>Play Your Way</h2>
+    <p class="sub">Build a profile, pick your crew, find a rival, and choose the battlefield that fits the mood.</p>
+
+    <div class="gallery-grid">
+      <div class="gallery-card gallery-card--feature">
+        <img src="assets/images/GridWars/v12-play-your-way.webp" alt="Grid Wars profile, Friends and Rivals, AI crew, Local VS and online play options">
+        <p class="gallery-caption">AI crews, Local VS, live online opponents, profiles, Arena rankings, Friends & Rivals.</p>
+      </div>
+
+      <div class="gallery-card gallery-card--feature">
+        <img src="assets/images/GridWars/v12-offset-boards.webp" alt="Grid Wars Offset board selection with Triangle, Diamond, and Hex boards">
+        <p class="gallery-caption">Three new shapes open an entirely different family of tactical boards.</p>
+      </div>
+
+      <div class="gallery-card gallery-card--feature">
+        <img src="assets/images/GridWars/v12-achievements.webp" alt="Grid Wars achievement collection showing 93 available achievements">
+        <p class="gallery-caption">Wins, streaks, rivals, board mastery, Canadian challenges, and plenty more to discover.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section-tight">
+    <h2>Three Shapes. Three New Strategies.</h2>
+    <p class="sub">
+      Triangle boards reward chains and sharp angles. Diamond boards tighten every decision.
+      Hex boards create more routes, more traps, and more ways to take control.
+    </p>
 
     <div class="gallery-grid">
       <div class="gallery-card">
-        <img src="assets/images/GridWars/g1.jpeg" alt="Grid Wars App Store preview image 1">
+        <img src="assets/images/GridWars/v12-triangle-match.webp" alt="Triangle Classic Grid Wars match">
+        <p class="gallery-caption"><strong>Triangle Classic</strong> — build chains across a field of interlocking triangles.</p>
       </div>
-
       <div class="gallery-card">
-        <img src="assets/images/GridWars/g2.jpeg" alt="Grid Wars App Store preview image 2">
+        <img src="assets/images/GridWars/v12-diamond-match.webp" alt="Diamond Classic Grid Wars match">
+        <p class="gallery-caption"><strong>Diamond Classic</strong> — compact geometry makes every line count.</p>
       </div>
-
       <div class="gallery-card">
-        <img src="assets/images/GridWars/g3.jpeg" alt="Grid Wars App Store preview image 3">
+        <img src="assets/images/GridWars/v12-hex-match.webp" alt="Hex Classic Grid Wars match">
+        <p class="gallery-caption"><strong>Hex Classic</strong> — six-sided spaces unlock fresh attacks and defenses.</p>
       </div>
-    </div>
-  </section>
-
-  <section class="section-tight">
-    <h2>Classic Boards. Chaos Boards. Online PvP.</h2>
-    <p class="sub">
-      Play clean classic strategy or turn up the pressure with special chaos boards
-      packed with hidden surprises and unique twists.
-    </p>
-
-    <div class="wide-showcase">
-      <img src="assets/images/GridWars/gridconnect.jpeg" alt="Grid Wars feature collage">
     </div>
   </section>
 
   <section class="cta-panel" id="download">
-    <h2>Now Live on iOS</h2>
-    <p class="sub" style="margin:0 auto 24px;">Ready to own the grid?</p>
+    <div class="version-badge">Version 1.2 is live</div>
+    <h2>Ready to Own the Grid?</h2>
+    <p class="sub" style="margin:0 auto 24px;">Download Grid Wars: Battle Lines on the App Store and choose your battlefield.</p>
 
     <a class="app-store-link"
    href="https://apps.apple.com/ca/app/grid-wars-battle-lines/id6762070963"
