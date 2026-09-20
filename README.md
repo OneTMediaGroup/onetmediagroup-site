@@ -1,28 +1,24 @@
-# One T Media Group — Website (Static)
+# One T Media Group website
 
-This is a static website ready for GitHub Pages.
+Static GitHub Pages website for [onetmediagroup.ca](https://onetmediagroup.ca/), focused on One T Media Group's industrial software and mobile apps.
 
-## Pages
-- Home: `index.html`
-- Apps: `apps.html`
-- Programs: `programs.html`
-- Books: `books.html`
-- Clothing: `clothing.html`
-- Media: `media.html`
-- Contact: `contact.html`
+## Primary pages
 
-## Quick Customize
-- Edit name/tagline inside the HTML files.
-- Update email in `contact.html`.
-- Replace the badge "1T" with your logo later (SVG/PNG).
+- `index.html` — Company home page
+- `one-t-industrial.html` — Industrial software overview
+- `floor-flow.html` — Floor Flow product page
+- `factory-on-call.html` — Factory On Call product page
+- `apps.html` — Mobile app overview
+- `grid-wars.html` — Grid Wars product page
+- `guru-crew.html` — Guru Crew product page
+- `contact.html` — Contact page
 
-## Deploy to GitHub Pages
-1. Create a GitHub repo (ex: `onetmediagroup-site`)
-2. Upload all files in this folder to the repo root
-3. Go to **Settings → Pages**
-4. Source: **Deploy from a branch**
-5. Branch: `main` / Folder: `/ (root)`
-6. Save — your site URL will appear.
+Additional product support, privacy, onboarding, and application files are kept alongside their related products.
 
-## Local Preview
-Open `index.html` in your browser, or use VS Code Live Server.
+## Local preview
+
+Serve the repository root with any static web server. There is no build step.
+
+## Deployment
+
+The site is published with GitHub Pages from the repository root. Keep `CNAME`, `robots.txt`, and `sitemap.xml` in the root directory.
