@@ -1,0 +1,22 @@
+{
+  "enabled": true,
+  "firebase": {
+    "apiKey": "AIzaSyCuNbmbZtS2gu-Jpbw-n2vXSyAWXSfY0ME",
+    "authDomain": "onet-kochi.firebaseapp.com",
+    "projectId": "onet-kochi",
+    "appId": "1:1055532443773:web:a18c0e1b1c4d6cd9e76914",
+    "messagingSenderId": "1055532443773",
+    "storageBucket": "onet-kochi.firebasestorage.app"
+  },
+  "appCheck": {
+    "provider": "recaptchaEnterprise",
+    "siteKey": "6Le_t9ktAAAAAOITrGw0JqQb5G2zU6a3ArYn8gCp"
+  },
+  "allowedHosts": [
+    "localhost",
+    "onetmediagroup.ca",
+    "www.onetmediagroup.ca"
+  ],
+  "status": "Public website domains registered for App Check and sign-in.",
+  "entitlementsEnabled": false
+}

@@ -1,0 +1,761 @@
+[
+  {
+    "title": "Meet the board",
+    "caption": "Nine points. Follow the carved lines between them.",
+    "placements": [],
+    "focus": [],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "A game of three",
+    "caption": "Black and white each have three stones.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Nine places to play",
+    "caption": "Stones sit on the nine points where the lines meet.",
+    "placements": [],
+    "focus": [
+      0,
+      1,
+      2,
+      3,
+      4,
+      5,
+      6,
+      7,
+      8
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Three stones each",
+    "caption": "Count three black stones and three white stones.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Find your line",
+    "caption": "Black can complete the top row by placing at the highlighted point.",
+    "placements": [
+      0,
+      3,
+      1,
+      4
+    ],
+    "focus": [
+      2
+    ],
+    "line": [],
+    "action": {
+      "to": 2,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "Three in a row",
+    "caption": "A horizontal, vertical or diagonal line wins—even during placement.",
+    "placements": [
+      0,
+      3,
+      1,
+      4,
+      2
+    ],
+    "focus": [],
+    "line": [
+      0,
+      1,
+      2
+    ],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Small board, big decisions",
+    "caption": "Look at both colours before choosing your next point.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      1,
+      5,
+      6
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Follow the lines",
+    "caption": "The centre connects directly to all eight outer points.",
+    "placements": [],
+    "focus": [
+      4
+    ],
+    "line": [],
+    "action": null,
+    "connections": true
+  },
+  {
+    "title": "One connection",
+    "caption": "Black can move from the top-left point to the empty top-middle point.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      0,
+      1
+    ],
+    "line": [],
+    "action": {
+      "to": 1,
+      "from": 0
+    },
+    "connections": false
+  },
+  {
+    "title": "Black places first",
+    "caption": "Begin by placing one black stone on any empty point.",
+    "placements": [],
+    "focus": [
+      4
+    ],
+    "line": [],
+    "action": {
+      "to": 4,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "One stone at a time",
+    "caption": "After black places, white takes a turn.",
+    "placements": [
+      4
+    ],
+    "focus": [
+      0
+    ],
+    "line": [],
+    "action": {
+      "to": 0,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "Any empty point",
+    "caption": "During placement, you do not have to follow a connection.",
+    "placements": [
+      4,
+      0
+    ],
+    "focus": [
+      1,
+      2,
+      3,
+      5,
+      6,
+      7,
+      8
+    ],
+    "line": [],
+    "action": {
+      "to": 8,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "White answers",
+    "caption": "Each turn belongs to the other player after you place.",
+    "placements": [
+      4
+    ],
+    "focus": [
+      2
+    ],
+    "line": [],
+    "action": {
+      "to": 2,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "All six are down",
+    "caption": "If nobody has won, the next turn begins movement.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Your starting position",
+    "caption": "Your placements decide which moves will be available later.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      1,
+      5,
+      6
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Place with a plan",
+    "caption": "A stone in the centre has connections in every direction.",
+    "placements": [
+      4,
+      0
+    ],
+    "focus": [
+      4
+    ],
+    "line": [],
+    "action": null,
+    "connections": true
+  },
+  {
+    "title": "The centre",
+    "caption": "Eight connections pass through this point. Occupied points still block movement.",
+    "placements": [
+      4
+    ],
+    "focus": [
+      4
+    ],
+    "line": [],
+    "action": null,
+    "connections": true
+  },
+  {
+    "title": "The corners",
+    "caption": "Each corner connects to the centre and its two neighbouring edge points.",
+    "placements": [],
+    "focus": [
+      0,
+      2,
+      6,
+      8
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Leave room to move",
+    "caption": "This empty neighbour gives black a route out of the corner.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      0,
+      1
+    ],
+    "line": [],
+    "action": {
+      "to": 1,
+      "from": 0
+    },
+    "connections": false
+  },
+  {
+    "title": "Look at all three",
+    "caption": "The highlighted points show black's three stones. Consider how they work together.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      0,
+      4,
+      7
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Time to move",
+    "caption": "All six stones are placed. Black now moves a stone instead of adding one.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      0,
+      1
+    ],
+    "line": [],
+    "action": {
+      "to": 1,
+      "from": 0
+    },
+    "connections": false
+  },
+  {
+    "title": "Move to a neighbour",
+    "caption": "Follow the arrow across one connection to an empty point.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      0,
+      1
+    ],
+    "line": [],
+    "action": {
+      "to": 1,
+      "from": 0
+    },
+    "connections": false
+  },
+  {
+    "title": "An empty destination",
+    "caption": "The centre stone can move right because that neighbouring point is empty.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      4,
+      5
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "No jumping",
+    "caption": "Black cannot move from top-left to bottom-right: the centre is occupied. Never cross more than one connection.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      0,
+      4,
+      8
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Move to defend",
+    "caption": "White threatens the right column. Black can move from the centre to block it.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      2,
+      5,
+      8
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "What did you leave?",
+    "caption": "Moving this black stone leaves the centre empty for the other player.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      4
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "Connected, not just close",
+    "caption": "A diagonal step from the centre to bottom-left is legal: there is a drawn connection.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      4,
+      6
+    ],
+    "line": [],
+    "action": {
+      "to": 6,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "Check the new position",
+    "caption": "This move occupies the right-middle point and opens the centre. Look at both changes.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      4,
+      5
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "Work together",
+    "caption": "Black's two top-row stones support a winning placement at the third point.",
+    "placements": [
+      0,
+      3,
+      1,
+      4
+    ],
+    "focus": [
+      0,
+      1,
+      2
+    ],
+    "line": [],
+    "action": {
+      "to": 2,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "See the whole board",
+    "caption": "Black threatens the top row; white threatens the middle row. Notice both.",
+    "placements": [
+      0,
+      3,
+      1,
+      4
+    ],
+    "focus": [
+      2,
+      5
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Two make a threat",
+    "caption": "Two black stones line up. The empty top-right point completes their row.",
+    "placements": [
+      0,
+      3,
+      1,
+      4
+    ],
+    "focus": [
+      2
+    ],
+    "line": [
+      0,
+      1,
+      2
+    ],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Three completes it",
+    "caption": "Place at top-right to complete the line and win immediately.",
+    "placements": [
+      0,
+      3,
+      1,
+      4
+    ],
+    "focus": [
+      2
+    ],
+    "line": [
+      0,
+      1,
+      2
+    ],
+    "action": {
+      "to": 2,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "Watch the opponent",
+    "caption": "White's top-right and bottom-right stones threaten the empty point between them.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      2,
+      5,
+      8
+    ],
+    "line": [
+      2,
+      5,
+      8
+    ],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Close the gap",
+    "caption": "Move black into the right-middle point to stop white completing that column.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      5
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "Defence and attack",
+    "caption": "Placing at right-middle blocks white's row and leaves black threatening the top row. Here, black could also win immediately at top-right.",
+    "placements": [
+      0,
+      3,
+      1,
+      4
+    ],
+    "focus": [
+      2,
+      5
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": null
+    },
+    "connections": false
+  },
+  {
+    "title": "Think one turn ahead",
+    "caption": "After blocking right-middle, the centre is open. Consider white's reply before moving.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      4,
+      5
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "More than one threat",
+    "caption": "Both players have two stones in a row. Check every line, not just the first one you spot.",
+    "placements": [
+      0,
+      3,
+      1,
+      4
+    ],
+    "focus": [
+      2,
+      5
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Keep your options",
+    "caption": "Black's centre stone has three empty neighbours: top-middle, right-middle and bottom-left.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      1,
+      5,
+      6
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  },
+  {
+    "title": "Take away an option",
+    "caption": "Occupying right-middle removes white's immediate winning destination.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      5
+    ],
+    "line": [],
+    "action": {
+      "to": 5,
+      "from": 4
+    },
+    "connections": false
+  },
+  {
+    "title": "Your move",
+    "caption": "Before every turn: check for a win, check the opponent's threats, then check the connections.",
+    "placements": [
+      0,
+      2,
+      4,
+      3,
+      7,
+      8
+    ],
+    "focus": [
+      1,
+      5,
+      6
+    ],
+    "line": [],
+    "action": null,
+    "connections": false
+  }
+]

@@ -1,0 +1,4299 @@
+{
+  "schemaVersion": 1,
+  "skins": [
+    {
+      "id": "canada",
+      "name": "Canada",
+      "board": "skins/canada_board.png",
+      "background": "skins/canada_background.jpg",
+      "p1": "skins/canada_p1.png",
+      "p2": "skins/canada_p2.png"
+    },
+    {
+      "id": "cherry",
+      "name": "Cherry",
+      "board": "skins/cherry_board.png",
+      "background": "skins/cherry_background.jpg",
+      "p1": "skins/cherry_p1.png",
+      "p2": "skins/cherry_p2.png"
+    },
+    {
+      "id": "city",
+      "name": "City",
+      "board": "skins/city_board.png",
+      "background": "skins/city_background.jpg",
+      "p1": "skins/city_p1.png",
+      "p2": "skins/city_p2.png"
+    },
+    {
+      "id": "classic",
+      "name": "Classic",
+      "board": "skins/classic_board.png",
+      "background": "skins/classic_background.jpg",
+      "p1": "skins/classic_p2.png",
+      "p2": "skins/classic_p1.png"
+    },
+    {
+      "id": "fire",
+      "name": "Fire",
+      "board": "skins/fire_board.png",
+      "background": "skins/fire_background.jpg",
+      "p1": "skins/fire_p1.png",
+      "p2": "skins/fire_p2.png"
+    },
+    {
+      "id": "future",
+      "name": "Future",
+      "board": "skins/future_board.png",
+      "background": "skins/future_background.jpg",
+      "p1": "skins/future_p1.png",
+      "p2": "skins/future_p2.png"
+    },
+    {
+      "id": "hiro",
+      "name": "Hiro",
+      "board": "skins/hiro_board.png",
+      "background": "skins/hiro_background.jpg",
+      "p1": "skins/hiro_p1.png",
+      "p2": "skins/hiro_p2.png"
+    },
+    {
+      "id": "ice",
+      "name": "Ice",
+      "board": "skins/ice_board.png",
+      "background": "skins/ice_background.jpg",
+      "p1": "skins/ice_p1.png",
+      "p2": "skins/ice_p2.png"
+    },
+    {
+      "id": "jade",
+      "name": "Jade",
+      "board": "skins/jade_board.png",
+      "background": "skins/jade_background.jpg",
+      "p1": "skins/jade_p1.png",
+      "p2": "skins/jade_p2.png"
+    },
+    {
+      "id": "kai",
+      "name": "Kai",
+      "board": "skins/kai_board.png",
+      "background": "skins/kai_background.jpg",
+      "p1": "skins/kai_p1.png",
+      "p2": "skins/kai_p2.png"
+    },
+    {
+      "id": "luna",
+      "name": "Luna",
+      "board": "skins/luna_board.png",
+      "background": "skins/luna_background.jpg",
+      "p1": "skins/luna_p1.png",
+      "p2": "skins/luna_p2.png"
+    },
+    {
+      "id": "marble",
+      "name": "Marble",
+      "board": "skins/marble_board.png",
+      "background": "skins/marble_background.jpg",
+      "p1": "skins/marble_p1.png",
+      "p2": "skins/marble_p2.png"
+    },
+    {
+      "id": "marco",
+      "name": "Marco",
+      "board": "skins/marco_board.png",
+      "background": "skins/marco_background.jpg",
+      "p1": "skins/marco_p1.png",
+      "p2": "skins/marco_p2.png"
+    },
+    {
+      "id": "neon",
+      "name": "Neon",
+      "board": "skins/neon_board.png",
+      "background": "skins/neon_background.jpg",
+      "p1": "skins/neon_p1.png",
+      "p2": "skins/neon_p2.png"
+    },
+    {
+      "id": "obsidian",
+      "name": "Obsidian",
+      "board": "skins/obsidian_board.png",
+      "background": "skins/obsidian_background.jpg",
+      "p1": "skins/obsidian_p1.png",
+      "p2": "skins/obsidian_p2.png"
+    },
+    {
+      "id": "office",
+      "name": "Office",
+      "board": "skins/office_board.png",
+      "background": "skins/office_background.jpg",
+      "p1": "skins/office_p1.png",
+      "p2": "skins/office_p2.png"
+    },
+    {
+      "id": "olivia",
+      "name": "Olivia",
+      "board": "skins/olivia_board.png",
+      "background": "skins/olivia_background.jpg",
+      "p1": "skins/olivia_p1.png",
+      "p2": "skins/olivia_p2.png"
+    },
+    {
+      "id": "onet",
+      "name": "Onet",
+      "board": "skins/onet_board.png",
+      "background": "skins/onet_background.jpg",
+      "p1": "skins/onet_p1.png",
+      "p2": "skins/onet_p2.png"
+    },
+    {
+      "id": "pirates",
+      "name": "Pirates",
+      "board": "skins/pirates_board.png",
+      "background": "skins/pirates_background.jpg",
+      "p1": "skins/pirates_p1.png",
+      "p2": "skins/pirates_p2.png"
+    },
+    {
+      "id": "stars",
+      "name": "Stars",
+      "board": "skins/stars_board.png",
+      "background": "skins/stars_background.jpg",
+      "p1": "skins/stars_p1.png",
+      "p2": "skins/stars_p2.png"
+    },
+    {
+      "id": "sujith",
+      "name": "Sujith",
+      "board": "skins/sujith_board.png",
+      "background": "skins/sujith_background.jpg",
+      "p1": "skins/sujith_p1.png",
+      "p2": "skins/sujith_p2.png"
+    },
+    {
+      "id": "wildwest",
+      "name": "Wildwest",
+      "board": "skins/wildwest_board.png",
+      "background": "skins/wildwest_background.jpg",
+      "p1": "skins/wildwest_p1.png",
+      "p2": "skins/wildwest_p2.png"
+    },
+    {
+      "id": "zara",
+      "name": "Zara",
+      "board": "skins/zara_board.png",
+      "background": "skins/zara_background.png",
+      "p1": "skins/zara_p1.png",
+      "p2": "skins/zara_p2.png"
+    }
+  ],
+  "items": [
+    {
+      "id": "overlay.bamboo",
+      "kind": "overlay",
+      "name": "Bamboo",
+      "file": "overlay/bamboo.png"
+    },
+    {
+      "id": "overlay.black",
+      "kind": "overlay",
+      "name": "Black",
+      "file": "overlay/black.png"
+    },
+    {
+      "id": "overlay.blue_neon",
+      "kind": "overlay",
+      "name": "Blue Neon",
+      "file": "overlay/blue_neon.png"
+    },
+    {
+      "id": "overlay.bronze",
+      "kind": "overlay",
+      "name": "Bronze",
+      "file": "overlay/bronze.png"
+    },
+    {
+      "id": "overlay.candy",
+      "kind": "overlay",
+      "name": "Candy",
+      "file": "overlay/candy.png"
+    },
+    {
+      "id": "overlay.candycane",
+      "kind": "overlay",
+      "name": "Candycane",
+      "file": "overlay/candycane.png"
+    },
+    {
+      "id": "overlay.chain",
+      "kind": "overlay",
+      "name": "Chain",
+      "file": "overlay/chain.png"
+    },
+    {
+      "id": "overlay.chalk",
+      "kind": "overlay",
+      "name": "Chalk",
+      "file": "overlay/chalk.png"
+    },
+    {
+      "id": "overlay.circuit",
+      "kind": "overlay",
+      "name": "Circuit",
+      "file": "overlay/circuit.png"
+    },
+    {
+      "id": "overlay.crayons",
+      "kind": "overlay",
+      "name": "Crayons",
+      "file": "overlay/crayons.png"
+    },
+    {
+      "id": "overlay.fire",
+      "kind": "overlay",
+      "name": "Fire",
+      "file": "overlay/fire.png"
+    },
+    {
+      "id": "overlay.glow_sticks",
+      "kind": "overlay",
+      "name": "Glow Sticks",
+      "file": "overlay/glow_sticks.png"
+    },
+    {
+      "id": "overlay.gold",
+      "kind": "overlay",
+      "name": "Gold",
+      "file": "overlay/gold.png"
+    },
+    {
+      "id": "overlay.laser",
+      "kind": "overlay",
+      "name": "Laser",
+      "file": "overlay/laser.png"
+    },
+    {
+      "id": "overlay.lego",
+      "kind": "overlay",
+      "name": "Lego",
+      "file": "overlay/lego.png"
+    },
+    {
+      "id": "overlay.matches",
+      "kind": "overlay",
+      "name": "Matches",
+      "file": "overlay/matches.png"
+    },
+    {
+      "id": "overlay.neon_swords",
+      "kind": "overlay",
+      "name": "Neon Swords",
+      "file": "overlay/neon_swords.png"
+    },
+    {
+      "id": "overlay.night_neon",
+      "kind": "overlay",
+      "name": "Night Neon",
+      "file": "overlay/night_neon.png"
+    },
+    {
+      "id": "overlay.pencil",
+      "kind": "overlay",
+      "name": "Pencil",
+      "file": "overlay/pencil.png"
+    },
+    {
+      "id": "overlay.popsicle_sticks",
+      "kind": "overlay",
+      "name": "Popsicle Sticks",
+      "file": "overlay/popsicle_sticks.png"
+    },
+    {
+      "id": "overlay.purple_neon",
+      "kind": "overlay",
+      "name": "Purple Neon",
+      "file": "overlay/purple_neon.png"
+    },
+    {
+      "id": "overlay.shocks",
+      "kind": "overlay",
+      "name": "Shocks",
+      "file": "overlay/shocks.png"
+    },
+    {
+      "id": "overlay.silver",
+      "kind": "overlay",
+      "name": "Silver",
+      "file": "overlay/silver.png"
+    },
+    {
+      "id": "overlay.steel",
+      "kind": "overlay",
+      "name": "Steel",
+      "file": "overlay/steel.png"
+    },
+    {
+      "id": "overlay.sticks",
+      "kind": "overlay",
+      "name": "Sticks",
+      "file": "overlay/sticks.png"
+    },
+    {
+      "id": "overlay.tracks",
+      "kind": "overlay",
+      "name": "Tracks",
+      "file": "overlay/tracks.png"
+    },
+    {
+      "id": "overlay.white_neon",
+      "kind": "overlay",
+      "name": "White Neon",
+      "file": "overlay/white_neon.png"
+    },
+    {
+      "id": "overlay.wicker",
+      "kind": "overlay",
+      "name": "Wicker",
+      "file": "overlay/wicker.png"
+    },
+    {
+      "id": "overlay.wood",
+      "kind": "overlay",
+      "name": "Wood",
+      "file": "overlay/wood.png"
+    },
+    {
+      "id": "background.autumn_cabin",
+      "kind": "background",
+      "name": "Autumn Cabin",
+      "file": "background/autumn_cabin.jpeg"
+    },
+    {
+      "id": "background.castle_hall",
+      "kind": "background",
+      "name": "Castle Hall",
+      "file": "background/castle_hall.jpeg"
+    },
+    {
+      "id": "background.coffee_house",
+      "kind": "background",
+      "name": "Coffee House",
+      "file": "background/coffee_house.jpeg"
+    },
+    {
+      "id": "background.cozy_fireplace",
+      "kind": "background",
+      "name": "Cozy Fireplace",
+      "file": "background/cozy_fireplace.jpeg"
+    },
+    {
+      "id": "background.deep_space",
+      "kind": "background",
+      "name": "Deep Space",
+      "file": "background/deep_space.jpeg"
+    },
+    {
+      "id": "background.desert_night",
+      "kind": "background",
+      "name": "Desert Night",
+      "file": "background/desert_night.jpeg"
+    },
+    {
+      "id": "background.jungle_temple",
+      "kind": "background",
+      "name": "Jungle Temple",
+      "file": "background/jungle_temple.jpeg"
+    },
+    {
+      "id": "background.moonlit_lake",
+      "kind": "background",
+      "name": "Moonlit Lake",
+      "file": "background/moonlit_lake.jpeg"
+    },
+    {
+      "id": "background.mountain_summit",
+      "kind": "background",
+      "name": "Mountain Summit",
+      "file": "background/mountain_summit.jpeg"
+    },
+    {
+      "id": "background.northern_lights",
+      "kind": "background",
+      "name": "Northern Lights",
+      "file": "background/northern_lights.jpeg"
+    },
+    {
+      "id": "background.rainy_tokyo",
+      "kind": "background",
+      "name": "Rainy Tokyo",
+      "file": "background/rainy_tokyo.jpeg"
+    },
+    {
+      "id": "background.retro_arcade",
+      "kind": "background",
+      "name": "Retro Arcade",
+      "file": "background/retro_arcade.jpeg"
+    },
+    {
+      "id": "background.rooftop_sunset",
+      "kind": "background",
+      "name": "Rooftop Sunset",
+      "file": "background/rooftop_sunset.jpeg"
+    },
+    {
+      "id": "background.secret_library",
+      "kind": "background",
+      "name": "Secret Library",
+      "file": "background/secret_library.jpeg"
+    },
+    {
+      "id": "background.storm_watch",
+      "kind": "background",
+      "name": "Storm Watch",
+      "file": "background/storm_watch.jpeg"
+    },
+    {
+      "id": "background.cyber_alley",
+      "kind": "background",
+      "name": "Cyber Alley",
+      "file": "background/cyber_alley.jpeg"
+    },
+    {
+      "id": "background.underwater_ruins",
+      "kind": "background",
+      "name": "Underwater Ruins",
+      "file": "background/underwater_ruins.jpeg"
+    },
+    {
+      "id": "avatar.bear",
+      "kind": "avatar",
+      "name": "Bear",
+      "file": "avatar/bear.jpg"
+    },
+    {
+      "id": "avatar.black_panther",
+      "kind": "avatar",
+      "name": "Black Panther",
+      "file": "avatar/black_panther.jpg"
+    },
+    {
+      "id": "avatar.bull",
+      "kind": "avatar",
+      "name": "Bull",
+      "file": "avatar/bull.jpg"
+    },
+    {
+      "id": "avatar.canada_knight",
+      "kind": "avatar",
+      "name": "Canada Knight",
+      "file": "avatar/canada_knight.jpg"
+    },
+    {
+      "id": "avatar.cobra",
+      "kind": "avatar",
+      "name": "Cobra",
+      "file": "avatar/cobra.jpg"
+    },
+    {
+      "id": "avatar.crown",
+      "kind": "avatar",
+      "name": "Crown",
+      "file": "avatar/crown.jpg"
+    },
+    {
+      "id": "avatar.elephant",
+      "kind": "avatar",
+      "name": "Elephant",
+      "file": "avatar/elephant.jpg"
+    },
+    {
+      "id": "avatar.fall_wolf",
+      "kind": "avatar",
+      "name": "Fall Wolf",
+      "file": "avatar/fall_wolf.jpg"
+    },
+    {
+      "id": "avatar.fire_ball",
+      "kind": "avatar",
+      "name": "Fire Ball",
+      "file": "avatar/fire_ball.jpg"
+    },
+    {
+      "id": "avatar.fire_dragon",
+      "kind": "avatar",
+      "name": "Fire Dragon",
+      "file": "avatar/fire_dragon.jpg"
+    },
+    {
+      "id": "avatar.fire_phoenix",
+      "kind": "avatar",
+      "name": "Fire Phoenix",
+      "file": "avatar/fire_phoenix.jpg"
+    },
+    {
+      "id": "avatar.fire_skull",
+      "kind": "avatar",
+      "name": "Fire Skull",
+      "file": "avatar/fire_skull.jpg"
+    },
+    {
+      "id": "avatar.forest_deer",
+      "kind": "avatar",
+      "name": "Forest Deer",
+      "file": "avatar/forest_deer.jpg"
+    },
+    {
+      "id": "avatar.gold_sun",
+      "kind": "avatar",
+      "name": "Gold Sun",
+      "file": "avatar/gold_sun.jpg"
+    },
+    {
+      "id": "avatar.ice_dragon",
+      "kind": "avatar",
+      "name": "Ice Dragon",
+      "file": "avatar/ice_dragon.jpg"
+    },
+    {
+      "id": "avatar.lucky_charm",
+      "kind": "avatar",
+      "name": "Lucky Charm",
+      "file": "avatar/lucky_charm.jpg"
+    },
+    {
+      "id": "avatar.night_crow",
+      "kind": "avatar",
+      "name": "Night Crow",
+      "file": "avatar/night_crow.jpg"
+    },
+    {
+      "id": "avatar.night_moon",
+      "kind": "avatar",
+      "name": "Night Moon",
+      "file": "avatar/night_moon.jpg"
+    },
+    {
+      "id": "avatar.night_ninja",
+      "kind": "avatar",
+      "name": "Night Ninja",
+      "file": "avatar/night_ninja.jpg"
+    },
+    {
+      "id": "avatar.night_wolf",
+      "kind": "avatar",
+      "name": "Night Wolf",
+      "file": "avatar/night_wolf.jpg"
+    },
+    {
+      "id": "avatar.northern_lights",
+      "kind": "avatar",
+      "name": "Northern Lights",
+      "file": "avatar/northern_lights.jpg"
+    },
+    {
+      "id": "avatar.owl",
+      "kind": "avatar",
+      "name": "Owl",
+      "file": "avatar/owl.jpg"
+    },
+    {
+      "id": "avatar.pink_blossom",
+      "kind": "avatar",
+      "name": "Pink Blossom",
+      "file": "avatar/pink_blossom.jpg"
+    },
+    {
+      "id": "avatar.pirate_captin",
+      "kind": "avatar",
+      "name": "Pirate Captin",
+      "file": "avatar/pirate_captin.jpg"
+    },
+    {
+      "id": "avatar.read_leaf",
+      "kind": "avatar",
+      "name": "Read Leaf",
+      "file": "avatar/read_leaf.jpg"
+    },
+    {
+      "id": "avatar.red_fox",
+      "kind": "avatar",
+      "name": "Red Fox",
+      "file": "avatar/red_fox.jpg"
+    },
+    {
+      "id": "avatar.samurai_blossom",
+      "kind": "avatar",
+      "name": "Samurai Blossom",
+      "file": "avatar/samurai_blossom.jpg"
+    },
+    {
+      "id": "avatar.spaceman",
+      "kind": "avatar",
+      "name": "Spaceman",
+      "file": "avatar/spaceman.jpg"
+    },
+    {
+      "id": "avatar.white_tiger",
+      "kind": "avatar",
+      "name": "White Tiger",
+      "file": "avatar/white_tiger.jpg"
+    },
+    {
+      "id": "avatar.zen_statue",
+      "kind": "avatar",
+      "name": "Zen Statue",
+      "file": "avatar/zen_statue.jpg"
+    }
+  ],
+  "characters": [
+    {
+      "id": "hiro",
+      "name": "Hiro",
+      "card": "characters/hiro_card.jpeg",
+      "icon": "characters/hiro_icon.png"
+    },
+    {
+      "id": "zara",
+      "name": "Zara",
+      "card": "characters/zara_card.jpeg",
+      "icon": "characters/zara_icon.png"
+    },
+    {
+      "id": "olivia",
+      "name": "Olivia",
+      "card": "characters/olivia_card.jpeg",
+      "icon": "characters/olivia_icon.png"
+    },
+    {
+      "id": "marco",
+      "name": "Marco",
+      "card": "characters/marco_card.jpeg",
+      "icon": "characters/marco_icon.png"
+    },
+    {
+      "id": "luna",
+      "name": "Luna",
+      "card": "characters/luna_card.jpeg",
+      "icon": "characters/luna_icon.png"
+    },
+    {
+      "id": "sujith",
+      "name": "Sujith",
+      "card": "characters/sujith_card.jpeg",
+      "icon": "characters/sujith_icon.png"
+    },
+    {
+      "id": "kai",
+      "name": "Kai",
+      "card": "characters/kai_card.jpeg",
+      "icon": "characters/kai_icon.png"
+    },
+    {
+      "id": "onet",
+      "name": "One T — The Dev",
+      "card": "characters/onet_card.jpg",
+      "icon": "characters/onet_icon.png"
+    }
+  ],
+  "clips": [
+    {
+      "id": "olivia_001",
+      "character": "olivia",
+      "number": 1,
+      "text": "Let us cause some trouble.",
+      "event": "opening",
+      "file": "audio/olivia_001.m4a"
+    },
+    {
+      "id": "olivia_002",
+      "character": "olivia",
+      "number": 2,
+      "text": "I hope you like surprises.",
+      "event": "opening",
+      "file": "audio/olivia_002.m4a"
+    },
+    {
+      "id": "olivia_003",
+      "character": "olivia",
+      "number": 3,
+      "text": "Pick a point. Any point.",
+      "event": "opening",
+      "file": "audio/olivia_003.m4a"
+    },
+    {
+      "id": "olivia_004",
+      "character": "olivia",
+      "number": 4,
+      "text": "That opening looks confident.",
+      "event": "context",
+      "file": "audio/olivia_004.m4a"
+    },
+    {
+      "id": "olivia_005",
+      "character": "olivia",
+      "number": 5,
+      "text": "Confidence can be dangerous.",
+      "event": "opening",
+      "file": "audio/olivia_005.m4a"
+    },
+    {
+      "id": "olivia_006",
+      "character": "olivia",
+      "number": 6,
+      "text": "The centre looks tempting.",
+      "event": "centre",
+      "file": "audio/olivia_006.m4a"
+    },
+    {
+      "id": "olivia_007",
+      "character": "olivia",
+      "number": 7,
+      "text": "Corners hide lovely little tricks.",
+      "event": "corner",
+      "file": "audio/olivia_007.m4a"
+    },
+    {
+      "id": "olivia_008",
+      "character": "olivia",
+      "number": 8,
+      "text": "I wonder what you are planning.",
+      "event": "placement",
+      "file": "audio/olivia_008.m4a"
+    },
+    {
+      "id": "olivia_009",
+      "character": "olivia",
+      "number": 9,
+      "text": "Actually, I think I know.",
+      "event": "placement",
+      "file": "audio/olivia_009.m4a"
+    },
+    {
+      "id": "olivia_010",
+      "character": "olivia",
+      "number": 10,
+      "text": "This should be fun.",
+      "event": "opening",
+      "file": "audio/olivia_010.m4a"
+    },
+    {
+      "id": "olivia_011",
+      "character": "olivia",
+      "number": 11,
+      "text": "Oh, that changes things.",
+      "event": "placement",
+      "file": "audio/olivia_011.m4a"
+    },
+    {
+      "id": "olivia_012",
+      "character": "olivia",
+      "number": 12,
+      "text": "You really chose that point.",
+      "event": "context",
+      "file": "audio/olivia_012.m4a"
+    },
+    {
+      "id": "olivia_013",
+      "character": "olivia",
+      "number": 13,
+      "text": "Interesting. Very interesting indeed.",
+      "event": "context",
+      "file": "audio/olivia_013.m4a"
+    },
+    {
+      "id": "olivia_014",
+      "character": "olivia",
+      "number": 14,
+      "text": "You might regret that placement.",
+      "event": "context",
+      "file": "audio/olivia_014.m4a"
+    },
+    {
+      "id": "olivia_015",
+      "character": "olivia",
+      "number": 15,
+      "text": "I see something you missed.",
+      "event": "context",
+      "file": "audio/olivia_015.m4a"
+    },
+    {
+      "id": "olivia_016",
+      "character": "olivia",
+      "number": 16,
+      "text": "That gives me an idea.",
+      "event": "mistake",
+      "file": "audio/olivia_016.m4a"
+    },
+    {
+      "id": "olivia_017",
+      "character": "olivia",
+      "number": 17,
+      "text": "Your plan looks almost convincing.",
+      "event": "context",
+      "file": "audio/olivia_017.m4a"
+    },
+    {
+      "id": "olivia_018",
+      "character": "olivia",
+      "number": 18,
+      "text": "Careful, I am watching.",
+      "event": "placement",
+      "file": "audio/olivia_018.m4a"
+    },
+    {
+      "id": "olivia_019",
+      "character": "olivia",
+      "number": 19,
+      "text": "Now things get sneaky.",
+      "event": "context",
+      "file": "audio/olivia_019.m4a"
+    },
+    {
+      "id": "olivia_020",
+      "character": "olivia",
+      "number": 20,
+      "text": "Placement was the easy part.",
+      "event": "context",
+      "file": "audio/olivia_020.m4a"
+    },
+    {
+      "id": "olivia_021",
+      "character": "olivia",
+      "number": 21,
+      "text": "Let the dancing begin.",
+      "event": "movement",
+      "file": "audio/olivia_021.m4a"
+    },
+    {
+      "id": "olivia_022",
+      "character": "olivia",
+      "number": 22,
+      "text": "That move surprised me.",
+      "event": "movement",
+      "file": "audio/olivia_022.m4a"
+    },
+    {
+      "id": "olivia_023",
+      "character": "olivia",
+      "number": 23,
+      "text": "You just opened something useful.",
+      "event": "mistake",
+      "file": "audio/olivia_023.m4a"
+    },
+    {
+      "id": "olivia_024",
+      "character": "olivia",
+      "number": 24,
+      "text": "Thanks for the invitation.",
+      "event": "context",
+      "file": "audio/olivia_024.m4a"
+    },
+    {
+      "id": "olivia_025",
+      "character": "olivia",
+      "number": 25,
+      "text": "I would reconsider that move.",
+      "event": "context",
+      "file": "audio/olivia_025.m4a"
+    },
+    {
+      "id": "olivia_026",
+      "character": "olivia",
+      "number": 26,
+      "text": "Too late now though.",
+      "event": "mistake",
+      "file": "audio/olivia_026.m4a"
+    },
+    {
+      "id": "olivia_027",
+      "character": "olivia",
+      "number": 27,
+      "text": "That stone wandered into trouble.",
+      "event": "context",
+      "file": "audio/olivia_027.m4a"
+    },
+    {
+      "id": "olivia_028",
+      "character": "olivia",
+      "number": 28,
+      "text": "I have a cheeky idea.",
+      "event": "movement",
+      "file": "audio/olivia_028.m4a"
+    },
+    {
+      "id": "olivia_029",
+      "character": "olivia",
+      "number": 29,
+      "text": "Watch this little trick.",
+      "event": "context",
+      "file": "audio/olivia_029.m4a"
+    },
+    {
+      "id": "olivia_030",
+      "character": "olivia",
+      "number": 30,
+      "text": "Things are getting interesting.",
+      "event": "movement",
+      "file": "audio/olivia_030.m4a"
+    },
+    {
+      "id": "olivia_031",
+      "character": "olivia",
+      "number": 31,
+      "text": "Oh, I see your threat.",
+      "event": "threat",
+      "file": "audio/olivia_031.m4a"
+    },
+    {
+      "id": "olivia_032",
+      "character": "olivia",
+      "number": 32,
+      "text": "Nice try with that line.",
+      "event": "threat",
+      "file": "audio/olivia_032.m4a"
+    },
+    {
+      "id": "olivia_033",
+      "character": "olivia",
+      "number": 33,
+      "text": "Not getting through there.",
+      "event": "context",
+      "file": "audio/olivia_033.m4a"
+    },
+    {
+      "id": "olivia_034",
+      "character": "olivia",
+      "number": 34,
+      "text": "You caught my little trick.",
+      "event": "block",
+      "file": "audio/olivia_034.m4a"
+    },
+    {
+      "id": "olivia_035",
+      "character": "olivia",
+      "number": 35,
+      "text": "That block spoiled everything.",
+      "event": "block",
+      "file": "audio/olivia_035.m4a"
+    },
+    {
+      "id": "olivia_036",
+      "character": "olivia",
+      "number": 36,
+      "text": "Fine. Plan number two.",
+      "event": "context",
+      "file": "audio/olivia_036.m4a"
+    },
+    {
+      "id": "olivia_037",
+      "character": "olivia",
+      "number": 37,
+      "text": "You blocked the obvious one.",
+      "event": "context",
+      "file": "audio/olivia_037.m4a"
+    },
+    {
+      "id": "olivia_038",
+      "character": "olivia",
+      "number": 38,
+      "text": "Did you notice the other one.",
+      "event": "context",
+      "file": "audio/olivia_038.m4a"
+    },
+    {
+      "id": "olivia_039",
+      "character": "olivia",
+      "number": 39,
+      "text": "Sometimes the bait works beautifully.",
+      "event": "context",
+      "file": "audio/olivia_039.m4a"
+    },
+    {
+      "id": "olivia_040",
+      "character": "olivia",
+      "number": 40,
+      "text": "You are making this difficult.",
+      "event": "context",
+      "file": "audio/olivia_040.m4a"
+    },
+    {
+      "id": "olivia_041",
+      "character": "olivia",
+      "number": 41,
+      "text": "Okay, that was clever.",
+      "event": "strong",
+      "file": "audio/olivia_041.m4a"
+    },
+    {
+      "id": "olivia_042",
+      "character": "olivia",
+      "number": 42,
+      "text": "You actually saw that coming.",
+      "event": "strong",
+      "file": "audio/olivia_042.m4a"
+    },
+    {
+      "id": "olivia_043",
+      "character": "olivia",
+      "number": 43,
+      "text": "That was not in my plan.",
+      "event": "strong",
+      "file": "audio/olivia_043.m4a"
+    },
+    {
+      "id": "olivia_044",
+      "character": "olivia",
+      "number": 44,
+      "text": "You turned that around nicely.",
+      "event": "strong",
+      "file": "audio/olivia_044.m4a"
+    },
+    {
+      "id": "olivia_045",
+      "character": "olivia",
+      "number": 45,
+      "text": "I walked straight into that.",
+      "event": "context",
+      "file": "audio/olivia_045.m4a"
+    },
+    {
+      "id": "olivia_046",
+      "character": "olivia",
+      "number": 46,
+      "text": "You ruined my best trick.",
+      "event": "context",
+      "file": "audio/olivia_046.m4a"
+    },
+    {
+      "id": "olivia_047",
+      "character": "olivia",
+      "number": 47,
+      "text": "Well played, you got me.",
+      "event": "loss",
+      "file": "audio/olivia_047.m4a"
+    },
+    {
+      "id": "olivia_048",
+      "character": "olivia",
+      "number": 48,
+      "text": "That victory was well earned.",
+      "event": "loss",
+      "file": "audio/olivia_048.m4a"
+    },
+    {
+      "id": "olivia_049",
+      "character": "olivia",
+      "number": 49,
+      "text": "Next time, trust nothing.",
+      "event": "rematch",
+      "file": "audio/olivia_049.m4a"
+    },
+    {
+      "id": "olivia_050",
+      "character": "olivia",
+      "number": 50,
+      "text": "Think you have got me. Think again.",
+      "event": "context",
+      "file": "audio/olivia_050.m4a"
+    },
+    {
+      "id": "marco_001",
+      "character": "marco",
+      "number": 1,
+      "text": "Every board offers opportunities.",
+      "event": "opening",
+      "file": "audio/marco_001.m4a"
+    },
+    {
+      "id": "marco_002",
+      "character": "marco",
+      "number": 2,
+      "text": "I prefer an active opening.",
+      "event": "opening",
+      "file": "audio/marco_002.m4a"
+    },
+    {
+      "id": "marco_003",
+      "character": "marco",
+      "number": 3,
+      "text": "Show me what you have planned.",
+      "event": "opening",
+      "file": "audio/marco_003.m4a"
+    },
+    {
+      "id": "marco_004",
+      "character": "marco",
+      "number": 4,
+      "text": "A strong start creates choices.",
+      "event": "context",
+      "file": "audio/marco_004.m4a"
+    },
+    {
+      "id": "marco_005",
+      "character": "marco",
+      "number": 5,
+      "text": "That opening has potential.",
+      "event": "opening",
+      "file": "audio/marco_005.m4a"
+    },
+    {
+      "id": "marco_006",
+      "character": "marco",
+      "number": 6,
+      "text": "I like that position.",
+      "event": "centre",
+      "file": "audio/marco_006.m4a"
+    },
+    {
+      "id": "marco_007",
+      "character": "marco",
+      "number": 7,
+      "text": "The centre deserves respect.",
+      "event": "corner",
+      "file": "audio/marco_007.m4a"
+    },
+    {
+      "id": "marco_008",
+      "character": "marco",
+      "number": 8,
+      "text": "Corners can create beautiful attacks.",
+      "event": "placement",
+      "file": "audio/marco_008.m4a"
+    },
+    {
+      "id": "marco_009",
+      "character": "marco",
+      "number": 9,
+      "text": "Your first choice tells a story.",
+      "event": "placement",
+      "file": "audio/marco_009.m4a"
+    },
+    {
+      "id": "marco_010",
+      "character": "marco",
+      "number": 10,
+      "text": "Now let us make this interesting.",
+      "event": "opening",
+      "file": "audio/marco_010.m4a"
+    },
+    {
+      "id": "marco_011",
+      "character": "marco",
+      "number": 11,
+      "text": "That placement changes the balance.",
+      "event": "placement",
+      "file": "audio/marco_011.m4a"
+    },
+    {
+      "id": "marco_012",
+      "character": "marco",
+      "number": 12,
+      "text": "You are creating useful pressure.",
+      "event": "context",
+      "file": "audio/marco_012.m4a"
+    },
+    {
+      "id": "marco_013",
+      "character": "marco",
+      "number": 13,
+      "text": "I see the angle developing.",
+      "event": "context",
+      "file": "audio/marco_013.m4a"
+    },
+    {
+      "id": "marco_014",
+      "character": "marco",
+      "number": 14,
+      "text": "That was a clever choice.",
+      "event": "context",
+      "file": "audio/marco_014.m4a"
+    },
+    {
+      "id": "marco_015",
+      "character": "marco",
+      "number": 15,
+      "text": "You left me an opportunity.",
+      "event": "context",
+      "file": "audio/marco_015.m4a"
+    },
+    {
+      "id": "marco_016",
+      "character": "marco",
+      "number": 16,
+      "text": "Your position has possibilities.",
+      "event": "mistake",
+      "file": "audio/marco_016.m4a"
+    },
+    {
+      "id": "marco_017",
+      "character": "marco",
+      "number": 17,
+      "text": "I would watch that corner.",
+      "event": "context",
+      "file": "audio/marco_017.m4a"
+    },
+    {
+      "id": "marco_018",
+      "character": "marco",
+      "number": 18,
+      "text": "That stone may cause trouble.",
+      "event": "placement",
+      "file": "audio/marco_018.m4a"
+    },
+    {
+      "id": "marco_019",
+      "character": "marco",
+      "number": 19,
+      "text": "Now the tactics begin.",
+      "event": "context",
+      "file": "audio/marco_019.m4a"
+    },
+    {
+      "id": "marco_020",
+      "character": "marco",
+      "number": 20,
+      "text": "Your formation is coming together.",
+      "event": "context",
+      "file": "audio/marco_020.m4a"
+    },
+    {
+      "id": "marco_021",
+      "character": "marco",
+      "number": 21,
+      "text": "Movement makes things interesting.",
+      "event": "movement",
+      "file": "audio/marco_021.m4a"
+    },
+    {
+      "id": "marco_022",
+      "character": "marco",
+      "number": 22,
+      "text": "That move changed the tempo.",
+      "event": "movement",
+      "file": "audio/marco_022.m4a"
+    },
+    {
+      "id": "marco_023",
+      "character": "marco",
+      "number": 23,
+      "text": "You opened an attacking route.",
+      "event": "mistake",
+      "file": "audio/marco_023.m4a"
+    },
+    {
+      "id": "marco_024",
+      "character": "marco",
+      "number": 24,
+      "text": "I can use that space.",
+      "event": "context",
+      "file": "audio/marco_024.m4a"
+    },
+    {
+      "id": "marco_025",
+      "character": "marco",
+      "number": 25,
+      "text": "That was an ambitious move.",
+      "event": "context",
+      "file": "audio/marco_025.m4a"
+    },
+    {
+      "id": "marco_026",
+      "character": "marco",
+      "number": 26,
+      "text": "Your stone found a useful position.",
+      "event": "mistake",
+      "file": "audio/marco_026.m4a"
+    },
+    {
+      "id": "marco_027",
+      "character": "marco",
+      "number": 27,
+      "text": "You gave up valuable ground.",
+      "event": "context",
+      "file": "audio/marco_027.m4a"
+    },
+    {
+      "id": "marco_028",
+      "character": "marco",
+      "number": 28,
+      "text": "I see a better angle.",
+      "event": "movement",
+      "file": "audio/marco_028.m4a"
+    },
+    {
+      "id": "marco_029",
+      "character": "marco",
+      "number": 29,
+      "text": "That position needs attention.",
+      "event": "context",
+      "file": "audio/marco_029.m4a"
+    },
+    {
+      "id": "marco_030",
+      "character": "marco",
+      "number": 30,
+      "text": "Let us increase the pressure.",
+      "event": "movement",
+      "file": "audio/marco_030.m4a"
+    },
+    {
+      "id": "marco_031",
+      "character": "marco",
+      "number": 31,
+      "text": "Your line is becoming dangerous.",
+      "event": "threat",
+      "file": "audio/marco_031.m4a"
+    },
+    {
+      "id": "marco_032",
+      "character": "marco",
+      "number": 32,
+      "text": "That threat deserves respect.",
+      "event": "threat",
+      "file": "audio/marco_032.m4a"
+    },
+    {
+      "id": "marco_033",
+      "character": "marco",
+      "number": 33,
+      "text": "I will close that route.",
+      "event": "context",
+      "file": "audio/marco_033.m4a"
+    },
+    {
+      "id": "marco_034",
+      "character": "marco",
+      "number": 34,
+      "text": "You found my weakness.",
+      "event": "block",
+      "file": "audio/marco_034.m4a"
+    },
+    {
+      "id": "marco_035",
+      "character": "marco",
+      "number": 35,
+      "text": "That was an excellent block.",
+      "event": "block",
+      "file": "audio/marco_035.m4a"
+    },
+    {
+      "id": "marco_036",
+      "character": "marco",
+      "number": 36,
+      "text": "Your defence was well timed.",
+      "event": "context",
+      "file": "audio/marco_036.m4a"
+    },
+    {
+      "id": "marco_037",
+      "character": "marco",
+      "number": 37,
+      "text": "I have another idea.",
+      "event": "context",
+      "file": "audio/marco_037.m4a"
+    },
+    {
+      "id": "marco_038",
+      "character": "marco",
+      "number": 38,
+      "text": "One attack creates another.",
+      "event": "context",
+      "file": "audio/marco_038.m4a"
+    },
+    {
+      "id": "marco_039",
+      "character": "marco",
+      "number": 39,
+      "text": "You stopped the first threat.",
+      "event": "context",
+      "file": "audio/marco_039.m4a"
+    },
+    {
+      "id": "marco_040",
+      "character": "marco",
+      "number": 40,
+      "text": "The second may surprise you.",
+      "event": "context",
+      "file": "audio/marco_040.m4a"
+    },
+    {
+      "id": "marco_041",
+      "character": "marco",
+      "number": 41,
+      "text": "That move impressed me.",
+      "event": "strong",
+      "file": "audio/marco_041.m4a"
+    },
+    {
+      "id": "marco_042",
+      "character": "marco",
+      "number": 42,
+      "text": "You read the position well.",
+      "event": "strong",
+      "file": "audio/marco_042.m4a"
+    },
+    {
+      "id": "marco_043",
+      "character": "marco",
+      "number": 43,
+      "text": "You forced me backwards.",
+      "event": "strong",
+      "file": "audio/marco_043.m4a"
+    },
+    {
+      "id": "marco_044",
+      "character": "marco",
+      "number": 44,
+      "text": "That was beautifully played.",
+      "event": "strong",
+      "file": "audio/marco_044.m4a"
+    },
+    {
+      "id": "marco_045",
+      "character": "marco",
+      "number": 45,
+      "text": "I should have seen that coming.",
+      "event": "context",
+      "file": "audio/marco_045.m4a"
+    },
+    {
+      "id": "marco_046",
+      "character": "marco",
+      "number": 46,
+      "text": "You turned defence into attack.",
+      "event": "context",
+      "file": "audio/marco_046.m4a"
+    },
+    {
+      "id": "marco_047",
+      "character": "marco",
+      "number": 47,
+      "text": "That line belongs to you.",
+      "event": "loss",
+      "file": "audio/marco_047.m4a"
+    },
+    {
+      "id": "marco_048",
+      "character": "marco",
+      "number": 48,
+      "text": "You earned that victory.",
+      "event": "loss",
+      "file": "audio/marco_048.m4a"
+    },
+    {
+      "id": "marco_049",
+      "character": "marco",
+      "number": 49,
+      "text": "Next game, expect something different.",
+      "event": "rematch",
+      "file": "audio/marco_049.m4a"
+    },
+    {
+      "id": "marco_050",
+      "character": "marco",
+      "number": 50,
+      "text": "Same game. Different perspective.",
+      "event": "context",
+      "file": "audio/marco_050.m4a"
+    },
+    {
+      "id": "kai_001",
+      "character": "kai",
+      "number": 1,
+      "text": "You are sitting in front of a Kochi board.",
+      "event": "lesson",
+      "file": "audio/kai_001.m4a"
+    },
+    {
+      "id": "kai_002",
+      "character": "kai",
+      "number": 2,
+      "text": "Welcome to a game of three.",
+      "event": "lesson",
+      "file": "audio/kai_002.m4a"
+    },
+    {
+      "id": "kai_003",
+      "character": "kai",
+      "number": 3,
+      "text": "The board has nine playable points.",
+      "event": "lesson",
+      "file": "audio/kai_003.m4a"
+    },
+    {
+      "id": "kai_004",
+      "character": "kai",
+      "number": 4,
+      "text": "Each player controls three stones.",
+      "event": "lesson",
+      "file": "audio/kai_004.m4a"
+    },
+    {
+      "id": "kai_005",
+      "character": "kai",
+      "number": 5,
+      "text": "Your goal is beautifully simple.",
+      "event": "lesson",
+      "file": "audio/kai_005.m4a"
+    },
+    {
+      "id": "kai_006",
+      "character": "kai",
+      "number": 6,
+      "text": "Form a straight line of three.",
+      "event": "lesson",
+      "file": "audio/kai_006.m4a"
+    },
+    {
+      "id": "kai_007",
+      "character": "kai",
+      "number": 7,
+      "text": "Simple rules create difficult decisions.",
+      "event": "lesson",
+      "file": "audio/kai_007.m4a"
+    },
+    {
+      "id": "kai_008",
+      "character": "kai",
+      "number": 8,
+      "text": "Every point connects along visible lines.",
+      "event": "lesson",
+      "file": "audio/kai_008.m4a"
+    },
+    {
+      "id": "kai_009",
+      "character": "kai",
+      "number": 9,
+      "text": "Those connections determine legal movement.",
+      "event": "lesson",
+      "file": "audio/kai_009.m4a"
+    },
+    {
+      "id": "kai_010",
+      "character": "kai",
+      "number": 10,
+      "text": "Let us begin with placement.",
+      "event": "lesson",
+      "file": "audio/kai_010.m4a"
+    },
+    {
+      "id": "kai_011",
+      "character": "kai",
+      "number": 11,
+      "text": "Players place their stones one at a time.",
+      "event": "lesson",
+      "file": "audio/kai_011.m4a"
+    },
+    {
+      "id": "kai_012",
+      "character": "kai",
+      "number": 12,
+      "text": "Choose any empty point.",
+      "event": "lesson",
+      "file": "audio/kai_012.m4a"
+    },
+    {
+      "id": "kai_013",
+      "character": "kai",
+      "number": 13,
+      "text": "Your opponent will answer with theirs.",
+      "event": "lesson",
+      "file": "audio/kai_013.m4a"
+    },
+    {
+      "id": "kai_014",
+      "character": "kai",
+      "number": 14,
+      "text": "Continue until all six stones are placed.",
+      "event": "lesson",
+      "file": "audio/kai_014.m4a"
+    },
+    {
+      "id": "kai_015",
+      "character": "kai",
+      "number": 15,
+      "text": "Placement creates the position you inherit.",
+      "event": "lesson",
+      "file": "audio/kai_015.m4a"
+    },
+    {
+      "id": "kai_016",
+      "character": "kai",
+      "number": 16,
+      "text": "Think about connections while placing.",
+      "event": "lesson",
+      "file": "audio/kai_016.m4a"
+    },
+    {
+      "id": "kai_017",
+      "character": "kai",
+      "number": 17,
+      "text": "The centre connects several important paths.",
+      "event": "lesson",
+      "file": "audio/kai_017.m4a"
+    },
+    {
+      "id": "kai_018",
+      "character": "kai",
+      "number": 18,
+      "text": "Corners offer different strategic possibilities.",
+      "event": "lesson",
+      "file": "audio/kai_018.m4a"
+    },
+    {
+      "id": "kai_019",
+      "character": "kai",
+      "number": 19,
+      "text": "Every placement affects future movement.",
+      "event": "lesson",
+      "file": "audio/kai_019.m4a"
+    },
+    {
+      "id": "kai_020",
+      "character": "kai",
+      "number": 20,
+      "text": "Three stones create more choices than expected.",
+      "event": "lesson",
+      "file": "audio/kai_020.m4a"
+    },
+    {
+      "id": "kai_021",
+      "character": "kai",
+      "number": 21,
+      "text": "Now we enter the movement phase.",
+      "event": "lesson",
+      "file": "audio/kai_021.m4a"
+    },
+    {
+      "id": "kai_022",
+      "character": "kai",
+      "number": 22,
+      "text": "Move one stone along a connected line.",
+      "event": "lesson",
+      "file": "audio/kai_022.m4a"
+    },
+    {
+      "id": "kai_023",
+      "character": "kai",
+      "number": 23,
+      "text": "The destination must be empty.",
+      "event": "lesson",
+      "file": "audio/kai_023.m4a"
+    },
+    {
+      "id": "kai_024",
+      "character": "kai",
+      "number": 24,
+      "text": "Stones cannot jump across occupied points.",
+      "event": "lesson",
+      "file": "audio/kai_024.m4a"
+    },
+    {
+      "id": "kai_025",
+      "character": "kai",
+      "number": 25,
+      "text": "Movement can attack or defend.",
+      "event": "lesson",
+      "file": "audio/kai_025.m4a"
+    },
+    {
+      "id": "kai_026",
+      "character": "kai",
+      "number": 26,
+      "text": "Watch what each move leaves behind.",
+      "event": "lesson",
+      "file": "audio/kai_026.m4a"
+    },
+    {
+      "id": "kai_027",
+      "character": "kai",
+      "number": 27,
+      "text": "Connections matter more than distance.",
+      "event": "lesson",
+      "file": "audio/kai_027.m4a"
+    },
+    {
+      "id": "kai_028",
+      "character": "kai",
+      "number": 28,
+      "text": "One move can change several possibilities.",
+      "event": "lesson",
+      "file": "audio/kai_028.m4a"
+    },
+    {
+      "id": "kai_029",
+      "character": "kai",
+      "number": 29,
+      "text": "Keep all three stones working together.",
+      "event": "lesson",
+      "file": "audio/kai_029.m4a"
+    },
+    {
+      "id": "kai_030",
+      "character": "kai",
+      "number": 30,
+      "text": "Never watch only one stone.",
+      "event": "lesson",
+      "file": "audio/kai_030.m4a"
+    },
+    {
+      "id": "kai_031",
+      "character": "kai",
+      "number": 31,
+      "text": "Two aligned stones create a threat.",
+      "event": "lesson",
+      "file": "audio/kai_031.m4a"
+    },
+    {
+      "id": "kai_032",
+      "character": "kai",
+      "number": 32,
+      "text": "A third stone completes the line.",
+      "event": "lesson",
+      "file": "audio/kai_032.m4a"
+    },
+    {
+      "id": "kai_033",
+      "character": "kai",
+      "number": 33,
+      "text": "Watch your opponent for developing lines.",
+      "event": "lesson",
+      "file": "audio/kai_033.m4a"
+    },
+    {
+      "id": "kai_034",
+      "character": "kai",
+      "number": 34,
+      "text": "Blocking can be as important as attacking.",
+      "event": "lesson",
+      "file": "audio/kai_034.m4a"
+    },
+    {
+      "id": "kai_035",
+      "character": "kai",
+      "number": 35,
+      "text": "Sometimes defence creates your next attack.",
+      "event": "lesson",
+      "file": "audio/kai_035.m4a"
+    },
+    {
+      "id": "kai_036",
+      "character": "kai",
+      "number": 36,
+      "text": "Look beyond the immediate threat.",
+      "event": "lesson",
+      "file": "audio/kai_036.m4a"
+    },
+    {
+      "id": "kai_037",
+      "character": "kai",
+      "number": 37,
+      "text": "One position may contain several threats.",
+      "event": "lesson",
+      "file": "audio/kai_037.m4a"
+    },
+    {
+      "id": "kai_038",
+      "character": "kai",
+      "number": 38,
+      "text": "Strong players create choices for themselves.",
+      "event": "lesson",
+      "file": "audio/kai_038.m4a"
+    },
+    {
+      "id": "kai_039",
+      "character": "kai",
+      "number": 39,
+      "text": "Better players remove choices from opponents.",
+      "event": "lesson",
+      "file": "audio/kai_039.m4a"
+    },
+    {
+      "id": "kai_040",
+      "character": "kai",
+      "number": 40,
+      "text": "The board rewards careful observation.",
+      "event": "lesson",
+      "file": "audio/kai_040.m4a"
+    },
+    {
+      "id": "kai_041",
+      "character": "kai",
+      "number": 41,
+      "text": "That placement gives you options.",
+      "event": "placement",
+      "file": "audio/kai_041.m4a"
+    },
+    {
+      "id": "kai_042",
+      "character": "kai",
+      "number": 42,
+      "text": "Consider what that point connects.",
+      "event": "placement",
+      "file": "audio/kai_042.m4a"
+    },
+    {
+      "id": "kai_043",
+      "character": "kai",
+      "number": 43,
+      "text": "Your stones are beginning to cooperate.",
+      "event": "placement",
+      "file": "audio/kai_043.m4a"
+    },
+    {
+      "id": "kai_044",
+      "character": "kai",
+      "number": 44,
+      "text": "That position deserves another look.",
+      "event": "placement",
+      "file": "audio/kai_044.m4a"
+    },
+    {
+      "id": "kai_045",
+      "character": "kai",
+      "number": 45,
+      "text": "You may have another possibility.",
+      "event": "placement",
+      "file": "audio/kai_045.m4a"
+    },
+    {
+      "id": "kai_046",
+      "character": "kai",
+      "number": 46,
+      "text": "Look at the entire board.",
+      "event": "placement",
+      "file": "audio/kai_046.m4a"
+    },
+    {
+      "id": "kai_047",
+      "character": "kai",
+      "number": 47,
+      "text": "Your opponent is building something.",
+      "event": "placement",
+      "file": "audio/kai_047.m4a"
+    },
+    {
+      "id": "kai_048",
+      "character": "kai",
+      "number": 48,
+      "text": "That point could become important.",
+      "event": "placement",
+      "file": "audio/kai_048.m4a"
+    },
+    {
+      "id": "kai_049",
+      "character": "kai",
+      "number": 49,
+      "text": "There is no need to hurry.",
+      "event": "placement",
+      "file": "audio/kai_049.m4a"
+    },
+    {
+      "id": "kai_050",
+      "character": "kai",
+      "number": 50,
+      "text": "Good decisions begin with observation.",
+      "event": "placement",
+      "file": "audio/kai_050.m4a"
+    },
+    {
+      "id": "kai_051",
+      "character": "kai",
+      "number": 51,
+      "text": "That move opened a new route.",
+      "event": "movement",
+      "file": "audio/kai_051.m4a"
+    },
+    {
+      "id": "kai_052",
+      "character": "kai",
+      "number": 52,
+      "text": "Notice what changed after moving.",
+      "event": "movement",
+      "file": "audio/kai_052.m4a"
+    },
+    {
+      "id": "kai_053",
+      "character": "kai",
+      "number": 53,
+      "text": "You gained something and surrendered something.",
+      "event": "movement",
+      "file": "audio/kai_053.m4a"
+    },
+    {
+      "id": "kai_054",
+      "character": "kai",
+      "number": 54,
+      "text": "Every movement has a cost.",
+      "event": "movement",
+      "file": "audio/kai_054.m4a"
+    },
+    {
+      "id": "kai_055",
+      "character": "kai",
+      "number": 55,
+      "text": "That stone was supporting another path.",
+      "event": "movement",
+      "file": "audio/kai_055.m4a"
+    },
+    {
+      "id": "kai_056",
+      "character": "kai",
+      "number": 56,
+      "text": "Consider the position you leave behind.",
+      "event": "movement",
+      "file": "audio/kai_056.m4a"
+    },
+    {
+      "id": "kai_057",
+      "character": "kai",
+      "number": 57,
+      "text": "Your opponent now has another option.",
+      "event": "movement",
+      "file": "audio/kai_057.m4a"
+    },
+    {
+      "id": "kai_058",
+      "character": "kai",
+      "number": 58,
+      "text": "You created useful pressure there.",
+      "event": "movement",
+      "file": "audio/kai_058.m4a"
+    },
+    {
+      "id": "kai_059",
+      "character": "kai",
+      "number": 59,
+      "text": "That move deserves careful attention.",
+      "event": "movement",
+      "file": "audio/kai_059.m4a"
+    },
+    {
+      "id": "kai_060",
+      "character": "kai",
+      "number": 60,
+      "text": "The board is becoming more interesting.",
+      "event": "movement",
+      "file": "audio/kai_060.m4a"
+    },
+    {
+      "id": "kai_061",
+      "character": "kai",
+      "number": 61,
+      "text": "You have a line developing.",
+      "event": "threat",
+      "file": "audio/kai_061.m4a"
+    },
+    {
+      "id": "kai_062",
+      "character": "kai",
+      "number": 62,
+      "text": "Your opponent has a threat.",
+      "event": "context",
+      "file": "audio/kai_062.m4a"
+    },
+    {
+      "id": "kai_063",
+      "character": "kai",
+      "number": 63,
+      "text": "One point needs your attention.",
+      "event": "context",
+      "file": "audio/kai_063.m4a"
+    },
+    {
+      "id": "kai_064",
+      "character": "kai",
+      "number": 64,
+      "text": "That block keeps you alive.",
+      "event": "block",
+      "file": "audio/kai_064.m4a"
+    },
+    {
+      "id": "kai_065",
+      "character": "kai",
+      "number": 65,
+      "text": "Excellent, you saw the danger.",
+      "event": "block",
+      "file": "audio/kai_065.m4a"
+    },
+    {
+      "id": "kai_066",
+      "character": "kai",
+      "number": 66,
+      "text": "That defence created an opportunity.",
+      "event": "block",
+      "file": "audio/kai_066.m4a"
+    },
+    {
+      "id": "kai_067",
+      "character": "kai",
+      "number": 67,
+      "text": "You forced your opponent to respond.",
+      "event": "context",
+      "file": "audio/kai_067.m4a"
+    },
+    {
+      "id": "kai_068",
+      "character": "kai",
+      "number": 68,
+      "text": "Now look for the follow-up.",
+      "event": "context",
+      "file": "audio/kai_068.m4a"
+    },
+    {
+      "id": "kai_069",
+      "character": "kai",
+      "number": 69,
+      "text": "Pressure works best with alternatives.",
+      "event": "context",
+      "file": "audio/kai_069.m4a"
+    },
+    {
+      "id": "kai_070",
+      "character": "kai",
+      "number": 70,
+      "text": "A forced response can be powerful.",
+      "event": "context",
+      "file": "audio/kai_070.m4a"
+    },
+    {
+      "id": "kai_071",
+      "character": "kai",
+      "number": 71,
+      "text": "That was a strong decision.",
+      "event": "strong",
+      "file": "audio/kai_071.m4a"
+    },
+    {
+      "id": "kai_072",
+      "character": "kai",
+      "number": 72,
+      "text": "You found the better route.",
+      "event": "strong",
+      "file": "audio/kai_072.m4a"
+    },
+    {
+      "id": "kai_073",
+      "character": "kai",
+      "number": 73,
+      "text": "Your patience improved that position.",
+      "event": "strong",
+      "file": "audio/kai_073.m4a"
+    },
+    {
+      "id": "kai_074",
+      "character": "kai",
+      "number": 74,
+      "text": "You anticipated the response correctly.",
+      "event": "strong",
+      "file": "audio/kai_074.m4a"
+    },
+    {
+      "id": "kai_075",
+      "character": "kai",
+      "number": 75,
+      "text": "That was efficient movement.",
+      "event": "strong",
+      "file": "audio/kai_075.m4a"
+    },
+    {
+      "id": "kai_076",
+      "character": "kai",
+      "number": 76,
+      "text": "You protected more than one point.",
+      "event": "strong",
+      "file": "audio/kai_076.m4a"
+    },
+    {
+      "id": "kai_077",
+      "character": "kai",
+      "number": 77,
+      "text": "Your stones are working together.",
+      "event": "strong",
+      "file": "audio/kai_077.m4a"
+    },
+    {
+      "id": "kai_078",
+      "character": "kai",
+      "number": 78,
+      "text": "That was worth remembering.",
+      "event": "strong",
+      "file": "audio/kai_078.m4a"
+    },
+    {
+      "id": "kai_079",
+      "character": "kai",
+      "number": 79,
+      "text": "You are beginning to see patterns.",
+      "event": "strong",
+      "file": "audio/kai_079.m4a"
+    },
+    {
+      "id": "kai_080",
+      "character": "kai",
+      "number": 80,
+      "text": "Good moves become better players.",
+      "event": "strong",
+      "file": "audio/kai_080.m4a"
+    },
+    {
+      "id": "kai_081",
+      "character": "kai",
+      "number": 81,
+      "text": "Interesting choice. Let us test it.",
+      "event": "context",
+      "file": "audio/kai_081.m4a"
+    },
+    {
+      "id": "kai_082",
+      "character": "kai",
+      "number": 82,
+      "text": "I might have chosen differently.",
+      "event": "context",
+      "file": "audio/kai_082.m4a"
+    },
+    {
+      "id": "kai_083",
+      "character": "kai",
+      "number": 83,
+      "text": "There is another route here.",
+      "event": "context",
+      "file": "audio/kai_083.m4a"
+    },
+    {
+      "id": "kai_084",
+      "character": "kai",
+      "number": 84,
+      "text": "You are learning quickly.",
+      "event": "context",
+      "file": "audio/kai_084.m4a"
+    },
+    {
+      "id": "kai_085",
+      "character": "kai",
+      "number": 85,
+      "text": "Perhaps I taught you too well.",
+      "event": "context",
+      "file": "audio/kai_085.m4a"
+    },
+    {
+      "id": "kai_086",
+      "character": "kai",
+      "number": 86,
+      "text": "Do not assume I only teach.",
+      "event": "context",
+      "file": "audio/kai_086.m4a"
+    },
+    {
+      "id": "kai_087",
+      "character": "kai",
+      "number": 87,
+      "text": "I know this board rather well.",
+      "event": "context",
+      "file": "audio/kai_087.m4a"
+    },
+    {
+      "id": "kai_088",
+      "character": "kai",
+      "number": 88,
+      "text": "Watching games teaches you plenty.",
+      "event": "context",
+      "file": "audio/kai_088.m4a"
+    },
+    {
+      "id": "kai_089",
+      "character": "kai",
+      "number": 89,
+      "text": "Playing them teaches even more.",
+      "event": "context",
+      "file": "audio/kai_089.m4a"
+    },
+    {
+      "id": "kai_090",
+      "character": "kai",
+      "number": 90,
+      "text": "Perhaps we should play sometime.",
+      "event": "context",
+      "file": "audio/kai_090.m4a"
+    },
+    {
+      "id": "kai_091",
+      "character": "kai",
+      "number": 91,
+      "text": "So you found me.",
+      "event": "opening",
+      "file": "audio/kai_091.m4a"
+    },
+    {
+      "id": "kai_092",
+      "character": "kai",
+      "number": 92,
+      "text": "Teaching was only half the story.",
+      "event": "opening",
+      "file": "audio/kai_092.m4a"
+    },
+    {
+      "id": "kai_093",
+      "character": "kai",
+      "number": 93,
+      "text": "Now you face the player.",
+      "event": "opening",
+      "file": "audio/kai_093.m4a"
+    },
+    {
+      "id": "kai_094",
+      "character": "kai",
+      "number": 94,
+      "text": "I have watched every lesson.",
+      "event": "context",
+      "file": "audio/kai_094.m4a"
+    },
+    {
+      "id": "kai_095",
+      "character": "kai",
+      "number": 95,
+      "text": "I know what you have learned.",
+      "event": "context",
+      "file": "audio/kai_095.m4a"
+    },
+    {
+      "id": "kai_096",
+      "character": "kai",
+      "number": 96,
+      "text": "Let us see what you remember.",
+      "event": "opening",
+      "file": "audio/kai_096.m4a"
+    },
+    {
+      "id": "kai_097",
+      "character": "kai",
+      "number": 97,
+      "text": "No hints this time.",
+      "event": "context",
+      "file": "audio/kai_097.m4a"
+    },
+    {
+      "id": "kai_098",
+      "character": "kai",
+      "number": 98,
+      "text": "Show me your best Kochi.",
+      "event": "opening",
+      "file": "audio/kai_098.m4a"
+    },
+    {
+      "id": "kai_099",
+      "character": "kai",
+      "number": 99,
+      "text": "The teacher still has secrets.",
+      "event": "context",
+      "file": "audio/kai_099.m4a"
+    },
+    {
+      "id": "kai_100",
+      "character": "kai",
+      "number": 100,
+      "text": "Good moves. Better players.",
+      "event": "rematch",
+      "file": "audio/kai_100.m4a"
+    },
+    {
+      "id": "sujith_001",
+      "character": "sujith",
+      "number": 1,
+      "text": "Patience will reveal everything.",
+      "event": "opening",
+      "file": "audio/sujith_001.m4a"
+    },
+    {
+      "id": "sujith_002",
+      "character": "sujith",
+      "number": 2,
+      "text": "Take all the time you need.",
+      "event": "opening",
+      "file": "audio/sujith_002.m4a"
+    },
+    {
+      "id": "sujith_003",
+      "character": "sujith",
+      "number": 3,
+      "text": "Every opening has a weakness.",
+      "event": "opening",
+      "file": "audio/sujith_003.m4a"
+    },
+    {
+      "id": "sujith_004",
+      "character": "sujith",
+      "number": 4,
+      "text": "Your first choice matters greatly.",
+      "event": "context",
+      "file": "audio/sujith_004.m4a"
+    },
+    {
+      "id": "sujith_005",
+      "character": "sujith",
+      "number": 5,
+      "text": "I am in no hurry.",
+      "event": "opening",
+      "file": "audio/sujith_005.m4a"
+    },
+    {
+      "id": "sujith_006",
+      "character": "sujith",
+      "number": 6,
+      "text": "The centre demands careful thought.",
+      "event": "centre",
+      "file": "audio/sujith_006.m4a"
+    },
+    {
+      "id": "sujith_007",
+      "character": "sujith",
+      "number": 7,
+      "text": "Corners can become dangerous quickly.",
+      "event": "corner",
+      "file": "audio/sujith_007.m4a"
+    },
+    {
+      "id": "sujith_008",
+      "character": "sujith",
+      "number": 8,
+      "text": "I will remember that placement.",
+      "event": "placement",
+      "file": "audio/sujith_008.m4a"
+    },
+    {
+      "id": "sujith_009",
+      "character": "sujith",
+      "number": 9,
+      "text": "Small decisions become large problems.",
+      "event": "placement",
+      "file": "audio/sujith_009.m4a"
+    },
+    {
+      "id": "sujith_010",
+      "character": "sujith",
+      "number": 10,
+      "text": "Let us test your patience.",
+      "event": "opening",
+      "file": "audio/sujith_010.m4a"
+    },
+    {
+      "id": "sujith_011",
+      "character": "sujith",
+      "number": 11,
+      "text": "That tells me enough.",
+      "event": "placement",
+      "file": "audio/sujith_011.m4a"
+    },
+    {
+      "id": "sujith_012",
+      "character": "sujith",
+      "number": 12,
+      "text": "You committed earlier than expected.",
+      "event": "context",
+      "file": "audio/sujith_012.m4a"
+    },
+    {
+      "id": "sujith_013",
+      "character": "sujith",
+      "number": 13,
+      "text": "Your structure has a weakness.",
+      "event": "context",
+      "file": "audio/sujith_013.m4a"
+    },
+    {
+      "id": "sujith_014",
+      "character": "sujith",
+      "number": 14,
+      "text": "I know where pressure belongs.",
+      "event": "context",
+      "file": "audio/sujith_014.m4a"
+    },
+    {
+      "id": "sujith_015",
+      "character": "sujith",
+      "number": 15,
+      "text": "That position will become important.",
+      "event": "context",
+      "file": "audio/sujith_015.m4a"
+    },
+    {
+      "id": "sujith_016",
+      "character": "sujith",
+      "number": 16,
+      "text": "You have left me options.",
+      "event": "mistake",
+      "file": "audio/sujith_016.m4a"
+    },
+    {
+      "id": "sujith_017",
+      "character": "sujith",
+      "number": 17,
+      "text": "I expected something stronger.",
+      "event": "context",
+      "file": "audio/sujith_017.m4a"
+    },
+    {
+      "id": "sujith_018",
+      "character": "sujith",
+      "number": 18,
+      "text": "Your intention is becoming clear.",
+      "event": "placement",
+      "file": "audio/sujith_018.m4a"
+    },
+    {
+      "id": "sujith_019",
+      "character": "sujith",
+      "number": 19,
+      "text": "I will not rush this.",
+      "event": "context",
+      "file": "audio/sujith_019.m4a"
+    },
+    {
+      "id": "sujith_020",
+      "character": "sujith",
+      "number": 20,
+      "text": "Now the real test begins.",
+      "event": "context",
+      "file": "audio/sujith_020.m4a"
+    },
+    {
+      "id": "sujith_021",
+      "character": "sujith",
+      "number": 21,
+      "text": "Movement exposes hidden mistakes.",
+      "event": "movement",
+      "file": "audio/sujith_021.m4a"
+    },
+    {
+      "id": "sujith_022",
+      "character": "sujith",
+      "number": 22,
+      "text": "Consider what your stone abandoned.",
+      "event": "movement",
+      "file": "audio/sujith_022.m4a"
+    },
+    {
+      "id": "sujith_023",
+      "character": "sujith",
+      "number": 23,
+      "text": "That move created a weakness.",
+      "event": "mistake",
+      "file": "audio/sujith_023.m4a"
+    },
+    {
+      "id": "sujith_024",
+      "character": "sujith",
+      "number": 24,
+      "text": "I have been waiting patiently.",
+      "event": "context",
+      "file": "audio/sujith_024.m4a"
+    },
+    {
+      "id": "sujith_025",
+      "character": "sujith",
+      "number": 25,
+      "text": "You moved exactly where expected.",
+      "event": "context",
+      "file": "audio/sujith_025.m4a"
+    },
+    {
+      "id": "sujith_026",
+      "character": "sujith",
+      "number": 26,
+      "text": "That choice limits your future.",
+      "event": "mistake",
+      "file": "audio/sujith_026.m4a"
+    },
+    {
+      "id": "sujith_027",
+      "character": "sujith",
+      "number": 27,
+      "text": "Your position is becoming uncomfortable.",
+      "event": "context",
+      "file": "audio/sujith_027.m4a"
+    },
+    {
+      "id": "sujith_028",
+      "character": "sujith",
+      "number": 28,
+      "text": "I need only one mistake.",
+      "event": "movement",
+      "file": "audio/sujith_028.m4a"
+    },
+    {
+      "id": "sujith_029",
+      "character": "sujith",
+      "number": 29,
+      "text": "Your safe choices are disappearing.",
+      "event": "context",
+      "file": "audio/sujith_029.m4a"
+    },
+    {
+      "id": "sujith_030",
+      "character": "sujith",
+      "number": 30,
+      "text": "The board is closing around you.",
+      "event": "movement",
+      "file": "audio/sujith_030.m4a"
+    },
+    {
+      "id": "sujith_031",
+      "character": "sujith",
+      "number": 31,
+      "text": "Your threat arrived too late.",
+      "event": "threat",
+      "file": "audio/sujith_031.m4a"
+    },
+    {
+      "id": "sujith_032",
+      "character": "sujith",
+      "number": 32,
+      "text": "I saw that line developing.",
+      "event": "threat",
+      "file": "audio/sujith_032.m4a"
+    },
+    {
+      "id": "sujith_033",
+      "character": "sujith",
+      "number": 33,
+      "text": "That path will go no further.",
+      "event": "context",
+      "file": "audio/sujith_033.m4a"
+    },
+    {
+      "id": "sujith_034",
+      "character": "sujith",
+      "number": 34,
+      "text": "You defended the correct point.",
+      "event": "block",
+      "file": "audio/sujith_034.m4a"
+    },
+    {
+      "id": "sujith_035",
+      "character": "sujith",
+      "number": 35,
+      "text": "A good block buys time.",
+      "event": "block",
+      "file": "audio/sujith_035.m4a"
+    },
+    {
+      "id": "sujith_036",
+      "character": "sujith",
+      "number": 36,
+      "text": "Time alone will not save you.",
+      "event": "context",
+      "file": "audio/sujith_036.m4a"
+    },
+    {
+      "id": "sujith_037",
+      "character": "sujith",
+      "number": 37,
+      "text": "You stopped one possibility.",
+      "event": "context",
+      "file": "audio/sujith_037.m4a"
+    },
+    {
+      "id": "sujith_038",
+      "character": "sujith",
+      "number": 38,
+      "text": "Another possibility remains open.",
+      "event": "context",
+      "file": "audio/sujith_038.m4a"
+    },
+    {
+      "id": "sujith_039",
+      "character": "sujith",
+      "number": 39,
+      "text": "Pressure eventually reveals mistakes.",
+      "event": "context",
+      "file": "audio/sujith_039.m4a"
+    },
+    {
+      "id": "sujith_040",
+      "character": "sujith",
+      "number": 40,
+      "text": "Patience is becoming expensive.",
+      "event": "context",
+      "file": "audio/sujith_040.m4a"
+    },
+    {
+      "id": "sujith_041",
+      "character": "sujith",
+      "number": 41,
+      "text": "That was stronger than expected.",
+      "event": "strong",
+      "file": "audio/sujith_041.m4a"
+    },
+    {
+      "id": "sujith_042",
+      "character": "sujith",
+      "number": 42,
+      "text": "You found the difficult answer.",
+      "event": "strong",
+      "file": "audio/sujith_042.m4a"
+    },
+    {
+      "id": "sujith_043",
+      "character": "sujith",
+      "number": 43,
+      "text": "You forced me to reconsider.",
+      "event": "strong",
+      "file": "audio/sujith_043.m4a"
+    },
+    {
+      "id": "sujith_044",
+      "character": "sujith",
+      "number": 44,
+      "text": "That move deserves respect.",
+      "event": "strong",
+      "file": "audio/sujith_044.m4a"
+    },
+    {
+      "id": "sujith_045",
+      "character": "sujith",
+      "number": 45,
+      "text": "You remained patient under pressure.",
+      "event": "context",
+      "file": "audio/sujith_045.m4a"
+    },
+    {
+      "id": "sujith_046",
+      "character": "sujith",
+      "number": 46,
+      "text": "You found the winning path.",
+      "event": "context",
+      "file": "audio/sujith_046.m4a"
+    },
+    {
+      "id": "sujith_047",
+      "character": "sujith",
+      "number": 47,
+      "text": "Your line is complete.",
+      "event": "loss",
+      "file": "audio/sujith_047.m4a"
+    },
+    {
+      "id": "sujith_048",
+      "character": "sujith",
+      "number": 48,
+      "text": "One opening was all I needed.",
+      "event": "win",
+      "file": "audio/sujith_048.m4a"
+    },
+    {
+      "id": "sujith_049",
+      "character": "sujith",
+      "number": 49,
+      "text": "Return when you want another test.",
+      "event": "rematch",
+      "file": "audio/sujith_049.m4a"
+    },
+    {
+      "id": "sujith_050",
+      "character": "sujith",
+      "number": 50,
+      "text": "Patience always wins.",
+      "event": "context",
+      "file": "audio/sujith_050.m4a"
+    },
+    {
+      "id": "onet_001",
+      "character": "onet",
+      "number": 1,
+      "text": "So you finally found me.",
+      "event": "firstEncounter",
+      "file": "audio/onet_001.m4a"
+    },
+    {
+      "id": "onet_002",
+      "character": "onet",
+      "number": 2,
+      "text": "I wondered when you would get here.",
+      "event": "opening",
+      "file": "audio/onet_002.m4a"
+    },
+    {
+      "id": "onet_003",
+      "character": "onet",
+      "number": 3,
+      "text": "Yes, I am that One T.",
+      "event": "opening",
+      "file": "audio/onet_003.m4a"
+    },
+    {
+      "id": "onet_004",
+      "character": "onet",
+      "number": 4,
+      "text": "Usually I stay behind the scenes.",
+      "event": "context",
+      "file": "audio/onet_004.m4a"
+    },
+    {
+      "id": "onet_005",
+      "character": "onet",
+      "number": 5,
+      "text": "Today I get to play.",
+      "event": "opening",
+      "file": "audio/onet_005.m4a"
+    },
+    {
+      "id": "onet_006",
+      "character": "onet",
+      "number": 6,
+      "text": "I know this board rather well.",
+      "event": "centre",
+      "file": "audio/onet_006.m4a"
+    },
+    {
+      "id": "onet_007",
+      "character": "onet",
+      "number": 7,
+      "text": "Building it was the easy part.",
+      "event": "corner",
+      "file": "audio/onet_007.m4a"
+    },
+    {
+      "id": "onet_008",
+      "character": "onet",
+      "number": 8,
+      "text": "Winning might be more interesting.",
+      "event": "placement",
+      "file": "audio/onet_008.m4a"
+    },
+    {
+      "id": "onet_009",
+      "character": "onet",
+      "number": 9,
+      "text": "You have come a long way.",
+      "event": "placement",
+      "file": "audio/onet_009.m4a"
+    },
+    {
+      "id": "onet_010",
+      "character": "onet",
+      "number": 10,
+      "text": "Let us see what you learned.",
+      "event": "opening",
+      "file": "audio/onet_010.m4a"
+    },
+    {
+      "id": "onet_011",
+      "character": "onet",
+      "number": 11,
+      "text": "I designed that point for a reason.",
+      "event": "placement",
+      "file": "audio/onet_011.m4a"
+    },
+    {
+      "id": "onet_012",
+      "character": "onet",
+      "number": 12,
+      "text": "Interesting opening. I like it.",
+      "event": "context",
+      "file": "audio/onet_012.m4a"
+    },
+    {
+      "id": "onet_013",
+      "character": "onet",
+      "number": 13,
+      "text": "You are already making me think.",
+      "event": "context",
+      "file": "audio/onet_013.m4a"
+    },
+    {
+      "id": "onet_014",
+      "character": "onet",
+      "number": 14,
+      "text": "I have watched that strategy before.",
+      "event": "context",
+      "file": "audio/onet_014.m4a"
+    },
+    {
+      "id": "onet_015",
+      "character": "onet",
+      "number": 15,
+      "text": "The board never plays the same twice.",
+      "event": "context",
+      "file": "audio/onet_015.m4a"
+    },
+    {
+      "id": "onet_016",
+      "character": "onet",
+      "number": 16,
+      "text": "Every point creates another possibility.",
+      "event": "mistake",
+      "file": "audio/onet_016.m4a"
+    },
+    {
+      "id": "onet_017",
+      "character": "onet",
+      "number": 17,
+      "text": "That placement changes my plan.",
+      "event": "context",
+      "file": "audio/onet_017.m4a"
+    },
+    {
+      "id": "onet_018",
+      "character": "onet",
+      "number": 18,
+      "text": "You found an interesting angle.",
+      "event": "placement",
+      "file": "audio/onet_018.m4a"
+    },
+    {
+      "id": "onet_019",
+      "character": "onet",
+      "number": 19,
+      "text": "This is why I built Kochi.",
+      "event": "context",
+      "file": "audio/onet_019.m4a"
+    },
+    {
+      "id": "onet_020",
+      "character": "onet",
+      "number": 20,
+      "text": "Three stones. Endless little problems.",
+      "event": "context",
+      "file": "audio/onet_020.m4a"
+    },
+    {
+      "id": "onet_021",
+      "character": "onet",
+      "number": 21,
+      "text": "Now we are really playing.",
+      "event": "movement",
+      "file": "audio/onet_021.m4a"
+    },
+    {
+      "id": "onet_022",
+      "character": "onet",
+      "number": 22,
+      "text": "That move changed the picture.",
+      "event": "movement",
+      "file": "audio/onet_022.m4a"
+    },
+    {
+      "id": "onet_023",
+      "character": "onet",
+      "number": 23,
+      "text": "I see what you are building.",
+      "event": "mistake",
+      "file": "audio/onet_023.m4a"
+    },
+    {
+      "id": "onet_024",
+      "character": "onet",
+      "number": 24,
+      "text": "You might want that point back.",
+      "event": "context",
+      "file": "audio/onet_024.m4a"
+    },
+    {
+      "id": "onet_025",
+      "character": "onet",
+      "number": 25,
+      "text": "That opened something useful for me.",
+      "event": "context",
+      "file": "audio/onet_025.m4a"
+    },
+    {
+      "id": "onet_026",
+      "character": "onet",
+      "number": 26,
+      "text": "I did not code you to do that.",
+      "event": "mistake",
+      "file": "audio/onet_026.m4a"
+    },
+    {
+      "id": "onet_027",
+      "character": "onet",
+      "number": 27,
+      "text": "Good players break expectations.",
+      "event": "context",
+      "file": "audio/onet_027.m4a"
+    },
+    {
+      "id": "onet_028",
+      "character": "onet",
+      "number": 28,
+      "text": "That move deserves another look.",
+      "event": "movement",
+      "file": "audio/onet_028.m4a"
+    },
+    {
+      "id": "onet_029",
+      "character": "onet",
+      "number": 29,
+      "text": "I have another idea already.",
+      "event": "context",
+      "file": "audio/onet_029.m4a"
+    },
+    {
+      "id": "onet_030",
+      "character": "onet",
+      "number": 30,
+      "text": "The bigger picture just changed.",
+      "event": "movement",
+      "file": "audio/onet_030.m4a"
+    },
+    {
+      "id": "onet_031",
+      "character": "onet",
+      "number": 31,
+      "text": "I see your winning line.",
+      "event": "threat",
+      "file": "audio/onet_031.m4a"
+    },
+    {
+      "id": "onet_032",
+      "character": "onet",
+      "number": 32,
+      "text": "Nice try. I built the board.",
+      "event": "threat",
+      "file": "audio/onet_032.m4a"
+    },
+    {
+      "id": "onet_033",
+      "character": "onet",
+      "number": 33,
+      "text": "That threat needs shutting down.",
+      "event": "context",
+      "file": "audio/onet_033.m4a"
+    },
+    {
+      "id": "onet_034",
+      "character": "onet",
+      "number": 34,
+      "text": "You found the right block.",
+      "event": "block",
+      "file": "audio/onet_034.m4a"
+    },
+    {
+      "id": "onet_035",
+      "character": "onet",
+      "number": 35,
+      "text": "Okay, that ruined my plan.",
+      "event": "block",
+      "file": "audio/onet_035.m4a"
+    },
+    {
+      "id": "onet_036",
+      "character": "onet",
+      "number": 36,
+      "text": "Back to the drawing board.",
+      "event": "context",
+      "file": "audio/onet_036.m4a"
+    },
+    {
+      "id": "onet_037",
+      "character": "onet",
+      "number": 37,
+      "text": "You stopped the obvious route.",
+      "event": "context",
+      "file": "audio/onet_037.m4a"
+    },
+    {
+      "id": "onet_038",
+      "character": "onet",
+      "number": 38,
+      "text": "Good thing I planned another.",
+      "event": "context",
+      "file": "audio/onet_038.m4a"
+    },
+    {
+      "id": "onet_039",
+      "character": "onet",
+      "number": 39,
+      "text": "Now you are thinking like a developer.",
+      "event": "context",
+      "file": "audio/onet_039.m4a"
+    },
+    {
+      "id": "onet_040",
+      "character": "onet",
+      "number": 40,
+      "text": "Problems usually have another solution.",
+      "event": "context",
+      "file": "audio/onet_040.m4a"
+    },
+    {
+      "id": "onet_041",
+      "character": "onet",
+      "number": 41,
+      "text": "That was better than expected.",
+      "event": "strong",
+      "file": "audio/onet_041.m4a"
+    },
+    {
+      "id": "onet_042",
+      "character": "onet",
+      "number": 42,
+      "text": "You actually caught me there.",
+      "event": "strong",
+      "file": "audio/onet_042.m4a"
+    },
+    {
+      "id": "onet_043",
+      "character": "onet",
+      "number": 43,
+      "text": "I might need an update.",
+      "event": "strong",
+      "file": "audio/onet_043.m4a"
+    },
+    {
+      "id": "onet_044",
+      "character": "onet",
+      "number": 44,
+      "text": "Consider that officially play tested.",
+      "event": "strong",
+      "file": "audio/onet_044.m4a"
+    },
+    {
+      "id": "onet_045",
+      "character": "onet",
+      "number": 45,
+      "text": "You earned that one.",
+      "event": "loss",
+      "file": "audio/onet_045.m4a"
+    },
+    {
+      "id": "onet_046",
+      "character": "onet",
+      "number": 46,
+      "text": "Apparently the developer can lose.",
+      "event": "loss",
+      "file": "audio/onet_046.m4a"
+    },
+    {
+      "id": "onet_047",
+      "character": "onet",
+      "number": 47,
+      "text": "Do not tell the other players.",
+      "event": "loss",
+      "file": "audio/onet_047.m4a"
+    },
+    {
+      "id": "onet_048",
+      "character": "onet",
+      "number": 48,
+      "text": "I think we need another game.",
+      "event": "rematch",
+      "file": "audio/onet_048.m4a"
+    },
+    {
+      "id": "onet_049",
+      "character": "onet",
+      "number": 49,
+      "text": "Same game. A bigger picture.",
+      "event": "rematch",
+      "file": "audio/onet_049.m4a"
+    },
+    {
+      "id": "onet_050",
+      "character": "onet",
+      "number": 50,
+      "text": "One vision. Every medium.",
+      "event": "context",
+      "file": "audio/onet_050.m4a"
+    },
+    {
+      "id": "luna_001",
+      "character": "luna",
+      "number": 1,
+      "text": "Every opening creates consequences.",
+      "event": "opening",
+      "file": "audio/luna_001.m4a"
+    },
+    {
+      "id": "luna_002",
+      "character": "luna",
+      "number": 2,
+      "text": "I already see possibilities.",
+      "event": "opening",
+      "file": "audio/luna_002.m4a"
+    },
+    {
+      "id": "luna_003",
+      "character": "luna",
+      "number": 3,
+      "text": "Choose your opening carefully.",
+      "event": "opening",
+      "file": "audio/luna_003.m4a"
+    },
+    {
+      "id": "luna_004",
+      "character": "luna",
+      "number": 4,
+      "text": "The first move shapes everything.",
+      "event": "context",
+      "file": "audio/luna_004.m4a"
+    },
+    {
+      "id": "luna_005",
+      "character": "luna",
+      "number": 5,
+      "text": "Give me something interesting.",
+      "event": "opening",
+      "file": "audio/luna_005.m4a"
+    },
+    {
+      "id": "luna_006",
+      "character": "luna",
+      "number": 6,
+      "text": "The centre changes every calculation.",
+      "event": "centre",
+      "file": "audio/luna_006.m4a"
+    },
+    {
+      "id": "luna_007",
+      "character": "luna",
+      "number": 7,
+      "text": "Corners create dangerous possibilities.",
+      "event": "corner",
+      "file": "audio/luna_007.m4a"
+    },
+    {
+      "id": "luna_008",
+      "character": "luna",
+      "number": 8,
+      "text": "Your placement tells me plenty.",
+      "event": "placement",
+      "file": "audio/luna_008.m4a"
+    },
+    {
+      "id": "luna_009",
+      "character": "luna",
+      "number": 9,
+      "text": "I am already planning ahead.",
+      "event": "placement",
+      "file": "audio/luna_009.m4a"
+    },
+    {
+      "id": "luna_010",
+      "character": "luna",
+      "number": 10,
+      "text": "Show me your strategy.",
+      "event": "opening",
+      "file": "audio/luna_010.m4a"
+    },
+    {
+      "id": "luna_011",
+      "character": "luna",
+      "number": 11,
+      "text": "That reveals your intention.",
+      "event": "placement",
+      "file": "audio/luna_011.m4a"
+    },
+    {
+      "id": "luna_012",
+      "character": "luna",
+      "number": 12,
+      "text": "I expected that placement.",
+      "event": "context",
+      "file": "audio/luna_012.m4a"
+    },
+    {
+      "id": "luna_013",
+      "character": "luna",
+      "number": 13,
+      "text": "You are building something dangerous.",
+      "event": "context",
+      "file": "audio/luna_013.m4a"
+    },
+    {
+      "id": "luna_014",
+      "character": "luna",
+      "number": 14,
+      "text": "That creates several possibilities.",
+      "event": "context",
+      "file": "audio/luna_014.m4a"
+    },
+    {
+      "id": "luna_015",
+      "character": "luna",
+      "number": 15,
+      "text": "Your plan is taking shape.",
+      "event": "context",
+      "file": "audio/luna_015.m4a"
+    },
+    {
+      "id": "luna_016",
+      "character": "luna",
+      "number": 16,
+      "text": "You just exposed another point.",
+      "event": "mistake",
+      "file": "audio/luna_016.m4a"
+    },
+    {
+      "id": "luna_017",
+      "character": "luna",
+      "number": 17,
+      "text": "That choice changes my response.",
+      "event": "context",
+      "file": "audio/luna_017.m4a"
+    },
+    {
+      "id": "luna_018",
+      "character": "luna",
+      "number": 18,
+      "text": "I can work with that.",
+      "event": "placement",
+      "file": "audio/luna_018.m4a"
+    },
+    {
+      "id": "luna_019",
+      "character": "luna",
+      "number": 19,
+      "text": "Now I know enough.",
+      "event": "context",
+      "file": "audio/luna_019.m4a"
+    },
+    {
+      "id": "luna_020",
+      "character": "luna",
+      "number": 20,
+      "text": "Placement was only preparation.",
+      "event": "context",
+      "file": "audio/luna_020.m4a"
+    },
+    {
+      "id": "luna_021",
+      "character": "luna",
+      "number": 21,
+      "text": "Now strategy becomes movement.",
+      "event": "movement",
+      "file": "audio/luna_021.m4a"
+    },
+    {
+      "id": "luna_022",
+      "character": "luna",
+      "number": 22,
+      "text": "Think beyond this move.",
+      "event": "movement",
+      "file": "audio/luna_022.m4a"
+    },
+    {
+      "id": "luna_023",
+      "character": "luna",
+      "number": 23,
+      "text": "That opened more than expected.",
+      "event": "mistake",
+      "file": "audio/luna_023.m4a"
+    },
+    {
+      "id": "luna_024",
+      "character": "luna",
+      "number": 24,
+      "text": "You traded one option for another.",
+      "event": "context",
+      "file": "audio/luna_024.m4a"
+    },
+    {
+      "id": "luna_025",
+      "character": "luna",
+      "number": 25,
+      "text": "I was waiting for that.",
+      "event": "context",
+      "file": "audio/luna_025.m4a"
+    },
+    {
+      "id": "luna_026",
+      "character": "luna",
+      "number": 26,
+      "text": "Your movement exposed the weakness.",
+      "event": "mistake",
+      "file": "audio/luna_026.m4a"
+    },
+    {
+      "id": "luna_027",
+      "character": "luna",
+      "number": 27,
+      "text": "That stone controls more than one path.",
+      "event": "context",
+      "file": "audio/luna_027.m4a"
+    },
+    {
+      "id": "luna_028",
+      "character": "luna",
+      "number": 28,
+      "text": "One move can reshape everything.",
+      "event": "movement",
+      "file": "audio/luna_028.m4a"
+    },
+    {
+      "id": "luna_029",
+      "character": "luna",
+      "number": 29,
+      "text": "Your choices are becoming predictable.",
+      "event": "context",
+      "file": "audio/luna_029.m4a"
+    },
+    {
+      "id": "luna_030",
+      "character": "luna",
+      "number": 30,
+      "text": "My next move is already planned.",
+      "event": "movement",
+      "file": "audio/luna_030.m4a"
+    },
+    {
+      "id": "luna_031",
+      "character": "luna",
+      "number": 31,
+      "text": "Your threat arrived too early.",
+      "event": "threat",
+      "file": "audio/luna_031.m4a"
+    },
+    {
+      "id": "luna_032",
+      "character": "luna",
+      "number": 32,
+      "text": "I can see your line.",
+      "event": "threat",
+      "file": "audio/luna_032.m4a"
+    },
+    {
+      "id": "luna_033",
+      "character": "luna",
+      "number": 33,
+      "text": "That threat demands an answer.",
+      "event": "context",
+      "file": "audio/luna_033.m4a"
+    },
+    {
+      "id": "luna_034",
+      "character": "luna",
+      "number": 34,
+      "text": "Consider that line finished.",
+      "event": "block",
+      "file": "audio/luna_034.m4a"
+    },
+    {
+      "id": "luna_035",
+      "character": "luna",
+      "number": 35,
+      "text": "You found the necessary block.",
+      "event": "block",
+      "file": "audio/luna_035.m4a"
+    },
+    {
+      "id": "luna_036",
+      "character": "luna",
+      "number": 36,
+      "text": "That defence creates another problem.",
+      "event": "context",
+      "file": "audio/luna_036.m4a"
+    },
+    {
+      "id": "luna_037",
+      "character": "luna",
+      "number": 37,
+      "text": "You stopped what I showed you.",
+      "event": "context",
+      "file": "audio/luna_037.m4a"
+    },
+    {
+      "id": "luna_038",
+      "character": "luna",
+      "number": 38,
+      "text": "Now find what I concealed.",
+      "event": "context",
+      "file": "audio/luna_038.m4a"
+    },
+    {
+      "id": "luna_039",
+      "character": "luna",
+      "number": 39,
+      "text": "One threat can hide another.",
+      "event": "context",
+      "file": "audio/luna_039.m4a"
+    },
+    {
+      "id": "luna_040",
+      "character": "luna",
+      "number": 40,
+      "text": "This position favours preparation.",
+      "event": "context",
+      "file": "audio/luna_040.m4a"
+    },
+    {
+      "id": "luna_041",
+      "character": "luna",
+      "number": 41,
+      "text": "You anticipated my response.",
+      "event": "strong",
+      "file": "audio/luna_041.m4a"
+    },
+    {
+      "id": "luna_042",
+      "character": "luna",
+      "number": 42,
+      "text": "That was strategically sound.",
+      "event": "strong",
+      "file": "audio/luna_042.m4a"
+    },
+    {
+      "id": "luna_043",
+      "character": "luna",
+      "number": 43,
+      "text": "You forced me to adjust.",
+      "event": "strong",
+      "file": "audio/luna_043.m4a"
+    },
+    {
+      "id": "luna_044",
+      "character": "luna",
+      "number": 44,
+      "text": "I did not expect that route.",
+      "event": "strong",
+      "file": "audio/luna_044.m4a"
+    },
+    {
+      "id": "luna_045",
+      "character": "luna",
+      "number": 45,
+      "text": "You planned that beautifully.",
+      "event": "context",
+      "file": "audio/luna_045.m4a"
+    },
+    {
+      "id": "luna_046",
+      "character": "luna",
+      "number": 46,
+      "text": "Your strategy reached its conclusion.",
+      "event": "context",
+      "file": "audio/luna_046.m4a"
+    },
+    {
+      "id": "luna_047",
+      "character": "luna",
+      "number": 47,
+      "text": "You completed the winning line.",
+      "event": "loss",
+      "file": "audio/luna_047.m4a"
+    },
+    {
+      "id": "luna_048",
+      "character": "luna",
+      "number": 48,
+      "text": "The final move was inevitable.",
+      "event": "win",
+      "file": "audio/luna_048.m4a"
+    },
+    {
+      "id": "luna_049",
+      "character": "luna",
+      "number": 49,
+      "text": "Next time, think even further.",
+      "event": "rematch",
+      "file": "audio/luna_049.m4a"
+    },
+    {
+      "id": "luna_050",
+      "character": "luna",
+      "number": 50,
+      "text": "Think further. Always.",
+      "event": "context",
+      "file": "audio/luna_050.m4a"
+    },
+    {
+      "id": "zara_001",
+      "character": "zara",
+      "number": 1,
+      "text": "Predictable openings are terribly boring.",
+      "event": "opening",
+      "file": "audio/zara_001.m4a"
+    },
+    {
+      "id": "zara_002",
+      "character": "zara",
+      "number": 2,
+      "text": "Let us shake things up.",
+      "event": "opening",
+      "file": "audio/zara_002.m4a"
+    },
+    {
+      "id": "zara_003",
+      "character": "zara",
+      "number": 3,
+      "text": "I rarely follow the obvious path.",
+      "event": "opening",
+      "file": "audio/zara_003.m4a"
+    },
+    {
+      "id": "zara_004",
+      "character": "zara",
+      "number": 4,
+      "text": "Your first move looks sensible.",
+      "event": "context",
+      "file": "audio/zara_004.m4a"
+    },
+    {
+      "id": "zara_005",
+      "character": "zara",
+      "number": 5,
+      "text": "Sensible is not always safe.",
+      "event": "opening",
+      "file": "audio/zara_005.m4a"
+    },
+    {
+      "id": "zara_006",
+      "character": "zara",
+      "number": 6,
+      "text": "The centre looks wonderfully chaotic.",
+      "event": "centre",
+      "file": "audio/zara_006.m4a"
+    },
+    {
+      "id": "zara_007",
+      "character": "zara",
+      "number": 7,
+      "text": "Corners give me interesting ideas.",
+      "event": "corner",
+      "file": "audio/zara_007.m4a"
+    },
+    {
+      "id": "zara_008",
+      "character": "zara",
+      "number": 8,
+      "text": "I might surprise you early.",
+      "event": "placement",
+      "file": "audio/zara_008.m4a"
+    },
+    {
+      "id": "zara_009",
+      "character": "zara",
+      "number": 9,
+      "text": "Plans are made to change.",
+      "event": "placement",
+      "file": "audio/zara_009.m4a"
+    },
+    {
+      "id": "zara_010",
+      "character": "zara",
+      "number": 10,
+      "text": "Expect absolutely anything.",
+      "event": "opening",
+      "file": "audio/zara_010.m4a"
+    },
+    {
+      "id": "zara_011",
+      "character": "zara",
+      "number": 11,
+      "text": "Well, that changes my plan.",
+      "event": "placement",
+      "file": "audio/zara_011.m4a"
+    },
+    {
+      "id": "zara_012",
+      "character": "zara",
+      "number": 12,
+      "text": "I did not expect that.",
+      "event": "context",
+      "file": "audio/zara_012.m4a"
+    },
+    {
+      "id": "zara_013",
+      "character": "zara",
+      "number": 13,
+      "text": "Now you have my attention.",
+      "event": "context",
+      "file": "audio/zara_013.m4a"
+    },
+    {
+      "id": "zara_014",
+      "character": "zara",
+      "number": 14,
+      "text": "That placement creates possibilities.",
+      "event": "context",
+      "file": "audio/zara_014.m4a"
+    },
+    {
+      "id": "zara_015",
+      "character": "zara",
+      "number": 15,
+      "text": "I see something unusual developing.",
+      "event": "context",
+      "file": "audio/zara_015.m4a"
+    },
+    {
+      "id": "zara_016",
+      "character": "zara",
+      "number": 16,
+      "text": "Let us make this complicated.",
+      "event": "mistake",
+      "file": "audio/zara_016.m4a"
+    },
+    {
+      "id": "zara_017",
+      "character": "zara",
+      "number": 17,
+      "text": "Your formation looks almost comfortable.",
+      "event": "context",
+      "file": "audio/zara_017.m4a"
+    },
+    {
+      "id": "zara_018",
+      "character": "zara",
+      "number": 18,
+      "text": "Comfortable positions make tempting targets.",
+      "event": "placement",
+      "file": "audio/zara_018.m4a"
+    },
+    {
+      "id": "zara_019",
+      "character": "zara",
+      "number": 19,
+      "text": "I have several ridiculous ideas.",
+      "event": "context",
+      "file": "audio/zara_019.m4a"
+    },
+    {
+      "id": "zara_020",
+      "character": "zara",
+      "number": 20,
+      "text": "Time to choose one.",
+      "event": "context",
+      "file": "audio/zara_020.m4a"
+    },
+    {
+      "id": "zara_021",
+      "character": "zara",
+      "number": 21,
+      "text": "Movement makes chaos useful.",
+      "event": "movement",
+      "file": "audio/zara_021.m4a"
+    },
+    {
+      "id": "zara_022",
+      "character": "zara",
+      "number": 22,
+      "text": "That move opened everything up.",
+      "event": "movement",
+      "file": "audio/zara_022.m4a"
+    },
+    {
+      "id": "zara_023",
+      "character": "zara",
+      "number": 23,
+      "text": "You just changed the whole board.",
+      "event": "mistake",
+      "file": "audio/zara_023.m4a"
+    },
+    {
+      "id": "zara_024",
+      "character": "zara",
+      "number": 24,
+      "text": "I love unexpected opportunities.",
+      "event": "context",
+      "file": "audio/zara_024.m4a"
+    },
+    {
+      "id": "zara_025",
+      "character": "zara",
+      "number": 25,
+      "text": "Let us try something dangerous.",
+      "event": "context",
+      "file": "audio/zara_025.m4a"
+    },
+    {
+      "id": "zara_026",
+      "character": "zara",
+      "number": 26,
+      "text": "Safe moves are overrated.",
+      "event": "mistake",
+      "file": "audio/zara_026.m4a"
+    },
+    {
+      "id": "zara_027",
+      "character": "zara",
+      "number": 27,
+      "text": "That stone is going exploring.",
+      "event": "context",
+      "file": "audio/zara_027.m4a"
+    },
+    {
+      "id": "zara_028",
+      "character": "zara",
+      "number": 28,
+      "text": "I wonder if this works.",
+      "event": "movement",
+      "file": "audio/zara_028.m4a"
+    },
+    {
+      "id": "zara_029",
+      "character": "zara",
+      "number": 29,
+      "text": "There is only one way to find out.",
+      "event": "context",
+      "file": "audio/zara_029.m4a"
+    },
+    {
+      "id": "zara_030",
+      "character": "zara",
+      "number": 30,
+      "text": "Now this feels interesting.",
+      "event": "movement",
+      "file": "audio/zara_030.m4a"
+    },
+    {
+      "id": "zara_031",
+      "character": "zara",
+      "number": 31,
+      "text": "I see your little threat.",
+      "event": "threat",
+      "file": "audio/zara_031.m4a"
+    },
+    {
+      "id": "zara_032",
+      "character": "zara",
+      "number": 32,
+      "text": "That line needs some disruption.",
+      "event": "threat",
+      "file": "audio/zara_032.m4a"
+    },
+    {
+      "id": "zara_033",
+      "character": "zara",
+      "number": 33,
+      "text": "Let us break that plan.",
+      "event": "context",
+      "file": "audio/zara_033.m4a"
+    },
+    {
+      "id": "zara_034",
+      "character": "zara",
+      "number": 34,
+      "text": "You blocked my favourite route.",
+      "event": "block",
+      "file": "audio/zara_034.m4a"
+    },
+    {
+      "id": "zara_035",
+      "character": "zara",
+      "number": 35,
+      "text": "Fine, I will invent another.",
+      "event": "block",
+      "file": "audio/zara_035.m4a"
+    },
+    {
+      "id": "zara_036",
+      "character": "zara",
+      "number": 36,
+      "text": "That defence was annoyingly clever.",
+      "event": "context",
+      "file": "audio/zara_036.m4a"
+    },
+    {
+      "id": "zara_037",
+      "character": "zara",
+      "number": 37,
+      "text": "You covered the obvious path.",
+      "event": "context",
+      "file": "audio/zara_037.m4a"
+    },
+    {
+      "id": "zara_038",
+      "character": "zara",
+      "number": 38,
+      "text": "Good thing I dislike obvious paths.",
+      "event": "context",
+      "file": "audio/zara_038.m4a"
+    },
+    {
+      "id": "zara_039",
+      "character": "zara",
+      "number": 39,
+      "text": "Chaos can hide excellent opportunities.",
+      "event": "context",
+      "file": "audio/zara_039.m4a"
+    },
+    {
+      "id": "zara_040",
+      "character": "zara",
+      "number": 40,
+      "text": "This board could go anywhere.",
+      "event": "context",
+      "file": "audio/zara_040.m4a"
+    },
+    {
+      "id": "zara_041",
+      "character": "zara",
+      "number": 41,
+      "text": "Okay, that was brilliant.",
+      "event": "strong",
+      "file": "audio/zara_041.m4a"
+    },
+    {
+      "id": "zara_042",
+      "character": "zara",
+      "number": 42,
+      "text": "You handled the chaos well.",
+      "event": "strong",
+      "file": "audio/zara_042.m4a"
+    },
+    {
+      "id": "zara_043",
+      "character": "zara",
+      "number": 43,
+      "text": "You actually predicted that.",
+      "event": "strong",
+      "file": "audio/zara_043.m4a"
+    },
+    {
+      "id": "zara_044",
+      "character": "zara",
+      "number": 44,
+      "text": "That move caught me completely.",
+      "event": "strong",
+      "file": "audio/zara_044.m4a"
+    },
+    {
+      "id": "zara_045",
+      "character": "zara",
+      "number": 45,
+      "text": "I definitely did not plan that.",
+      "event": "context",
+      "file": "audio/zara_045.m4a"
+    },
+    {
+      "id": "zara_046",
+      "character": "zara",
+      "number": 46,
+      "text": "You turned madness into strategy.",
+      "event": "context",
+      "file": "audio/zara_046.m4a"
+    },
+    {
+      "id": "zara_047",
+      "character": "zara",
+      "number": 47,
+      "text": "That winning line came from nowhere.",
+      "event": "loss",
+      "file": "audio/zara_047.m4a"
+    },
+    {
+      "id": "zara_048",
+      "character": "zara",
+      "number": 48,
+      "text": "Sometimes chaos chooses me.",
+      "event": "win",
+      "file": "audio/zara_048.m4a"
+    },
+    {
+      "id": "zara_049",
+      "character": "zara",
+      "number": 49,
+      "text": "Next game gets even stranger.",
+      "event": "rematch",
+      "file": "audio/zara_049.m4a"
+    },
+    {
+      "id": "zara_050",
+      "character": "zara",
+      "number": 50,
+      "text": "Expect the unexpected.",
+      "event": "context",
+      "file": "audio/zara_050.m4a"
+    },
+    {
+      "id": "hiro_001",
+      "character": "hiro",
+      "number": 1,
+      "text": "Quiet boards reveal intentions.",
+      "event": "opening",
+      "file": "audio/hiro_001.m4a"
+    },
+    {
+      "id": "hiro_002",
+      "character": "hiro",
+      "number": 2,
+      "text": "Patience creates better choices.",
+      "event": "opening",
+      "file": "audio/hiro_002.m4a"
+    },
+    {
+      "id": "hiro_003",
+      "character": "hiro",
+      "number": 3,
+      "text": "Begin with purpose.",
+      "event": "opening",
+      "file": "audio/hiro_003.m4a"
+    },
+    {
+      "id": "hiro_004",
+      "character": "hiro",
+      "number": 4,
+      "text": "Your first stone speaks loudly.",
+      "event": "context",
+      "file": "audio/hiro_004.m4a"
+    },
+    {
+      "id": "hiro_005",
+      "character": "hiro",
+      "number": 5,
+      "text": "I prefer quieter openings.",
+      "event": "opening",
+      "file": "audio/hiro_005.m4a"
+    },
+    {
+      "id": "hiro_006",
+      "character": "hiro",
+      "number": 6,
+      "text": "The centre invites attention.",
+      "event": "centre",
+      "file": "audio/hiro_006.m4a"
+    },
+    {
+      "id": "hiro_007",
+      "character": "hiro",
+      "number": 7,
+      "text": "Corners reward careful planning.",
+      "event": "corner",
+      "file": "audio/hiro_007.m4a"
+    },
+    {
+      "id": "hiro_008",
+      "character": "hiro",
+      "number": 8,
+      "text": "Every placement leaves something behind.",
+      "event": "placement",
+      "file": "audio/hiro_008.m4a"
+    },
+    {
+      "id": "hiro_009",
+      "character": "hiro",
+      "number": 9,
+      "text": "Simple positions can deceive.",
+      "event": "placement",
+      "file": "audio/hiro_009.m4a"
+    },
+    {
+      "id": "hiro_010",
+      "character": "hiro",
+      "number": 10,
+      "text": "Three stones are enough.",
+      "event": "opening",
+      "file": "audio/hiro_010.m4a"
+    },
+    {
+      "id": "hiro_011",
+      "character": "hiro",
+      "number": 11,
+      "text": "That placement reveals your plan.",
+      "event": "placement",
+      "file": "audio/hiro_011.m4a"
+    },
+    {
+      "id": "hiro_012",
+      "character": "hiro",
+      "number": 12,
+      "text": "You chose space over pressure.",
+      "event": "context",
+      "file": "audio/hiro_012.m4a"
+    },
+    {
+      "id": "hiro_013",
+      "character": "hiro",
+      "number": 13,
+      "text": "That point carries responsibility.",
+      "event": "context",
+      "file": "audio/hiro_013.m4a"
+    },
+    {
+      "id": "hiro_014",
+      "character": "hiro",
+      "number": 14,
+      "text": "Your stones are becoming connected.",
+      "event": "context",
+      "file": "audio/hiro_014.m4a"
+    },
+    {
+      "id": "hiro_015",
+      "character": "hiro",
+      "number": 15,
+      "text": "I see what you are building.",
+      "event": "context",
+      "file": "audio/hiro_015.m4a"
+    },
+    {
+      "id": "hiro_016",
+      "character": "hiro",
+      "number": 16,
+      "text": "You left something unprotected.",
+      "event": "mistake",
+      "file": "audio/hiro_016.m4a"
+    },
+    {
+      "id": "hiro_017",
+      "character": "hiro",
+      "number": 17,
+      "text": "That was carefully chosen.",
+      "event": "context",
+      "file": "audio/hiro_017.m4a"
+    },
+    {
+      "id": "hiro_018",
+      "character": "hiro",
+      "number": 18,
+      "text": "Your shape is becoming clear.",
+      "event": "placement",
+      "file": "audio/hiro_018.m4a"
+    },
+    {
+      "id": "hiro_019",
+      "character": "hiro",
+      "number": 19,
+      "text": "I will answer quietly.",
+      "event": "context",
+      "file": "audio/hiro_019.m4a"
+    },
+    {
+      "id": "hiro_020",
+      "character": "hiro",
+      "number": 20,
+      "text": "Now the board can breathe.",
+      "event": "context",
+      "file": "audio/hiro_020.m4a"
+    },
+    {
+      "id": "hiro_021",
+      "character": "hiro",
+      "number": 21,
+      "text": "Movement changes everything.",
+      "event": "movement",
+      "file": "audio/hiro_021.m4a"
+    },
+    {
+      "id": "hiro_022",
+      "character": "hiro",
+      "number": 22,
+      "text": "Move only with purpose.",
+      "event": "movement",
+      "file": "audio/hiro_022.m4a"
+    },
+    {
+      "id": "hiro_023",
+      "character": "hiro",
+      "number": 23,
+      "text": "One connection just disappeared.",
+      "event": "mistake",
+      "file": "audio/hiro_023.m4a"
+    },
+    {
+      "id": "hiro_024",
+      "character": "hiro",
+      "number": 24,
+      "text": "Another connection became possible.",
+      "event": "context",
+      "file": "audio/hiro_024.m4a"
+    },
+    {
+      "id": "hiro_025",
+      "character": "hiro",
+      "number": 25,
+      "text": "You moved the correct stone.",
+      "event": "context",
+      "file": "audio/hiro_025.m4a"
+    },
+    {
+      "id": "hiro_026",
+      "character": "hiro",
+      "number": 26,
+      "text": "That stone was supporting more.",
+      "event": "mistake",
+      "file": "audio/hiro_026.m4a"
+    },
+    {
+      "id": "hiro_027",
+      "character": "hiro",
+      "number": 27,
+      "text": "Sometimes staying still is stronger.",
+      "event": "context",
+      "file": "audio/hiro_027.m4a"
+    },
+    {
+      "id": "hiro_028",
+      "character": "hiro",
+      "number": 28,
+      "text": "The shortest path is enough.",
+      "event": "movement",
+      "file": "audio/hiro_028.m4a"
+    },
+    {
+      "id": "hiro_029",
+      "character": "hiro",
+      "number": 29,
+      "text": "Your options are narrowing.",
+      "event": "context",
+      "file": "audio/hiro_029.m4a"
+    },
+    {
+      "id": "hiro_030",
+      "character": "hiro",
+      "number": 30,
+      "text": "Attention",
+      "event": "review",
+      "file": "audio/hiro_030.m4a"
+    },
+    {
+      "id": "hiro_031",
+      "character": "hiro",
+      "number": 31,
+      "text": "Two stones deserve attention.",
+      "event": "threat",
+      "file": "audio/hiro_031.m4a"
+    },
+    {
+      "id": "hiro_032",
+      "character": "hiro",
+      "number": 32,
+      "text": "Your threat is very clear.",
+      "event": "threat",
+      "file": "audio/hiro_032.m4a"
+    },
+    {
+      "id": "hiro_033",
+      "character": "hiro",
+      "number": 33,
+      "text": "I noticed that opening.",
+      "event": "context",
+      "file": "audio/hiro_033.m4a"
+    },
+    {
+      "id": "hiro_034",
+      "character": "hiro",
+      "number": 34,
+      "text": "That line needed closing.",
+      "event": "block",
+      "file": "audio/hiro_034.m4a"
+    },
+    {
+      "id": "hiro_035",
+      "character": "hiro",
+      "number": 35,
+      "text": "You defended without wasting movement.",
+      "event": "block",
+      "file": "audio/hiro_035.m4a"
+    },
+    {
+      "id": "hiro_036",
+      "character": "hiro",
+      "number": 36,
+      "text": "A quiet threat is stronger.",
+      "event": "context",
+      "file": "audio/hiro_036.m4a"
+    },
+    {
+      "id": "hiro_037",
+      "character": "hiro",
+      "number": 37,
+      "text": "You blocked the obvious path.",
+      "event": "context",
+      "file": "audio/hiro_037.m4a"
+    },
+    {
+      "id": "hiro_038",
+      "character": "hiro",
+      "number": 38,
+      "text": "There is another path.",
+      "event": "context",
+      "file": "audio/hiro_038.m4a"
+    },
+    {
+      "id": "hiro_039",
+      "character": "hiro",
+      "number": 39,
+      "text": "Pressure does not require noise.",
+      "event": "context",
+      "file": "audio/hiro_039.m4a"
+    },
+    {
+      "id": "hiro_040",
+      "character": "hiro",
+      "number": 40,
+      "text": "This position rewards patience.",
+      "event": "context",
+      "file": "audio/hiro_040.m4a"
+    },
+    {
+      "id": "hiro_041",
+      "character": "hiro",
+      "number": 41,
+      "text": "You saw beyond my move.",
+      "event": "strong",
+      "file": "audio/hiro_041.m4a"
+    },
+    {
+      "id": "hiro_042",
+      "character": "hiro",
+      "number": 42,
+      "text": "That was precise play.",
+      "event": "strong",
+      "file": "audio/hiro_042.m4a"
+    },
+    {
+      "id": "hiro_043",
+      "character": "hiro",
+      "number": 43,
+      "text": "You forced my response.",
+      "event": "strong",
+      "file": "audio/hiro_043.m4a"
+    },
+    {
+      "id": "hiro_044",
+      "character": "hiro",
+      "number": 44,
+      "text": "I underestimated that connection.",
+      "event": "strong",
+      "file": "audio/hiro_044.m4a"
+    },
+    {
+      "id": "hiro_045",
+      "character": "hiro",
+      "number": 45,
+      "text": "Your patience was rewarded.",
+      "event": "context",
+      "file": "audio/hiro_045.m4a"
+    },
+    {
+      "id": "hiro_046",
+      "character": "hiro",
+      "number": 46,
+      "text": "Three stones found harmony.",
+      "event": "context",
+      "file": "audio/hiro_046.m4a"
+    },
+    {
+      "id": "hiro_047",
+      "character": "hiro",
+      "number": 47,
+      "text": "Your line is complete.",
+      "event": "loss",
+      "file": "audio/hiro_047.m4a"
+    },
+    {
+      "id": "hiro_048",
+      "character": "hiro",
+      "number": 48,
+      "text": "I found the final opening.",
+      "event": "win",
+      "file": "audio/hiro_048.m4a"
+    },
+    {
+      "id": "hiro_049",
+      "character": "hiro",
+      "number": 49,
+      "text": "Another game may reveal more.",
+      "event": "rematch",
+      "file": "audio/hiro_049.m4a"
+    },
+    {
+      "id": "hiro_050",
+      "character": "hiro",
+      "number": 50,
+      "text": "Less noise. Better moves.",
+      "event": "context",
+      "file": "audio/hiro_050.m4a"
+    }
+  ]
+}
