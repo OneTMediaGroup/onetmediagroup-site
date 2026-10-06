@@ -1,0 +1,106 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="canonical" href="https://onetmediagroup.ca/tools/heic-to-jpg.html">
+<title>HEIC to JPG Converter - Free & Private | One T Tools</title>
+<meta name="description" content="Convert HEIC and HEIF photos to JPG free in your browser. Batch conversion, adjustable quality, no account, and no photo upload to One T servers.">
+<meta name="theme-color" content="#0b0b0f">
+<link rel="icon" type="image/png" href="../assets/images/General/onet-favicon.png">
+<link rel="apple-touch-icon" href="../assets/images/General/onet-apple-touch-icon.png">
+<link rel="stylesheet" href="../assets/css/styles.css">
+<script src="https://cdn.jsdelivr.net/npm/heic-to@1.5.2/dist/iife/heic-to.js"></script>
+<style>
+.tool-hero{padding:62px 20px 24px}.crumbs{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:.82rem;margin-bottom:20px}.crumbs a{color:#ccc;text-decoration:none}
+.tool-title{font-size:clamp(2.8rem,7vw,5.8rem);line-height:.92;letter-spacing:-.065em;margin:0 0 18px}.tool-lead{font-size:clamp(1rem,2vw,1.2rem);color:#c0c0cf;max-width:760px}
+.privacy-pill{display:inline-block;margin-top:18px;padding:8px 11px;border:1px solid rgba(110,231,255,.2);border-radius:999px;background:rgba(110,231,255,.06);color:#c9f7ff;font-size:.82rem;font-weight:800}
+.workspace{padding:24px 20px 40px}.converter{border:1px solid var(--border);border-radius:28px;background:linear-gradient(145deg,rgba(20,20,28,.96),rgba(16,16,24,.78));box-shadow:var(--shadow);overflow:hidden}
+.converter-head{display:flex;justify-content:space-between;gap:20px;align-items:center;padding:22px 24px;border-bottom:1px solid var(--border)}.converter-head h2{margin:0;font-size:1.25rem}.converter-head p{margin:3px 0 0;color:var(--muted);font-size:.84rem}
+.quality{display:flex;align-items:center;gap:10px}.quality label{font-size:.8rem;color:#ccc;font-weight:800}.quality input{width:130px}.quality output{font-size:.8rem;color:#ccc}
+.drop-wrap{padding:24px}.dropzone{display:grid;place-items:center;text-align:center;min-height:280px;padding:36px;border:2px dashed rgba(110,231,255,.25);border-radius:22px;background:rgba(11,11,15,.45);cursor:pointer;transition:.2s}.dropzone:hover,.dropzone.drag{border-color:rgba(110,231,255,.75);background:rgba(110,231,255,.055)}
+.drop-icon{display:grid;place-items:center;width:72px;height:72px;border-radius:22px;background:linear-gradient(135deg,rgba(110,231,255,.13),rgba(139,92,246,.18));font-size:1rem;font-weight:950;margin:0 auto 17px}.dropzone h3{font-size:1.35rem;margin:0 0 7px}.dropzone p{color:var(--muted);margin:0 0 18px}.dropzone small{display:block;color:#7f7f90;margin-top:12px}
+#fileInput{position:absolute;width:1px;height:1px;opacity:0}.action-btn{appearance:none;border:1px solid var(--border);border-radius:12px;background:rgba(20,20,28,.85);color:var(--text);padding:10px 15px;font:inherit;font-size:.88rem;font-weight:850;cursor:pointer}.action-btn.primary{border-color:transparent;background:linear-gradient(135deg,var(--accent1),var(--accent2));color:#090910}
+.queue{display:none;padding:0 24px 24px}.queue.show{display:block}.queue-toolbar{display:flex;justify-content:space-between;gap:15px;align-items:center;margin-bottom:12px}.queue-toolbar h3{margin:0}.queue-actions{display:flex;gap:8px}
+.file-row{display:grid;grid-template-columns:minmax(0,1fr) auto auto;gap:14px;align-items:center;padding:14px 0;border-top:1px solid var(--border)}.file-name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.file-meta{color:var(--muted);font-size:.78rem;margin-top:3px}.state{font-size:.78rem;font-weight:850;color:#aaa}.state.ok{color:#9be9b1}.state.bad{color:#ffaaa9}.state.busy{color:#a8eefc}.download{display:none}.download.ready{display:inline-block}
+.notice{margin:0 24px 24px;padding:13px 15px;border:1px solid rgba(255,255,255,.08);border-radius:14px;background:rgba(11,11,15,.5);color:var(--muted);font-size:.8rem;line-height:1.45}
+.ad-slot{margin:22px auto 0;min-height:92px;display:grid;place-items:center;border:1px dashed rgba(255,255,255,.1);border-radius:16px;color:#666678;font-size:.72rem;text-transform:uppercase;letter-spacing:.12em}
+.content-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:18px;padding:30px 20px 60px}.info-card{padding:25px;border:1px solid var(--border);border-radius:22px;background:rgba(20,20,28,.58)}.info-card h2,.info-card h3{margin-top:0}.info-card p,.info-card li{color:var(--muted);line-height:1.65}.faq details{border-top:1px solid var(--border);padding:15px 0}.faq details:first-of-type{border-top:0}.faq summary{cursor:pointer;font-weight:850}
+@media(max-width:820px){.converter-head{display:block}.quality{margin-top:15px}.content-grid{grid-template-columns:1fr}.file-row{grid-template-columns:1fr auto}.download{grid-column:1/-1}.drop-wrap{padding:15px}}@media(max-width:520px){.tool-hero{padding-top:42px}.queue-toolbar{display:block}.queue-actions{margin-top:10px}}
+</style></head><body>
+<header class="nav"><div class="container"><div class="nav-inner">
+<a class="brand" href="../index.html"><img class="brand-logo" src="../assets/images/General/1tnewprologo.png" alt="One T Media Group"></a>
+<nav class="nav-links"><a href="../index.html">Home</a><a href="../one-t-industrial.html">Industrial</a><a href="../apps.html">Apps</a><a href="../tools.html" aria-current="page" style="color:var(--text);background:rgba(20,20,28,.7)">Tools</a><a href="../contact.html">Contact</a><img src="../assets/images/General/Crafted-In-The-North-Header.png" alt="Crafted in Canada" class="crafted-badge" id="canadaBadge"></nav>
+</div></div></header><main>
+<section class="tool-hero container"><div class="crumbs"><a href="../tools.html">One T Tools</a><span>›</span><span>Image Tools</span><span>›</span><span>HEIC to JPG</span></div>
+<h1 class="tool-title">HEIC to JPG.<br><span class="grad">Right in your browser.</span></h1>
+<p class="tool-lead">Convert iPhone HEIC and HEIF photos into widely compatible JPG images. Choose one photo or a batch, adjust quality, and download the results.</p>
+<div class="privacy-pill">● Photos processed on your device</div></section>
+<section class="workspace container"><div class="converter">
+<div class="converter-head"><div><h2>HEIC → JPG Converter</h2><p>Free • No account • Batch friendly</p></div><div class="quality"><label for="quality">JPG quality</label><input id="quality" type="range" min="50" max="100" value="92"><output id="qualityOut">92%</output></div></div>
+<div class="drop-wrap"><label class="dropzone" id="dropzone" for="fileInput" tabindex="0"><div><div class="drop-icon">HEIC</div><h3>Drop HEIC photos here</h3><p>or choose files from your device</p><span class="action-btn primary">Choose HEIC Files</span><small>.heic and .heif • Multiple files supported</small></div></label><input id="fileInput" type="file" accept=".heic,.heif,image/heic,image/heif" multiple></div>
+<div class="queue" id="queue"><div class="queue-toolbar"><h3 id="queueTitle">Files</h3><div class="queue-actions"><button class="action-btn" id="clearBtn" type="button">Clear</button><button class="action-btn primary" id="convertBtn" type="button">Convert All</button></div></div><div id="fileList"></div></div>
+<div class="notice"><strong>Privacy:</strong> conversion happens in your browser. Selected photos are not intentionally uploaded to or stored on One T Media Group servers by this tool. Normal page and library requests still occur when loading the site.</div>
+</div><div class="ad-slot">Advertising space</div></section>
+<section class="content-grid container">
+<article class="info-card"><h2>How to convert HEIC to JPG</h2><ol><li><strong>Choose your HEIC photos.</strong> Select one file or a batch.</li><li><strong>Choose JPG quality.</strong> 92% is a good starting point.</li><li><strong>Convert and download.</strong> Your browser creates the JPG files locally.</li></ol>
+<h3>Why convert HEIC?</h3><p>HEIC is commonly used for efficient photo storage, especially on Apple devices. JPG remains widely supported across websites, older software, email workflows and devices.</p></article>
+<aside class="info-card faq"><h2>HEIC to JPG FAQ</h2>
+<details open><summary>Are my photos uploaded?</summary><p>No photo upload is required for conversion. Processing is designed to happen on your device.</p></details>
+<details><summary>Can I convert several photos?</summary><p>Yes. Select multiple HEIC or HEIF files and choose Convert All.</p></details>
+<details><summary>Is metadata preserved?</summary><p>This tool focuses on image conversion and does not promise to preserve original HEIC metadata in the JPG output.</p></details>
+<details><summary>What quality should I use?</summary><p>92% is the default. Lower settings reduce file size; higher settings prioritize image quality.</p></details>
+</aside></section></main>
+<footer class="footer"><div class="footer-grid"><div class="footer-col"><h3>One T Tools</h3><p class="small">Useful online tools without the nonsense. Built in Canada.</p></div><div class="footer-col"><h4>Tools</h4><div class="footer-links"><a href="../tools.html">All Tools</a><a href="../tools.html#image-tools">Image Tools</a><a href="../tools.html#pdf-tools">PDF Tools</a><a href="../tools.html#canadian-tools">Canadian Tools</a></div></div><div class="footer-col"><h4>One T Media Group</h4><div class="footer-links"><a href="../apps.html">Mobile Apps</a><a href="../one-t-industrial.html">Industrial Software</a><a href="../contact.html">Contact</a></div></div></div><div class="footer-bottom">© <span id="year"></span> One T Media Group</div></footer>
+<script src="../assets/js/main.js"></script>
+<script>
+(() => {
+ const input=document.getElementById('fileInput'), drop=document.getElementById('dropzone'), list=document.getElementById('fileList'), queue=document.getElementById('queue'), qTitle=document.getElementById('queueTitle'), convertBtn=document.getElementById('convertBtn'), clearBtn=document.getElementById('clearBtn'), quality=document.getElementById('quality'), qualityOut=document.getElementById('qualityOut');
+ let items=[];
+ const fmt=b=>b<1024?b+' B':b<1048576?(b/1024).toFixed(1)+' KB':(b/1048576).toFixed(1)+' MB';
+ const base=n=>(n.replace(/\.(heic|heif)$/i,'').replace(/[<>:"/\\|?*\x00-\x1F]/g,'_')||'converted');
+ quality.oninput=()=>qualityOut.value=quality.value+'%';
+ function cleanup(x){if(x.url)URL.revokeObjectURL(x.url)}
+ function render(){
+   queue.classList.toggle('show',items.length>0); qTitle.textContent=items.length+' file'+(items.length===1?'':'s');
+   list.innerHTML='';
+   items.forEach((x,i)=>{
+     const row=document.createElement('div'); row.className='file-row';
+     const main=document.createElement('div'); main.innerHTML='<div class="file-name"></div><div class="file-meta"></div>';
+     main.querySelector('.file-name').textContent=x.file.name;
+     main.querySelector('.file-meta').textContent=fmt(x.file.size)+(x.out?' → '+fmt(x.out.size):'');
+     const state=document.createElement('span'); state.className='state '+x.state; state.textContent=x.label;
+     const a=document.createElement('a'); a.className='action-btn download'+(x.url?' ready':''); a.textContent='Download JPG'; if(x.url){a.href=x.url;a.download=base(x.file.name)+'.jpg'}
+     row.append(main,state,a); list.append(row);
+   });
+ }
+ function add(files){
+   [...files].forEach(file=>{
+     const ok=/\.(heic|heif)$/i.test(file.name)||/image\/hei[cf]/i.test(file.type||'');
+     if(ok)items.push({file,state:'',label:'Ready',out:null,url:null});
+   }); render();
+ }
+ input.onchange=e=>{add(e.target.files);input.value=''};
+ ['dragenter','dragover'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.add('drag')}));
+ ['dragleave','drop'].forEach(ev=>drop.addEventListener(ev,e=>{e.preventDefault();drop.classList.remove('drag')}));
+ drop.addEventListener('drop',e=>add(e.dataTransfer.files));
+ drop.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();input.click()}});
+ clearBtn.onclick=()=>{items.forEach(cleanup);items=[];render()};
+ async function convertOne(x){
+   cleanup(x); x.url=null;x.out=null;x.state='busy';x.label='Converting…';render();
+   try{
+     if(!window.HeicTo)throw new Error('Converter library did not load');
+     const valid=await window.HeicTo.isHeic(x.file);
+     if(!valid)throw new Error('Not a valid HEIC/HEIF file');
+     const blob=await window.HeicTo.heicTo({blob:x.file,type:'image/jpeg',quality:Number(quality.value)/100});
+     x.out=blob;x.url=URL.createObjectURL(blob);x.state='ok';x.label='Ready';
+   }catch(err){x.state='bad';x.label='Could not convert';console.error(err)}
+   render();
+ }
+ convertBtn.onclick=async()=>{
+   convertBtn.disabled=true;clearBtn.disabled=true;
+   for(const x of items)await convertOne(x);
+   convertBtn.disabled=false;clearBtn.disabled=false;
+ };
+ window.addEventListener('beforeunload',()=>items.forEach(cleanup));
+ render();
+})();
+</script></body></html>
