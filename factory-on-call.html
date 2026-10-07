@@ -31,12 +31,60 @@ body{background:var(--foc-bg);color:var(--foc-text)}
 .foc-promo-frame{position:relative;aspect-ratio:16/9;overflow:hidden;border:1px solid var(--foc-line);border-radius:22px;background:var(--foc-navy);box-shadow:0 14px 34px rgba(15,23,42,.12)}
 .foc-promo-frame iframe{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
 .foc-promo-link{margin:14px 0 0;font-size:.95rem}.foc-promo-link a{color:var(--foc-blue);text-underline-offset:3px}
+/* Keep One T master header dark */
+.nav {
+  background: #0b0b0f !important;
+  color: #f4f4f7 !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
 
+.nav .nav-links a {
+  color: #b8b8c6 !important;
+}
+
+.nav .nav-links a:hover {
+  color: #ffffff !important;
+}
+
+.nav .brand {
+  color: inherit !important;
+}
+/* Keep One T master footer readable */
+.footer {
+  background: #111118 !important;
+  color: #f4f4f7 !important;
+}
+
+.footer h3,
+.footer h4 {
+  color: #f4f4f7 !important;
+}
+
+.footer p,
+.footer .small {
+  color: #a9a9b8 !important;
+}
+
+.footer-links a {
+  color: #d7d7e1 !important;
+}
+
+.footer-links a:hover {
+  color: #ffffff !important;
+}
+
+.footer-bottom {
+  color: #9b9baa !important;
+}
+
+.footer-social a {
+  color: #ffffff !important;
+}
 
 </style>
 </head>
 <body>
-<body>
+
 
 <div class="nav ff-nav">
   <div class="container">
@@ -45,7 +93,13 @@ body{background:var(--foc-bg);color:var(--foc-text)}
 
       <nav class="nav-links">
           <a href="index.html">Home</a>
-        <a href="one-t-industrial.html">Industrial</a>
+        <a
+  href="one-t-industrial.html"
+  aria-current="page"
+  style="color:#fff;background:rgba(20,20,28,.9);border-color:rgba(60,60,78,.9)"
+>
+  Industrial
+</a>
         <a href="apps.html">Apps</a>
          <a href="publishing.html">Publishing</a>
          <a href="tools.html">Tools</a>
@@ -57,7 +111,7 @@ body{background:var(--foc-bg);color:var(--foc-text)}
 </div>
 <body>
     
-</body>
+
 <main class="container">
 <section class="foc-hero"><div class="foc-hero-grid"><div><div class="foc-kicker">Factory On Call • One T Industrial</div><h1>Get the right help moving faster.</h1><p>Factory On Call gives production teams a clear way to call for support, acknowledge requests, track response, escalate emergencies, and keep everyone looking at the same live information.</p><div class="hero-actions"><a class="btn primary" href="#onboarding">View Onboarding</a><a class="btn" href="#pricing">View Pricing</a><a class="btn" href="mailto:factoryoncall@onetmediagroup.ca?subject=Factory%20On%20Call%20Inquiry">Contact</a></div></div><div class="foc-logo-panel"><img src="assets/images/FOC/foc_logo_dark.png" alt="Factory On Call logo"></div></div></section>
 
