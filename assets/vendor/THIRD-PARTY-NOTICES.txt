@@ -1,0 +1,38 @@
+One T Tools third-party libraries — October 7, 2026
+
+Locally served, unmodified browser script:
+qrcode 1.4.4 — MIT
+Source: https://github.com/soldair/node-qrcode/tree/v1.4.4
+Distributed file: qrcode-1.4.4.min.js
+Licence: qrcode-LICENSE.txt
+Original URL: https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js
+
+Existing remotely served libraries (not bundled or modified in this update):
+heic-to 1.5.2 — LGPL-3.0
+https://github.com/hoppergee/heic-to
+https://cdn.jsdelivr.net/npm/heic-to@1.5.2/dist/iife/heic-to.js
+
+@imgly/background-removal 1.7.0 — AGPL-3.0 (commercial licensing also offered by the publisher)
+https://github.com/imgly/background-removal-js
+https://cdn.jsdelivr.net/npm/@imgly/background-removal@1.7.0/+esm
+AI model/runtime assets are downloaded by this library.
+
+jszip 3.10.1
+https://github.com/Stuk/jszip/tree/v3.10.1
+https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js
+
+jspdf 2.5.2
+https://github.com/parallax/jsPDF/tree/v2.5.2
+https://cdn.jsdelivr.net/npm/jspdf@2.5.2/dist/jspdf.umd.min.js
+
+pdf-lib 1.17.1
+https://github.com/Hopding/pdf-lib/tree/v1.17.1
+https://cdn.jsdelivr.net/npm/pdf-lib@1.17.1/dist/pdf-lib.min.js
+
+pdfjs-dist 3.11.174 (PDF.js)
+https://github.com/mozilla/pdf.js/tree/v3.11.174
+https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js
+https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js
+
+Consult the linked upstream repositories for full licences, notices, source, and licence terms of embedded components.
+The background-removal library's AGPL/commercial licensing obligations need an owner decision before monetized deployment. This notice is not a claim that the site's licence obligations have been resolved.
