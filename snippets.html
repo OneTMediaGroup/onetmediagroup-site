@@ -33,6 +33,32 @@ header.nav .nav-links a[aria-current="page"] {
 header.nav .brand {
   color: inherit !important;
 }
+.amazon-badge-link {
+  display: inline-block;
+  margin-top: 18px;
+  line-height: 0;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.amazon-badge-link:hover {
+  transform: translateY(-2px);
+  opacity: .92;
+}
+
+.amazon-badge {
+  display: block;
+  width: 190px;
+  max-width: 100%;
+  height: auto;
+}
+
+@media(max-width:820px) {
+  .amazon-badge-link {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
 
 </style>
 </head>
@@ -106,7 +132,19 @@ header.nav .brand {
         <h3>Snippets from the Edge of Sanity</h3>
         <p>A collection of poetry from Bill “Scotti” Anderson — observations, memories, feelings and moments gathered from a life spent watching, listening, writing and creating.</p>
         <p>Personal without pretending to have all the answers, <em>Snippets from the Edge of Sanity</em> moves through the joy, pain, humour and uncertainty that make up an ordinary — and extraordinary — life.</p>
-        <a class="button" href="https://www.amazon.ca/dp/B0HM4VGDCK" target="_blank" rel="noopener noreferrer">Read the eBook on Amazon.ca →</a>
+<a
+  class="amazon-badge-link"
+  href="https://www.amazon.ca/dp/B0HM4VGDCK"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Snippets from the Edge of Sanity — Available at Amazon"
+>
+  <img
+    class="amazon-badge"
+    src="assets/images/General/available_at_amazon_ca_en_cc_horizontal_wht.png"
+    alt="Available at Amazon"
+  >
+</a>
       </div>
     </article>
     <article class="book coming">
