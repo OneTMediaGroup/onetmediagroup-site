@@ -1,6 +1,7 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Scot Anderson | Nightshift Books</title>
+<link rel="stylesheet" href="assets/css/styles.css">
 <style>
 :root{--bg:#080b10;--card:#111720;--ink:#edf1f5;--muted:#aab3bd;--line:#29333f;--blue:#9bb8cf;--gold:#d8b56d}
 *{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:radial-gradient(circle at 20% 0,#172231 0,transparent 28rem),var(--bg);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif;line-height:1.65}
@@ -11,8 +12,94 @@ section{padding:72px 0;border-top:1px solid var(--line)}.head{display:flex;justi
 .grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}.series{background:linear-gradient(145deg,#151d27,#0e141c);border:1px solid var(--line);padding:25px}.series img{width:100%;display:block;border:1px solid #35404b;margin-bottom:23px}.about{background:#0d1219}.aboutgrid{display:grid;grid-template-columns:.7fr 1.3fr;gap:55px}.about h2{font-size:3rem;margin-top:8px}.about p{color:#c6cdd5;font-size:1.06rem}
 footer{padding:38px 0;color:#818b96;font-size:.85rem}.foot{display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap}
 @media(max-width:800px){nav{display:none}.hero-grid,.book,.aboutgrid,.grid{grid-template-columns:1fr}.hero{padding:60px 0}.book{gap:28px}.cover{max-width:350px}.head{display:block}.head p{margin-top:12px}section{padding:55px 0}}
+/* One T master navigation overrides */
+header.nav {
+  min-height: initial !important;
+  display: block !important;
+  background: #0b0b0f !important;
+  color: #f4f4f7 !important;
+  font-family: Arial, sans-serif !important;
+  border-bottom: 1px solid rgba(255,255,255,.08) !important;
+}
+
+header.nav .nav-inner {
+  display: flex !important;
+}
+
+header.nav .nav-links {
+  display: flex !important;
+}
+
+header.nav .nav-links a {
+  margin-left: 0 !important;
+  color: #b8b8c6 !important;
+  font-size: inherit !important;
+}
+
+header.nav .nav-links a:hover {
+  color: #ffffff !important;
+}
+
+header.nav .nav-links a[aria-current="page"] {
+  color: #ffffff !important;
+  background: rgba(20,20,28,.9) !important;
+  border-color: rgba(60,60,78,.9) !important;
+}
+
+header.nav .brand {
+  font: inherit !important;
+  letter-spacing: normal !important;
+  text-transform: none !important;
+}
+
+/* Keep One T navigation visible on mobile */
+@media(max-width:800px) {
+  header.nav nav {
+    display: flex !important;
+  }
+}
 </style></head><body>
-<header><div class="wrap nav"><div class="brand">Scot Anderson <b>• Nightshift</b></div><nav><a href="#books">Books</a><a href="#series">Series</a><a href="#about">About</a></nav></div></header>
+<header class="nav">
+  <div class="container">
+    <div class="nav-inner">
+
+      <a class="brand" href="index.html" aria-label="One T Media Group home">
+        <img
+          class="brand-logo"
+          src="assets/images/General/1tnewprologo.png"
+          alt="One T Media Group"
+        >
+      </a>
+
+      <nav class="nav-links" aria-label="Primary navigation">
+
+        <a href="index.html">Home</a>
+        <a href="one-t-industrial.html">Industrial</a>
+        <a href="apps.html">Apps</a>
+
+        <a
+          href="publishing.html"
+          aria-current="page"
+          style="color:var(--text);background:rgba(20,20,28,.7);border-color:rgba(35,35,54,.9)"
+        >
+          Publishing
+        </a>
+
+        <a href="tools.html">Tools</a>
+        <a href="contact.html">Contact</a>
+
+        <img
+          src="assets/images/General/Crafted-In-The-North-Header.png"
+          alt="Crafted in Canada - One T Media Group"
+          class="crafted-badge"
+          id="canadaBadge"
+        >
+
+      </nav>
+
+    </div>
+  </div>
+</header>
 <main>
 <div class="hero"><div class="wrap hero-grid"><div><div class="kicker">Books by Scot Anderson</div><h1>Stories for<br>after dark.</h1><div class="lede">Atmospheric mysteries, thoughtful science fiction, psychological unease, and stories about the systems, memories, families, and quiet choices that shape our lives.</div></div><div class="note"><strong>Nightshift</strong>Different worlds. Different questions. The same fascination with what happens when ordinary life shifts just slightly out of alignment.</div></div></div>
 
@@ -28,5 +115,64 @@ footer{padding:38px 0;color:#818b96;font-size:.85rem}.foot{display:flex;justify-
 </div></div></section>
 
 <section class="about" id="about"><div class="wrap aboutgrid"><div><div class="kicker">The Author</div><h2>Scot Anderson</h2></div><div><p>Scot Anderson writes across speculative fiction, mystery, science fiction, and psychological suspense. His stories often begin with something small and recognizable—a family recipe, a reflection, a piece of technology, a familiar face—and follow the consequences when that ordinary thing stops behaving quite the way it should.</p><p>Across standalone novels and multi-book series, his work explores memory, identity, family, artificial intelligence, hidden systems, restraint, and the uneasy space between what people know to be true and what they are willing to accept.</p></div></div></section>
-</main><footer><div class="wrap foot"><span>© 2026 Scot Anderson. All rights reserved.</span><span>One T Media Group — one vision, every medium.</span></div></footer>
-</body></html>
+</main>
+<footer class="footer">
+  <div class="footer-grid">
+
+    <div class="footer-col">
+      <h3>One T Media Group</h3>
+      <p class="small">
+        Practical industrial software, focused mobile apps and useful online tools. Built in Canada.
+      </p>
+    </div>
+
+    <div class="footer-col">
+      <h4>Explore</h4>
+
+      <div class="footer-links">
+        <a href="one-t-industrial.html">Industrial Software</a>
+        <a href="apps.html">Mobile Apps</a>
+        <a href="publishing.html">Publishing</a>
+        <a href="tools.html">Free Tools</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+
+    <div class="footer-col">
+      <h4>Follow</h4>
+
+      <div class="footer-social">
+
+        <a href="https://www.youtube.com/@OneTMediaGroup"
+           target="_blank"
+           rel="noopener"
+           aria-label="YouTube">
+          <img src="assets/icons/youtube.svg" alt="">
+        </a>
+
+        <a href="https://github.com/OneTMediaGroup"
+           target="_blank"
+           rel="noopener"
+           aria-label="GitHub">
+          <img src="assets/icons/github.svg" alt="">
+        </a>
+
+        <a href="https://www.facebook.com/OneTMedia"
+           target="_blank"
+           rel="noopener"
+           aria-label="Facebook">
+          <img src="assets/icons/facebook.svg" alt="">
+        </a>
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="footer-bottom">
+    © <span id="year"></span> One T Media Group
+  </div>
+</footer>
+<script src="assets/js/main.js"></script>
+</body>
+</html>
