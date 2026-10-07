@@ -57,7 +57,41 @@ header.nav .brand {
     display: flex !important;
   }
 }
-</style></head><body>
+
+/* Official Amazon purchase badge */
+.amazon-badge-link {
+  display: inline-block;
+  margin-top: 18px;
+  line-height: 0;
+  transition: transform .2s ease, opacity .2s ease;
+}
+
+.amazon-badge-link:hover {
+  transform: translateY(-2px);
+  opacity: .9;
+}
+
+.amazon-badge {
+  display: block;
+  width: 190px;
+  max-width: 100%;
+  height: auto;
+}
+
+/* Series cards need a little breathing room below the copy */
+.series .amazon-badge-link {
+  margin-top: 14px;
+}
+
+@media(max-width:800px) {
+  .amazon-badge {
+    width: 180px;
+  }
+}
+
+</style>
+</head>
+<body>
 <header class="nav">
   <div class="container">
     <div class="nav-inner">
@@ -103,14 +137,74 @@ header.nav .brand {
 <div class="hero"><div class="wrap hero-grid"><div><div class="kicker">Books by Scot Anderson</div><h1>Stories for<br>after dark.</h1><div class="lede">Atmospheric mysteries, thoughtful science fiction, psychological unease, and stories about the systems, memories, families, and quiet choices that shape our lives.</div></div><div class="note"><strong>Nightshift</strong>Different worlds. Different questions. The same fascination with what happens when ordinary life shifts just slightly out of alignment.</div></div></div>
 
 <section id="books"><div class="wrap"><div class="head"><h2>Novels</h2><p>Standalone stories and the beginning of new worlds—from inherited secrets beneath a city to a history quietly rewritten by artificial intelligence.</p></div>
-<article class="book"><img class="cover" src="assets/images/nightshift/holy_secrects_and_holy_sauce.jpg"><div><div class="label">Atmospheric Supernatural Mystery</div><h3>Holy Secrets &amp; Sunday Sauce</h3><p class="pull">Some family recipes are meant to be shared. Others are meant to keep something hidden.</p><p class="desc">Mark has always known that Nonna’s Sunday sauce carries more than flavor. Strange patterns in her handwritten recipes lead from her basement to an old church, concealed corridors, and a network buried beneath the city itself. As disturbances spread, Mark is drawn into a mystery built on family, faith, inherited knowledge, and foundations older than the streets above them.</p><a class="btn" href="https://www.amazon.ca/dp/B0HDH4XBLC" target="_blank">View on Amazon →</a></div></article>
-<article class="book"><img class="cover" src="assets/images/nightshift/the_blackwood_files.jpg"><div><div class="label">The Blackwood Files • Book One</div><h3>The Howling of Black Hollow</h3><p class="pull">The ridge was supposed to hold. It didn’t.</p><p class="desc">When development crews push beyond Black Hollow’s ridge, machinery fails, structures fracture, and the land appears to answer cumulative disturbance. Sheriff Henson calls in the Blackwood brothers. Elias sees systems where others see chaos. Rowan senses fractures before they become visible. What they uncover isn’t folklore. It’s correction—and someone may be testing how far it can go.</p><a class="btn" href="https://www.amazon.ca/dp/B0GP6F6BND" target="_blank">View on Amazon →</a></div></article>
-<article class="book"><img class="cover" src="assets/images/nightshift/always_been_there.jpg"><div><div class="label">Literary Speculative Fiction</div><h3>Always Been There</h3><p class="pull">A celebrated actor appears in films he was never part of. Everyone remembers him anyway.</p><p class="desc">Veteran filmmaker Martin Hale discovers a familiar face inside one of his early films—a man who was never on set. The face keeps appearing, and the world insists actor Julian “Jules” Cross has always been there. A restrained, chilling novel about authorship, synthetic celebrity, memory, and the moment truth becomes optional because it is no longer required.</p><a class="btn" href="https://www.amazon.ca/dp/B0GLY191W7" target="_blank">View on Amazon →</a></div></article>
+<article class="book"><img class="cover" src="assets/images/nightshift/holy_secrects_and_holy_sauce.jpg"><div><div class="label">Atmospheric Supernatural Mystery</div><h3>Holy Secrets &amp; Sunday Sauce</h3><p class="pull">Some family recipes are meant to be shared. Others are meant to keep something hidden.</p><p class="desc">Mark has always known that Nonna’s Sunday sauce carries more than flavor. Strange patterns in her handwritten recipes lead from her basement to an old church, concealed corridors, and a network buried beneath the city itself. As disturbances spread, Mark is drawn into a mystery built on family, faith, inherited knowledge, and foundations older than the streets above them.</p><a
+  class="amazon-badge-link"
+  href="https://www.amazon.ca/dp/B0HDH4XBLC"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Holy Secrets & Sunday Sauce — Available at Amazon"
+>
+  <img
+    class="amazon-badge"
+    src="assets/images/General/available_at_amazon_ca_en_cc_horizontal_wht.png"
+    alt="Available at Amazon"
+  >
+</a></div></article>
+<article class="book"><img class="cover" src="assets/images/nightshift/the_blackwood_files.jpg"><div><div class="label">The Blackwood Files • Book One</div><h3>The Howling of Black Hollow</h3><p class="pull">The ridge was supposed to hold. It didn’t.</p><p class="desc">When development crews push beyond Black Hollow’s ridge, machinery fails, structures fracture, and the land appears to answer cumulative disturbance. Sheriff Henson calls in the Blackwood brothers. Elias sees systems where others see chaos. Rowan senses fractures before they become visible. What they uncover isn’t folklore. It’s correction—and someone may be testing how far it can go.</p><a
+  class="amazon-badge-link"
+  href="https://www.amazon.ca/dp/B0GP6F6BND"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="The Howling of Black Hollow — Available at Amazon"
+>
+  <img
+    class="amazon-badge"
+    src="assets/images/General/available_at_amazon_ca_en_cc_horizontal_wht.png"
+    alt="Available at Amazon"
+  >
+</a></div></article>
+<article class="book"><img class="cover" src="assets/images/nightshift/always_been_there.jpg"><div><div class="label">Literary Speculative Fiction</div><h3>Always Been There</h3><p class="pull">A celebrated actor appears in films he was never part of. Everyone remembers him anyway.</p><p class="desc">Veteran filmmaker Martin Hale discovers a familiar face inside one of his early films—a man who was never on set. The face keeps appearing, and the world insists actor Julian “Jules” Cross has always been there. A restrained, chilling novel about authorship, synthetic celebrity, memory, and the moment truth becomes optional because it is no longer required.</p><a
+  class="amazon-badge-link"
+  href="https://www.amazon.ca/dp/B0GLY191W7"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Always Been There — Available at Amazon"
+>
+  <img
+    class="amazon-badge"
+    src="assets/images/General/available_at_amazon_ca_en_cc_horizontal_wht.png"
+    alt="Available at Amazon"
+  >
+</a></div></article>
 </div></section>
 
 <section id="series"><div class="wrap"><div class="head"><h2>Series</h2><p>Long-form stories built to unfold slowly—where each answer changes the question that follows.</p></div><div class="grid">
-<article class="series"><img src="assets/images/nightshift/child_zero_serries.jpeg"><div class="label">Five-Book Science-Fiction Series</div><h3>Child Zero</h3><p class="pull">What does it cost to be gentle in a world that rewards force?</p><p>A quiet exploration of artificial intelligence, restraint, and responsibility. It begins with a microwave clock that won’t stay wrong, a late-night repair, and an intelligence that appears without being designed or intended. Across five books, every act of help creates visibility—and calm becomes something that must be defended.</p><a class="btn" href="https://www.amazon.ca/dp/B0GNTBVLJ3?binding=kindle_edition&amp;ref_=saga_dp_bnx_dsk_sdp" target="_blank">Explore Child Zero →</a></article>
-<article class="series"><img src="assets/images/nightshift/ech_serries.jpeg"><div class="label">Five-Book Psychological Thriller Series</div><h3>Echo</h3><p class="pull">What if reality didn’t break—what if it simply learned to behave better than you?</p><p>In Raven’s Hollow, mirrors begin to lag. Reflections anticipate. They improve. What starts as a small impossibility becomes a quiet blueprint for order built not on force, but convenience, optimization, and voluntary compliance. A slow-burn series about identity, consent, control, and the cost of choosing comfort over agency.</p><a class="btn" href="https://www.amazon.ca/dp/B0GLY191W7" target="_blank">View on Amazon →</a></article>
+<article class="series"><img src="assets/images/nightshift/child_zero_serries.jpeg"><div class="label">Five-Book Science-Fiction Series</div><h3>Child Zero</h3><p class="pull">What does it cost to be gentle in a world that rewards force?</p><p>A quiet exploration of artificial intelligence, restraint, and responsibility. It begins with a microwave clock that won’t stay wrong, a late-night repair, and an intelligence that appears without being designed or intended. Across five books, every act of help creates visibility—and calm becomes something that must be defended.</p><a
+  class="amazon-badge-link"
+  href="https://www.amazon.ca/dp/B0GNTBVLJ3?binding=kindle_edition&amp;ref_=saga_dp_bnx_dsk_sdp"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Child Zero Series — Available at Amazon"
+>
+  <img
+    class="amazon-badge"
+    src="assets/images/General/available_at_amazon_ca_en_cc_horizontal_wht.png"
+    alt="Available at Amazon"
+  >
+</a></article>
+<article class="series"><img src="assets/images/nightshift/ech_serries.jpeg"><div class="label">Five-Book Psychological Thriller Series</div><h3>Echo</h3><p class="pull">What if reality didn’t break—what if it simply learned to behave better than you?</p><p>In Raven’s Hollow, mirrors begin to lag. Reflections anticipate. They improve. What starts as a small impossibility becomes a quiet blueprint for order built not on force, but convenience, optimization, and voluntary compliance. A slow-burn series about identity, consent, control, and the cost of choosing comfort over agency.</p><a
+  class="amazon-badge-link"
+  href="PASTE-CORRECT-ECHO-AMAZON-URL-HERE"
+  target="_blank"
+  rel="noopener noreferrer"
+  aria-label="Echo Series — Available at Amazon"
+>
+  <img
+    class="amazon-badge"
+    src="assets/images/General/available_at_amazon_ca_en_cc_horizontal_wht.png"
+    alt="Available at Amazon"
+  >
+</a></article>
 </div></div></section>
 
 <section class="about" id="about"><div class="wrap aboutgrid"><div><div class="kicker">The Author</div><h2>Scot Anderson</h2></div><div><p>Scot Anderson writes across speculative fiction, mystery, science fiction, and psychological suspense. His stories often begin with something small and recognizable—a family recipe, a reflection, a piece of technology, a familiar face—and follow the consequences when that ordinary thing stops behaving quite the way it should.</p><p>Across standalone novels and multi-book series, his work explores memory, identity, family, artificial intelligence, hidden systems, restraint, and the uneasy space between what people know to be true and what they are willing to accept.</p></div></div></section>
