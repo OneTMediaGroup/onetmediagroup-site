@@ -79,4 +79,26 @@ body{background:var(--foc-bg);color:var(--foc-text)}
 <section class="foc-cta"><h2>Make support calls impossible to miss.</h2><p>Factory On Call gives the floor a simple way to request help and gives supervisors the visibility to respond faster.</p><div class="hero-actions" style="justify-content:center"><a class="btn primary" href="#onboarding">Get Started</a><a class="btn" href="mailto:factoryoncall@onetmediagroup.ca?subject=Factory%20On%20Call%20Inquiry">Contact</a></div></section>
 </main>
 
-<footer class="footer"><div class="footer-grid"><div class="footer-col"><h3>One T Media Group</h3><p class="small">Practical industrial software, focused mobile apps and useful online tools. Built in Canada.</p></div><div class="footer-col"><h4>Explore</h4><div class="footer-links"><a href="one-t-industrial.html">Industrial Software</a><a href="apps.html">Mobile Apps</a><a href="publishing.html">Publishing</a><a href="tools.html">Free Tools</a><a href="contact.html">Contact</a></div></div><div class="footer-col"><h4>Follow</h4><div class="footer-social"><a href="https://www.youtube.com/@OneTMediaGroup" target="_blank" rel="noopener" aria-label="YouTube"><img src="assets/icons/youtube.svg" alt=""></a><a href="https://github.com/OneTMediaGroup" target="_blank" rel="noopener" aria-label="GitHub"><img src="assets/icons/github.svg" alt=""></a><a href="https://www.facebook.com/OneTMedia" target="_blank" rel="noopener" aria-label="Facebook"><img src="assets/icons/facebook.svg" alt=""></a></div></div></div><div class="footer-bottom">© <span id="year"></span> One T Media Group</div></footer></body>
+<footer class="footer"><div class="footer-grid"><div class="footer-col"><h3>One T Media Group</h3><p class="small">Practical industrial software, focused mobile apps and useful online tools. Built in Canada.</p></div><div class="footer-col"><h4>Explore</h4><div class="footer-links"><a href="one-t-industrial.html">Industrial Software</a><a href="apps.html">Mobile Apps</a><a href="publishing.html">Publishing</a><a href="tools.html">Free Tools</a><a href="contact.html">Contact</a></div></div><div class="footer-col"><h4>Follow</h4><div class="footer-social"><a href="https://www.youtube.com/@OneTMediaGroup" target="_blank" rel="noopener" aria-label="YouTube"><img src="assets/icons/youtube.svg" alt=""></a><a href="https://github.com/OneTMediaGroup" target="_blank" rel="noopener" aria-label="GitHub"><img src="assets/icons/github.svg" alt=""></a><a href="https://www.facebook.com/OneTMedia" target="_blank" rel="noopener" aria-label="Facebook"><img src="assets/icons/facebook.svg" alt=""></a></div></div></div><div class="footer-bottom">© <span id="year"></span> One T Media Group</div></footer>
+<script src="assets/js/main.js"></script>
+
+<audio id="ohCanadaAudio" src="assets/audio/OhCanada/OhCanadaapps.m4a"></audio>
+
+<script>
+const badge = document.getElementById("canadaBadge");
+const anthem = document.getElementById("ohCanadaAudio");
+
+if (badge && anthem) {
+  badge.addEventListener("click", () => {
+    if (anthem.paused) {
+      anthem.play();
+    } else {
+      anthem.pause();
+      anthem.currentTime = 0;
+    }
+  });
+}
+</script>
+
+</body>
+</html>
