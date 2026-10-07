@@ -56,6 +56,7 @@
       ins.dataset.adClient = publisherId; ins.dataset.adSlot = config.adsenseSlots[el.dataset.toolsAd];
       ins.dataset.adFormat = 'auto'; ins.dataset.fullWidthResponsive = 'true'; el.append(ins);
     }
+    if (config.adsReady === true) { placements.forEach(() => { (window.adsbygoogle = window.adsbygoogle || []).push({}); }); return; }
     const script = document.createElement('script'); script.async = true; script.crossOrigin = 'anonymous';
     script.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + publisherId;
     script.onload = () => placements.forEach(() => { (window.adsbygoogle = window.adsbygoogle || []).push({}); });
@@ -71,6 +72,32 @@
       else if (adsLoaded) location.reload();
     }
   };
+  // Bootstrap Google's published CMP after approval; do not request an ad until
+  // the TCF callback confirms Google's vendor and required purpose consents.
+  if (config.adsReady === true && publisherId) {
+    window.googlefc = window.googlefc || {};
+    window.googlefc.callbackQueue = window.googlefc.callbackQueue || [];
+    window.googlefc.callbackQueue.push({ CONSENT_API_READY: () => {
+      if (typeof window.__tcfapi !== 'function') return;
+      window.__tcfapi('addEventListener', 2, (data, success) => {
+        if (!success || !data || !['tcloaded', 'useractioncomplete'].includes(data.eventStatus)) return;
+        const purposes = data.purpose?.consents || {};
+        const allowed = data.gdprApplies === true && data.vendor?.consents?.[755] === true &&
+          [1, 3, 4].every(id => purposes[id] === true);
+        if (allowed) adPlacements(true);
+        else if (adsLoaded) location.reload();
+      });
+    }});
+    const privacy = document.createElement('button'); privacy.type = 'button';
+    privacy.textContent = 'Ad privacy choices';
+    privacy.onclick = () => window.googlefc.callbackQueue.push({ CONSENT_API_READY: () => {
+      window.googlefc.showRevocationMessage();
+    }});
+    document.querySelector('.tools-privacy-links')?.append(privacy);
+    const cmpTag = document.createElement('script'); cmpTag.async = true; cmpTag.crossOrigin = 'anonymous';
+    cmpTag.src = 'https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=' + publisherId;
+    cmpTag.onload = () => { cmpTag.dataset.ready = 'true'; }; document.head.append(cmpTag);
+  }
   const settings = document.querySelector('[data-tools-settings]');
   if (settings && !measurementId) { settings.textContent = 'Analytics is not active'; settings.disabled = true; }
   function prompt() {
