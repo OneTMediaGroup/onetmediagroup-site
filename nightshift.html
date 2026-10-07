@@ -9,7 +9,12 @@ a{color:inherit}.wrap{width:min(1160px,calc(100% - 36px));margin:auto}.nav{min-h
 .hero{padding:90px 0 75px}.hero-grid{display:grid;grid-template-columns:1.2fr .8fr;gap:65px;align-items:end}.kicker,.label{color:var(--gold);font-weight:800;text-transform:uppercase;letter-spacing:.17em;font-size:.75rem}h1,h2,h3{font-family:Georgia,serif}h1{font-size:clamp(3.7rem,8vw,7.5rem);line-height:.9;letter-spacing:-.04em;margin:15px 0 25px}.lede{font:1.45rem/1.55 Georgia,serif;color:#d6dde4}.note{border-left:2px solid var(--blue);padding-left:20px;color:var(--muted)}.note strong{display:block;color:white;font:1.3rem Georgia,serif;margin-bottom:6px}
 section{padding:72px 0;border-top:1px solid var(--line)}.head{display:flex;justify-content:space-between;align-items:end;gap:30px;margin-bottom:28px}.head h2{font-size:clamp(2.5rem,5vw,4rem);margin:0}.head p{max-width:560px;color:var(--muted);margin:0}
 .book{display:grid;grid-template-columns:310px 1fr;gap:50px;padding:42px 0;border-top:1px solid var(--line)}.cover{width:100%;border:1px solid #394451;box-shadow:0 22px 55px #0008}.book h3,.series h3{font-size:clamp(2rem,4vw,3.2rem);line-height:1.05;margin:7px 0 12px}.desc,.series p{color:#c3cbd3}.pull{font:1.2rem Georgia,serif;border-left:2px solid var(--blue);padding-left:17px;color:white}.btn{display:inline-block;margin-top:10px;padding:11px 17px;background:#172535;border:1px solid #6d8599;text-decoration:none;font-weight:750;border-radius:4px}.btn:hover{background:#21364a}
-.grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}.series{background:linear-gradient(145deg,#151d27,#0e141c);border:1px solid var(--line);padding:25px}.series img{width:100%;display:block;border:1px solid #35404b;margin-bottom:23px}.about{background:#0d1219}.aboutgrid{display:grid;grid-template-columns:.7fr 1.3fr;gap:55px}.about h2{font-size:3rem;margin-top:8px}.about p{color:#c6cdd5;font-size:1.06rem}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:28px}.series{background:linear-gradient(145deg,#151d27,#0e141c);border:1px solid var(--line);padding:25px}.series > img {
+  width:100%;
+  display:block;
+  border:1px solid #35404b;
+  margin-bottom:23px;
+}.about{background:#0d1219}.aboutgrid{display:grid;grid-template-columns:.7fr 1.3fr;gap:55px}.about h2{font-size:3rem;margin-top:8px}.about p{color:#c6cdd5;font-size:1.06rem}
 @media(max-width:800px){nav{display:none}.hero-grid,.book,.aboutgrid,.grid{grid-template-columns:1fr}.hero{padding:60px 0}.book{gap:28px}.cover{max-width:350px}.head{display:block}.head p{margin-top:12px}section{padding:55px 0}}
 /* One T master navigation overrides */
 header.nav {
