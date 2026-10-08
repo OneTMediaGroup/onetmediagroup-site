@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="239" height="71" viewBox="0 0 239 71" role="img" aria-labelledby="title">
+  <title id="title">Play in your browser</title>
+  <rect x=".75" y=".75" width="237.5" height="69.5" rx="7" fill="#000" stroke="#a6a6a6" stroke-width="1.5"/>
+  <g fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round">
+    <circle cx="31" cy="35.5" r="18"/>
+    <ellipse cx="31" cy="35.5" rx="8" ry="18"/>
+    <path d="M13 35.5h36M16 25.5h30M16 45.5h30"/>
+  </g>
+  <g fill="#fff" font-family="Arial, Helvetica, sans-serif">
+    <text x="61" y="25" font-size="12" letter-spacing=".6">PLAY IN YOUR</text>
+    <text x="60" y="51" font-size="28">Browser</text>
+  </g>
+</svg>
