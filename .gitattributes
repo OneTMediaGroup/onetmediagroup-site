@@ -1,2 +1,5 @@
 # Firebase's generated bundle contains intentional multiline string whitespace.
 7d/assets/app.js whitespace=-blank-at-eol
+
+# Generated graphics shaders preserve whitespace inside source strings.
+7d/assets/chunks/*.js whitespace=-blank-at-eol,-space-before-tab
