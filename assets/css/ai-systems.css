@@ -9,3 +9,7 @@
 @media(max-width:650px){.ai-intro{padding-top:40px;padding-bottom:25px}.genie-feature,.pg-hero-grid,.pg-showcase{grid-template-columns:1fr}.genie-art img{height:270px}.genie-art{padding-top:0}.feature-copy{padding:28px}.ai-section{padding-top:55px}.ai-values{grid-template-columns:1fr;gap:20px}.pg-hero-grid{padding-top:25px;padding-bottom:15px}.pg-copy h1{font-size:3.25rem}.pg-copy>p{font-size:1.12rem}.pg-copy .ai-kicker{font-size:.66rem}.breadcrumb{margin-bottom:22px}.ai-actions{gap:16px}.pg-hero .genie-art{margin-top:10px}.pg-ribbon{gap:13px;font-size:.58rem;letter-spacing:.08em}.ai-end{margin-left:20px;margin-right:20px}.pg-showcase{padding-top:40px}.home-ai-spotlight .genie-art img{height:240px}}
 /* Keep long product pages on a continuous canvas. */
 body.ai-page{height:auto;min-height:100%;background:#0b0b0f}
+
+/* 7D concept artwork keeps its approved portrait composition. */
+.sevend-art img{max-width:360px;height:460px;border-radius:24px;animation:none;filter:none}.sevend-art{padding-top:24px;padding-bottom:55px}
+@media(max-width:650px){.sevend-art img{height:340px;max-width:260px}.sevend-art .art-caption{font-size:.54rem;letter-spacing:.12em}}
