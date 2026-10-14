@@ -172,13 +172,21 @@ service cloud.firestore {
       allow delete: if false;
     }
     match /memories/{id} {
+      function validAlbumPhoto(p) { return p is string && p.size() <= 240000 && p.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+'); }
+      function validAlbum(d) {
+        let photos = d.get('additionalPhotos', []);
+        return photos is list && photos.size() <= 3 && (photos.size() == 0 || d.photoData != '')
+          && (photos.size() < 1 || validAlbumPhoto(photos[0]))
+          && (photos.size() < 2 || validAlbumPhoto(photos[1]))
+          && (photos.size() < 3 || validAlbumPhoto(photos[2]));
+      }
       function validMemory(d) {
-        return d.keys().hasOnly(['ownerUid','ownerName','title','story','happenedOn','photoData','personUid','petId','circleId','audienceKind','audienceId','createdAt','updatedAt'])
+        return d.keys().hasOnly(['ownerUid','ownerName','title','story','happenedOn','photoData','additionalPhotos','personUid','petId','circleId','audienceKind','audienceId','createdAt','updatedAt'])
           && d.ownerUid == request.auth.uid && d.ownerName == get(profile(request.auth.uid)).data.name
           && d.title is string && d.title.size() >= 1 && d.title.size() <= 100
           && d.story is string && d.story.size() <= 4000
           && d.photoData is string && (d.photoData == '' || (d.photoData.size() <= 240000 && d.photoData.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+')))
-          && (d.story.size() > 0 || d.photoData.size() > 0)
+          && validAlbum(d) && (d.story.size() > 0 || d.photoData.size() > 0)
           && d.happenedOn is string && (d.happenedOn == '' || d.happenedOn.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}'))
           && d.personUid is string && (d.personUid == '' || d.personUid == request.auth.uid || exists(edge(request.auth.uid, d.personUid)))
           && d.petId is string && (d.petId == '' || get(/databases/$(database)/documents/pets/$(d.petId)).data.ownerUid == request.auth.uid)

@@ -133,6 +133,11 @@
       "collectionGroup": "memories",
       "fieldPath": "circleId",
       "indexes": []
+    },
+    {
+      "collectionGroup": "memories",
+      "fieldPath": "additionalPhotos",
+      "indexes": []
     }
   ]
 }
