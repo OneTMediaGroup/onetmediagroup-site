@@ -1,0 +1,11 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {graphFocus} from '../src/graph-focus.js';
+const nodes=[{kind:'person',id:'me'},{kind:'person',id:'john'},{kind:'person',id:'emily'},{kind:'person',id:'other'},{kind:'pet',id:'maple',ownerUid:'john'},{kind:'circle',id:'family'},{kind:'circle',id:'work'},{kind:'memory',id:'walk',ownerUid:'john',personUid:'john',petId:'maple',circleId:'family'},{kind:'memory',id:'portrait',ownerUid:'me',personUid:'john',circleId:'family'},{kind:'memory',id:'emily-story',ownerUid:'me',personUid:'emily',circleId:'family'},{kind:'memory',id:'work-story',ownerUid:'other',personUid:'other',circleId:'work'}];
+const circles=[{id:'family',memberUids:['me','john','emily','hidden-member']},{id:'work',memberUids:['other']}];
+const focus=(kind,id)=>graphFocus(nodes,circles,{kind,id});
+test('person highlights own pets, relevant memories, and memberships without expanding every circle member',()=>{assert.deepEqual([...focus('person','john').related].sort(),['person:john','person:me','pet:maple','circle:family','memory:walk','memory:portrait'].sort());});
+test('pet highlights owner, pet memories, and their linked circles only',()=>{assert.deepEqual([...focus('pet','maple').related].sort(),['pet:maple','person:john','memory:walk','circle:family'].sort());});
+test('circle includes visible members, their pets, and linked memories without inventing inaccessible nodes',()=>{const r=focus('circle','family').related;assert.ok(r.has('person:emily'));assert.ok(r.has('pet:maple'));assert.ok(r.has('memory:emily-story'));assert.ok(!r.has('person:hidden-member'));assert.ok(!r.has('circle:work'));assert.ok(!r.has('memory:work-story'));});
+test('memory highlights the linked person, author, pet, and circle',()=>{assert.deepEqual([...focus('memory','walk').related].sort(),['memory:walk','person:john','pet:maple','circle:family'].sort());});
+test('a removed or cleared selection leaves no highlights',()=>{assert.equal(focus('pet','removed').root,null);assert.equal(focus('pet','removed').related.size,0);assert.equal(graphFocus(nodes,circles,null).root,null);});
