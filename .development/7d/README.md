@@ -45,3 +45,16 @@ Circles have a single owner, title, description, up to 20 unique member UIDs, an
 Photo controls, pet editing/removal, circle invitation/acceptance/removal, and nodes support both themes. Private state and portrait drafts clear on sign-out. AI remains offline. The interface shows up to 50 own pets/circles, 100 circle invitations, and the existing account limits; larger-scale pagination remains future work.
 
 29 security tests passed, including the original 15 account cases and new portrait/pet/circle isolation, ownership, acceptance atomicity, expiration, removal, capacity, and exact inbox/outbox query coverage. Browser checks use only local fictional accounts; no real account records are mutated during development.
+
+
+## Shared memories (October 13)
+
+`memories/{id}` stores owner UID/name, title (100 characters), plain-text story (4000), optional date, one optimized JPEG (up to 240000 data-URI characters), person/pet/circle links, one audience, and timestamps. New memories default private. Tags do not grant audience access. The author may link self/a confirmed connection, an own pet, and a current circle. IDs are stored, not private profile snapshots. Link buttons respect the linked resource's separate rules.
+
+Audiences are private, a single linked confirmed connection, or the linked circle. Direct sharing requires the connection to remain confirmed. Circle read access uses current membership, including members who join later. An author's circle contribution remains shared after the author leaves; the author can delete it or reopen the editor to clear unavailable links and choose private sharing. This policy is stated in the editor and privacy page. Deleting a circle revokes non-author access to its memories. Only authors may edit or delete; author access survives missing links/circles. Changed or removed sharing clears recipient cards and the selected memory detail.
+
+The browser keeps photo proportions and limits the longest side to 1280 (960 if necessary), compressing to fit the document limit. Original files/EXIF are not uploaded. Memory photo and story fields are not indexed. No Cloud Storage, new billing plan, domain, or AI provider is added.
+
+Owned memories and a selected shared-person/circle view each load the latest 30 items. Queries are explicitly scoped and server-limited to 50 maximum. People/pets/circles have memory-navigation buttons; owned memories appear as universe nodes with dashed links to currently visible tagged nodes. Author edits use a transaction that compares the original timestamp to prevent overwriting another session's changes.
+
+41 emulator authorization tests passed, including the prior account/pet/circle cases and memory validation, private tags, selected audience, current connection/circle membership, new members, leaving/removal/deletion, bounded exact feed queries, owner-only edits, and sharing withdrawal. Local two-account browser checks passed for uncropped photo storage (853×1280 from a 1024×1536 source), three tagged universe links, private/direct/circle sharing, readonly recipient views, literal HTML-like story text, author editing/deletion, realtime audience withdrawal, detail clearing, photo persistence, simultaneous-edit conflict protection, and a 390-pixel layout check. No production records were used for tests.

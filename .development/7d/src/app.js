@@ -3,10 +3,11 @@ import {getAuth,connectAuthEmulator,setPersistence,browserSessionPersistence,onA
 import {getFirestore,connectFirestoreEmulator,doc,getDoc,setDoc,updateDoc,collection,query,where,orderBy,limit,onSnapshot,runTransaction,writeBatch,serverTimestamp,Timestamp} from 'firebase/firestore';
 import {resizePhoto,portrait} from './photos.js';
 import {createUniverseExtras} from './extras.js';
+import {createMemories} from './memories.js';
 import {firebaseConfig,useEmulators} from './config.js';
 const $=id=>document.getElementById(id);
-const colors={blue:'#234e82',violet:'#5c428d',teal:'#1d626d',rose:'#7b3c64'};
-let extras,photoDraft=null,photoBusy=false,photoRevision=0;
+const colors={blue:'#234e82',violet:'#5c428d',teal:'#1d626d',rose:'#7b3c64',gold:'#82602c'};
+let extras,memories,photoDraft=null,photoBusy=false,photoRevision=0;
 let auth,db,mode='signup',currentProfile=null,connections=[],received=[],sent=[],unsubs=[],sessionId=0,profileVersion=0;
 const notice=(message='',error=false)=>{$('notice').textContent=message;$('notice').classList.toggle('error',error);};
 function failure(error){
@@ -43,7 +44,7 @@ bind('reset-password','click',async()=>{const email=$('email').value.trim();if(!
 bind('signout','click',async()=>{await signOut(auth);notice('You’re signed out.');});
 bind('resend-verification','click',async()=>{await sendEmailVerification(auth.currentUser,continueSettings());notice('Verification email sent. Check your inbox and spam folder.');});
 bind('check-verification','click',async()=>{await reload(auth.currentUser);await auth.currentUser.getIdToken(true);if(!auth.currentUser.emailVerified)problem('Your email is not verified yet. Follow the link in the email, then try again.');await loadSession(auth.currentUser);});
-function clearPrivateState(){extras?.clear();photoDraft=null;photoBusy=false;photoRevision++;$('profile-photo-input').value='';$('profile-photo-preview').replaceChildren();delete $('person-detail').dataset.personUid;unsubs.forEach(f=>f());unsubs=[];currentProfile=null;connections=[];received=[];sent=[];profileVersion++;$('greeting').textContent='Your Universe';$('connection-count').textContent='';$('verify-email').textContent='';for(const id of ['received-list','sent-list','connections-list','nodes','lines','person-detail'])$(id).replaceChildren();$('person-detail').hidden=true;$('profile-name').value='';$('profile-bio').value='';$('invite-email').value='';}
+function clearPrivateState(){memories?.clear();extras?.clear();photoDraft=null;photoBusy=false;photoRevision++;$('profile-photo-input').value='';$('profile-photo-preview').replaceChildren();delete $('person-detail').dataset.personUid;unsubs.forEach(f=>f());unsubs=[];currentProfile=null;connections=[];received=[];sent=[];profileVersion++;$('greeting').textContent='Your Universe';$('connection-count').textContent='';$('verify-email').textContent='';for(const id of ['received-list','sent-list','connections-list','nodes','lines','person-detail'])$(id).replaceChildren();$('person-detail').hidden=true;$('profile-name').value='';$('profile-bio').value='';$('invite-email').value='';}
 async function loadSession(user){
  const version=++sessionId;clearPrivateState();
  if(!user){$('email').value='';$('password').value='';$('signup-name').value='';views('auth-view');notice();return;}
@@ -53,7 +54,7 @@ async function loadSession(user){
   const ref=doc(db,'profiles',user.uid);let snap=await getDoc(ref);if(version!==sessionId)return;
   if(!snap.exists()){const name=(user.displayName||'Universe explorer').trim().slice(0,60)||'Universe explorer';await setDoc(ref,{uid:user.uid,name,bio:'',color:'blue',createdAt:serverTimestamp(),updatedAt:serverTimestamp(),lastInviteAt:Timestamp.fromMillis(0)});snap=await getDoc(ref);}
   if(version!==sessionId)return;
-  currentProfile=snap.data();populateProfile();views('dashboard');notice();extras.start(version);
+  currentProfile=snap.data();populateProfile();views('dashboard');notice();extras.start(version);memories.start(version);
   const guarded=fn=>snap=>{if(version===sessionId)fn(snap);};
   const subscriptionError=()=>{if(version===sessionId){clearPrivateState();views('');notice('Your session or connection needs refreshing. Sign out and sign back in to continue.',true);}};
   unsubs.push(onSnapshot(query(collection(db,'members',user.uid,'connections'),limit(200)),guarded(s=>{connections=s.docs.map(d=>({id:d.id,...d.data()}));$('person-detail').hidden=true;renderConnections(version).catch(()=>notice('Could not refresh all profiles. Try Refresh universe.',true));}),subscriptionError));
@@ -99,22 +100,23 @@ async function renderConnections(version){
  for(const c of connections){const {row,buttons}=entry(c.profile?.name||'Connection unavailable',c.relationship);if(c.profile)buttons.append(action('View profile',()=>showPerson(c.otherUid)));buttons.append(action('Remove',async()=>{buttons.replaceChildren(action('Confirm removal',()=>removeConnection(c.otherUid)),action('Keep connection',()=>renderConnections(sessionId)));}));parent.append(row);}
  extras.refreshLists();drawGraph();
 }
-async function showPerson(uid){extras.deselect();const version=sessionId;const snapshot=await getDoc(doc(db,'profiles',uid));if(version!==sessionId||!snapshot.exists()||(uid!==auth.currentUser.uid&&!connections.some(c=>c.otherUid===uid)))return;const p=snapshot.data();const panel=$('person-detail');panel.dataset.personUid=uid;panel.replaceChildren(portrait(p.photoData,p.name),element('h2',p.name),element('p',p.bio||'No bio yet.'),element('p',uid===auth.currentUser.uid?'Your profile':'Confirmed connection','fine'));panel.hidden=false;if(uid!==auth.currentUser.uid)await extras.connectedPets(uid,panel);}
+async function showPerson(uid){extras.deselect();const version=sessionId;const snapshot=await getDoc(doc(db,'profiles',uid));if(version!==sessionId||!snapshot.exists()||(uid!==auth.currentUser.uid&&!connections.some(c=>c.otherUid===uid)))return;const p=snapshot.data();const panel=$('person-detail');panel.dataset.personUid=uid;panel.replaceChildren(portrait(p.photoData,p.name),element('h2',p.name),element('p',p.bio||'No bio yet.'),element('p',uid===auth.currentUser.uid?'Your profile':'Confirmed connection','fine'));panel.append(action(uid===auth.currentUser.uid?'Your memories':`Memories shared by ${p.name}`,()=>memories.browse('person',uid,p.name)));panel.hidden=false;if(uid!==auth.currentUser.uid)await extras.connectedPets(uid,panel);}
 const ns='http://www.w3.org/2000/svg';
 function svgEl(tag,attrs,parent,text){const n=document.createElementNS(ns,tag);for(const [key,value]of Object.entries(attrs))n.setAttribute(key,value);if(text!==undefined)n.textContent=text;parent.append(n);return n;}
 function drawGraph(){
  if(!currentProfile)return;$('nodes').replaceChildren();$('lines').replaceChildren();
- const people=connections.filter(c=>c.profile).map(c=>({...c.profile,id:c.otherUid,kind:'person'})),additional=extras?.graphItems()||[],items=[...people,...additional];
- const petCount=additional.filter(p=>p.kind==='pet').length,circleCount=additional.filter(p=>p.kind==='circle').length;
- $('connection-count').textContent=items.length?`${connections.length} confirmed connection${connections.length===1?'':'s'} · ${petCount} pet${petCount===1?'':'s'} · ${circleCount} circle${circleCount===1?'':'s'}`:'You’re the first star. Add a pet, create a circle, or invite someone you know.';
+ const people=connections.filter(c=>c.profile).map(c=>({...c.profile,id:c.otherUid,kind:'person'})),additional=[...(extras?.graphItems()||[]),...(memories?.graphItems()||[])],items=[...people,...additional];
+ const petCount=additional.filter(p=>p.kind==='pet').length,circleCount=additional.filter(p=>p.kind==='circle').length,memoryCount=additional.filter(p=>p.kind==='memory').length;
+ $('connection-count').textContent=items.length?`${connections.length} confirmed connection${connections.length===1?'':'s'} · ${petCount} pet${petCount===1?'':'s'} · ${circleCount} circle${circleCount===1?'':'s'} · ${memoryCount} memor${memoryCount===1?'y':'ies'}`:'You’re the first star. Add a pet, create a circle, or invite someone you know.';
  const list=[{...currentProfile,id:currentProfile.uid,kind:'person',x:450,y:250,self:true},...items.map((p,i)=>{const angle=i/Math.max(items.length,1)*Math.PI*2-Math.PI/2,r=items.length>12?120+(i%3)*25:155;return {...p,x:450+Math.cos(angle)*r*1.85,y:250+Math.sin(angle)*r};})];
+ list.filter(p=>p.kind==='memory').forEach(memory=>{for(const [kind,id]of [['person',memory.personUid],['pet',memory.petId],['circle',memory.circleId]]){const target=list.find(p=>p.kind===kind&&p.id===id);if(target&&!target.self)svgEl('line',{x1:memory.x,y1:memory.y,x2:target.x,y2:target.y,class:'edge memory-edge'},$('lines'));}});
  list.forEach((p,index)=>{if(!p.self)svgEl('line',{x1:450,y1:250,x2:p.x,y2:p.y,class:'edge'},$('lines'));const radius=p.self?37:29;
- const g=svgEl('g',{class:'node',transform:`translate(${p.x} ${p.y})`,tabindex:0,role:'button','aria-label':`${p.name}${p.self?', you':p.kind==='pet'?', pet':p.kind==='circle'?', circle':''}`},$('nodes'));
+ const g=svgEl('g',{class:'node',transform:`translate(${p.x} ${p.y})`,tabindex:0,role:'button','aria-label':`${p.name}${p.self?', you':p.kind==='pet'?', pet':p.kind==='circle'?', circle':p.kind==='memory'?', memory':''}`},$('nodes'));
  svgEl('circle',{r:radius,fill:colors[p.color]||colors.blue},g);
  if(p.photoData){const clip=svgEl('clipPath',{id:`portrait-${index}`},g);svgEl('circle',{r:radius-2},clip);svgEl('image',{href:p.photoData,x:-radius,y:-radius,width:radius*2,height:radius*2,preserveAspectRatio:'xMidYMid slice','clip-path':`url(#portrait-${index})`},g);}
- else svgEl('text',{y:p.kind==='person'?5:7,class:p.kind==='person'?'':'node-icon'},g,p.self?'YOU':p.kind==='pet'?'🐾':p.kind==='circle'?'◎':p.name.slice(0,10));
+ else svgEl('text',{y:p.kind==='person'?5:7,class:p.kind==='person'?'':'node-icon'},g,p.self?'YOU':p.kind==='pet'?'🐾':p.kind==='circle'?'◎':p.kind==='memory'?'✦':p.name.slice(0,10));
  svgEl('text',{y:radius+18,class:'node-label'},g,p.name.slice(0,18));
- const open=()=>{if(p.kind==='person')showPerson(p.id).catch(e=>notice(failure(e),true));else extras.open(p.kind,p.id);};g.addEventListener('click',open);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
+ const open=()=>{if(p.kind==='person')showPerson(p.id).catch(e=>notice(failure(e),true));else if(p.kind==='memory')memories.open(p.id).catch(e=>notice(failure(e),true));else extras.open(p.kind,p.id);};g.addEventListener('click',open);g.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open();}});
  });
 }
 
@@ -122,4 +124,4 @@ let zoom=1,panX=0,panY=0,drag=null;
 function transform(){$('viewport').setAttribute('transform',`translate(${panX} ${panY}) translate(450 250) scale(${zoom}) translate(-450 -250)`);}
 bind('zoom-in','click',()=>{zoom=Math.min(2,zoom+.2);transform();});bind('zoom-out','click',()=>{zoom=Math.max(.65,zoom-.2);transform();});bind('reset-view','click',()=>{zoom=1;panX=0;panY=0;transform();});
 $('space').addEventListener('pointerdown',e=>{if(e.target.closest('.node'))return;drag=[e.clientX,e.clientY,panX,panY];$('space').setPointerCapture(e.pointerId);});$('space').addEventListener('pointermove',e=>{if(!drag)return;const r=$('space').getBoundingClientRect();panX=drag[2]+(e.clientX-drag[0])*900/r.width;panY=drag[3]+(e.clientY-drag[1])*500/r.height;transform();});for(const event of ['pointerup','pointercancel'])$('space').addEventListener(event,()=>drag=null);$('space').addEventListener('wheel',e=>{e.preventDefault();zoom=Math.max(.65,Math.min(2,zoom+(e.deltaY<0?.1:-.1)));transform();},{passive:false});
-if(firebaseConfig){try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);extras=createUniverseExtras({db,user:()=>auth.currentUser,version:()=>sessionId,profile:()=>currentProfile,connections:()=>connections,notice,drawGraph,element,entry,action,bind,problem});if(useEmulators&&location.hostname==='127.0.0.1'){connectAuthEmulator(auth,'http://127.0.0.1:9199',{disableWarnings:true});connectFirestoreEmulator(db,'127.0.0.1',8180);}await setPersistence(auth,browserSessionPersistence);onAuthStateChanged(auth,user=>loadSession(user));}catch(error){views('auth-view');$('auth-submit').disabled=true;notice('Accounts are temporarily unavailable. Please try again later.',true);}}else{views('auth-view');$('auth-submit').disabled=true;notice('Account setup is being connected. Please try again later.');}
+if(firebaseConfig){try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);extras=createUniverseExtras({db,user:()=>auth.currentUser,version:()=>sessionId,profile:()=>currentProfile,connections:()=>connections,notice,drawGraph,element,entry,action,bind,problem,changed:()=>memories?.refreshOptions(),browseMemories:(...args)=>memories?.browse(...args)});memories=createMemories({db,user:()=>auth.currentUser,version:()=>sessionId,profile:()=>currentProfile,connections:()=>connections,pets:()=>extras.pets(),circles:()=>extras.circles(),notice,drawGraph,element,action,bind,problem,showPerson,openPet:pet=>extras.openPet(pet),openCircle:id=>extras.open('circle',id)});if(useEmulators&&location.hostname==='127.0.0.1'){connectAuthEmulator(auth,'http://127.0.0.1:9199',{disableWarnings:true});connectFirestoreEmulator(db,'127.0.0.1',8180);}await setPersistence(auth,browserSessionPersistence);onAuthStateChanged(auth,user=>loadSession(user));}catch(error){views('auth-view');$('auth-submit').disabled=true;notice('Accounts are temporarily unavailable. Please try again later.',true);}}else{views('auth-view');$('auth-submit').disabled=true;notice('Account setup is being connected. Please try again later.');}
