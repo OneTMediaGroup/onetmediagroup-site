@@ -29,5 +29,16 @@
       ]
     }
   ],
-  "fieldOverrides": []
+  "fieldOverrides": [
+    {
+      "collectionGroup": "profiles",
+      "fieldPath": "photoData",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "pets",
+      "fieldPath": "photoData",
+      "indexes": []
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 # 7D accounts, profiles, and confirmed connections
 
-Dedicated Firebase project: `onet-7d`. Authentication: email/password, verified email required for all profile/invitation/connection data, minimum password length 12 enforced in Firebase. Firestore: Standard edition, `(default)`, `northamerica-northeast2` (Toronto). Hosting remains the existing One T GitHub Pages website at `/7d/app.html`. No Cloud Functions, new domain, billing upgrade, storage upload, or AI service was added.
+Dedicated Firebase project: `onet-7d`. Authentication: email/password, verified email required for all profile/invitation/connection data, minimum password length 12 enforced in Firebase. Firestore: Standard edition, `(default)`, `northamerica-northeast2` (Toronto). Hosting remains the existing One T GitHub Pages website at `/7d/app.html`. No Cloud Functions, new domain, billing upgrade, Cloud Storage bucket, or AI service was added.
 
 ## Working flows
 
@@ -33,3 +33,15 @@ Browser flow passed against isolated Auth and Firestore emulators with fictional
 Test with a small trusted group before broader promotion. Add operational account-data deletion/export tooling, invitation abuse handling/blocking, App Check, and monitoring as the service grows. Add photos/pets/circles/memories and their permission models before AI. No AI provider is configured. The existing guide remains an explicit interface preview.
 
 Implementation references: https://firebase.google.com/docs/auth/web/password-auth and https://firebase.google.com/docs/firestore/security/rules-conditions.
+
+## Profile photos, pets, and circles (October 13)
+
+Optional photoData is backward compatible with existing profile documents. Photos are locally center-cropped to 256×256, flattened to white, and re-encoded as JPEG under a 60,000-character data URI limit. Original files/EXIF are not sent. JPEG/PNG/WebP sources up to 8 MB are accepted; uploads are processed with createImageBitmap and canvas. Thumbnails are private document fields, not public Storage URLs. photoData indexes are disabled for profiles and pets. This keeps the release on the current Spark plan without a new storage/billing setup; it is for portraits rather than full-resolution memory galleries.
+
+Pets are owner-managed documents with name/species/bio/optional portrait. Owners and confirmed connections can read them; disconnecting revokes pet access. Own pets appear in the universe; a connection's pets can be viewed from that person's profile.
+
+Circles have a single owner, title, description, up to 20 unique member UIDs, and display names captured at join time. Owners may rename, remove members, or delete circles. Members can leave. Circle invitees must be confirmed connections of the owner when invited AND when accepting. Owner-issued invitations alone never create membership. Recipient acceptance and addition of only that recipient must be atomic. Circle inbox/outbox queries have dedicated authorization tests. Joining does not expand profile/pet access. Existing circle membership is independent of later personal disconnection, and this is disclosed on the privacy page. Circle invitations are retained even when a circle is deleted.
+
+Photo controls, pet editing/removal, circle invitation/acceptance/removal, and nodes support both themes. Private state and portrait drafts clear on sign-out. AI remains offline. The interface shows up to 50 own pets/circles, 100 circle invitations, and the existing account limits; larger-scale pagination remains future work.
+
+29 security tests passed, including the original 15 account cases and new portrait/pet/circle isolation, ownership, acceptance atomicity, expiration, removal, capacity, and exact inbox/outbox query coverage. Browser checks use only local fictional accounts; no real account records are mutated during development.

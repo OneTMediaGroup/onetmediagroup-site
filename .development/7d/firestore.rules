@@ -5,12 +5,13 @@ service cloud.firestore {
     function profile(uid) { return /databases/$(database)/documents/profiles/$(uid); }
     function edge(uid, other) { return /databases/$(database)/documents/members/$(uid)/connections/$(other); }
     function invite(id) { return /databases/$(database)/documents/invitations/$(id); }
+    function validPhoto(value) { return value is string && (value == '' || (value.size() <= 60000 && value.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+'))); }
     function validProfile(d, uid) {
       return d.keys().hasAll(['uid','name','bio','color','createdAt','updatedAt','lastInviteAt'])
-        && d.keys().hasOnly(['uid','name','bio','color','createdAt','updatedAt','lastInviteAt'])
+        && d.keys().hasOnly(['uid','name','bio','color','createdAt','updatedAt','lastInviteAt','photoData'])
         && d.uid == uid && d.name is string && d.name.size() >= 1 && d.name.size() <= 60
         && d.bio is string && d.bio.size() <= 240
-        && d.color in ['blue','violet','teal','rose']
+        && validPhoto(d.get('photoData', '')) && d.color in ['blue','violet','teal','rose']
         && d.createdAt is timestamp && d.updatedAt == request.time && d.lastInviteAt is timestamp;
     }
     match /profiles/{uid} {
@@ -76,6 +77,99 @@ service cloud.firestore {
         && getAfter(edge(other, uid)).data.invitationId == request.resource.data.invitationId;
       allow delete: if verified() && request.auth.uid in [uid, other] && !existsAfter(edge(other, uid));
       allow update: if false;
+    }
+    match /pets/{id} {
+      function validPet(d) {
+        return d.keys().hasOnly(['ownerUid','name','species','bio','photoData','createdAt','updatedAt'])
+          && d.ownerUid is string && d.name is string && d.name.size() >= 1 && d.name.size() <= 60
+          && d.species in ['Dog','Cat','Bird','Horse','Other'] && d.bio is string && d.bio.size() <= 240
+          && validPhoto(d.photoData) && d.createdAt is timestamp && d.updatedAt == request.time;
+      }
+      allow read: if verified() && (resource.data.ownerUid == request.auth.uid || exists(edge(request.auth.uid, resource.data.ownerUid)));
+      allow create: if verified() && id.size() == 20 && validPet(request.resource.data)
+        && request.resource.data.ownerUid == request.auth.uid && exists(profile(request.auth.uid))
+        && request.resource.data.createdAt == request.time;
+      allow update: if verified() && resource.data.ownerUid == request.auth.uid && validPet(request.resource.data)
+        && request.resource.data.ownerUid == resource.data.ownerUid && request.resource.data.createdAt == resource.data.createdAt;
+      allow delete: if verified() && resource.data.ownerUid == request.auth.uid;
+    }
+    function circle(id) { return /databases/$(database)/documents/circles/$(id); }
+    function circleInvite(id, uid) { return /databases/$(database)/documents/circleInvitations/$(id + '_' + uid); }
+    match /circles/{id} {
+      function validCircle(d) {
+        return d.keys().hasOnly(['ownerUid','title','description','memberUids','memberNames','createdAt','updatedAt'])
+          && d.title is string && d.title.size() >= 1 && d.title.size() <= 60
+          && d.description is string && d.description.size() <= 240
+          && d.memberUids is list && d.memberUids.size() >= 1 && d.memberUids.size() <= 20
+          && d.memberUids.toSet().size() == d.memberUids.size() && d.ownerUid in d.memberUids
+          && d.memberNames is map && d.memberNames.size() == d.memberUids.size()
+          && d.memberNames.keys().hasAll(d.memberUids)
+          && d.createdAt is timestamp && d.updatedAt == request.time;
+      }
+      function stableMetadata() {
+        return request.resource.data.title == resource.data.title && request.resource.data.description == resource.data.description;
+      }
+      function joining() {
+        let uid = request.auth.uid;
+        let before = get(circleInvite(id, uid)).data;
+        return !(uid in resource.data.memberUids) && request.resource.data.memberUids.hasAll(resource.data.memberUids)
+          && request.resource.data.memberUids.size() == resource.data.memberUids.size() + 1
+          && uid in request.resource.data.memberUids && stableMetadata()
+          && request.resource.data.memberNames.diff(resource.data.memberNames).affectedKeys().hasOnly([uid])
+          && request.resource.data.memberNames[uid] == get(profile(uid)).data.name
+          && before.status == 'pending' && before.expiresAt > request.time && before.ownerUid == resource.data.ownerUid
+          && exists(edge(resource.data.ownerUid, uid))
+          && getAfter(circleInvite(id, uid)).data.status == 'accepted';
+      }
+      allow read: if verified() && request.auth.uid in resource.data.memberUids;
+      allow create: if verified() && id.size() == 20 && validCircle(request.resource.data)
+        && request.resource.data.ownerUid == request.auth.uid && request.resource.data.memberUids == [request.auth.uid]
+        && request.resource.data.memberNames[request.auth.uid] == get(profile(request.auth.uid)).data.name
+        && request.resource.data.createdAt == request.time;
+      allow update: if verified() && validCircle(request.resource.data)
+        && request.resource.data.ownerUid == resource.data.ownerUid && request.resource.data.createdAt == resource.data.createdAt
+        && (
+          (request.auth.uid == resource.data.ownerUid
+            && resource.data.memberUids.hasAll(request.resource.data.memberUids)
+            && request.resource.data.memberNames.diff(resource.data.memberNames).addedKeys().size() == 0
+            && request.resource.data.memberNames.diff(resource.data.memberNames).changedKeys().size() == 0)
+          || (request.auth.uid in resource.data.memberUids && request.auth.uid != resource.data.ownerUid && stableMetadata()
+            && request.resource.data.memberUids == resource.data.memberUids.removeAll([request.auth.uid])
+            && request.resource.data.memberNames.diff(resource.data.memberNames).affectedKeys().hasOnly([request.auth.uid]))
+          || joining()
+        );
+      allow delete: if verified() && request.auth.uid == resource.data.ownerUid;
+    }
+    match /circleInvitations/{id} {
+      function validCircleInvite(d) {
+        return d.keys().hasOnly(['circleId','circleTitle','ownerUid','senderName','recipientUid','status','createdAt','updatedAt','expiresAt'])
+          && d.circleId is string && d.circleId.size() == 20 && id == d.circleId + '_' + d.recipientUid
+          && d.ownerUid == request.auth.uid && d.ownerUid == get(circle(d.circleId)).data.ownerUid
+          && d.circleTitle == get(circle(d.circleId)).data.title
+          && d.senderName == get(profile(request.auth.uid)).data.name
+          && exists(edge(request.auth.uid, d.recipientUid)) && exists(profile(d.recipientUid))
+          && !(d.recipientUid in get(circle(d.circleId)).data.memberUids)
+          && d.status == 'pending' && d.createdAt == request.time && d.updatedAt == request.time
+          && d.expiresAt > request.time && d.expiresAt <= request.time + duration.value(7, 'd')
+          && get(profile(request.auth.uid)).data.lastInviteAt < request.time - duration.value(30, 's')
+          && getAfter(profile(request.auth.uid)).data.lastInviteAt == request.time;
+      }
+      allow read: if verified() && (resource.data.ownerUid == request.auth.uid || resource.data.recipientUid == request.auth.uid);
+      allow create: if verified() && validCircleInvite(request.resource.data);
+      allow update: if verified() && (
+        (request.auth.uid == resource.data.ownerUid && resource.data.status != 'pending' && validCircleInvite(request.resource.data))
+        || (resource.data.status == 'pending'
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','updatedAt'])
+          && request.resource.data.updatedAt == request.time
+          && (
+            (request.auth.uid == resource.data.ownerUid && request.resource.data.status == 'cancelled')
+            || (request.auth.uid == resource.data.recipientUid && request.resource.data.status == 'declined')
+            || (request.auth.uid == resource.data.recipientUid && request.resource.data.status == 'accepted'
+              && resource.data.expiresAt > request.time
+              && request.auth.uid in getAfter(circle(resource.data.circleId)).data.memberUids)
+          ))
+      );
+      allow delete: if false;
     }
     match /{document=**} { allow read, write: if false; }
   }
