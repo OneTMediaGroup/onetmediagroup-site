@@ -143,6 +143,21 @@
       "collectionGroup": "memories",
       "fieldPath": "photoCaptions",
       "indexes": []
+    },
+    {
+      "collectionGroup": "memories",
+      "fieldPath": "photoTags",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "memories",
+      "fieldPath": "photoTagPeople",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "memories",
+      "fieldPath": "photoTagPets",
+      "indexes": []
     }
   ]
 }

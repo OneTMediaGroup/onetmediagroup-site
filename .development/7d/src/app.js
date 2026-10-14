@@ -124,7 +124,7 @@ function drawGraph(){
 
 
  list.filter(p=>p.kind==='pet').forEach(pet=>{const owner=list.find(p=>p.kind==='person'&&p.id===pet.ownerUid);if(owner&&!owner.self)connect(pet,owner,'pet-edge');});
- list.filter(p=>p.kind==='memory').forEach(memory=>{for(const [kind,id]of [['person',memory.personUid],['pet',memory.petId],['circle',memory.circleId]]){const target=list.find(p=>p.kind===kind&&p.id===id);if(target&&!target.self)connect(memory,target,'memory-edge');}});
+ list.filter(p=>p.kind==='memory').forEach(memory=>{for(const [kind,id]of [['person',memory.personUid],['pet',memory.petId],['circle',memory.circleId],...(memory.tagPeople||[]).filter(id=>id!==memory.personUid).map(id=>['person',id]),...(memory.tagPets||[]).filter(id=>id!==memory.petId).map(id=>['pet',id])]){const target=list.find(p=>p.kind===kind&&p.id===id);if(target&&!target.self)connect(memory,target,'memory-edge');}});
  list.forEach((p,index)=>{const radius=p.self?37:29;
  const g=svgEl('g',{class:`node${root?(related.has(p.kind+':'+p.id)?' node-highlight':' node-muted'):''}${root&&p.kind===root.kind&&p.id===root.id?' node-selected':''}`,'data-kind':p.kind,'data-id':p.id,transform:`translate(${p.x} ${p.y})`,tabindex:0,role:'button','aria-label':`${p.name}${p.self?', you':p.kind==='pet'?', pet':p.kind==='circle'?', circle':p.kind==='memory'?', memory':''}`},$('nodes'));
  g.setAttribute('aria-pressed',String(!!root&&p.kind===root.kind&&p.id===root.id));svgEl('title',{},g,p.name);

@@ -25,3 +25,5 @@
 .memory-card .memory-photo-open{padding:0;border-radius:0}
 
 .photo-caption{white-space:pre-wrap;overflow-wrap:anywhere;font-size:15px;line-height:1.6;margin:12px 0}.photo-viewer-caption{max-width:760px;margin:12px auto 18px;text-align:center}.album-draft-photo>label{margin-top:10px}.photo-viewer:has(.photo-viewer-caption:not([hidden])) .photo-viewer-stage img{height:calc(100dvh - 330px)}
+
+.photo-tag-editor{margin:12px 0}.photo-tag-editor summary{cursor:pointer;font-size:13px;font-weight:650;color:var(--accent)}.photo-tag-editor fieldset{padding:10px;margin:10px 0}.photo-tag-choice{display:flex;align-items:center;gap:8px;font-size:12px;font-weight:400;padding:5px 0}.photo-tag-choice input{width:18px;height:18px;flex:0 0 auto;margin:0}.photo-tag-links{display:flex;flex-wrap:wrap;gap:7px;margin:12px 0}.photo-tag-links button{font-size:12px;padding:6px 10px;border-radius:20px}.photo-tag-links button:disabled{cursor:default}.photo-viewer-tags{justify-content:center}.photo-viewer:has(.photo-viewer-tags:not([hidden])) .photo-viewer-stage img{height:calc(100dvh - 380px)}

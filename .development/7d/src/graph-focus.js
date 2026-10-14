@@ -5,10 +5,10 @@ export function graphFocus(nodes,circles,selection){
  const add=(kind,id)=>{if(nodes.some(n=>n.kind===kind&&n.id===id))related.add(kind+':'+id);};
  add(root.kind,root.id);
  const circle=root.kind==='circle'?circles.find(c=>c.id===root.id):null;
- const memories=nodes.filter(n=>n.kind==='memory'&&(circle?n.circleId===circle.id:root.kind==='person'?n.personUid===root.id||n.ownerUid===root.id:root.kind==='pet'?n.petId===root.id:root.kind==='memory'?n.id===root.id:false));
+ const memories=nodes.filter(n=>n.kind==='memory'&&(circle?n.circleId===circle.id:root.kind==='person'?n.personUid===root.id||n.ownerUid===root.id||n.tagPeople?.includes(root.id):root.kind==='pet'?n.petId===root.id||n.tagPets?.includes(root.id):root.kind==='memory'?n.id===root.id:false));
  if(circle)for(const n of nodes){if(n.kind==='person'&&circle.memberUids.includes(n.id))add('person',n.id);if(n.kind==='pet'&&circle.memberUids.includes(n.ownerUid))add('pet',n.id);}
  if(root.kind==='person'){for(const n of nodes)if(n.kind==='pet'&&n.ownerUid===root.id)add('pet',n.id);for(const c of circles)if(c.memberUids.includes(root.id))add('circle',c.id);}
  if(root.kind==='pet')add('person',root.ownerUid);
- for(const m of memories){add('memory',m.id);add('person',m.personUid);add('person',m.ownerUid);add('pet',m.petId);add('circle',m.circleId);}
+ for(const m of memories){add('memory',m.id);add('person',m.personUid);add('person',m.ownerUid);add('pet',m.petId);add('circle',m.circleId);for(const id of m.tagPeople||[])add('person',id);for(const id of m.tagPets||[])add('pet',id);}
  return {root,related};
 }
