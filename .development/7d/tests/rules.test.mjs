@@ -1,0 +1,38 @@
+import {before,after,beforeEach,test} from 'node:test';
+import {readFileSync} from 'node:fs';
+import {initializeTestEnvironment,assertSucceeds,assertFails} from '@firebase/rules-unit-testing';
+import {doc,getDoc,setDoc,updateDoc,deleteDoc,getDocs,collection,query,where,writeBatch,serverTimestamp,Timestamp} from 'firebase/firestore';
+let env;
+const id='abcdefghijklmnopqrst';
+const past=Timestamp.fromMillis(Date.now()-60000),future=Timestamp.fromMillis(Date.now()+86400000);
+const profile=uid=>({uid,name:uid,bio:'',color:'blue',createdAt:past,updatedAt:past,lastInviteAt:Timestamp.fromMillis(0)});
+const invitation=(extra={})=>({senderUid:'alice',senderName:'alice',recipientEmail:'bob@example.test',recipientUid:'',relationship:'Friend',status:'pending',createdAt:past,updatedAt:past,expiresAt:future,...extra});
+function db(uid, verified=true){return env.authenticatedContext(uid,{email:`${uid}@example.test`,email_verified:verified}).firestore();}
+function edge(uid,other){return `members/${uid}/connections/${other}`;}
+async function seed(inv=invitation()){
+ await env.withSecurityRulesDisabled(async c=>{const d=c.firestore();for(const u of ['alice','bob','carol'])await setDoc(doc(d,'profiles',u),profile(u));await setDoc(doc(d,'invitations',id),inv);});
+}
+function accept(d,recipient='bob',partial=false){
+ const b=writeBatch(d);b.update(doc(d,'invitations',id),{status:'accepted',recipientUid:recipient,updatedAt:serverTimestamp()});
+ b.set(doc(d,edge('alice',recipient)),{otherUid:recipient,invitationId:id,relationship:'Friend',createdAt:serverTimestamp()});
+ if(!partial)b.set(doc(d,edge(recipient,'alice')),{otherUid:'alice',invitationId:id,relationship:'Friend',createdAt:serverTimestamp()});
+ return b.commit();
+}
+before(async()=>{env=await initializeTestEnvironment({projectId:'demo-7d',firestore:{host:'127.0.0.1',port:8180,rules:readFileSync('firestore.rules','utf8')}});});
+after(async()=>env?.cleanup());
+beforeEach(async()=>env.clearFirestore());
+test('anonymous and unverified users cannot read profiles',async()=>{await seed();await assertFails(getDoc(doc(env.unauthenticatedContext().firestore(),'profiles','alice')));await assertFails(getDoc(doc(db('alice',false),'profiles','alice')));});
+test('owner can read profile; stranger cannot; profile directory forbidden',async()=>{await seed();await assertSucceeds(getDoc(doc(db('alice'),'profiles','alice')));await assertFails(getDoc(doc(db('bob'),'profiles','alice')));await assertFails(getDocs(collection(db('alice'),'profiles')));});
+test('profile creation is owner-only with validated fields and server timestamps',async()=>{const d=db('new');const p={...profile('new'),createdAt:serverTimestamp(),updatedAt:serverTimestamp()};await assertSucceeds(setDoc(doc(d,'profiles','new'),p));await assertFails(setDoc(doc(d,'profiles','stranger'),{...p,uid:'stranger'}));await assertFails(updateDoc(doc(d,'profiles','new'),{email:'private@example.test',updatedAt:serverTimestamp()}));});
+test('profile editing validates ownership, lengths, and immutable creation date',async()=>{await seed();const d=db('alice');await assertSucceeds(updateDoc(doc(d,'profiles','alice'),{name:'Alice',bio:'Hello',updatedAt:serverTimestamp()}));await assertFails(updateDoc(doc(db('bob'),'profiles','alice'),{name:'Forged',updatedAt:serverTimestamp()}));await assertFails(updateDoc(doc(d,'profiles','alice'),{name:'x'.repeat(61),updatedAt:serverTimestamp()}));await assertFails(updateDoc(doc(d,'profiles','alice'),{createdAt:future,updatedAt:serverTimestamp()}));});
+test('pending invitations are visible only to the sender and verified intended email',async()=>{await seed();await assertSucceeds(getDoc(doc(db('alice'),'invitations',id)));await assertSucceeds(getDoc(doc(db('bob'),'invitations',id)));await assertFails(getDoc(doc(db('carol'),'invitations',id)));await assertFails(getDoc(doc(db('bob',false),'invitations',id)));await assertSucceeds(getDocs(query(collection(db('bob'),'invitations'),where('recipientEmail','==','bob@example.test'))));await assertFails(getDocs(collection(db('bob'),'invitations')));});
+test('sending requires profile cooldown timestamp in the same atomic batch',async()=>{await seed();const d=db('alice');const p={...invitation(),createdAt:serverTimestamp(),updatedAt:serverTimestamp()};const other='12345678901234567890';await assertFails(setDoc(doc(d,'invitations',other),p));const b=writeBatch(d);b.set(doc(d,'invitations',other),p);b.update(doc(d,'profiles','alice'),{lastInviteAt:serverTimestamp(),updatedAt:serverTimestamp()});await assertSucceeds(b.commit());const b2=writeBatch(d);b2.set(doc(d,'invitations','12345678901234567891'),p);b2.update(doc(d,'profiles','alice'),{lastInviteAt:serverTimestamp(),updatedAt:serverTimestamp()});await assertFails(b2.commit());});
+test('recipient can atomically accept and both can read each other afterwards',async()=>{await seed();await assertSucceeds(accept(db('bob')));await assertSucceeds(getDoc(doc(db('alice'),'profiles','bob')));await assertSucceeds(getDoc(doc(db('bob'),'profiles','alice')));await assertFails(getDoc(doc(db('carol'),'profiles','alice')));});
+test('acceptance cannot omit either connection mirror',async()=>{await seed();await assertFails(accept(db('bob'),'bob',true));});
+test('acceptance cannot forge intended recipient or be performed by sender',async()=>{await seed();await assertFails(accept(db('carol'),'carol'));await assertFails(accept(db('alice'),'bob'));});
+test('expired, declined, or cancelled invitations cannot be accepted',async()=>{for(const extra of [{expiresAt:past},{status:'declined'},{status:'cancelled'}]){await env.clearFirestore();await seed(invitation(extra));await assertFails(accept(db('bob')));}});
+test('cannot create arbitrary connections or accepted invites without mirrors',async()=>{await seed();await assertFails(setDoc(doc(db('alice'),edge('alice','carol')),{otherUid:'carol',invitationId:id,relationship:'Friend',createdAt:serverTimestamp()}));await assertFails(updateDoc(doc(db('bob'),'invitations',id),{status:'accepted',recipientUid:'bob',updatedAt:serverTimestamp()}));});
+test('sender can cancel and recipient can decline but neither impersonates the other',async()=>{await seed();await assertFails(updateDoc(doc(db('bob'),'invitations',id),{status:'cancelled',updatedAt:serverTimestamp()}));await assertSucceeds(updateDoc(doc(db('alice'),'invitations',id),{status:'cancelled',updatedAt:serverTimestamp()}));await env.clearFirestore();await seed();await assertFails(updateDoc(doc(db('alice'),'invitations',id),{status:'declined',updatedAt:serverTimestamp()}));await assertSucceeds(updateDoc(doc(db('bob'),'invitations',id),{status:'declined',updatedAt:serverTimestamp()}));});
+test('single-sided removal forbidden; atomic removal revokes profile access',async()=>{await seed();await accept(db('bob'));const d=db('alice');await assertFails(deleteDoc(doc(d,edge('alice','bob'))));const b=writeBatch(d);b.delete(doc(d,edge('alice','bob')));b.delete(doc(d,edge('bob','alice')));await assertSucceeds(b.commit());await assertFails(getDoc(doc(d,'profiles','bob')));await assertFails(getDoc(doc(db('bob'),'profiles','alice')));await assertFails(accept(db('bob')));});
+test('stranger cannot remove or list someone else’s connections',async()=>{await seed();await accept(db('bob'));const d=db('carol');const b=writeBatch(d);b.delete(doc(d,edge('alice','bob')));b.delete(doc(d,edge('bob','alice')));await assertFails(b.commit());await assertFails(getDocs(collection(d,'members','alice','connections')));});
+test('accepted invitation cannot be replayed or changed',async()=>{await seed();await accept(db('bob'));await assertFails(accept(db('bob')));await assertFails(updateDoc(doc(db('bob'),'invitations',id),{relationship:'Family',updatedAt:serverTimestamp()}));});

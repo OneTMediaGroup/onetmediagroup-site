@@ -1,0 +1,82 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function verified() { return request.auth != null && request.auth.token.email_verified == true; }
+    function profile(uid) { return /databases/$(database)/documents/profiles/$(uid); }
+    function edge(uid, other) { return /databases/$(database)/documents/members/$(uid)/connections/$(other); }
+    function invite(id) { return /databases/$(database)/documents/invitations/$(id); }
+    function validProfile(d, uid) {
+      return d.keys().hasAll(['uid','name','bio','color','createdAt','updatedAt','lastInviteAt'])
+        && d.keys().hasOnly(['uid','name','bio','color','createdAt','updatedAt','lastInviteAt'])
+        && d.uid == uid && d.name is string && d.name.size() >= 1 && d.name.size() <= 60
+        && d.bio is string && d.bio.size() <= 240
+        && d.color in ['blue','violet','teal','rose']
+        && d.createdAt is timestamp && d.updatedAt == request.time && d.lastInviteAt is timestamp;
+    }
+    match /profiles/{uid} {
+      allow get: if verified() && (request.auth.uid == uid || exists(edge(request.auth.uid, uid)));
+      allow list: if false;
+      allow create: if verified() && request.auth.uid == uid && validProfile(request.resource.data, uid)
+        && request.resource.data.createdAt == request.time
+        && request.resource.data.lastInviteAt == timestamp.value(0);
+      allow update: if verified() && request.auth.uid == uid && validProfile(request.resource.data, uid)
+        && request.resource.data.createdAt == resource.data.createdAt
+        && (request.resource.data.lastInviteAt == resource.data.lastInviteAt || request.resource.data.lastInviteAt == request.time);
+      allow delete: if false;
+    }
+    match /invitations/{id} {
+      function recipient() { return resource.data.recipientEmail == request.auth.token.email.lower(); }
+      function pending() { return resource.data.status == 'pending' && resource.data.expiresAt > request.time; }
+      allow read: if verified() && (resource.data.senderUid == request.auth.uid || recipient());
+      allow create: if verified() && id.size() == 20
+        && request.resource.data.keys().hasOnly(['senderUid','senderName','recipientEmail','recipientUid','relationship','status','createdAt','updatedAt','expiresAt'])
+        && request.resource.data.senderUid == request.auth.uid
+        && request.resource.data.senderName == get(profile(request.auth.uid)).data.name
+        && request.resource.data.recipientEmail is string && request.resource.data.recipientEmail.size() <= 254
+        && request.resource.data.recipientEmail.matches('[^@ ]+@[^@ ]+\\.[^@ ]+')
+        && request.resource.data.recipientEmail == request.resource.data.recipientEmail.lower()
+        && request.resource.data.recipientEmail != request.auth.token.email.lower()
+        && request.resource.data.recipientUid == ''
+        && request.resource.data.relationship in ['Friend','Family','Colleague','Other']
+        && request.resource.data.status == 'pending'
+        && request.resource.data.createdAt == request.time && request.resource.data.updatedAt == request.time
+        && request.resource.data.expiresAt > request.time
+        && request.resource.data.expiresAt <= request.time + duration.value(7, 'd')
+        && get(profile(request.auth.uid)).data.lastInviteAt < request.time - duration.value(30, 's')
+        && getAfter(profile(request.auth.uid)).data.lastInviteAt == request.time;
+      allow update: if verified() && resource.data.status == 'pending'
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status','recipientUid','updatedAt'])
+        && request.resource.data.updatedAt == request.time
+        && (
+          (resource.data.senderUid == request.auth.uid && request.resource.data.status == 'cancelled'
+            && request.resource.data.recipientUid == resource.data.recipientUid)
+          || (recipient() && request.resource.data.status == 'declined'
+            && request.resource.data.recipientUid == resource.data.recipientUid)
+          || (recipient() && pending() && resource.data.senderUid != request.auth.uid
+            && request.resource.data.status == 'accepted' && request.resource.data.recipientUid == request.auth.uid
+            && exists(profile(request.auth.uid))
+            && getAfter(edge(resource.data.senderUid, request.auth.uid)).data.invitationId == id
+            && getAfter(edge(request.auth.uid, resource.data.senderUid)).data.invitationId == id)
+        );
+      allow delete: if false;
+    }
+    match /members/{uid}/connections/{other} {
+      allow read: if verified() && request.auth.uid == uid;
+      allow create: if verified() && request.auth.uid in [uid, other] && uid != other
+        && request.resource.data.keys().hasOnly(['otherUid','invitationId','relationship','createdAt'])
+        && request.resource.data.otherUid == other
+        && request.resource.data.createdAt == request.time
+        && get(invite(request.resource.data.invitationId)).data.status == 'pending'
+        && get(invite(request.resource.data.invitationId)).data.expiresAt > request.time
+        && getAfter(invite(request.resource.data.invitationId)).data.status == 'accepted'
+        && getAfter(invite(request.resource.data.invitationId)).data.recipientUid == request.auth.uid
+        && getAfter(invite(request.resource.data.invitationId)).data.senderUid in [uid, other]
+        && getAfter(invite(request.resource.data.invitationId)).data.recipientUid in [uid, other]
+        && request.resource.data.relationship == getAfter(invite(request.resource.data.invitationId)).data.relationship
+        && getAfter(edge(other, uid)).data.invitationId == request.resource.data.invitationId;
+      allow delete: if verified() && request.auth.uid in [uid, other] && !existsAfter(edge(other, uid));
+      allow update: if false;
+    }
+    match /{document=**} { allow read, write: if false; }
+  }
+}
