@@ -63,7 +63,7 @@ export function createMemories(context){
   if(missing.length){$('memory-edit-note').textContent=`Some links are no longer available (${missing.join(', ')}). Saving will clear those links. Check the sharing choice before saving.`;$('memory-edit-note').hidden=false;}
   $('memory-form-heading').textContent='Edit memory';const image=memoryImage(photo,'Memory photo preview','memory-detail-photo');if(image)$('memory-photo-preview').append(image);sharingNote();$('memory-editor').hidden=false;$('memory-form-heading').scrollIntoView({block:'center'});
  }
- function browse(kind,id,label,ownerUid){filter=null;if(kind==='circle')selectFeed('circle:'+id);else if(kind==='person')selectFeed(id===user().uid?'mine':'person:'+id);else{filter={kind:'pet',id,label};selectFeed(ownerUid===user().uid?'mine':'person:'+ownerUid);}if(kind==='pet')renderCards();$('memories-heading').scrollIntoView({block:'start'});}
+ function browse(kind,id,label,ownerUid){const previousFeed=feed;filter=null;if(kind==='circle')selectFeed('circle:'+id);else if(kind==='person')selectFeed(id===user().uid?'mine':'person:'+id);else{filter={kind:'pet',id,label};const circleView=previousFeed.startsWith('circle:')&&circles().some(c=>'circle:'+c.id===previousFeed);selectFeed(circleView?previousFeed:ownerUid===user().uid?'mine':'person:'+ownerUid);}if(kind==='pet')renderCards();$('memories-heading').scrollIntoView({block:'start'});}
  function graphItems(){return owned.map(m=>({id:m.id,name:m.title,kind:'memory',color:'gold',photoData:m.photoData,personUid:m.personUid,petId:m.petId,circleId:m.circleId}));}
  return {start,clear,refreshOptions,graphItems,open:openMemory,browse};
 }
