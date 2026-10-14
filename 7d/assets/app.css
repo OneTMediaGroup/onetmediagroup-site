@@ -10,3 +10,5 @@
 .universe svg{height:calc(100% - 64px)}.universe-controls{left:0;right:0;bottom:0;height:60px;padding:8px 16px;align-items:center;justify-content:flex-end;border-top:1px solid #344d6f;background:#0c1529}
 
 .node .selection-halo{stroke:#a5fff3;stroke-width:2;opacity:.7;pointer-events:none;transform-box:fill-box;transform-origin:center;animation:selected-node-pulse 2.6s ease-in-out infinite}.node-selected>circle:not(.selection-halo){stroke:#fff;stroke-width:4;filter:drop-shadow(0 0 8px #80ffe8)}@keyframes selected-node-pulse{0%,100%{transform:scale(1);opacity:.65}50%{transform:scale(1.13);opacity:.2}}@media(prefers-reduced-motion:reduce){.node .selection-halo{animation:none;opacity:.55}}
+
+.node .node-label{pointer-events:bounding-box;cursor:pointer}
