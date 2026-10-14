@@ -180,13 +180,23 @@ service cloud.firestore {
           && (photos.size() < 2 || validAlbumPhoto(photos[1]))
           && (photos.size() < 3 || validAlbumPhoto(photos[2]));
       }
+      function validCaption(c) { return c is string && c.size() <= 500; }
+      function validCaptions(d) {
+        let captions = d.get('photoCaptions', []);
+        let count = (d.photoData == '' ? 0 : 1) + d.get('additionalPhotos', []).size();
+        return !('photoCaptions' in d) || (captions is list && captions.size() == count && captions.size() <= 4
+          && (captions.size() < 1 || validCaption(captions[0]))
+          && (captions.size() < 2 || validCaption(captions[1]))
+          && (captions.size() < 3 || validCaption(captions[2]))
+          && (captions.size() < 4 || validCaption(captions[3])));
+      }
       function validMemory(d) {
-        return d.keys().hasOnly(['ownerUid','ownerName','title','story','happenedOn','photoData','additionalPhotos','personUid','petId','circleId','audienceKind','audienceId','createdAt','updatedAt'])
+        return d.keys().hasOnly(['ownerUid','ownerName','title','story','happenedOn','photoData','additionalPhotos','photoCaptions','personUid','petId','circleId','audienceKind','audienceId','createdAt','updatedAt'])
           && d.ownerUid == request.auth.uid && d.ownerName == get(profile(request.auth.uid)).data.name
           && d.title is string && d.title.size() >= 1 && d.title.size() <= 100
           && d.story is string && d.story.size() <= 4000
           && d.photoData is string && (d.photoData == '' || (d.photoData.size() <= 240000 && d.photoData.matches('data:image/jpeg;base64,[A-Za-z0-9+/=]+')))
-          && validAlbum(d) && (d.story.size() > 0 || d.photoData.size() > 0)
+          && validAlbum(d) && validCaptions(d) && (d.story.size() > 0 || d.photoData.size() > 0)
           && d.happenedOn is string && (d.happenedOn == '' || d.happenedOn.matches('[0-9]{4}-[0-9]{2}-[0-9]{2}'))
           && d.personUid is string && (d.personUid == '' || d.personUid == request.auth.uid || exists(edge(request.auth.uid, d.personUid)))
           && d.petId is string && (d.petId == '' || get(/databases/$(database)/documents/pets/$(d.petId)).data.ownerUid == request.auth.uid)

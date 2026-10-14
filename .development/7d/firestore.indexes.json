@@ -138,6 +138,11 @@
       "collectionGroup": "memories",
       "fieldPath": "additionalPhotos",
       "indexes": []
+    },
+    {
+      "collectionGroup": "memories",
+      "fieldPath": "photoCaptions",
+      "indexes": []
     }
   ]
 }
