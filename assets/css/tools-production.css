@@ -7,3 +7,11 @@
 @media print{.footer,.tools-related,.tools-ad,.tools-consent{display:none!important}}
 
 .tools-privacy-links{max-width:1100px;margin-left:auto;margin-right:auto}
+
+/* Original usage guidance sits below each tool and before advertising. */
+.tool-guide{margin:32px auto 48px;padding:clamp(20px,4vw,36px);border:1px solid var(--border);border-radius:20px;background:rgba(20,20,28,.55);box-sizing:border-box;line-height:1.7;overflow-wrap:anywhere}
+.tool-guide h2{font-size:clamp(1.4rem,3vw,2rem);line-height:1.25;margin:0 0 18px;letter-spacing:normal}
+.tool-guide h3{font-size:1.1rem;line-height:1.4;margin:18px 0 8px}.tool-guide p{color:var(--muted);max-width:80ch}.tool-guide a{color:#bdf4ff;text-underline-offset:3px}
+.tool-guide-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px}.tool-guide details{border-top:1px solid var(--border);padding:14px 0}.tool-guide summary{cursor:pointer;font-weight:700}.tool-guide summary:focus-visible{outline:2px solid var(--accent1);outline-offset:4px}.tool-guide details p{margin-bottom:0}.tool-guide-next{padding-top:14px}
+@media(max-width:760px){.tool-guide-grid{grid-template-columns:minmax(0,1fr);gap:0}}
+@media print{.tool-guide{display:none!important}}
