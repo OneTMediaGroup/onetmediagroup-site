@@ -111,3 +111,6 @@ All photo galleries search each photo’s own caption and its memory title/story
 
 ## Search highlights (0.9.5)
 Gallery titles, individual photo captions, and story previews render literal text nodes plus mark elements for matching search terms. Shared case/accent folding maps matches back to complete original graphemes, preserving accents/emoji and merging overlapping matches. Story excerpts center on the first actual match instead of clipping it after the opening lines; album opening still provides the full original story. Clear search removes highlights. Uses existing transient search and permission-bound gallery state; no AI, rules/index changes, or production data edits.
+
+## Album search context (0.9.6)
+Opening a gallery result captures its current search words after the fresh memory access check. The full memory title/story and each selected photo caption use the same safe highlight renderer. The larger viewer carries those words through next/previous photos and exposes the full memory story in a disclosure, expanded for search openings. Detail re-renders retain the context; closing clears viewer text/query, and detail close/access withdrawal/sign-out clears its query. Ordinary timeline/feed openings start without search context. No new reads, backend rules, indexes, external services, or production data edits.
