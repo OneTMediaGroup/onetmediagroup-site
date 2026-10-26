@@ -39,3 +39,5 @@
 .gallery-search-match{background:#ffe08a;color:#312300;border-radius:3px;padding:0 .06em;box-decoration-break:clone;-webkit-box-decoration-break:clone}
 
 .photo-viewer-story{max-width:850px;margin:18px auto;overflow-wrap:anywhere}.photo-viewer-story summary{cursor:pointer;font-weight:650}.photo-viewer-story .memory-story{white-space:pre-wrap}.photo-viewer-caption mark{font-size:inherit}
+
+.photo-viewer-matches{position:sticky;top:-18px;z-index:2;background:var(--surface);border-bottom:1px solid var(--line);padding:10px 0;display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap}.photo-viewer-matches[hidden]{display:none}.photo-viewer-matches p{font-size:13px;margin:0;text-align:center}.photo-viewer-matches button{font-size:13px;min-height:44px}.gallery-search-match.current-search-match{background:#ffb545;color:#231700;outline:2px solid #775000;outline-offset:2px}@media(max-width:650px){.photo-viewer-matches{top:-12px;gap:6px}.photo-viewer-matches p{flex-basis:100%;order:3}}

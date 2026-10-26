@@ -114,3 +114,6 @@ Gallery titles, individual photo captions, and story previews render literal tex
 
 ## Album search context (0.9.6)
 Opening a gallery result captures its current search words after the fresh memory access check. The full memory title/story and each selected photo caption use the same safe highlight renderer. The larger viewer carries those words through next/previous photos and exposes the full memory story in a disclosure, expanded for search openings. Detail re-renders retain the context; closing clears viewer text/query, and detail close/access withdrawal/sign-out clears its query. Ordinary timeline/feed openings start without search context. No new reads, backend rules, indexes, external services, or production data edits.
+
+## Viewer match navigation (0.9.7)
+Previous match / Next match traverse the current photo’s title, caption, and full story highlights in reading order, wrap at either end, and report Match N of total with the field name. The active match has a stronger outline. Jumping to a story match opens its disclosure; a sticky control bar stays available while scrolling. Album navigation rebuilds the current photo’s match list; zero matches disables the buttons. Ordinary openings hide the bar, and close/access revocation clear match references/status with the viewer. No data, query, or permission changes.
