@@ -11,3 +11,9 @@ export function galleryPhotos(memories,kind,id,selection=null){
 }
 
 export function galleryTagFilter(kind,id,selection=null){const filter=kind==='circle'?selection:{kind,id};return filter?{field:filter.kind==='person'?'photoTagPeople':'photoTagPets',id:filter.id}:null;}
+
+// Dates belong to memories; never substitute upload timestamps for story dates.
+export function galleryYearPhotos(photos,year='all'){
+ if(year==='all')return photos;
+ return photos.filter(photo=>{const value=photo.happenedOn;if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return year==='undated';const date=new Date(value+'T12:00:00Z'),valid=Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===value;return year==='undated'?!valid:valid&&value.slice(0,4)===year;});
+}
