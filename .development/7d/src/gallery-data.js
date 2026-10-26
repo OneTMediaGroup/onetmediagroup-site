@@ -4,8 +4,10 @@ export function gallerySources(uid,connections,circles,kind,id){if(kind==='circl
  ...[...new Set(circles.map(c=>c.id))].map(id=>({key:'circle:'+id,filters:[['audienceKind','==','circle'],['audienceId','==',id]]})),
  ...[...new Set(connections.map(c=>c.otherUid))].filter(id=>id!==uid).map(id=>({key:'person:'+id,filters:[['ownerUid','==',id],['audienceKind','==','person'],['audienceId','==',uid]]}))
 ];}
-export function galleryPhotos(memories,kind,id){
+export function galleryPhotos(memories,kind,id,selection=null){
  const key=kind==='person'?'people':'pets';
- return [...new Map(memories.map(m=>[m.id,m])).values()].filter(m=>kind!=='circle'||m.audienceKind==='circle'&&m.audienceId===id).flatMap(m=>memoryAlbum(m).flatMap((p,index)=>kind==='circle'||p.tags[key].includes(id)?[{...p,index,memoryId:m.id,title:m.title,happenedOn:m.happenedOn||'',createdAt:m.createdAt}]:[]))
+ return [...new Map(memories.map(m=>[m.id,m])).values()].filter(m=>kind!=='circle'||m.audienceKind==='circle'&&m.audienceId===id).flatMap(m=>memoryAlbum(m).flatMap((p,index)=>(kind==='circle'?(!selection||p.tags[selection.kind==='person'?'people':'pets'].includes(selection.id)):p.tags[key].includes(id))?[{...p,index,memoryId:m.id,title:m.title,happenedOn:m.happenedOn||'',createdAt:m.createdAt}]:[]))
   .sort((a,b)=>b.happenedOn.localeCompare(a.happenedOn)||(b.createdAt?.toMillis?.()||0)-(a.createdAt?.toMillis?.()||0)||a.memoryId.localeCompare(b.memoryId)||a.index-b.index);
 }
+
+export function galleryTagFilter(kind,id,selection=null){const filter=kind==='circle'?selection:{kind,id};return filter?{field:filter.kind==='person'?'photoTagPeople':'photoTagPets',id:filter.id}:null;}
