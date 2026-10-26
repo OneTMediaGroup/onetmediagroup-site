@@ -1,3 +1,4 @@
+import {searchWords,matchesSearch} from './search-text.js';
 import {memoryAlbum} from './albums.js';
 export function gallerySources(uid,connections,circles,kind,id){if(kind==='circle')return circles.some(c=>c.id===id)?[{key:'circle:'+id,filters:[['audienceKind','==','circle'],['audienceId','==',id]]}]:[];return [
  {key:'own',filters:[['ownerUid','==',uid]]},
@@ -18,9 +19,8 @@ export function galleryYearPhotos(photos,year='all'){
  return photos.filter(photo=>{const value=photo.happenedOn;if(!/^\d{4}-\d{2}-\d{2}$/.test(value||''))return year==='undated';const date=new Date(value+'T12:00:00Z'),valid=Number.isFinite(date.getTime())&&date.toISOString().slice(0,10)===value;return year==='undated'?!valid:valid&&value.slice(0,4)===year;});
 }
 
-function searchText(value){return String(value||'').normalize('NFD').replace(/\p{M}/gu,'').toLocaleLowerCase();}
 export function gallerySearchPhotos(photos,search=''){
- const words=searchText(search).trim().split(/\s+/u).filter(Boolean);
+ const words=searchWords(search);
  if(!words.length)return photos;
- return photos.filter(photo=>{const text=searchText([photo.title,photo.caption,photo.story].join(' '));return words.every(word=>text.includes(word));});
+ return photos.filter(photo=>matchesSearch([photo.title,photo.caption,photo.story].join(' '),words));
 }

@@ -1,3 +1,4 @@
+import {searchParts,storyPreview} from './search-text.js';
 import {collection,query,where,orderBy,limit,startAfter,onSnapshot} from 'firebase/firestore';
 import {galleryPhotos,gallerySources,galleryTagFilter,galleryYearPhotos,gallerySearchPhotos} from './gallery-data.js';
 const PAGE_SIZE=12;
@@ -7,6 +8,7 @@ export function createPhotoGallery({db,user,version,connections,circles,targetNa
  function clear(){generation++;for(const source of sources)for(const page of source.pages){page.rows=[];page.last=null;page.stop?.();}sources=[];target=null;selection=null;filterSelect=null;signature='';year='all';search='';grid?.replaceChildren();heading=summary=grid=more=warning=null;panel.replaceChildren();panel.hidden=true;}
  function accessSignature(){return JSON.stringify({sources:gallerySources(user().uid,connections(),circles(),target.kind,target.id),choices:target.kind==='circle'?filterChoices(target.id):[]});}
  function scheduleRender(){if(renderQueued)return;renderQueued=true;requestAnimationFrame(()=>{renderQueued=false;if(target&&user())render();});}
+ function highlighted(tag,text,className){const node=element(tag,undefined,className);for(const part of searchParts(text,search))node.append(part.match?element('mark',part.text,'gallery-search-match'):document.createTextNode(part.text));return node;}
  function render(){
   const rows=gallerySearchPhotos(galleryYearPhotos(galleryPhotos(sources.flatMap(s=>s.pages.flatMap(p=>p.rows)),target.kind,target.id,selection),year),search),pending=sources.some(s=>s.pages.some(p=>p.pending)),failed=sources.some(s=>s.error),hasMore=sources.some(s=>!s.error&&s.pages.at(-1)?.full);
   const count=new Set(rows.map(p=>p.memoryId)).size;
@@ -15,7 +17,7 @@ export function createPhotoGallery({db,user,version,connections,circles,targetNa
   grid.replaceChildren();for(const photo of rows){
    const card=element('article',undefined,'profile-gallery-card'),button=action('Open tagged photo',()=>openPhoto(photo));button.className='memory-photo-open';button.setAttribute('aria-label',`Open photo ${photo.index+1} from ${photo.title}`);
    const image=element('img');image.src=photo.photoData;image.alt=photo.caption||`${target.label} · ${photo.title}`;image.loading='lazy';image.className='profile-gallery-photo';button.replaceChildren(image);
-   const copy=element('div',undefined,'profile-gallery-copy');copy.append(element('h3',photo.title));if(photo.happenedOn)copy.append(element('p',photo.happenedOn,'fine'));if(photo.caption)copy.append(element('p',photo.caption,'photo-caption'));if(search.trim()&&photo.story)copy.append(element('p',photo.story,'gallery-story-excerpt'));
+   const copy=element('div',undefined,'profile-gallery-copy');copy.append(highlighted('h3',photo.title));if(photo.happenedOn)copy.append(element('p',photo.happenedOn,'fine'));if(photo.caption)copy.append(highlighted('p',photo.caption,'photo-caption'));if(search.trim()&&photo.story)copy.append(highlighted('p',storyPreview(photo.story,search),'gallery-story-excerpt'));
    card.dataset.memoryId=photo.memoryId;card.dataset.photoIndex=String(photo.index);card.append(button,copy);grid.append(card);
   }
   if(!rows.length&&!pending)grid.append(element('p',hasMore?'No matching photos in this batch. Load more to keep looking.':failed?'No photos loaded yet. Try refreshing the gallery.':search.trim()?'No photos match this search and the current filters. Try fewer words or Clear search.':year!=='all'?'No matching photos for this date choice. Try another year or All years.':selection?`No photos tagged with ${selection.name} in this circle yet.`:target.kind==='circle'?'No shared photos in this circle yet. Share a photo memory with the circle to add it.':'No photos tagged here yet. Only photos explicitly tagged with this person or pet appear.','muted'));
