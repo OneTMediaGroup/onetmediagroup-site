@@ -130,6 +130,15 @@ body { min-height:100%; height:auto; }
 }
 </style>
 <link rel="stylesheet" href="assets/css/bookporch.css">
+<style>
+/* Weekly series: keep the video in its own responsive box. */
+.weekly-update{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1.15fr);gap:32px;align-items:center;margin:24px 0 32px;padding:26px;border:1px solid var(--border);border-radius:24px;background:rgba(20,20,28,.65)}
+.weekly-update h2{font-size:clamp(1.8rem,3vw,2.5rem);line-height:1.15;margin:14px 0}
+.weekly-update p{color:var(--muted);line-height:1.7;margin:0 0 18px}
+.weekly-update iframe{display:block;width:100%;height:auto;aspect-ratio:16/9;border:0;border-radius:16px;background:var(--panel);min-width:0}
+.weekly-update .weekly-playlist-link{font-size:.9rem;font-weight:700;color:var(--accent1)}
+@media(max-width:620px){.weekly-update{grid-template-columns:1fr;gap:22px;padding:20px}}
+</style>
 </head><body>
 <header class="nav"><div class="container"><div class="nav-inner">
 <a class="brand" href="index.html" aria-label="One T Media Group home"><img class="brand-logo" src="assets/images/General/1tnewprologo.png" alt="One T Media Group"></a>
@@ -153,6 +162,15 @@ body { min-height:100%; height:auto; }
     </div>
   </section>
 <section class="bookporch-feature" aria-labelledby="bookporch-title"><div><span class="bookporch-kicker">BookPorch is now open</span><h2 id="bookporch-title">A good book starts a conversation.</h2><p>Discover books, share reviews and meet fellow readers on BookPorch—our new reading community from One T Media Group.</p><p>Rate your latest read, save your next one and explore book clubs. Readers, authors and independent bookshops are welcome.</p><a class="btn" href="https://bookporch.ca/">Explore BookPorch →</a><p class="bookporch-note">Free to join. No purchase needed to take part.</p></div><a href="https://bookporch.ca/" aria-label="Visit BookPorch"><img src="assets/images/BookPorch/bookporch-share.png" alt="BookPorch — A good book starts a conversation." width="1200" height="630" loading="lazy"></a></section>
+  <section class="weekly-update" aria-labelledby="weekly-update-title">
+    <div>
+      <span class="eyebrow">This week at One T</span>
+      <h2 id="weekly-update-title">One T Weekly Updates</h2>
+      <p>Catch up on the latest news, releases and projects from One T Media Group.</p>
+      <a class="weekly-playlist-link" href="https://www.youtube.com/playlist?list=PLVdd6y9tDCck" target="_blank" rel="noopener noreferrer">Watch the weekly update series on YouTube ↗</a>
+    </div>
+    <iframe src="https://www.youtube-nocookie.com/embed/videoseries?list=PLVdd6y9tDCck" title="One T Media Group weekly update video playlist" width="560" height="315" loading="lazy" allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  </section>
   <section class="home-ai-spotlight" aria-labelledby="home-ai-title"><article class="genie-feature"><div class="feature-copy"><span class="ai-kicker">NEW FROM ONE T / AI SYSTEMS</span><h2 id="home-ai-title">Your Wish.<br>Your Website.</h2><p class="feature-lead">Meet PageGenie. Your idea’s new best friend.</p><p>Build your first website free, without signing up. Create a free account to keep and publish it. Upgrade only when you want to.</p><a class="btn primary" href="ai-systems.html">Explore AI Systems →</a></div><div class="genie-art"><img src="assets/images/PageGenie/robo-genie-blue-white.webp" alt="PageGenie’s floating robot Genie" width="400" height="400" loading="lazy"></div></article></section><section class="home-hero" aria-label="One T products">
 
   <div class="home-hero-grid"><div><span class="eyebrow">Independent Canadian software studio</span><h1 class="home-title">Software that keeps work <span class="grad">moving.</span></h1><p class="home-lead">We build AI systems for new ideas, practical industrial software for production teams, and focused mobile apps for everyday users—designed clearly, supported directly, and built in Canada.</p><div class="hero-actions"><a class="btn primary" href="one-t-industrial.html">Explore Industrial Software</a><a class="btn" href="apps.html">Browse Mobile Apps</a></div><div class="hero-proof"><div class="proof"><strong>Purpose-built</strong><span>Focused products, not bloated platforms</span></div><div class="proof"><strong>Cloud connected</strong><span>Live visibility where teams need it</span></div><div class="proof"><strong>Direct support</strong><span>Built and supported by One T</span></div></div></div><aside class="hero-visual" aria-label="Featured One T Media Group products"><div class="visual-label">Featured products</div><a class="visual-card" href="floor-flow.html"><img src="assets/images/FloorFlow/floor-flow-hero.png" alt="Floor Flow dashboard" /><div><strong>Floor Flow</strong><span>Production visibility and plant control</span></div></a><a class="visual-card" href="factory-on-call.html"><img class="contain" src="assets/images/FOC/foc_logo_dark.png" alt="Factory On Call logo" /><div><strong>Factory On Call</strong><span>Faster alerts, response, and escalation</span></div></a><a class="visual-card" href="grid-wars.html"><img src="assets/images/GridWars/gridicon.jpeg" alt="Grid Wars icon" /><div><strong>Grid Wars</strong><span>Fast strategy and online competition</span></div></a><a class="visual-card" href="go.html"><img class="contain" src="assets/images/Go/go-icon.png" alt="GO: The Keeper’s Board icon" /><div><strong>GO: The Keeper’s Board</strong><span>Three board sizes. Six AI rivals. Now on iOS.</span></div></a></aside></div></section>
