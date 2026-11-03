@@ -36,7 +36,7 @@ body{background:radial-gradient(circle at 12% 4%,rgba(216,173,84,.13),transparen
 .how-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:26px}.how-card{padding:26px;border-radius:22px;background:linear-gradient(145deg,rgba(29,26,21,.93),rgba(12,12,12,.94));border:1px solid var(--gb)}
 .how-number{display:inline-grid;place-items:center;width:42px;height:42px;border-radius:50%;background:var(--gg);color:#17130b;font-weight:950;margin-bottom:12px}.how-card h3{margin:0 0 8px;color:var(--gc)}.how-card p{margin:0;color:var(--gm);line-height:1.6}
 .shots{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}.shot{margin:0;padding:10px;background:rgba(15,14,12,.92);border:1px solid var(--gb);border-radius:25px;box-shadow:0 22px 54px rgba(0,0,0,.36)}
-.shot img{display:block;width:100%;aspect-ratio:9/19.5;object-fit:cover;border-radius:18px;background:#090909}.shot figcaption{padding:12px 8px 5px;text-align:center;color:var(--gm);font-size:.92rem;font-weight:750}
+.shot img{display:block;width:100%;aspect-ratio:1242/2688;object-fit:contain;border-radius:18px;background:#090909}.shot figcaption{padding:12px 8px 5px;text-align:center;color:var(--gm);font-size:.92rem;font-weight:750}
 .journey{margin:70px 0 0;padding:44px 24px;text-align:center;border-radius:30px;background:radial-gradient(circle at 50% 0%,rgba(216,173,84,.14),transparent 39%),rgba(8,8,8,.91);border:1px solid var(--gb)}
 .journey-kicker{color:var(--gg);font-size:.85rem;font-weight:900;letter-spacing:.15em;text-transform:uppercase}.journey h2{font-family:Georgia,"Times New Roman",serif;color:var(--gc);font-size:clamp(2rem,5vw,3.4rem);margin:10px 0 12px}.journey p{max-width:760px;margin:0 auto;color:var(--gm);line-height:1.7}
 .keeper{margin:26px 0 0;padding:42px 24px;text-align:center;border-radius:30px;background:radial-gradient(circle at 50% 0%,rgba(244,215,141,.10),transparent 36%),linear-gradient(145deg,rgba(22,19,14,.94),rgba(7,7,7,.96));border:1px solid var(--gb)}
@@ -46,6 +46,7 @@ body{background:radial-gradient(circle at 12% 4%,rgba(216,173,84,.13),transparen
 .go-store{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 20px;border-radius:999px;background:linear-gradient(135deg,var(--gg2),var(--gg));color:#17130b;text-decoration:none;font-weight:950}
 @media(max-width:920px){.hero-grid{grid-template-columns:1fr;text-align:center}.hero-art{max-width:430px;margin:auto}.hero-copy{margin-left:auto;margin-right:auto}.feature-grid,.shots{grid-template-columns:repeat(2,1fr)}.how-grid{grid-template-columns:1fr}}
 @media(max-width:560px){.go-hero{padding-top:32px}.feature-grid,.shots{grid-template-columns:1fr}.go-title{font-size:3.5rem}}
+.go-app-store{display:inline-flex;align-items:center;border-radius:10px}.go-app-store img{display:block;width:189px;height:auto}.go-app-store:focus-visible{outline:3px solid var(--gg2);outline-offset:4px}
 </style>
 </head>
 <body>
@@ -63,7 +64,7 @@ body{background:radial-gradient(circle at 12% 4%,rgba(216,173,84,.13),transparen
 <div><div class="eyebrow">A strategy game from One T Media Group</div><h1 class="go-title">GO</h1><div class="go-subtitle">The Keeper&#39;s Board</div><div class="go-tagline">One Board. Endless Possibilities.</div>
 <p class="hero-copy">Discover one of the world's great strategy games through a modern experience built for iPhone. Learn on a 9×9 board, grow into 13×13 and take on the full 19×19 game. Challenge six personality-driven AI opponents, play locally with a friend or face players online, then follow a progression journey filled with puzzles, unlockable boards, backgrounds, stone sets and a few things that are better discovered for yourself.</p>
 <div class="pillrow"><span class="pill">9×9</span><span class="pill">13×13</span><span class="pill">19×19</span><span class="pill">6 AI Rivals</span><span class="pill">Online 1v1</span><span class="pill">Local 2 Player</span><span class="pill">Challenge Mode</span><span class="pill">Unlockable Themes</span></div>
-<span class="status">Coming Soon to iOS</span></div>
+<span class="status">Now available on iOS</span><div class="cta-links"><a class="go-app-store" href="https://apps.apple.com/us/app/go-the-keepers-board/id6816266407"><img src="assets/images/General/download-on-app-store.svg" width="189" height="56" alt="Download GO: The Keeper’s Board on the App Store"></a></div></div>
 </div></section>
 
 <section class="section section-tight"><div class="section-head"><h2>Learn the board. Find your game.</h2><p>Start small, learn the shape of the board and build toward the full game. GO supports three board sizes so a first match can feel approachable while experienced players still have the complete 19×19 battlefield waiting for them.</p></div>
@@ -85,20 +86,19 @@ body{background:radial-gradient(circle at 12% 4%,rgba(216,173,84,.13),transparen
 
 <section class="journey"><div class="journey-kicker">A journey worth playing</div><h2>Every challenge moves you forward.</h2><p>Challenge Mode is more than a puzzle list. Work through sets of board problems to unlock new backgrounds, boards and stone designs. Progress far enough and a new opponent waits at the end of the path. Beat them on the board and they become yours to challenge whenever you want.</p></section>
 
-<section class="section"><div class="section-head"><h2>Ancient strategy. A different board every night.</h2><p>Classic wood, marble, gardens, neon cities, temples, celestial worlds and more. GO's visual collection lets the same timeless game take on an entirely different atmosphere.</p></div>
+<section class="section"><div class="section-head"><h2>Take a closer look at The Keeper’s Board.</h2><p>Play your way, meet the rivals, build your collection and take on Challenge Mode.</p></div>
 <div class="shots">
-<!-- IMAGE 2 --><figure class="shot"><img src="assets/images/Go/go-gameplay.png" alt="GO gameplay on the board"><figcaption>Play 9×9, 13×13 and full 19×19 Go.</figcaption></figure>
-<!-- IMAGE 3 --><figure class="shot"><img src="assets/images/Go/go-ai-rivals.png" alt="GO AI opponents"><figcaption>Meet six opponents with distinct styles.</figcaption></figure>
-<!-- IMAGE 4 --><figure class="shot"><img src="assets/images/Go/go-challenges.png" alt="GO Challenge Mode"><figcaption>Solve challenges. Learn. Progress. Unlock.</figcaption></figure>
-<!-- IMAGE 5 --><figure class="shot"><img src="assets/images/Go/go-themes.png" alt="GO boards backgrounds and stones"><figcaption>Collect boards, backgrounds and custom stones.</figcaption></figure>
+<figure class="shot"><a href="assets/images/Go/go-app-store-gameplay.jpg" target="_blank" rel="noopener" aria-label="View full-size image: Real Go play. Anytime. Anywhere."><img src="assets/images/Go/go-app-store-gameplay.jpg" alt="GO gameplay on 9×9, 13×13 and 19×19 boards" width="1242" height="2688" loading="lazy"></a><figcaption>Real Go play. Anytime. Anywhere.</figcaption></figure>
+<figure class="shot"><a href="assets/images/Go/go-app-store-ai-rivals.jpg" target="_blank" rel="noopener" aria-label="View full-size image: Six rivals. Six styles."><img src="assets/images/Go/go-app-store-ai-rivals.jpg" alt="Six GO AI rivals: Sensei, The Fox, The Monk, The Master, The Scholar and The Warrior" width="1242" height="2688" loading="lazy"></a><figcaption>Six rivals. Six styles.</figcaption></figure>
+<figure class="shot"><a href="assets/images/Go/go-app-store-challenge-mode.jpg" target="_blank" rel="noopener" aria-label="View full-size image: Solve. Improve. Advance."><img src="assets/images/Go/go-app-store-challenge-mode.jpg" alt="GO Challenge Mode puzzles for captures, connections, and life and death" width="1242" height="2688" loading="lazy"></a><figcaption>Solve. Improve. Advance.</figcaption></figure>
+<figure class="shot"><a href="assets/images/Go/go-app-store-collection.jpg" target="_blank" rel="noopener" aria-label="View full-size image: Beautiful boards. Unique stones."><img src="assets/images/Go/go-app-store-collection.jpg" alt="Unlockable GO boards, stone sets and backgrounds" width="1242" height="2688" loading="lazy"></a><figcaption>Beautiful boards. Unique stones.</figcaption></figure>
 </div></section>
 
 <section class="keeper"><div class="mystery-kicker">Someone is watching the board</div><h2>Every game has a story.</h2><p>A traveller. An observer. A guide. The Keeper has seen more games than he cares to count, and he may have something to say about yours. Listen carefully. Keep learning. And perhaps, one day, you'll discover why he has been watching.</p></section>
 
-<section class="cta"><h2>Your first stone is waiting.</h2><p class="small">GO: The Keeper&#39;s Board is preparing for launch. App Store information will be added here when it becomes available.</p>
+<section class="cta"><h2>Your first stone is waiting.</h2><p class="small">GO: The Keeper&#39;s Board is now available on iOS. Download it from the App Store and begin your journey.</p>
 <div class="cta-links">
-<!-- FUTURE APP STORE LINK: replace # and button text when live -->
-<a class="go-store" href="#" aria-disabled="true" onclick="return false;">Coming Soon to iOS</a>
+<a class="go-app-store" href="https://apps.apple.com/us/app/go-the-keepers-board/id6816266407"><img src="assets/images/General/download-on-app-store.svg" width="189" height="56" alt="Download GO: The Keeper’s Board on the App Store"></a>
 <a class="btn" href="go-support.html">Support</a><a class="btn" href="go-privacy.html">Privacy Policy</a>
 </div>
 </section>
